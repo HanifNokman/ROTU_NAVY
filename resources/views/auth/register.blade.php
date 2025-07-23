@@ -9,6 +9,15 @@
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
+        <!-- Role Selection -->
+        <div class="mt-4">
+            <label for="role" class="block text-sm font-medium text-gray-700">Register as</label>
+            <select id="role" name="role" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                <option value="cadet">Cadet</option>
+                <option value="instructor">Instructor</option>
+            </select>
+        </div>
+
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
