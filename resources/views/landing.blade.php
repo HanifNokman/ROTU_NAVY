@@ -50,7 +50,7 @@
 <section class="hero-section text-center text-white d-flex align-items-center" style="min-height: 80vh; background-color: #1a1a1a;">
     <div class="container">
         <h1>Cadet Management & Learning Hub</h1>
-        <p class="lead">PALAPES Laut UMS | RESERVE OFFICER TRAINING UNIT</p>
+        <p class="lead">PALAPES LAUT UMS | RESERVE OFFICER TRAINING UNIT</p>
         <a href="#join" class="btn btn-warning mt-3">Get Started</a>
     </div>
 </section>
