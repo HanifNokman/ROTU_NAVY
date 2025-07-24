@@ -130,9 +130,9 @@
                     <div class="p-6 border-t border-gray-200">
                         <a href="{{ url('/') }}" class="flex items-center justify-center">
                             @if(View::exists('components.application-logo'))
-                                <x-application-logo class="h-5 w-auto fill-current text-gray-800" />
+                                <x-application-logo class="h-8 w-auto fill-current text-gray-800" />
                             @else
-                                <div class="h-5 w-5 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 font-bold text-sm">LOGO</div>
+                                <div class="h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 font-bold text-sm">LOGO</div>
                             @endif
                         </a>
                     </div>
@@ -309,9 +309,9 @@
                     <div class="p-6 border-t border-gray-200">
                         <a href="{{ url('/') }}" class="flex items-center justify-center">
                             @if(View::exists('components.application-logo'))
-                                <x-application-logo class="h-5 w-auto fill-current text-gray-800" />
+                                <x-application-logo class="h-8 w-auto fill-current text-gray-800" />
                             @else
-                                <div class="h-5 w-5 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 font-bold text-sm">LOGO</div>
+                                <div class="h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 font-bold text-sm">LOGO</div>
                             @endif
                         </a>
                     </div>

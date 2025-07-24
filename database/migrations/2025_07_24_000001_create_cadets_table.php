@@ -1,0 +1,35 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up()
+    {
+        Schema::create('cadets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('intake_year')->nullable();
+            $table->string('matric_no', 20)->nullable();
+            $table->decimal('current_cgpa', 4, 2)->nullable();
+            $table->decimal('past_cgpa', 4, 2)->nullable();
+            $table->string('phone_number', 15)->nullable();
+            $table->string('ic_number', 14)->nullable();
+            $table->enum('rank', ['PK','PKK','Lt.M'])->nullable();
+            $table->string('service_number', 20)->nullable();
+            $table->enum('position', ['Normal','CO','Thana','Zayn','PMC'])->default('Normal');
+            $table->enum('gender', ['Male','Female'])->nullable();
+            $table->enum('cadet_status', ['Active','Suspended','Completed','Inactive'])->default('Active');
+            $table->integer('daily_duty_count')->nullable();
+            $table->decimal('BMI', 4, 1)->nullable();
+            $table->date('BMI_update_date')->nullable();
+            $table->enum('swimming_qualification', ['Pass','In Progress','Fail'])->default('In Progress');
+            $table->string('bank_account_number', 30)->nullable();
+            $table->timestamps();
+        });
+    }
+    public function down()
+    {
+        Schema::dropIfExists('cadets');
+    }
+};
