@@ -38,41 +38,6 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's personal information (cadet/instructor).
-     */
-    public function updatePersonal(Request $request): RedirectResponse
-    {
-        $user = Auth::user();
-
-        if ($user->role === 'cadet') {
-            $validated = $request->validate([
-                'phone_number' => 'required|string',
-                'gender' => 'required|in:Male,Female',
-                'bank_account_number' => 'required|string',
-                'rank' => 'required|string',
-            ]);
-
-            Cadet::updateOrCreate(
-                ['user_id' => $user->id],
-                $validated
-            );
-
-        } elseif ($user->role === 'instructor') {
-            $validated = $request->validate([
-                'phone_number' => 'required|string',
-                'rank' => 'required|string',
-            ]);
-
-            Instructor::updateOrCreate(
-                ['user_id' => $user->id],
-                $validated
-            );
-        }
-
-        return back()->with('status', 'personal-updated');
-    }
-
-    /**
      * Delete the user's account.
      */
     public function destroy(Request $request): RedirectResponse
