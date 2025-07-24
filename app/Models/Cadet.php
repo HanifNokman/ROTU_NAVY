@@ -1,0 +1,16 @@
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Cadet extends Model
+{
+    protected $fillable = [
+        'user_id',
+        // Add more fields as needed
+    ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+}

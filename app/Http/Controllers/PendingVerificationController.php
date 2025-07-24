@@ -17,6 +17,14 @@ class PendingVerificationController extends Controller
     {
         $user->status = 'accepted';
         $user->save();
+
+        // Automatically create Cadet or Instructor record if not exists
+        if ($user->role === 'cadet') {
+            \App\Models\Cadet::firstOrCreate(['user_id' => $user->id]);
+        } elseif ($user->role === 'instructor') {
+            \App\Models\Instructor::firstOrCreate(['user_id' => $user->id]);
+        }
+
         return back()->with('success', 'User accepted.');
     }
 
