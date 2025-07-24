@@ -35,7 +35,17 @@
                 <li class="nav-item"><a class="nav-link" href="#join">Join Us</a></li>
 
                 @auth
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a></li>
+                    @php
+                        $dashboardRoute = match (auth()->user()->role) {
+                            'cadet' => 'cadet.dashboard',
+                            'instructor' => 'instructor.dashboard',
+                            'admin' => 'admin.dashboard',
+                            default => null
+                        };
+                    @endphp
+                    @if($dashboardRoute)
+                        <li class="nav-item"><a class="nav-link" href="{{ route($dashboardRoute) }}">Dashboard</a></li>
+                    @endif
                 @else
                     <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
                 @endauth
