@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PendingVerificationController;
+use App\Http\Controllers\PersonalInfoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -144,7 +145,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/personal', [ProfileController::class, 'updatePersonal'])->name('profile.personal.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/profile/personal', [PersonalInfoController::class, 'edit'])->name('personal.edit');
+    Route::patch('/profile/personal', [PersonalInfoController::class, 'update'])->name('personal.update');
 });
 
 require __DIR__.'/auth.php';
