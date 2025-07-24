@@ -47,14 +47,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        if ($user->role === 'cadet') {
-            return redirect()->route('cadet.dashboard');
-        } elseif ($user->role === 'instructor') {
-            return redirect()->route('instructor.dashboard');
-        } elseif ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return redirect('/'); // fallback
+        return redirect()->route('awaiting.approval');
     }
 }

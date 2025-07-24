@@ -323,7 +323,7 @@
                 @isset($header)
                     <header class="bg-white shadow flex-shrink-0 w-full flex justify-end">
                         <div class="w-full max-w-7xl py-6 px-4 sm:px-6 lg:px-8 flex justify-end">
-                            <div class="text-right w-full">
+                            <div class="text-left w-full">
                                 {{ $header }}
                             </div>
                         </div>

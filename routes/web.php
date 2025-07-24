@@ -1,29 +1,46 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PendingVerificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('landing');
 });
 
+Route::get('/logout-and-landing', function () {
+    \Auth::logout();
+    return redirect('/');
+})->name('logout.and.landing');
+
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if (!$user) {
         return redirect()->route('login');
     }
-
-    return match ($user->role) {
-        'cadet' => redirect()->route('cadet.dashboard'),
-        'instructor' => redirect()->route('instructor.dashboard'),
-        'admin' => redirect()->route('admin.dashboard'),
-        default => abort(403),
-    };
-})->name('dashboard');
+    if ($user->status !== 'accepted') {
+        \Auth::logout();
+        return redirect('/')->with('error', 'Your account is not accepted.');
+    }
+    switch ($user->role) {
+        case 'cadet':
+            return redirect()->route('cadet.dashboard');
+        case 'instructor':
+            return redirect()->route('instructor.dashboard');
+        case 'admin':
+            return redirect()->route('admin.dashboard');
+        default:
+            abort(403);
+    }
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Instructor Dashboard
     Route::get('/instructor/dashboard', function () {
+        $user = auth()->user();
+        if (!$user || $user->status !== 'accepted') {
+            abort(403, 'Your account is not accepted.');
+        }
         return view('instructor.dashboard');
     })->name('instructor.dashboard');
 
@@ -49,21 +66,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Learning Hub route
     Route::get('/instructor/learning-hub', function () {
+        $user = auth()->user();
+        if (!$user || $user->status !== 'accepted') {
+            abort(403, 'Your account is not accepted.');
+        }
         return view('instructor.learning-hub');
     })->name('instructor.learning-hub');
 
     // Gallery route
     Route::get('/instructor/gallery', function () {
+        $user = auth()->user();
+        if (!$user || $user->status !== 'accepted') {
+            abort(403, 'Your account is not accepted.');
+        }
         return view('instructor.gallery');
     })->name('instructor.gallery');
 
-    // Pending Verification route
-    Route::get('/instructor/pending-verification', function () {
-        return view('instructor.pending-verification');
-    })->name('pending.verification');
+    // Pending Verification routes
+    Route::get('/instructor/pending-verification', [PendingVerificationController::class, 'index'])->name('pending.verification');
+    Route::post('/instructor/pending-verification/{user}/accept', [PendingVerificationController::class, 'accept'])->name('pending.verification.accept');
+    Route::post('/instructor/pending-verification/{user}/reject', [PendingVerificationController::class, 'reject'])->name('pending.verification.reject');
+
+    Route::get('/awaiting-approval', function () {
+        return view('auth.awaiting-approval');
+    })->name('awaiting.approval');
 
     // Cadet Dashboard
     Route::get('/cadet/dashboard', function () {
+        $user = auth()->user();
+        if (!$user || $user->status !== 'accepted') {
+            abort(403, 'Your account is not accepted.');
+        }
         return view('cadet.dashboard');
     })->name('cadet.dashboard');
 
@@ -100,6 +133,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin Dashboard
     Route::get('/admin/dashboard', function () {
+        $user = auth()->user();
+        if (!$user || $user->status !== 'accepted') {
+            abort(403, 'Your account is not accepted.');
+        }
         return view('admin.dashboard');
     })->name('admin.dashboard');
 });
