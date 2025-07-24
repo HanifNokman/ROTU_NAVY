@@ -1,7 +1,3 @@
-
-// This migration file should be renamed to run before create_instructors_table
-// Suggested new filename: 2025_07_24_000000_add_status_to_users_table.php
-// Please rename this file in your migrations folder for correct order.
 <?php
 
 use Illuminate\Database\Migrations\Migration;
