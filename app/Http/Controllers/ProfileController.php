@@ -16,8 +16,16 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $personal = null;
+        if ($user->role === 'cadet') {
+            $personal = \App\Models\Cadet::where('user_id', $user->id)->first();
+        } elseif ($user->role === 'instructor') {
+            $personal = \App\Models\Instructor::where('user_id', $user->id)->first();
+        }
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'personal' => $personal,
         ]);
     }
 
