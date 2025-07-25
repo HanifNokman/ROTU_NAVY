@@ -10,7 +10,16 @@ class Instructor extends Model
     protected $fillable = [
         'user_id',
         'phone_number',
+        'gender',
         'rank',
+        'profile_pic',
+        'position',
+        'expertise',
+        'time_in_service',
+        'ttp',
+        'status',
+        'service_number',
+        'past_unit',
     ];
 
     protected $hidden = [
