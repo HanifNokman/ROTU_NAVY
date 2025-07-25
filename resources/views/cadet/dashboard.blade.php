@@ -42,7 +42,14 @@
                         <div><strong>Gender:</strong> {{ $cadet->gender ?? '-' }}</div>
                         <div><strong>Bank Account Number:</strong> {{ $cadet->bank_account_number ?? '-' }}</div>
                         <div><strong>Matric Number:</strong> {{ $cadet->matric_no ?? '-' }}</div>
-                        <div><strong>Intake Year:</strong> {{ $cadet->intake_year ?? '-' }}</div>
+                        <div>
+                            <strong>Intake Year:</strong>
+                            @if($cadet->intake_year)
+                                {{ $cadet->intake_year }} / Intake - {{ $cadet->intake_year - 2011 }}
+                            @else
+                                -
+                            @endif
+                        </div>
                         <div><strong>Current CGPA:</strong> {{ $cadet->current_cgpa ?? '-' }}</div>
                         <div><strong>IC Number:</strong> {{ $cadet->ic_number ?? '-' }}</div>
                         <div><strong>BMI:</strong> {{ $cadet->BMI ?? '-' }}</div>
