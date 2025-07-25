@@ -20,7 +20,11 @@ class PendingVerificationController extends Controller
 
         // Automatically create Cadet or Instructor record if not exists
         if ($user->role === 'cadet') {
-            \App\Models\Cadet::firstOrCreate(['user_id' => $user->id]);
+            $cadet = \App\Models\Cadet::firstOrCreate(
+                ['user_id' => $user->id]
+            );
+            $cadet->daily_duty_count = 0;
+            $cadet->save();
         } elseif ($user->role === 'instructor') {
             \App\Models\Instructor::firstOrCreate(['user_id' => $user->id]);
         }

@@ -119,13 +119,27 @@
                             </svg>
                             Gallery
                         </a>
-                        <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-4 px-5 bg-yellow-100 text-yellow-800 rounded-lg font-semibold hover:bg-yellow-200 transition-colors border border-yellow-200 {{ request()->routeIs('pending.verification') ? 'bg-yellow-200' : '' }}">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
-                            Pending Verification
-                        </a>
                     </nav>
+                    
+                    <!-- Special Action Buttons - Mobile -->
+                    <div class="px-4 py-4">
+                        @if(Auth::user()->role === 'instructor')
+                            <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-4 px-5 bg-yellow-100 text-yellow-800 rounded-lg font-semibold hover:bg-yellow-200 transition-colors border border-yellow-200 {{ request()->routeIs('pending.verification') ? 'bg-yellow-200' : '' }}">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                                Pending Verification
+                            </a>
+                        @elseif(Auth::user()->role === 'cadet')
+                            <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-4 px-5 bg-green-100 text-green-800 rounded-lg font-semibold hover:bg-green-200 transition-colors border border-green-200 {{ request()->routeIs('cadet.attendance') ? 'bg-green-200' : '' }}">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Attendance
+                            </a>
+                        @endif
+                    </div>
+
                     <!-- Bottom Logo Section -->
                     <div class="p-6 border-t border-gray-200">
                         <a href="{{ url('/') }}" class="flex items-center justify-center">
@@ -142,7 +156,7 @@
             <!-- Two Column Layout -->
             <div class="flex h-screen">
                 <!-- Column 1: Sidebar -->
-                <aside class="w-80 bg-white shadow-lg flex flex-col justify-between border-r border-gray-200 transform transition-transform duration-300 ease-in-out sm:translate-x-0 hidden sm:flex"
+                <aside class="w-80 bg-white shadow-lg flex-col justify-between border-r border-gray-200 transform transition-transform duration-300 ease-in-out hidden sm:flex"
                        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'">
                     
                     <div class="flex flex-col flex-1 space-y-6 px-4 pt-4">
@@ -195,7 +209,7 @@
                                     Management
                                 </h3>
                                 <!-- Dynamic Navigation based on User Role -->
-                                        <div class="space-y-1">
+                                <div class="space-y-1">
                                     @if(Auth::user()->role === 'instructor')
                                         <!-- Instructor Navigation -->
                                         <a href="{{ route('instructor.cadet_management') }}"
@@ -246,12 +260,6 @@
                                             </svg>
                                             Gallery
                                         </a>
-                                        <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-4 px-5 bg-yellow-100 text-yellow-800 rounded-lg font-semibold hover:bg-yellow-200 transition-colors border border-yellow-200 {{ request()->routeIs('pending.verification') ? 'bg-yellow-200' : '' }}">
-                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                            </svg>
-                                            Pending Verification
-                                        </a>
                                     @elseif(Auth::user()->role === 'cadet')
                                         <!-- Cadet Navigation -->
                                         <a href="{{ route('cadet.training') }}"
@@ -294,26 +302,40 @@
                                             </svg>
                                             Gallery
                                         </a>
-
-                                        <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-4 px-5 bg-green-100 text-green-800 rounded-lg font-semibold hover:bg-green-200 transition-colors border border-green-200 {{ request()->routeIs('cadet.attendance') ? 'bg-green-200' : '' }}">
-                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                            </svg>
-                                            Attendance
-                                        </a>
                                     @endif
                                 </div>
                             </div>
-
-                    <!-- Bottom Logo Section -->
-                    <div class="p-6 border-t border-gray-200">
-                        <a href="{{ url('/') }}" class="flex items-center justify-center">
-                            @if(View::exists('components.application-logo'))
-                                <x-application-logo class="h-8 w-auto fill-current text-gray-800" />
-                            @else
-                                <div class="h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 font-bold text-sm">LOGO</div>
+                        </nav>
+                        
+                        <!-- Special Action Buttons - Desktop -->
+                        <div class="px-4 py-4">
+                            @if(Auth::user()->role === 'instructor')
+                                <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-4 px-5 bg-yellow-100 text-yellow-800 rounded-lg font-semibold hover:bg-yellow-200 transition-colors border border-yellow-200 {{ request()->routeIs('pending.verification') ? 'bg-yellow-200' : '' }}">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                    Pending Verification
+                                </a>
+                            @elseif(Auth::user()->role === 'cadet')
+                                <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-4 px-5 bg-green-100 text-green-800 rounded-lg font-semibold hover:bg-green-200 transition-colors border border-green-200 {{ request()->routeIs('cadet.attendance') ? 'bg-green-200' : '' }}">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Attendance
+                                </a>
                             @endif
-                        </a>
+                        </div>
+
+                        <!-- Bottom Logo Section -->
+                        <div class="p-6 border-t border-gray-200">
+                            <a href="{{ url('/') }}" class="flex items-center justify-center">
+                                @if(View::exists('components.application-logo'))
+                                    <x-application-logo class="h-8 w-auto fill-current text-gray-800" />
+                                @else
+                                    <div class="h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 font-bold text-sm">LOGO</div>
+                                @endif
+                            </a>
+                        </div>
                     </div>
                 </aside>
 
