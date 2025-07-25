@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PendingVerificationController;
 use App\Http\Controllers\PersonalInfoController;
+use App\Http\Controllers\Instructor\InstructorDashboardController;
+use App\Http\Controllers\Cadet\CadetDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -150,6 +152,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/update-personal-info', [PersonalInfoController::class, 'edit'])->name('personal.edit');
     Route::patch('/update-personal-info', [PersonalInfoController::class, 'update'])->name('personal.update');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cadet/dashboard', [CadetDashboardController::class, 'index'])->name('cadet.dashboard');
 });
 
 require __DIR__.'/auth.php';
