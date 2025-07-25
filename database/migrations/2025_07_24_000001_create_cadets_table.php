@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->date('BMI_update_date')->nullable();
             $table->enum('swimming_qualification', ['Pass','In Progress','Fail'])->default('In Progress');
             $table->string('bank_account_number', 30)->nullable();
+            $table->string('profile_pic')->nullable();
             $table->timestamps();
         });
     }

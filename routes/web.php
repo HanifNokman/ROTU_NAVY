@@ -148,8 +148,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile/personal', [ProfileController::class, 'updatePersonal'])->name('profile.personal.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/profile/personal', [PersonalInfoController::class, 'edit'])->name('personal.edit');
-    Route::patch('/profile/personal', [PersonalInfoController::class, 'update'])->name('personal.update');
+    Route::get('/update-personal-info', [PersonalInfoController::class, 'edit'])->name('personal.edit');
+    Route::patch('/update-personal-info', [PersonalInfoController::class, 'update'])->name('personal.update');
 });
 
 require __DIR__.'/auth.php';

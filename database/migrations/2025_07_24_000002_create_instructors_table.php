@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->enum('status', ['Active','Relocated','Retired'])->default('Active');
             $table->string('service_number', 20)->nullable();
             $table->string('past_unit', 100)->nullable();
+            $table->string('profile_pic')->nullable();
             $table->timestamps();
         });
 

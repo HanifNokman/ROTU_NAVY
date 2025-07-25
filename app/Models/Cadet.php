@@ -13,6 +13,13 @@ class Cadet extends Model
         'gender',
         'bank_account_number',
         'rank',
+        'profile_pic',
+        'intake_year',
+        'matric_no',
+        'current_cgpa',
+        'past_cgpa',
+        'ic_number',
+        'BMI',
     ];
 
     protected $hidden = [
