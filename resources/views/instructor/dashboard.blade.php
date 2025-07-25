@@ -41,7 +41,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><strong>Position:</strong> {{ $instructor->position ?? '-' }}</div>
                     <div><strong>Expertise:</strong> {{ $instructor->expertise ?? '-' }}</div>
-                    <div><strong>Time in Service:</strong> {{ $instructor->time_in_service ?? '-' }}</div>
+                    <div><strong>Time in Service:</strong> {{ $instructor->time_in_service ? $instructor->time_in_service . ' Years' : '-' }}</div>
                     <div><strong>TTP:</strong> {{ $instructor->ttp ?? '-' }}</div>
                     <div><strong>Status:</strong> {{ $instructor->status ?? '-' }}</div>
                     <div><strong>Service Number:</strong> {{ $instructor->service_number ?? '-' }}</div>
