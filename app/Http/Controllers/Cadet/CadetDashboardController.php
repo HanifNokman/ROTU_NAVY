@@ -17,12 +17,18 @@ class CadetDashboardController extends Controller
 
         $sortOrder = $request->get('sort_order', 'desc');
 
-        // Eager load 'user' relationship to access name
+        // Cadets in same intake
         $cadets = Cadet::where('intake_year', $cadet->intake_year)
-            ->with('user') // <- make sure this relationship exists in the Cadet model
+            ->with('user')
             ->orderBy('daily_duty_count', $sortOrder)
             ->get();
 
-        return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder'));
+        // Duty cadets filtered by same intake
+        $dutyCadets = Cadet::where('intake_year', $cadet->intake_year)
+            ->with('user')
+            ->orderBy('daily_duty_count', $sortOrder)
+            ->get();
+
+        return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets'));
     }
 }
