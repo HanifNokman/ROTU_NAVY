@@ -96,15 +96,15 @@
                         @php
                             $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
 
-                            // Gradient from red → yellow → green
-                            $ratio = $percentage / 100;
-
-                            if ($ratio < 0.5) {
+                            // Calculate RGB color from red → yellow → green based on percentage
+                            if ($percentage < 50) {
+                                $ratio = $percentage / 50; // 0 to 1
                                 $r = 255;
-                                $g = (int)(510 * $ratio); // 0 → 255
+                                $g = (int)(180 * $ratio);
                             } else {
-                                $r = (int)(510 * (1 - $ratio)); // 255 → 0
-                                $g = 255;
+                                $ratio = ($percentage - 50) / 50; // 0 to 1
+                                $r = (int)(255 * (1 - $ratio));
+                                $g = 180;
                             }
                             $bgColor = "rgb($r, $g, 0)";
                         @endphp
