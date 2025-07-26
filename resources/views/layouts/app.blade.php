@@ -15,6 +15,22 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-100">
+        @php
+            $user = Auth::user();
+            $profilePicture = null;
+
+            if ($user->role === 'instructor') {
+                $profilePicture = optional(App\Models\Instructor::where('user_id', $user->id)->first())->profile_picture;
+            } elseif ($user->role === 'cadet') {
+                $profilePicture = optional(App\Models\Cadet::where('user_id', $user->id)->first())->profile_picture;
+            }
+
+            $fallbackAvatar = 'https://ui-avatars.com/api/?name=' . urlencode($user->name);
+            $avatarSrc = $profilePicture 
+                ? asset('storage/' . $profilePicture) 
+                : $fallbackAvatar;
+        @endphp
+
         <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-gray-100">
             <!-- Mobile menu button (top right, always fixed) -->
             <div class="sm:hidden fixed top-4 right-4 z-50">
@@ -50,7 +66,10 @@
                     </div>
                     <!-- Profile Section -->
                     <div class="flex items-center gap-3 border-b border-gray-200 pb-4">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}" alt="Profile" class="w-10 h-10 rounded-full">
+                       <img src="{{ $avatarSrc }}" 
+                            alt="Profile" 
+                            class="w-10 h-10 rounded-full object-cover"
+                            onerror="this.onerror=null; this.src='{{ $fallbackAvatar }}';">
                         <div class="flex flex-col flex-1 min-w-0">
                             <div class="font-semibold text-sm leading-tight truncate">{{ Auth::user()->name }}</div>
                             <div class="text-xs text-gray-500 leading-tight truncate">{{ Auth::user()->email }}</div>
@@ -162,9 +181,10 @@
                     <div class="flex flex-col flex-1 space-y-6 px-4 pt-4">
                         <!-- Profile Section -->
                         <div class="flex items-center gap-3 border-b border-gray-200 pb-4">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}" 
-                                 alt="Profile" 
-                                 class="w-10 h-10 rounded-full">
+                            <img src="{{ $avatarSrc }}" 
+                                alt="Profile" 
+                                class="w-10 h-10 rounded-full object-cover"
+                                onerror="this.onerror=null; this.src='{{ $fallbackAvatar }}';">
                             <div class="flex flex-col flex-1 min-w-0">
                                 <div class="font-semibold text-sm leading-tight truncate">{{ Auth::user()->name }}</div>
                                 <div class="text-xs text-gray-500 leading-tight truncate">{{ Auth::user()->email }}</div>
