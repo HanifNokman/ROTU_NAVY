@@ -146,7 +146,7 @@
 
                 @php
                     $intakeYear = $cadet->intake_year ?? now()->year;
-                    $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 1); // 3 years later on Sep 1
+                    $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15); // 3 years later on Sep 15
                     $today = \Carbon\Carbon::today();
                     $daysLeft = $today->diffInDays($tauliahDate, false);
                     $totalPrepDays = 1095; // 3 years in days
@@ -182,8 +182,19 @@
                     </div>
                 @else
                     <!-- After Countdown -->
-                    <div class="flex justify-center items-center text-center text-2xl font-bold text-yellow-600 mt-6">
-                        ⚓ Commissioned Officer<br class="block md:hidden" /> – Congratulations!
+                    <div class="flex flex-col items-center text-center mt-1 space-y-4 animate-pulse">
+                        <div class="text-4xl md:text-5xl font-extrabold text-yellow-500 drop-shadow-lg">
+                            ⚓ Commissioned Officer ⚓
+                        </div>
+                        <div class="text-2xl md:text-3xl font-semibold text-gray-800">
+                            Congratulations on Your Promotion to <span class="text-yellow-600">Lt. Muda!</span>
+                        </div>
+                        <div class="text-xl md:text-2xl text-pink-500 font-medium">
+                            Your service, dedication, and leadership are recognized! 🌟
+                        </div>
+                        <div class="text-3xl animate-bounce mt-4">
+                            🎉🥳🎊
+                        </div>
                     </div>
                 @endif
             </div>

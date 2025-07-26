@@ -77,7 +77,6 @@
                         <option value="">Select Rank</option>
                         <option value="PK" {{ $selectedRank === 'PK' ? 'selected' : '' }}>PK</option>
                         <option value="PKK" {{ $selectedRank === 'PKK' ? 'selected' : '' }}>PKK</option>
-                        <option value="Lt.M" {{ $selectedRank === 'Lt.M' ? 'selected' : '' }}>Lt.M</option>
                     </select>
                     <x-input-error class="mt-2" :messages="$errors->get('rank')" />
                 </div>

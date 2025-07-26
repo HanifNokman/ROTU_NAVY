@@ -162,4 +162,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cadet/dashboard', [CadetDashboardController::class, 'index'])->name('cadet.dashboard');
 });
 
+Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
+
+
 require __DIR__.'/auth.php';
