@@ -13,7 +13,6 @@ class InstructorDashboardController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
         $instructor = Instructor::where('user_id', $user->id)->first();
 
         if ($instructor && $instructor->past_unit) {
@@ -26,31 +25,29 @@ class InstructorDashboardController extends Controller
         $currentYear = now()->year;
         $minYear = $currentYear - 3;
 
-        $selectedIntakeYear = $request->get('intake_year', $currentYear);
-        $sortOrder = $request->get('sort_order', 'desc'); // default to descending
+        // Intake options for duty leaderboard
+        $dutyIntakeOptions = collect(range($currentYear, $minYear))->map(fn($year) => [
+            'year' => $year,
+            'label' => 'Intake - ' . ($year - 2011),
+        ]);
 
-        $intakeOptions = collect(range($currentYear, $minYear))
-            ->map(function ($year) {
-                return [
-                    'year' => $year,
-                    'label' => 'Intake - ' . ($year - 2011)
-                ];
-            });
+        $selectedIntakeYear = $request->get('intake_year', $currentYear);
+        $sortOrder = $request->get('sort_order', 'desc');
 
         $cadets = \DB::table('cadets')
             ->join('users', 'cadets.user_id', '=', 'users.id')
             ->where('cadets.intake_year', $selectedIntakeYear)
             ->orderBy('cadets.daily_duty_count', $sortOrder)
-            ->select('users.name', 'cadets.daily_duty_count')
+            ->select('users.name', 'cadets.daily_duty_count', 'cadets.current_cgpa', 'cadets.past_cgpa')
             ->get();
 
         return view('instructor.dashboard', [
             'user' => $user,
             'instructor' => $instructor,
-            'cadets' => $cadets,
-            'intakeOptions' => $intakeOptions,
+            'dutyIntakeOptions' => $dutyIntakeOptions,
             'selectedIntakeYear' => $selectedIntakeYear,
             'sortOrder' => $sortOrder,
+            'cadets' => $cadets,
         ]);
     }
 }
