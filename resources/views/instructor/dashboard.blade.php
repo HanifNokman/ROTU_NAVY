@@ -108,11 +108,11 @@
                             if ($percentage < 50) {
                                 $ratio = $percentage / 50; // 0 to 1
                                 $r = 255;
-                                $g = (int)(255 * $ratio);
+                                $g = (int)(180 * $ratio);
                             } else {
                                 $ratio = ($percentage - 50) / 50; // 0 to 1
                                 $r = (int)(255 * (1 - $ratio));
-                                $g = 255;
+                                $g = 180;
                             }
                             $bgColor = "rgb($r, $g, 0)";
                         @endphp
