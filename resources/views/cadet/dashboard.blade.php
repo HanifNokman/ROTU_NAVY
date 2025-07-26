@@ -89,24 +89,22 @@
 
                 <!-- Leaderboard Bars -->
                 <div class="space-y-4 max-h-[600px] overflow-y-auto">
-                        @php
-                            $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
-                        @endphp
+                    @php
+                        $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
+                    @endphp
                     @forelse ($dutyCadets as $index => $cadet)
                         @php
                             $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
-                            $totalCadets = count($cadets);
-                            $position = $sortOrder === 'desc' ? $index : ($totalCadets - $index - 1);
-                            $relative = $totalCadets > 1 ? ($position / ($totalCadets - 1)) : 0;
 
-                            if ($relative < 0.5) {
-                                $ratio = $relative * 2;
-                                $r = (int)(255 * $ratio);
-                                $g = 255;
-                            } else {
-                                $ratio = ($relative - 0.5) * 2;
+                            // Gradient from red → yellow → green
+                            $ratio = $percentage / 100;
+
+                            if ($ratio < 0.5) {
                                 $r = 255;
-                                $g = (int)(255 * (1 - $ratio));
+                                $g = (int)(510 * $ratio); // 0 → 255
+                            } else {
+                                $r = (int)(510 * (1 - $ratio)); // 255 → 0
+                                $g = 255;
                             }
                             $bgColor = "rgb($r, $g, 0)";
                         @endphp
@@ -147,7 +145,7 @@
                 <h3 class="text-3xl font-bold text-center mb-1">TAULIAH COUNTDOWN</h3>
 
                 @php
-                    $intakeYear = $cadet->intake_year ?? 2022; // fallback if not set
+                    $intakeYear = $cadet->intake_year ?? now()->year;
                     $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 1); // 3 years later on Sep 1
                     $today = \Carbon\Carbon::today();
                     $daysLeft = $today->diffInDays($tauliahDate, false);
