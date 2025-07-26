@@ -95,18 +95,16 @@
                     @forelse ($cadets as $index => $cadet)
                         @php
                             $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
-                            $totalCadets = count($cadets);
-                            $position = $sortOrder === 'desc' ? $index : ($totalCadets - $index - 1);
-                            $relative = $totalCadets > 1 ? ($position / ($totalCadets - 1)) : 0;
 
-                            if ($relative < 0.5) {
-                                $ratio = $relative * 2;
-                                $r = (int)(255 * $ratio);
-                                $g = 255;
-                            } else {
-                                $ratio = ($relative - 0.5) * 2;
+                            // Calculate RGB color from red → yellow → green based on percentage
+                            if ($percentage < 50) {
+                                $ratio = $percentage / 50; // 0 to 1
                                 $r = 255;
-                                $g = (int)(255 * (1 - $ratio));
+                                $g = (int)(255 * $ratio);
+                            } else {
+                                $ratio = ($percentage - 50) / 50; // 0 to 1
+                                $r = (int)(255 * (1 - $ratio));
+                                $g = 255;
                             }
                             $bgColor = "rgb($r, $g, 0)";
                         @endphp
