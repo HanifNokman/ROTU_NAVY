@@ -66,10 +66,18 @@
     <div class="w-full px-6 py-1">
         <div class="flex flex-col lg:flex-row gap-6">
 
-            <!-- LEFT: Duty Ranking Card -->
-            <div class="w-full lg:w-1/2 bg-white shadow border border-transparent rounded-lg p-6 flex flex-col gap-6 transition duration-300 hover:shadow-2xl hover:border-blue-300">
-                <h3 class="text-3xl font-bold text-center mb-1">DUTY RANKING</h3>
-
+        <!-- LEFT: Duty Ranking Card -->
+            <div class="w-full lg:w-1/2 bg-white shadow border border-transparent rounded-lg p-6 flex flex-col gap-6 transition duration-300 hover:shadow-2xl hover:border-blue-300"
+                x-data="{ open: false, selected: [] }">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-3xl font-bold text-center lg:text-left">DUTY RANKING</h3>
+                    <button
+                        @click="open = true"
+                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        ➕ Add Duty Count
+                    </button>
+                </div>
+                
                 <!-- Filter Form -->
                 <form method="GET" id="duty-filter-form" class="mb-1 flex justify-center">
                     <select name="intake_year" onchange="this.form.submit()">
@@ -138,6 +146,57 @@
                     @empty
                         <div class="text-center text-gray-500">No cadets available.</div>
                     @endforelse
+                </div>
+
+                <!-- Duty Increment Modal -->
+                <div x-show="open"
+                    x-transition
+                    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+                    @click.self="open = false; selected = [];">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto relative">
+                        <!-- X Close Button -->
+                        <button 
+                            @click="open = false; selected = [];"
+                            class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                            ×
+                        </button>
+                        
+                        <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets by Seniority</h2>
+
+                        <ul class="space-y-2">
+                            @foreach ($cadetList as $cadet)
+                                <li class="flex items-center justify-between border p-2 rounded">
+                                    <span>{{ $cadet->user->name }} ({{ $cadet->service_number }})</span>
+                                    <input type="checkbox" x-model="selected" value="{{ $cadet->id }}">
+                                </li>
+                            @endforeach
+                        </ul>
+
+                        <div class="mt-6 text-center">
+                            <button
+                                @click="
+                                    fetch('{{ route('instructor.incrementDuty') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        },
+                                        body: JSON.stringify({ cadet_ids: selected })
+                                    }).then(response => {
+                                        if (response.ok) {
+                                            open = false;
+                                            selected = [];
+                                            location.reload();
+                                        }
+                                    }).catch(error => {
+                                        console.error('Error:', error);
+                                    });
+                                "
+                                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                ➕ Add Duty Count
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -15,6 +15,16 @@ class CadetDashboardController extends Controller
         $user = Auth::user();
         $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
 
+        // Calculate Tauliah Date
+        $intakeYear = $cadet->intake_year ?? now()->year;
+        $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
+
+        // Auto-update rank if date has passed and not yet updated
+        if (now()->greaterThanOrEqualTo($tauliahDate) && $cadet->rank !== 'Lt.M') {
+            $cadet->rank = 'Lt.M';
+            $cadet->save();
+        }
+
         $sortOrder = $request->get('sort_order', 'desc');
 
         // Cadets in same intake

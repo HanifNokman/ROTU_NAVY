@@ -41,6 +41,11 @@ class InstructorDashboardController extends Controller
             ->select('users.name', 'cadets.daily_duty_count', 'cadets.current_cgpa', 'cadets.past_cgpa')
             ->get();
 
+        $cadetList = \App\Models\Cadet::with('user')
+            ->where('intake_year', $selectedIntakeYear)
+            ->orderBy('service_number', 'asc') // sort by seniority
+            ->get();
+
         return view('instructor.dashboard', [
             'user' => $user,
             'instructor' => $instructor,
@@ -48,6 +53,22 @@ class InstructorDashboardController extends Controller
             'selectedIntakeYear' => $selectedIntakeYear,
             'sortOrder' => $sortOrder,
             'cadets' => $cadets,
+            'cadetList' => $cadetList,
         ]);
     }
+
+    public function incrementDuty(Request $request)
+    {
+        $request->validate([
+            'cadet_ids' => 'required|array',
+            'cadet_ids.*' => 'exists:cadets,id',
+        ]);
+
+        foreach ($request->cadet_ids as $cadetId) {
+            \App\Models\Cadet::where('id', $cadetId)->increment('daily_duty_count');
+        }
+
+        return response()->json(['message' => 'Duty count updated.']);
+    }
+
 }
