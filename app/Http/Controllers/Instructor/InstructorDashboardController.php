@@ -65,6 +65,31 @@ class InstructorDashboardController extends Controller
             )
             ->get();
 
+        // CGPA Distribution data for chart
+        $cgpaRanges = [
+            '3.67 & above' => ['min' => 3.67, 'max' => 4.00],
+            '3.00 - 3.66' => ['min' => 3.00, 'max' => 3.66],
+            '2.50 - 2.99' => ['min' => 2.50, 'max' => 2.99],
+            '2.49 & below' => ['min' => 0.00, 'max' => 2.49],
+        ];
+
+        $cgpaDistribution = [];
+        foreach ($cgpaRanges as $label => $range) {
+            $pastCount = $cgpaCadets->filter(function($cadet) use ($range) {
+                return $cadet->past_cgpa >= $range['min'] && $cadet->past_cgpa <= $range['max'];
+            })->count();
+            
+            $currentCount = $cgpaCadets->filter(function($cadet) use ($range) {
+                return $cadet->current_cgpa >= $range['min'] && $cadet->current_cgpa <= $range['max'];
+            })->count();
+            
+            $cgpaDistribution[] = [
+                'label' => $label,
+                'past_count' => $pastCount,
+                'current_count' => $currentCount,
+            ];
+        }
+
         return view('instructor.dashboard', [
             'user' => $user,
             'instructor' => $instructor,
@@ -76,6 +101,7 @@ class InstructorDashboardController extends Controller
             'cadets' => $cadets,
             'cadetList' => $cadetList,
             'cgpaCadets' => $cgpaCadets,
+            'cgpaDistribution' => $cgpaDistribution,
         ]);
     }
 
