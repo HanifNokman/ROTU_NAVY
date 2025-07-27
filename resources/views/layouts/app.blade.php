@@ -31,6 +31,7 @@
                 : $fallbackAvatar;
         @endphp
 
+        <!-- Mobile Sidebar (Toggle Sidebar) -->
         <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-gray-100">
             <!-- Mobile menu button (top right, always fixed) -->
             <div class="sm:hidden fixed top-4 right-4 z-50">
