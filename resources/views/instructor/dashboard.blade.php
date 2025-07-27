@@ -202,31 +202,55 @@
                     </div>
 
                     <!-- RIGHT: Cadet CGPA Comparison -->
-                    <div class="w-full lg:w-1/2 bg-white shadow border border-transparent rounded-lg p-6 flex flex-col gap-6 transition duration-300 hover:shadow-2xl hover:border-blue-300">
+                    <div class="w-full lg:w-1/2 bg-white shadow border border-transparent rounded-lg p-6 flex flex-col gap-6 transition duration-300 hover:shadow-2xl hover:border-blue-300"
+                        x-data="{ showDistribution: false }">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-3xl font-bold text-center lg:text-left">CADET CGPA</h3>
+                            <button
+                                @click="showDistribution = !showDistribution"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                                <span x-text="showDistribution ? '📊 Individual View' : '📈 Distribution View'"></span>
+                            </button>
                         </div>
 
                         <!-- Filter Form for CGPA Comparison -->
-                        <form method="GET" id="cgpa-filter-form" class="mb-1 flex justify-center gap-2">
-                            <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
-                            <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
-                            <select name="cgpa_intake_year" onchange="this.form.submit()">
-                                @foreach ($intakeOptions as $option)
-                                    <option value="{{ $option['year'] }}" {{ $selectedCgpaIntakeYear == $option['year'] ? 'selected' : '' }}>
-                                        {{ $option['label'] }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            
-                            <select name="cgpa_sort_order" onchange="this.form.submit()">
-                                <option value="desc" {{ $cgpaSortOrder == 'desc' ? 'selected' : '' }}>Highest CGPA First</option>
-                                <option value="asc" {{ $cgpaSortOrder == 'asc' ? 'selected' : '' }}>Lowest CGPA First</option>
-                            </select>
-                        </form>
+                        <div x-show="!showDistribution" x-transition>
+                            <form method="GET" id="cgpa-filter-form" class="mb-1 flex justify-center gap-2">
+                                <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
+                                <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
+                                <select name="cgpa_intake_year" onchange="this.form.submit()">
+                                    @foreach ($intakeOptions as $option)
+                                        <option value="{{ $option['year'] }}" {{ $selectedCgpaIntakeYear == $option['year'] ? 'selected' : '' }}>
+                                            {{ $option['label'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                
+                                <select name="cgpa_sort_order" onchange="this.form.submit()">
+                                    <option value="desc" {{ $cgpaSortOrder == 'desc' ? 'selected' : '' }}>Highest CGPA First</option>
+                                    <option value="asc" {{ $cgpaSortOrder == 'asc' ? 'selected' : '' }}>Lowest CGPA First</option>
+                                </select>
+                            </form>
+                        </div>
 
-                        <!-- CGPA Comparison Bars -->
-                        <div class="space-y-4 max-h-[600px] overflow-y-auto">
+                        <!-- Distribution Filter (only intake year) -->
+                        <div x-show="showDistribution" x-transition>
+                            <form method="GET" id="cgpa-distribution-filter-form" class="mb-1 flex justify-center">
+                                <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
+                                <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
+                                <input type="hidden" name="cgpa_sort_order" value="{{ $cgpaSortOrder }}">
+                                <select name="cgpa_intake_year" onchange="this.form.submit()">
+                                    @foreach ($intakeOptions as $option)
+                                        <option value="{{ $option['year'] }}" {{ $selectedCgpaIntakeYear == $option['year'] ? 'selected' : '' }}>
+                                            {{ $option['label'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        </div>
+
+                        <!-- CGPA Comparison Bars (Individual View) -->
+                        <div x-show="!showDistribution" x-transition class="space-y-4 max-h-[600px] overflow-y-auto">
                             @php
                                 $maxCgpa = max($cgpaCadets->max('current_cgpa'), $cgpaCadets->max('past_cgpa')) ?: 4.0;
                             @endphp
@@ -287,7 +311,75 @@
                             @endforelse
                         </div>
 
-                        <!-- Legend -->
+                        <!-- CGPA Distribution Chart (Distribution View) -->
+                        <div x-show="showDistribution" x-transition class="max-h-[600px] overflow-y-auto">
+                            @php
+                                $maxCount = max(array_column($cgpaDistribution, 'past_count') + array_column($cgpaDistribution, 'current_count')) ?: 1;
+                            @endphp
+
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 h-full">
+                                @foreach ($cgpaDistribution as $range)
+                                    <div class="flex flex-col items-center">
+                                        <!-- Range Label -->
+                                        <div class="text-xs font-medium text-center mb-2 h-8 flex items-center">
+                                            {{ $range['label'] }}
+                                        </div>
+
+                                        <!-- Chart Container -->
+                                        <div class="flex-1 flex items-end justify-center gap-2 w-full max-h-80">
+                                            <!-- Past CGPA Bar -->
+                                            <div class="flex flex-col items-center">
+                                                @php
+                                                    $pastHeight = $maxCount > 0 ? ($range['past_count'] / $maxCount) * 200 : 0;
+                                                @endphp
+                                                <div class="w-6 bg-blue-500 rounded-t flex items-end justify-center"
+                                                    style="height: {{ $pastHeight }}px; min-height: 20px;">
+                                                    @if($range['past_count'] > 0)
+                                                        <span class="text-white text-xs font-bold mb-1">{{ $range['past_count'] }}</span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-xs text-blue-600 font-medium mt-1">Past</div>
+                                            </div>
+
+                                            <!-- Current CGPA Bar -->
+                                            <div class="flex flex-col items-center">
+                                                @php
+                                                    $currentHeight = $maxCount > 0 ? ($range['current_count'] / $maxCount) * 200 : 0;
+                                                    $barColor = $range['current_count'] >= $range['past_count'] ? '#10b981' : '#ef4444';
+                                                @endphp
+                                                <div class="w-6 rounded-t flex items-end justify-center"
+                                                    style="height: {{ $currentHeight }}px; min-height: 20px; background-color: {{ $barColor }};">
+                                                    @if($range['current_count'] > 0)
+                                                        <span class="text-white text-xs font-bold mb-1">{{ $range['current_count'] }}</span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-xs font-medium mt-1" style="color: {{ $barColor }};">Current</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Distribution Summary -->
+                            <div class="mt-6 text-center">
+                                <h4 class="font-semibold text-lg mb-2">CGPA Distribution Summary</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                                    @foreach ($cgpaDistribution as $range)
+                                        <div class="flex justify-between items-center bg-gray-50 px-3 py-2 rounded">
+                                            <span class="font-medium">{{ $range['label'] }}:</span>
+                                            <div class="flex gap-4">
+                                                <span class="text-blue-600">Past: {{ $range['past_count'] }}</span>
+                                                <span class="{{ $range['current_count'] >= $range['past_count'] ? 'text-green-600' : 'text-red-600' }}">
+                                                    Current: {{ $range['current_count'] }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legend (shown in both views) -->
                         <div class="flex justify-center gap-6 text-xs mt-4">
                             <div class="flex items-center gap-2">
                                 <div class="w-4 h-4 bg-blue-500 rounded"></div>

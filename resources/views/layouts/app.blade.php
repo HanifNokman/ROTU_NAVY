@@ -378,7 +378,6 @@
                     </main>
                 </div>
             </div>
-
             <!-- Mobile Overlay -->
             <div x-show="sidebarOpen" 
                  @click="sidebarOpen = false"
@@ -388,7 +387,7 @@
                  x-transition:leave="transition-opacity ease-linear duration-300"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 bg-black bg-opacity-50 z-30 sm:hidden">
+                 class="fixed inset-0 bg-black bg-opacity-50 z-40 sm:hidden">
             </div>
         </div>
     </body>
