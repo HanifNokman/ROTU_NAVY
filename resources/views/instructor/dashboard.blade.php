@@ -327,7 +327,7 @@
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 h-full">
                             @foreach ($cgpaDistribution as $range)
                                 @php
-                                    $MAX_BAR_HEIGHT = 80;
+                                    $MAX_BAR_HEIGHT = 160;
                                     $pastHeight = $maxCount > 0 ? ($range['past_count'] / $maxCount) * $MAX_BAR_HEIGHT : 0;
                                     $currentHeight = $maxCount > 0 ? ($range['current_count'] / $maxCount) * $MAX_BAR_HEIGHT : 0;
                                     $barColor = $range['current_count'] >= $range['past_count'] ? '#10b981' : '#ef4444';
