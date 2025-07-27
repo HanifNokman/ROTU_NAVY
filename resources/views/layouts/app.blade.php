@@ -13,6 +13,8 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>[x-cloak] { display: none !important; }</style>
     </head>
     <body class="font-sans antialiased bg-gray-100">
         @php
@@ -30,7 +32,7 @@
                 ? asset('storage/' . $profilePicture) 
                 : $fallbackAvatar;
         @endphp
-
+    <div x-data="{ sidebarOpen: false }">
         <!-- Mobile Sidebar (Toggle Sidebar) -->
         <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-gray-100">
             <!-- Mobile menu button (top right, always fixed) -->
@@ -232,6 +234,14 @@
                     </div>
                 </div>
             </aside>
+
+            <div 
+                x-show="sidebarOpen || $store.modal?.open"
+                x-cloak
+                x-transition
+                @click="sidebarOpen = false; if ($store.modal) { $store.modal.open = false; $store.modal.selected = [] }"
+                class="fixed inset-0 bg-black bg-opacity-50 z-40 sm:hidden">
+            </div>
 
             <!-- Two Column Layout -->
             <div class="flex h-screen">
@@ -440,16 +450,18 @@
                 </div>
             </div>
             <!-- Mobile Overlay -->
-            <div x-show="sidebarOpen" 
-                 @click="sidebarOpen = false"
-                 x-transition:enter="transition-opacity ease-linear duration-300"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition-opacity ease-linear duration-300"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 bg-black bg-opacity-50 z-40 sm:hidden">
+            <div x-show="sidebarOpen"
+                x-cloak
+                @click="sidebarOpen = false"
+                x-transition:enter="transition-opacity ease-linear duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition-opacity ease-linear duration-300"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-black bg-opacity-50 z-40 sm:hidden">
             </div>
         </div>
+    </div>
     </body>
 </html>
