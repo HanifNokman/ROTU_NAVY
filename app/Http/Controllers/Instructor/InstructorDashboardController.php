@@ -25,35 +25,57 @@ class InstructorDashboardController extends Controller
         $currentYear = now()->year;
         $minYear = $currentYear - 3;
 
-        // Intake options for duty leaderboard
-        $dutyIntakeOptions = collect(range($currentYear, $minYear))->map(fn($year) => [
+        // Intake options for both duty leaderboard and CGPA comparison
+        $intakeOptions = collect(range($currentYear, $minYear))->map(fn($year) => [
             'year' => $year,
             'label' => 'Intake - ' . ($year - 2011),
         ]);
 
-        $selectedIntakeYear = $request->get('intake_year', $currentYear);
+        // Separate filters for duty ranking and CGPA comparison
+        $selectedDutyIntakeYear = $request->get('duty_intake_year', $currentYear);
+        $selectedCgpaIntakeYear = $request->get('cgpa_intake_year', $currentYear);
         $sortOrder = $request->get('sort_order', 'desc');
+        $cgpaSortOrder = $request->get('cgpa_sort_order', 'desc');
 
+        // Duty ranking data
         $cadets = \DB::table('cadets')
             ->join('users', 'cadets.user_id', '=', 'users.id')
-            ->where('cadets.intake_year', $selectedIntakeYear)
+            ->where('cadets.intake_year', $selectedDutyIntakeYear)
             ->orderBy('cadets.daily_duty_count', $sortOrder)
             ->select('users.name', 'cadets.daily_duty_count', 'cadets.current_cgpa', 'cadets.past_cgpa')
             ->get();
 
         $cadetList = \App\Models\Cadet::with('user')
-            ->where('intake_year', $selectedIntakeYear)
+            ->where('intake_year', $selectedDutyIntakeYear)
             ->orderBy('service_number', 'asc') // sort by seniority
+            ->get();
+
+        // CGPA comparison data
+        $cgpaCadets = \DB::table('cadets')
+            ->join('users', 'cadets.user_id', '=', 'users.id')
+            ->where('cadets.intake_year', $selectedCgpaIntakeYear)
+            ->whereNotNull('cadets.current_cgpa')
+            ->whereNotNull('cadets.past_cgpa')
+            ->orderBy('cadets.current_cgpa', $cgpaSortOrder)
+            ->select(
+                'users.name', 
+                'cadets.current_cgpa', 
+                'cadets.past_cgpa',
+                'cadets.service_number'
+            )
             ->get();
 
         return view('instructor.dashboard', [
             'user' => $user,
             'instructor' => $instructor,
-            'dutyIntakeOptions' => $dutyIntakeOptions,
-            'selectedIntakeYear' => $selectedIntakeYear,
+            'intakeOptions' => $intakeOptions,
+            'selectedDutyIntakeYear' => $selectedDutyIntakeYear,
+            'selectedCgpaIntakeYear' => $selectedCgpaIntakeYear,
             'sortOrder' => $sortOrder,
+            'cgpaSortOrder' => $cgpaSortOrder,
             'cadets' => $cadets,
             'cadetList' => $cadetList,
+            'cgpaCadets' => $cgpaCadets,
         ]);
     }
 
@@ -70,5 +92,4 @@ class InstructorDashboardController extends Controller
 
         return response()->json(['message' => 'Duty count updated.']);
     }
-
 }
