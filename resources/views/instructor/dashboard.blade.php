@@ -37,7 +37,7 @@
 
                 <!-- Row 2: Contact Info -->
                 <div>
-                    <p class="text-gray-500 font-semibold mb-2">Contact Information</p>
+                    <p class="text-gray-500 font-semibold mb-1">Contact Information</p>
                     <div class="flex flex-col sm:flex-row gap-4">
                         <p><strong>Phone:</strong> {{ $instructor?->phone_number ?? 'Not set' }}</p>
                         <p><strong>Email:</strong> {{ $user?->email ?? 'Not set' }}</p>
@@ -46,7 +46,7 @@
 
                 <!-- Row 3: General Info -->
                 <div>
-                    <p class="text-gray-500 font-semibold mb-2">General Information</p>
+                    <p class="text-gray-500 font-semibold mb-1">General Information</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><strong>Position:</strong> {{ $instructor->position ?? '-' }}</div>
                         <div><strong>Expertise:</strong> {{ $instructor->expertise ?? '-' }}</div>
@@ -69,7 +69,7 @@
             <!-- LEFT: Duty Ranking Card -->
             <div class="w-full lg:w-1/2 bg-white shadow border border-transparent rounded-lg p-6 flex flex-col gap-6 transition duration-300 hover:shadow-2xl hover:border-blue-300"
                 x-data="{ open: false, selected: [] }">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center mb-1">
                     <h3 class="text-3xl font-bold text-center lg:text-left">DUTY RANKING</h3>
                     <button
                         @click="$store.modal.open = true"
@@ -172,7 +172,7 @@
                             ×
                         </button>
 
-                        <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets by Seniority</h2>
+                        <h2 class="text-xl font-bold mb-1 text-center pr-8">Select Cadets on Duty</h2>
 
                         <ul class="space-y-2">
                             @foreach ($cadetList as $cadet)
@@ -214,7 +214,7 @@
             <!-- RIGHT: Cadet CGPA Comparison -->
             <div class="w-full lg:w-1/2 bg-white shadow border border-transparent rounded-lg p-6 flex flex-col gap-6 transition duration-300 hover:shadow-2xl hover:border-blue-300"
                 x-data="{ showDistribution: false }">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center mb-1">
                     <h3 class="text-3xl font-bold text-center lg:text-left">CADET CGPA</h3>
                     <button
                         @click="showDistribution = !showDistribution"
@@ -324,61 +324,64 @@
 
                     <!-- CGPA Distribution Chart (Distribution View) -->
                     <div x-show="showDistribution" x-cloak x-transition class="max-h-[600px] overflow-y-auto">
-                        @php
-                            $maxCount = max(array_column($cgpaDistribution, 'past_count') + array_column($cgpaDistribution, 'current_count')) ?: 1;
-                        @endphp
-
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 h-full">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 h-full">
                             @foreach ($cgpaDistribution as $range)
-                                <div class="flex flex-col items-center">
-                                    <!-- Range Label -->
-                                    <div class="text-xs font-medium text-center mb-2 h-8 flex items-center">
-                                        {{ $range['label'] }}
-                                    </div>
+                                @php
+                                    $MAX_BAR_HEIGHT = 160;
+                                    $pastHeight = $maxCount > 0 ? ($range['past_count'] / $maxCount) * $MAX_BAR_HEIGHT : 0;
+                                    $currentHeight = $maxCount > 0 ? ($range['current_count'] / $maxCount) * $MAX_BAR_HEIGHT : 0;
+                                    $barColor = $range['current_count'] >= $range['past_count'] ? '#10b981' : '#ef4444';
+                                @endphp
 
-                                    <!-- Chart Container -->
-                                    <div class="flex-1 flex items-end justify-center gap-2 w-full max-h-80">
+                                <div class="flex flex-col items-center">
+                                    <div class="flex-1 flex items-end justify-center gap-1 w-full max-h-80">
+                                        
                                         <!-- Past CGPA Bar -->
                                         <div class="flex flex-col items-center">
-                                            @php
-                                                $pastHeight = $maxCount > 0 ? ($range['past_count'] / $maxCount) * 200 : 0;
-                                            @endphp
-                                            <div class="w-6 bg-blue-500 rounded-t flex items-end justify-center"
-                                                style="height: {{ $pastHeight }}px; min-height: 20px;">
-                                                @if($range['past_count'] > 0)
-                                                    <span class="text-white text-xs font-bold mb-1">{{ $range['past_count'] }}</span>
-                                                @endif
-                                            </div>
-                                            <div class="text-xs text-blue-600 font-medium mt-1">Past</div>
+                                            @if ($range['past_count'] > 0)
+                                                <div class="w-6 bg-blue-500 rounded-t flex items-end justify-center transition-all duration-300"
+                                                    style="height: {{ $pastHeight }}px; min-height: 20px;">
+                                                    <span class="text-white text-xs font-bold mb-0.5">{{ $range['past_count'] }}</span>
+                                                </div>
+                                            @else
+                                                <!-- Empty bar placeholder to keep layout consistent -->
+                                                <div class="w-6" style="height: 20px;"></div>
+                                            @endif
+                                            <div class="text-xs text-blue-600 font-medium mt-0.5">Past</div>
                                         </div>
 
                                         <!-- Current CGPA Bar -->
                                         <div class="flex flex-col items-center">
-                                            @php
-                                                $currentHeight = $maxCount > 0 ? ($range['current_count'] / $maxCount) * 200 : 0;
-                                                $barColor = $range['current_count'] >= $range['past_count'] ? '#10b981' : '#ef4444';
-                                            @endphp
-                                            <div class="w-6 rounded-t flex items-end justify-center"
-                                                style="height: {{ $currentHeight }}px; min-height: 20px; background-color: {{ $barColor }};">
-                                                @if($range['current_count'] > 0)
-                                                    <span class="text-white text-xs font-bold mb-1">{{ $range['current_count'] }}</span>
-                                                @endif
-                                            </div>
-                                            <div class="text-xs font-medium mt-1" style="color: {{ $barColor }};">Current</div>
+                                            @if ($range['current_count'] > 0)
+                                                <div class="w-6 rounded-t flex items-end justify-center transition-all duration-300"
+                                                    style="height: {{ $currentHeight }}px; min-height: 20px; background-color: {{ $barColor }};">
+                                                    <span class="text-white text-xs font-bold mb-0.5">{{ $range['current_count'] }}</span>
+                                                </div>
+                                            @else
+                                                <!-- Empty bar placeholder to keep layout consistent -->
+                                                <div class="w-6" style="height: 20px;"></div>
+                                            @endif
+                                            <div class="text-xs font-medium mt-0.5" style="color: {{ $barColor }};">Current</div>
                                         </div>
+
+                                    </div>
+
+                                    <!-- Range label -->
+                                    <div class="text-xs font-medium text-center mt-2">
+                                        {{ $range['label'] }}
                                     </div>
                                 </div>
                             @endforeach
                         </div>
 
                         <!-- Distribution Summary -->
-                        <div class="mt-6 text-center">
-                            <h4 class="font-semibold text-lg mb-2">CGPA Distribution Summary</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div class="mt-8 text-center">
+                            <h4 class="font-semibold text-lg mb-1">CGPA Distribution Summary</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm">
                                 @foreach ($cgpaDistribution as $range)
-                                    <div class="flex justify-between items-center bg-gray-50 px-3 py-2 rounded">
+                                    <div class="flex justify-between items-center bg-gray-50 px-3 py-1 rounded">
                                         <span class="font-medium">{{ $range['label'] }}:</span>
-                                        <div class="flex gap-4">
+                                        <div class="flex gap-2">
                                             <span class="text-blue-600">Past: {{ $range['past_count'] }}</span>
                                             <span class="{{ $range['current_count'] >= $range['past_count'] ? 'text-green-600' : 'text-red-600' }}">
                                                 Current: {{ $range['current_count'] }}
@@ -390,21 +393,22 @@
                         </div>
                     </div>
 
-                    <!-- Legend (shown in both views) -->
-                    <div class="flex justify-center gap-6 text-xs mt-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-4 h-4 bg-blue-500 rounded"></div>
+                    <!-- Legend -->
+                    <div class="flex justify-center gap-3 text-xs mt-2">
+                        <div class="flex items-center gap-1">
+                            <div class="w-3.5 h-3.5 bg-blue-500 rounded"></div>
                             <span>Past CGPA</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-4 h-4 bg-green-500 rounded"></div>
+                        <div class="flex items-center gap-1">
+                            <div class="w-3.5 h-3.5 bg-green-500 rounded"></div>
                             <span>Improved</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-4 h-4 bg-red-500 rounded"></div>
+                        <div class="flex items-center gap-1">
+                            <div class="w-3.5 h-3.5 bg-red-500 rounded"></div>
                             <span>Declined</span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
