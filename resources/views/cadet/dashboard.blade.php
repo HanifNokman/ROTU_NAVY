@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="w-full px-6 py-10">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow rounded-lg p-6 flex flex-col md:flex-row gap-6 transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
             <!-- Profile Picture -->
             <div class="flex justify-center lg:justify-start">
@@ -69,7 +69,7 @@
     </div>
 
     <!-- Section: Side-by-side Cards (Duty Ranking & Tauliah Timer) -->
-    <div class="w-full px-6 py-1">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-8">
         <div class="flex flex-col lg:flex-row gap-6">
 
             <!-- Duty Ranking Card -->

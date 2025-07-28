@@ -27,7 +27,7 @@ return new class extends Migration {
             $userId = \DB::table('users')->insertGetId([
                 'name' => 'Hanif Nokman',
                 'email' => 'hanifnokman02@gmail.com',
-                'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // bcrypt('password')
+                'password' => Hash::make('Hanif)$)^02'),
                 'role' => 'instructor',
                 'status' => 'accepted',
                 'created_at' => now(),
@@ -35,11 +35,11 @@ return new class extends Migration {
             ]);
             \DB::table('instructors')->insert([
                 'user_id' => $userId,
-                'position' => 'Admin',
-                'phone_number' => '0123456789',
+                'position' => 'Developer',
+                'phone_number' => '0196520368',
                 'rank' => 'Lt.M',
                 'expertise' => 'Admin',
-                'time_in_service' => 1,
+                'time_in_service' => 3,
                 'ttp' => now(),
                 'status' => 'Active',
                 'service_number' => 'NV/8709199',
