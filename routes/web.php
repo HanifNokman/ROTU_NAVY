@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PendingVerificationController;
+use App\Http\Controllers\Instructor\PendingVerificationController;
 use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\Instructor\InstructorDashboardController;
 use App\Http\Controllers\Cadet\CadetDashboardController;
@@ -68,13 +68,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('instructor.inventory');
 
     // Learning Hub route
-    Route::get('/instructor/learning-hub', function () {
+    Route::get('/instructor/learning_hub', function () {
         $user = auth()->user();
         if (!$user || $user->status !== 'accepted') {
             abort(403, 'Your account is not accepted.');
         }
-        return view('instructor.learning-hub');
-    })->name('instructor.learning-hub');
+        return view('instructor.learning_hub');
+    })->name('instructor.learning_hub');
 
     // Gallery route
     Route::get('/instructor/gallery', function () {
