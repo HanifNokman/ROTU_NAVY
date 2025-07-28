@@ -5,6 +5,8 @@ use App\Http\Controllers\Instructor\PendingVerificationController;
 use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\Instructor\InstructorDashboardController;
 use App\Http\Controllers\Cadet\CadetDashboardController;
+use App\Http\Controllers\Instructor\LearningHubController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -68,13 +70,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('instructor.inventory');
 
     // Learning Hub route
-    Route::get('/instructor/learning_hub', function () {
-        $user = auth()->user();
-        if (!$user || $user->status !== 'accepted') {
-            abort(403, 'Your account is not accepted.');
-        }
-        return view('instructor.learning_hub');
-    })->name('instructor.learning_hub');
+    Route::get('/instructor/learning_hub', [LearningHubController::class, 'index'])->name('instructor.learning_hub');
+    // Add this route for category creation
+    Route::post('/instructor/categories', [LearningHubController::class, 'storeCategory'])->name('instructor.categories.store');
+
+    // Make sure you also have the material store route
+    Route::post('/instructor/learning-materials', [LearningHubController::class, 'store'])->name('instructor.learning_materials.store');
 
     // Gallery route
     Route::get('/instructor/gallery', function () {
@@ -164,5 +165,8 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
 
+Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
+    Route::get('/learning-materials', [LearningMaterialController::class, 'index'])->name('learning_materials');
+});
 
 require __DIR__.'/auth.php';
