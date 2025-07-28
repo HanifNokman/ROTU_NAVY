@@ -294,7 +294,7 @@
                                     </svg>
                                     Dashboard
                                 </a>
-
+                                
                                 <!-- Management Section -->
                                 <div class="mt-6">
                                     <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
