@@ -11,14 +11,13 @@ class LearningMaterial extends Model
     protected $fillable = [
         'title',
         'description',
-        'category_id',
+        'learning_material_category_id', // Fixed field name
         'file_url',
-        // Add other fields if needed
     ];
 
-    // Relationship (if you have a Category model)
+    // Fixed relationship
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(LearningMaterialCategory::class, 'learning_material_category_id');
     }
 }
