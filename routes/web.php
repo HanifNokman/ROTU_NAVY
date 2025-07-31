@@ -5,7 +5,8 @@ use App\Http\Controllers\Instructor\PendingVerificationController;
 use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\Instructor\InstructorDashboardController;
 use App\Http\Controllers\Cadet\CadetDashboardController;
-use App\Http\Controllers\Instructor\LearningHubController;
+use App\Http\Controllers\Instructor\LearningHubController as InstructorLearningHubController;
+use App\Http\Controllers\Cadet\LearningHubController as CadetLearningHubController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -70,7 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('instructor.inventory');
 
     // Learning Hub route
-    Route::get('/instructor/learning_hub', [LearningHubController::class, 'index'])->name('instructor.learning_hub');
+    Route::get('/instructor/learning_hub', [InstructorLearningHubController::class, 'index'])->name('instructor.learning_hub');
     // Add this route for category creation
 
     // Gallery route
@@ -112,9 +113,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('cadet.allowance');
 
     // Cadet Learning Hub
-    Route::get('/cadet/learning_hub', function () {
-        return view('cadet.learning_hub');
-    })->name('cadet.learning_hub');
+
+    Route::get('/cadet/learning_hub', [CadetLearningHubController::class, 'index'])->name('cadet.learning_hub');
 
     // Cadet Inventory
     Route::get('/cadet/inventory', function () {
@@ -162,19 +162,19 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
 
 Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
-    Route::get('/learning-materials', [LearningHubController::class, 'index'])->name('learning_materials');
+    Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
 });
 
 Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
     // Learning Materials routes
-    Route::get('/learning-materials', [LearningHubController::class, 'index'])->name('learning_materials');
-    Route::post('/learning-materials', [LearningHubController::class, 'store'])->name('learning_materials.store');
-    Route::get('/learning-materials/{material}/edit', [LearningHubController::class, 'edit'])->name('learning_materials.edit');
-    Route::put('/learning-materials/{material}', [LearningHubController::class, 'update'])->name('learning_materials.update');
-    Route::delete('/learning-materials/{material}', [LearningHubController::class, 'destroy'])->name('learning_materials.destroy');
+    Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
+    Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
+    Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
+    Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
+    Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
 
     // Category route
-    Route::post('/categories', [LearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
+    Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
 });
 
 require __DIR__.'/auth.php';
