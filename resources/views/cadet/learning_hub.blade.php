@@ -11,7 +11,7 @@
     </x-slot>
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg p-6 flex flex-col gap-6">
+        <div class="bg-white shadow border border-transparent rounded-lg p-6 flex flex-col gap-6 transition duration-300 hover:shadow-2xl hover:border-blue-300">
             <!-- Category Filter -->
             <form method="GET" action="{{ route('cadet.learning_hub') }}" class="w-full max-w-xs mb-4">
                 <select name="category" onchange="this.form.submit()"
