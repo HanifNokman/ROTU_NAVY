@@ -38,23 +38,35 @@
                     </div>
                 </div>
 
-                <!-- Alpine.js Edit Modal Integration -->
-                <div x-data="{
-                    showModal: false,
-                    material: {},
-                    routeTemplate: '{{ route('instructor.learning_materials.update', ['material' => '__id__']) }}',
-                    get updateUrl() {
-                        return this.routeTemplate.replace('__id__', this.material.id);
-                    },
-                    openEdit(materialData) {
-                        this.material = JSON.parse(materialData);
-                        this.showModal = true;
-                    }
-                }">
+                    <!-- Alpine State for Edit and Delete Modal -->
+                    <div x-data="{
+                        showModal: false,
+                        showDeleteModal: false,
+                        material: {},
+                        deleteMaterial: {},
+                        routeTemplate: '{{ route('instructor.learning_materials.update', ['material' => '__id__']) }}',
+                        deleteRouteTemplate: '{{ route('instructor.learning_materials.destroy', ['material' => '__id__']) }}',
+
+                        get updateUrl() {
+                            return this.routeTemplate.replace('__id__', this.material.id);
+                        },
+                        get deleteUrl() {
+                            return this.deleteRouteTemplate.replace('__id__', this.deleteMaterial.id);
+                        },
+                        openEdit(materialData) {
+                            this.material = JSON.parse(materialData);
+                            this.showModal = true;
+                        },
+                        openDelete(materialData) {
+                            this.deleteMaterial = JSON.parse(materialData);
+                            this.showDeleteModal = true;
+                        }
+                    }">
+
                     <!-- Materials Table -->
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead>...</thead>
+                            <thead>Component</thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($materials as $material)
                                 <tr>
@@ -81,15 +93,28 @@
                                                     class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm">
                                                 Edit
                                             </button>
-                                            <form action="{{ route('instructor.learning_materials.destroy', $material->id) }}" ...>
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="bg-red-600 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm">Delete</button>
+                                            <form method="POST" action="{{ route('instructor.learning_materials.destroy', $material->id) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button"
+                                                        @click="openDelete('{{ json_encode(['id' => $material->id, 'title' => $material->title]) }}')"
+                                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm">
+                                                    Delete
+                                                </button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                                 @empty
-                                <tr><td colspan="4" class="...">...</td></tr>
+                                <tr>
+                                    <td colspan="4" class="text-center px-6 py-4 text-gray-500">
+                                        @if(request()->filled('category'))
+                                            No learning materials found in this category.
+                                        @else
+                                            No learning materials available.
+                                        @endif
+                                    </td>
+                                </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -130,6 +155,30 @@
                                 <div class="flex justify-end gap-3">
                                     <button type="button" @click="showModal = false" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">Cancel</button>
                                     <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+                            <h2 class="text-lg font-semibold mb-4">Confirm Deletion</h2>
+                            <p class="mb-6 text-gray-700">Are you sure you want to delete <strong x-text="deleteMaterial.title"></strong>?</p>
+
+                            <form :action="deleteUrl" method="POST">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                                <div class="flex justify-end gap-3">
+                                    <button type="button" @click="showDeleteModal = false"
+                                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                                        Cancel
+                                    </button>
+                                    <button type="submit"
+                                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                        Confirm Delete
+                                    </button>
                                 </div>
                             </form>
                         </div>
