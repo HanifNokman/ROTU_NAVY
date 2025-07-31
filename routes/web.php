@@ -72,10 +72,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Learning Hub route
     Route::get('/instructor/learning_hub', [LearningHubController::class, 'index'])->name('instructor.learning_hub');
     // Add this route for category creation
-    Route::post('/instructor/categories', [LearningHubController::class, 'storeCategory'])->name('instructor.categories.store');
-
-    // Make sure you also have the material store route
-    Route::post('/instructor/learning-materials', [LearningHubController::class, 'store'])->name('instructor.learning_materials.store');
 
     // Gallery route
     Route::get('/instructor/gallery', function () {
@@ -166,7 +162,19 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
 
 Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
-    Route::get('/learning-materials', [LearningMaterialController::class, 'index'])->name('learning_materials');
+    Route::get('/learning-materials', [LearningHubController::class, 'index'])->name('learning_materials');
+});
+
+Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+    // Learning Materials routes
+    Route::get('/learning-materials', [LearningHubController::class, 'index'])->name('learning_materials');
+    Route::post('/learning-materials', [LearningHubController::class, 'store'])->name('learning_materials.store');
+    Route::get('/learning-materials/{material}/edit', [LearningHubController::class, 'edit'])->name('learning_materials.edit');
+    Route::put('/learning-materials/{material}', [LearningHubController::class, 'update'])->name('learning_materials.update');
+    Route::delete('/learning-materials/{material}', [LearningHubController::class, 'destroy'])->name('learning_materials.destroy');
+
+    // Category route
+    Route::post('/categories', [LearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
 });
 
 require __DIR__.'/auth.php';

@@ -15,7 +15,7 @@
                 <!-- Top controls: filter + buttons -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                     <!-- Left side: Filter only -->
-                    <form method="GET" action="{{ route('instructor.learning_materials') }}" class="flex items-center gap-2">
+                    <form method="GET" action="{{ route('instructor.learning_hub') }}" class="flex items-center gap-2">
                         <label for="category" class="text-sm font-medium text-gray-700">Filter by Category:</label>
                         <select name="category" id="category" onchange="this.form.submit()" class="border-gray-300 rounded-md shadow-sm">
                             <option value="">All</option>
@@ -155,7 +155,7 @@
                     
                     <div class="mb-4">
                         <label for="material_file" class="block text-sm font-medium text-gray-700 mb-2">File</label>
-                        <input type="file" id="material_file" name="file" required
+                        <input type="file" id="material_file" name="file"
                                accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF (Max: 10MB)</p>
@@ -189,7 +189,7 @@
                     </button>
                 </div>
                 
-                <form action="{{ route('instructor.categories.store') }}" method="POST">
+                <form action="{{ route('instructor.learning_material_categories.store') }}" method="POST">
                     @csrf
                     <div class="mb-4">
                         <label for="category_name" class="block text-sm font-medium text-gray-700 mb-2">Category Name</label>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('learning_material_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('category'); // Example: 'Foot Drill', 'Naval Knowledge', etc.
+            $table->string('name'); // Example: 'Foot Drill', 'Naval Knowledge', etc.
             $table->timestamps();
         });
     }
