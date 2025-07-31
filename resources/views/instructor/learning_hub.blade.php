@@ -38,78 +38,102 @@
                     </div>
                 </div>
 
-                <!-- Materials Table -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File</th>
-                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($materials as $material)
+                <!-- Alpine.js Edit Modal Integration -->
+                <div x-data="{
+                    showModal: false,
+                    material: {},
+                    routeTemplate: '{{ route('instructor.learning_materials.update', ['material' => '__id__']) }}',
+                    get updateUrl() {
+                        return this.routeTemplate.replace('__id__', this.material.id);
+                    },
+                    openEdit(materialData) {
+                        this.material = JSON.parse(materialData);
+                        this.showModal = true;
+                    }
+                }">
+                    <!-- Materials Table -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>...</thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($materials as $material)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-800">
+                                    <td class="px-6 py-4 ...">
                                         {{ $material->title }}
                                         @if($material->description)
-                                            <p class="text-sm text-gray-500 mt-1">{{ Str::limit($material->description, 100) }}</p>
+                                        <p class="text-sm ...">{{ Str::limit($material->description, 100) }}</p>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <td class="px-6 py-4 ...">
+                                        <span class="inline-flex ...">
                                             {{ $material->category->name ?? 'N/A' }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 ...">
                                         @if($material->file_url)
-                                            <a href="{{ asset($material->file_url) }}" target="_blank" class="text-blue-600 hover:text-blue-800 underline inline-flex items-center">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                                                </svg>
-                                                View File
-                                            </a>
-                                        @else
-                                            <span class="text-gray-400">No file</span>
-                                        @endif
+                                        <a href="{{ asset($material->file_url) }}" ...>View File</a>
+                                        @else <span class="text-gray-400">No file</span> @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 ...">
                                         <div class="flex gap-2">
-                                            <a href="{{ route('instructor.learning_materials.edit', $material->id) }}" 
-                                               class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                            <button type="button"
+                                                    @click="openEdit('{{ json_encode([ 'id' => $material->id, 'title' => $material->title, 'description' => $material->description, 'learning_material_category_id' => $material->learning_material_category_id ]) }}')"
+                                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm">
                                                 Edit
-                                            </a>
-                                            <form action="{{ route('instructor.learning_materials.destroy', $material->id) }}" 
-                                                  method="POST" 
-                                                  onsubmit="return confirm('Are you sure you want to delete this learning material?')"
-                                                  class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" 
-                                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                                    Delete
-                                                </button>
+                                            </button>
+                                            <form action="{{ route('instructor.learning_materials.destroy', $material->id) }}" ...>
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="bg-red-600 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm">Delete</button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
-                                        <div class="flex flex-col items-center py-8">
-                                            <svg class="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
-                                            <p class="text-lg font-medium">No learning materials found</p>
-                                            <p class="text-sm text-gray-400 mt-1">Get started by adding your first learning material</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                @empty
+                                <tr><td colspan="4" class="...">...</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Edit Modal -->
+                    <div x-show="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-xl">
+                            <h2 class="text-lg font-semibold mb-4">Edit Learning Material</h2>
+                            <form method="POST" :action="updateUrl" enctype="multipart/form-data">
+                                <input type="hidden" name="_method" value="PUT">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium">Title</label>
+                                    <input type="text" name="title" x-model="material.title" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium">Description</label>
+                                    <textarea name="description" x-model="material.description" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium">Category</label>
+                                    <select name="learning_material_category_id" x-model="material.learning_material_category_id" class="mt-1 block w-full border rounded px-3 py-2">
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium">Replace File (optional)</label>
+                                    <input type="file" name="file" class="mt-1 block w-full">
+                                </div>
+
+                                <div class="flex justify-end gap-3">
+                                    <button type="button" @click="showModal = false" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">Cancel</button>
+                                    <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
