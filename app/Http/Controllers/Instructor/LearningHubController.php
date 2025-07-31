@@ -38,18 +38,23 @@ class LearningHubController extends Controller
             'title' => 'required|max:255',
             'description' => 'nullable|string',
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif|max:10240',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif|max:10240',
         ]);
 
-        $file = $request->file('file');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('learning_materials', $fileName, 'public');
+        $filePath = null;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('learning_materials', $fileName, 'public');
+        }
 
         LearningMaterial::create([
             'title' => $request->title,
             'description' => $request->description,
             'learning_material_category_id' => $request->learning_material_category_id,
-            'file_url' => 'storage/' . $filePath,
+            'file_url' => $filePath ? 'storage/' . $filePath : null,
+            'instructor_id' => auth()->id(), 
         ]);
 
         return redirect()->route('instructor.learning_hub')
@@ -59,7 +64,7 @@ class LearningHubController extends Controller
     public function edit(LearningMaterial $material)
     {
         $categories = LearningMaterialCategory::all();
-        return view('instructor.learning_hub', compact('material', 'categories'));
+        return view('instructor.learning_materials.edit', compact('material', 'categories'));
     }
 
     public function update(Request $request, LearningMaterial $material)
@@ -73,7 +78,7 @@ class LearningHubController extends Controller
 
         $data = [
             'title' => $request->title,
-            'description' => $request->description,
+            'description' => $request->description, // Changed from 'content' to 'description' to match model
             'learning_material_category_id' => $request->learning_material_category_id,
         ];
 
@@ -112,11 +117,11 @@ class LearningHubController extends Controller
     public function storeCategory(Request $request)
     {
         $request->validate([
-            'category' => 'required|max:255|unique:learning_material_categories,category',
+            'name' => 'required|max:255|unique:learning_material_categories,name',
         ]);
 
         LearningMaterialCategory::create([
-            'category' => $request->category,
+            'name' => $request->name,
         ]);
 
         return redirect()->route('instructor.learning_hub')

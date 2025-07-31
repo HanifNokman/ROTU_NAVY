@@ -11,8 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('instructor_id');
             $table->string('title');
-            $table->text('content')->nullable(); // optional description
-            $table->string('file_url'); // can store S3/local URL
+            $table->text('description')->nullable(); // optional description
+            $table->string('file_url')->nullable(); // can store S3/local URL
             $table->timestamps();
 
             // Foreign key constraint
