@@ -149,7 +149,8 @@
 
                                 <div class="mb-4">
                                     <label class="block text-sm font-medium">Replace File (optional)</label>
-                                    <input type="file" name="file" class="mt-1 block w-full">
+                                    <input type="file" name="file" class="mt-1 block w-full" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv">
+                                    <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
                                 </div>
 
                                 <div class="flex justify-end gap-3">
@@ -229,9 +230,9 @@
                     <div class="mb-4">
                         <label for="material_file" class="block text-sm font-medium text-gray-700 mb-2">File</label>
                         <input type="file" id="material_file" name="file"
-                               accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+                               accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF (Max: 10MB)</p>
+                        <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
                     </div>
                     
                     <div class="flex justify-end gap-3">
@@ -249,36 +250,117 @@
         </div>
     </div>
 
-    <!-- Add Category Modal -->
+    <!-- Enhanced Category Modal -->
     <div id="categoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-md shadow-lg rounded-md bg-white">
+        <div class="relative top-10 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium text-gray-900">Add Category</h3>
+                    <h3 class="text-lg font-medium text-gray-900">Category Management</h3>
                     <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
-                
-                <form action="{{ route('instructor.learning_material_categories.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-4">
-                        <label for="category_name" class="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
-                        <input type="text" id="category_name" name="name" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                               placeholder="Enter category name">
+
+                <!-- Toggle Buttons -->
+                <div class="flex mb-6 bg-gray-100 p-1 rounded-lg">
+                    <button id="addCategoryBtn" onclick="showAddCategoryForm()" 
+                            class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white">
+                        Add Category
+                    </button>
+                    <button id="manageCategoriesBtn" onclick="showCategoriesList()" 
+                            class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700">
+                        Manage Categories
+                    </button>
+                </div>
+
+                <!-- Add Category Form -->
+                <div id="addCategorySection">
+                    <form action="{{ route('instructor.learning_material_categories.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="category_name" class="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
+                            <input type="text" id="category_name" name="name" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   placeholder="Enter category name">
+                        </div>
+                        
+                        <div class="flex justify-end gap-3">
+                            <button type="button" onclick="closeCategoryModal()" 
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                                Add Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Categories List -->
+                <div id="categoriesListSection" class="hidden">
+                    <div class="max-h-96 overflow-y-auto">
+                        @if($categories->isEmpty())
+                            <div class="text-center py-8 text-gray-500">
+                                <p>No categories available.</p>
+                                <p class="text-sm">Click "Add Category" to create your first category.</p>
+                            </div>
+                        @else
+                            <div class="space-y-2">
+                                @foreach($categories as $category)
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">{{ $category->name }}</h4>
+                                            <p class="text-sm text-gray-500">
+                                                {{ $category->learningMaterials->count() ?? 0 }} material(s) in this category
+                                            </p>
+                                        </div>
+                                        <button onclick="confirmDeleteCategory({{ $category->id }}, '{{ $category->name }}', {{ $category->learningMaterials->count() ?? 0 }})"
+                                                class="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition duration-200">
+                                            Delete
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
-                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Category Confirmation Modal -->
+    <div id="deleteCategoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[60]">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Confirm Category Deletion</h3>
+                    <button onclick="closeDeleteCategoryModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-gray-700 mb-2">Are you sure you want to delete the category:</p>
+                    <p class="font-semibold text-gray-900" id="categoryToDeleteName"></p>
+                    <p class="text-sm text-red-600 mt-2" id="categoryWarningMessage"></p>
+                </div>
+                
+                <form id="deleteCategoryForm" method="POST">
+                    @csrf
+                    @method('DELETE')
                     <div class="flex justify-end gap-3">
-                        <button type="button" onclick="closeCategoryModal()" 
+                        <button type="button" onclick="closeDeleteCategoryModal()" 
                                 class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
                             Cancel
                         </button>
                         <button type="submit" 
-                                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
-                            Add Category
+                                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200">
+                            Delete Category
                         </button>
                     </div>
                 </form>
@@ -301,6 +383,7 @@
         // Category Modal Functions
         function openCategoryModal() {
             document.getElementById('categoryModal').classList.remove('hidden');
+            showAddCategoryForm(); // Default to add category form
         }
 
         function closeCategoryModal() {
@@ -309,16 +392,63 @@
             document.querySelector('#categoryModal form').reset();
         }
 
+        // Category Tab Functions
+        function showAddCategoryForm() {
+            // Update button styles
+            document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
+            document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
+            
+            // Show/hide sections
+            document.getElementById('addCategorySection').classList.remove('hidden');
+            document.getElementById('categoriesListSection').classList.add('hidden');
+        }
+
+        function showCategoriesList() {
+            // Update button styles
+            document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
+            document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
+            
+            // Show/hide sections
+            document.getElementById('addCategorySection').classList.add('hidden');
+            document.getElementById('categoriesListSection').classList.remove('hidden');
+        }
+
+        // Delete Category Functions
+        function confirmDeleteCategory(categoryId, categoryName, materialCount) {
+            document.getElementById('categoryToDeleteName').textContent = categoryName;
+            
+            const warningMessage = document.getElementById('categoryWarningMessage');
+            if (materialCount > 0) {
+                warningMessage.textContent = `Warning: This category contains ${materialCount} material(s). Deleting this category will also affect these materials.`;
+            } else {
+                warningMessage.textContent = '';
+            }
+            
+            // Set the form action
+            const deleteForm = document.getElementById('deleteCategoryForm');
+            deleteForm.action = `{{ route('instructor.learning_material_categories.destroy', ['category' => '__id__']) }}`.replace('__id__', categoryId);
+            
+            document.getElementById('deleteCategoryModal').classList.remove('hidden');
+        }
+
+        function closeDeleteCategoryModal() {
+            document.getElementById('deleteCategoryModal').classList.add('hidden');
+        }
+
         // Close modals when clicking outside
         window.onclick = function(event) {
             const materialModal = document.getElementById('materialModal');
             const categoryModal = document.getElementById('categoryModal');
+            const deleteCategoryModal = document.getElementById('deleteCategoryModal');
             
             if (event.target === materialModal) {
                 closeMaterialModal();
             }
             if (event.target === categoryModal) {
                 closeCategoryModal();
+            }
+            if (event.target === deleteCategoryModal) {
+                closeDeleteCategoryModal();
             }
         }
 
@@ -327,6 +457,7 @@
             if (event.key === 'Escape') {
                 closeMaterialModal();
                 closeCategoryModal();
+                closeDeleteCategoryModal();
             }
         });
     </script>
