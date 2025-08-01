@@ -208,7 +208,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             @switch($infoType)
                                                 @case('seniority')
-                                                    <button class="text-red-600 hover:text-red-900 remove-cadet-btn" 
+                                                    <button class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 remove-cadet-btn" 
                                                             data-cadet-id="{{ $cadet->id }}" 
                                                             data-cadet-name="{{ $cadet->user->name }}">
                                                         Remove Cadet

@@ -81,17 +81,21 @@
                 <!-- Filter Form for Duty Ranking -->
                 <form method="GET" id="duty-filter-form" class="mb-1 flex justify-center">
                     <input type="hidden" name="cgpa_intake_year" value="{{ $selectedCgpaIntakeYear }}">
-                    <select name="duty_intake_year" onchange="this.form.submit()">
-                        @foreach ($intakeOptions as $option)
-                            <option value="{{ $option['year'] }}" {{ $selectedDutyIntakeYear == $option['year'] ? 'selected' : '' }}>
-                                {{ $option['label'] }}                                    </option>
-                           @endforeach
-                    </select>
 
-                    <select name="sort_order" onchange="this.form.submit()">
-                        <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Highest First</option>
-                        <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Lowest First</option>
+                    <div class="flex gap-2">
+                        <select name="duty_intake_year" onchange="this.form.submit()">
+                            @foreach ($intakeOptions as $option)
+                                <option value="{{ $option['year'] }}" {{ $selectedDutyIntakeYear == $option['year'] ? 'selected' : '' }}>
+                                    {{ $option['label'] }}
+                                </option>
+                            @endforeach
                         </select>
+
+                        <select name="sort_order" onchange="this.form.submit()">
+                            <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Highest First</option>
+                            <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Lowest First</option>
+                        </select>
+                    </div>
                 </form>
 
                 <!-- Leaderboard Bars -->
