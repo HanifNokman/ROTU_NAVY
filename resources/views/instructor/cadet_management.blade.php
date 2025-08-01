@@ -9,106 +9,118 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
                 <div class="p-6 text-gray-900">
-                    <!-- Top Section: Filters and Sort Options -->
-                    <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
-                        <!-- Left Side Filters -->
-                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                            <!-- Intake Filter -->
-                            <div class="flex flex-col">
-                                <label class="text-sm font-medium text-gray-700 mb-1">Cadet Intake</label>
-                                <select id="intakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @if(!empty($recentIntakes) && is_array($recentIntakes))
-                                        @foreach($recentIntakes as $intake)
-                                            <option value="{{ $intake['year'] }}" {{ $intakeYear == $intake['year'] ? 'selected' : '' }}>
-                                                {{ $intake['label'] }}
-                                            </option>
-                                        @endforeach
-                                    @else
-                                        @php
-                                            $currentYear = now()->year;
-                                            for ($i = 0; $i < 4; $i++) {
-                                                $year = $currentYear - $i;
-                                                $intakeNumber = 14 - $i;
-                                                echo "<option value='{$year}'" . ($intakeYear == $year ? ' selected' : '') . ">Intake - {$intakeNumber} ({$year})</option>";
-                                            }
-                                        @endphp
-                                    @endif
-                                </select>
-                            </div>
+<!-- Top Section: Filters and Sort Options -->
+<div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+    <!-- Left Side Filters -->
+    <div class="flex flex-col sm:flex-row space-y-0 sm:space-y-0 sm:space-x-6 items-center">
+        <!-- Intake Filter -->
+        <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-700 mb-1">Cadet Intake</label>
+            <select id="intakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                @if(!empty($recentIntakes) && is_array($recentIntakes))
+                    @foreach($recentIntakes as $intake)
+                        <option value="{{ $intake['year'] }}" {{ $intakeYear == $intake['year'] ? 'selected' : '' }}>
+                            {{ $intake['label'] }}
+                        </option>
+                    @endforeach
+                @else
+                    @php
+                        $currentYear = now()->year;
+                        for ($i = 0; $i < 4; $i++) {
+                            $year = $currentYear - $i;
+                            $intakeNumber = 14 - $i;
+                            echo "<option value='{$year}'" . ($intakeYear == $year ? ' selected' : '') . ">Intake - {$intakeNumber} ({$year})</option>";
+                        }
+                    @endphp
+                @endif
+            </select>
+        </div>
 
-                            <!-- Dynamic Sorting Filter -->
-                            <div class="flex flex-col">
-                                <label class="text-sm font-medium text-gray-700 mb-1">
-                                    @switch($infoType)
-                                        @case('seniority')
-                                        @case('cgpa')
-                                        @case('bmi')
-                                            Sort Order
-                                            @break
-                                        @case('position')
-                                            Filter
-                                            @break
-                                        @case('gender')
-                                            Gender
-                                            @break
-                                        @case('swimming')
-                                            Status
-                                            @break
-                                    @endswitch
-                                </label>
-                                <select id="sortFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @switch($infoType)
-                                        @case('seniority')
-                                        @case('cgpa')
-                                            <option value="asc" {{ $sortBy == 'asc' ? 'selected' : '' }}>Ascending</option>
-                                            <option value="desc" {{ $sortBy == 'desc' ? 'selected' : '' }}>Descending</option>
-                                            @break
-                                        @case('position')
-                                            <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                            <option value="rank_holders" {{ $filterBy == 'rank_holders' ? 'selected' : '' }}>Rank Holders Only</option>
-                                            @break
-                                        @case('gender')
-                                            <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                            <option value="male" {{ $filterBy == 'male' ? 'selected' : '' }}>Male</option>
-                                            <option value="female" {{ $filterBy == 'female' ? 'selected' : '' }}>Female</option>
-                                            @break
-                                        @case('swimming')
-                                            <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                            <option value="pass" {{ $filterBy == 'pass' ? 'selected' : '' }}>Pass</option>
-                                            <option value="in_progress" {{ $filterBy == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                            <option value="fail" {{ $filterBy == 'fail' ? 'selected' : '' }}>Fail</option>
-                                            @break
-                                        @case('bmi')
-                                            <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                            <option value="high_bmi" {{ $filterBy == 'high_bmi' ? 'selected' : '' }}>BMI > 26.9</option>
-                                            <option value="low_bmi" {{ $filterBy == 'low_bmi' ? 'selected' : '' }}>BMI < 18.0</option>
-                                            @break
-                                    @endswitch
-                                </select>
-                            </div>
+<!-- Dynamic Sorting Filter -->
+@if($infoType !== 'seniority')
+<div class="flex flex-col space-y-2">
+    @if($infoType != 'cgpa')
+    <div class="flex flex-col">
+        <label class="text-sm font-medium text-gray-700 mb-1">
+            @switch($infoType)
+                @case('bmi')
+                    Sort Order
+                    @break
+                @case('position')
+                    Filter
+                    @break
+                @case('gender')
+                    Gender
+                    @break
+                @case('swimming')
+                    Status
+                    @break
+            @endswitch
+        </label>
+        <select id="sortFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            @switch($infoType)
+                @case('bmi')
+                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                    <option value="overweight" {{ $filterBy == 'overweight' ? 'selected' : '' }}>BMI > 26.9</option>
+                    <option value="underweight" {{ $filterBy == 'underweight' ? 'selected' : '' }}>BMI < 18.0</option>
+                    @break
+                @case('position')
+                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                    <option value="rank_holders" {{ $filterBy == 'rank_holders' ? 'selected' : '' }}>Rank Holders Only</option>
+                    @break
+                @case('gender')
+                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                    <option value="male" {{ $filterBy == 'male' ? 'selected' : '' }}>Male</option>
+                    <option value="female" {{ $filterBy == 'female' ? 'selected' : '' }}>Female</option>
+                    @break
+                @case('swimming')
+                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                    <option value="pass" {{ $filterBy == 'pass' ? 'selected' : '' }}>Pass</option>
+                    <option value="in_progress" {{ $filterBy == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                    <option value="fail" {{ $filterBy == 'fail' ? 'selected' : '' }}>Fail</option>
+                    @break
+            @endswitch
+        </select>
+    </div>
+    @endif
+
+    @if($infoType == 'cgpa')
+    <div class="flex flex-col">
+        <label class="text-sm font-medium text-gray-700 mb-1">CGPA Range Filter</label>
+        <select id="cgpaRangeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+            <option value="3.67_and_above" {{ $filterBy == '3.67_and_above' ? 'selected' : '' }}>3.67 and above</option>
+            <option value="3.00_to_3.66" {{ $filterBy == '3.00_to_3.66' ? 'selected' : '' }}>3.00 - 3.66</option>
+            <option value="2.50_to_2.99" {{ $filterBy == '2.50_to_2.99' ? 'selected' : '' }}>2.50 - 2.99</option>
+            <option value="2.49_and_below" {{ $filterBy == '2.49_and_below' ? 'selected' : '' }}>2.49 and below</option>
+        </select>
+    </div>
+    @endif
+</div>
+@endif
                         </div>
 
-                        <!-- Right Side: Information Type Buttons -->
-                        <div class="flex flex-wrap gap-2">
-                            @php
-                                $infoTypes = [
-                                    'seniority' => 'Seniority',
-                                    'position' => 'Position', 
-                                    'gender' => 'Gender',
-                                    'cgpa' => 'CGPA',
-                                    'swimming' => 'Swimming',
-                                    'bmi' => 'BMI'
-                                ];
-                            @endphp
-                            @foreach($infoTypes as $type => $label)
-                                <button 
-                                    class="info-type-btn px-4 py-2 rounded-md text-sm font-medium transition-colors
-                                           {{ $infoType == $type ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
-                                    data-type="{{ $type }}">
-                                    {{ $label }}
-                                </button>
-                            @endforeach
-                        </div>
+<!-- Right Side: Information Type Buttons -->
+<div class="flex flex-wrap gap-2 items-center">
+    @php
+        $infoTypes = [
+            'seniority' => 'Seniority',
+            'position' => 'Position', 
+            'gender' => 'Gender',
+            'cgpa' => 'CGPA',
+            'swimming' => 'Swimming',
+            'bmi' => 'BMI'
+        ];
+    @endphp
+    @foreach($infoTypes as $type => $label)
+        <button 
+            class="info-type-btn px-4 py-2 rounded-md text-sm font-medium transition-colors
+                   {{ $infoType == $type ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
+            data-type="{{ $type }}">
+            {{ $label }}
+        </button>
+    @endforeach
+</div>
                     </div>
 
                     <!-- Cadet Information Table -->
@@ -187,7 +199,7 @@
                                                     <div>
                                                         <div class="font-medium">{{ $cadet->BMI ? number_format($cadet->BMI, 1) : 'N/A' }}</div>
                                                         <div class="text-xs text-gray-500">
-                                                            {{ $cadet->bmi_updated_at ? $cadet->bmi_updated_at->format('d/m/Y') : 'Not updated' }}
+                                                            {{ $cadet->BMI_update_date ? $cadet->BMI_update_date->format('d/m/Y') : 'Not updated' }}
                                                         </div>
                                                     </div>
                                                     @break
@@ -315,9 +327,17 @@
                 updateFilters();
             });
 
-            document.getElementById('sortFilter').addEventListener('change', function() {
-                updateFilters();
-            });
+            if(document.getElementById('sortFilter')) {
+                document.getElementById('sortFilter').addEventListener('change', function() {
+                    updateFilters();
+                });
+            }
+            
+            if(document.getElementById('cgpaRangeFilter')) {
+                document.getElementById('cgpaRangeFilter').addEventListener('change', function() {
+                    updateFilters();
+                });
+            }
 
             // Profile viewing
             document.querySelectorAll('.cadet-row, .view-profile-btn').forEach(element => {
@@ -361,28 +381,48 @@
             });
         });
 
-        function updateFilters(infoType = null) {
-            const url = new URL(window.location);
-            
-            if (infoType) {
-                url.searchParams.set('info_type', infoType);
-            }
-            
-            url.searchParams.set('intake_year', document.getElementById('intakeFilter').value);
-            
-            const sortValue = document.getElementById('sortFilter').value;
-            const currentInfoType = infoType || url.searchParams.get('info_type') || 'seniority';
-            
-            if (['seniority', 'cgpa', 'bmi'].includes(currentInfoType)) {
-                url.searchParams.set('sort_by', sortValue);
-                url.searchParams.delete('filter_by');
+function updateFilters(infoType = null) {
+    const url = new URL(window.location);
+    
+    if (infoType) {
+        url.searchParams.set('info_type', infoType);
+    }
+    
+    url.searchParams.set('intake_year', document.getElementById('intakeFilter').value);
+    
+    const currentInfoType = infoType || url.searchParams.get('info_type') || 'seniority';
+
+    if (currentInfoType === 'seniority') {
+        // For seniority, always set sort_by to asc and do not allow changing it
+        url.searchParams.set('sort_by', 'asc');
+        url.searchParams.delete('filter_by');
+    } else {
+            if (currentInfoType === 'cgpa') {
+            const cgpaRangeFilter = document.getElementById('cgpaRangeFilter');
+            if (cgpaRangeFilter) {
+                url.searchParams.set('filter_by', cgpaRangeFilter.value);
             } else {
-                url.searchParams.set('filter_by', sortValue);
-                url.searchParams.delete('sort_by');
+                url.searchParams.delete('filter_by');
             }
-            
-            window.location.href = url.toString();
+            // fixed sort order for CGPA, no sort_by param needed
+            url.searchParams.delete('sort_by');
+        } else if (currentInfoType === 'bmi') {
+            const bmiFilter = document.getElementById('sortFilter');
+            if (bmiFilter) {
+                url.searchParams.set('filter_by', bmiFilter.value);
+            } else {
+                url.searchParams.delete('filter_by');
+            }
+            url.searchParams.delete('sort_by');
+        } else {
+            const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'asc';
+            url.searchParams.set('filter_by', sortValue);
+            url.searchParams.delete('sort_by');
         }
+    }
+    
+    window.location.href = url.toString();
+}
 
         function showCadetProfile(cadetId) {
             fetch(`/instructor/cadets/${cadetId}`)
@@ -479,7 +519,7 @@
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600">BMI Updated:</span>
-                                        <span class="font-medium text-xs">${data.cadet.bmi_updated_at ? new Date(data.cadet.bmi_updated_at).toLocaleDateString() : 'Not updated'}</span>
+                                        <span class="font-medium text-xs">${data.cadet.BMI_update_date ? new Date(data.cadet.BMI_update_date).toLocaleDateString() : 'Not updated'}</span>
                                     </div>
                                 </div>
                             </div>
