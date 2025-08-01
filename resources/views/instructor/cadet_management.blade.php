@@ -153,7 +153,16 @@
                                                 @break
                                         @endswitch
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        @if($infoType == 'swimming')
+                                            <div class="flex items-center">
+                                                <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
+                                                <span>Select All</span>
+                                            </div>
+                                        @else
+                                            Actions
+                                        @endif
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -226,6 +235,16 @@
                                                         @endforeach
                                                     </select>
                                                     @break
+                                                @case('swimming')
+                                                    @if($cadet->swimming_qualification != 'Pass')
+                                                        <input type="checkbox" 
+                                                               class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                                                               data-cadet-id="{{ $cadet->id }}"
+                                                               onclick="event.stopPropagation()">
+                                                    @else
+                                                        <span class="text-green-600 font-medium">Passed</span>
+                                                    @endif
+                                                    @break
                                                 @default
                                                     <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn" 
                                                             data-cadet-id="{{ $cadet->id }}">
@@ -252,6 +271,17 @@
                             <button id="savePositionsBtn" 
                                     class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
                                 Save Changes
+                            </button>
+                        </div>
+                    @endif
+
+                    <!-- Mark as Passed Button for Swimming Management -->
+                    @if($infoType == 'swimming' && $cadets->count() > 0)
+                        <div class="mt-4 flex justify-end">
+                            <button id="markAsPassedBtn" 
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                    disabled>
+                                Mark Selected as Passed
                             </button>
                         </div>
                     @endif
@@ -339,11 +369,94 @@
                 });
             }
 
+            // Swimming qualification checkbox functionality
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const cadetCheckboxes = document.querySelectorAll('.cadet-checkbox');
+            const markAsPassedBtn = document.getElementById('markAsPassedBtn');
+
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    cadetCheckboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                    updateMarkAsPassedButton();
+                });
+            }
+
+            cadetCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateSelectAllCheckbox();
+                    updateMarkAsPassedButton();
+                });
+            });
+
+            if (markAsPassedBtn) {
+                markAsPassedBtn.addEventListener('click', function() {
+                    markSelectedAsPassed();
+                });
+            }
+
+            function updateSelectAllCheckbox() {
+                if (selectAllCheckbox) {
+                    const checkedBoxes = document.querySelectorAll('.cadet-checkbox:checked');
+                    selectAllCheckbox.checked = checkedBoxes.length === cadetCheckboxes.length;
+                    selectAllCheckbox.indeterminate = checkedBoxes.length > 0 && checkedBoxes.length < cadetCheckboxes.length;
+                }
+            }
+
+            function updateMarkAsPassedButton() {
+                if (markAsPassedBtn) {
+                    const checkedBoxes = document.querySelectorAll('.cadet-checkbox:checked');
+                    markAsPassedBtn.disabled = checkedBoxes.length === 0;
+                }
+            }
+
+            function markSelectedAsPassed() {
+                const selectedCadets = [];
+                document.querySelectorAll('.cadet-checkbox:checked').forEach(checkbox => {
+                    selectedCadets.push(checkbox.dataset.cadetId);
+                });
+
+                if (selectedCadets.length === 0) {
+                    alert('Please select at least one cadet to mark as passed.');
+                    return;
+                }
+
+                const intakeYear = document.getElementById('intakeFilter').value;
+
+                fetch('/instructor/cadets/swimming/mark-passed', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        cadet_ids: selectedCadets,
+                        intake_year: intakeYear
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`${data.updated_count} cadet(s) marked as passed successfully`);
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Failed to update swimming qualification');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update swimming qualification');
+                });
+            }
+
             // Profile viewing
             document.querySelectorAll('.cadet-row, .view-profile-btn').forEach(element => {
                 element.addEventListener('click', function(e) {
                     if (e.target.classList.contains('remove-cadet-btn') || 
-                        e.target.classList.contains('position-select')) {
+                        e.target.classList.contains('position-select') ||
+                        e.target.classList.contains('cadet-checkbox') ||
+                        e.target.type === 'checkbox') {
                         return;
                     }
                     
@@ -359,6 +472,14 @@
                     const cadetId = this.dataset.cadetId;
                     const cadetName = this.dataset.cadetName;
                     showRemoveModal(cadetId, cadetName);
+                });
+            });
+
+            // Position select validation
+            document.querySelectorAll('.position-select').forEach(select => {
+                select.addEventListener('change', function(e) {
+                    e.stopPropagation();
+                    validatePositionSelection(this);
                 });
             });
 
@@ -424,6 +545,35 @@ function updateFilters(infoType = null) {
     window.location.href = url.toString();
 }
 
+        function validatePositionSelection(selectElement) {
+            const selectedPosition = selectElement.value;
+            const cadetId = selectElement.dataset.cadetId;
+            const specialPositions = ['CO', 'Thana', 'Zayn', 'PMC'];
+            
+            if (specialPositions.includes(selectedPosition)) {
+                // Check if another cadet already has this position
+                const otherSelects = document.querySelectorAll('.position-select');
+                let conflictFound = false;
+                
+                otherSelects.forEach(otherSelect => {
+                    if (otherSelect.dataset.cadetId !== cadetId && otherSelect.value === selectedPosition) {
+                        conflictFound = true;
+                    }
+                });
+                
+                if (conflictFound) {
+                    alert(`Only one cadet per intake can hold the ${selectedPosition} position. Please change the other cadet's position first.`);
+                    // Reset to previous value or Normal Cadet
+                    selectElement.value = selectElement.dataset.originalValue || 'Normal Cadet';
+                    return false;
+                }
+            }
+            
+            // Store the current value as original for future validation
+            selectElement.dataset.originalValue = selectedPosition;
+            return true;
+        }
+
         function showCadetProfile(cadetId) {
             fetch(`/instructor/cadets/${cadetId}`)
                 .then(response => response.json())
@@ -452,10 +602,6 @@ function updateFilters(infoType = null) {
                             <div class="space-y-4">
                                 <h5 class="font-medium text-gray-900 border-b pb-2">Personal Information</h5>
                                 <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">IC Number:</span>
-                                        <span class="font-medium">${data.cadet.ic_number || 'N/A'}</span>
-                                    </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600">Gender:</span>
                                         <span class="font-medium">${data.cadet.gender || 'N/A'}</span>
@@ -575,8 +721,28 @@ function updateFilters(infoType = null) {
         }
 
         function savePositions() {
+            // Validate all positions before saving
+            const positionSelects = document.querySelectorAll('.position-select');
+            const positionCounts = { 'CO': 0, 'Thana': 0, 'Zayn': 0, 'PMC': 0 };
+            
+            positionSelects.forEach(select => {
+                const position = select.value;
+                if (positionCounts.hasOwnProperty(position)) {
+                    positionCounts[position]++;
+                }
+            });
+            
+            // Check for conflicts
+            const conflicts = Object.entries(positionCounts).filter(([position, count]) => count > 1);
+            if (conflicts.length > 0) {
+                const conflictMessage = conflicts.map(([position, count]) => 
+                    `${position}: ${count} cadets selected`).join(', ');
+                alert(`Position conflicts detected: ${conflictMessage}. Each position can only be assigned to one cadet per intake.`);
+                return;
+            }
+
             const positions = {};
-            document.querySelectorAll('.position-select').forEach(select => {
+            positionSelects.forEach(select => {
                 positions[select.dataset.cadetId] = select.value;
             });
 

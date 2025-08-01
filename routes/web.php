@@ -51,11 +51,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('instructor.dashboard');
     })->name('instructor.dashboard');
 
-    // Instructor Cadet Management
+    // Updated Instructor Cadet Management Routes
     Route::middleware(['auth'])->group(function () {
         Route::get('/instructor/cadet_management', [CadetManagementController::class, 'index'])->name('instructor.cadet_management');
         Route::get('/instructor/cadets/{cadet}', [CadetManagementController::class, 'show'])->name('instructor.cadets.show');
         Route::post('/instructor/cadets/positions', [CadetManagementController::class, 'updatePositions'])->name('instructor.cadets.positions.update');
+        Route::post('/instructor/cadets/swimming/mark-passed', [CadetManagementController::class, 'markSwimmingPassed'])->name('instructor.cadets.swimming.mark-passed');
         Route::delete('/instructor/cadets/{cadet}', [CadetManagementController::class, 'destroy'])->name('instructor.cadets.destroy');
     });
 
