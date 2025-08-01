@@ -7,6 +7,7 @@ use App\Http\Controllers\Instructor\InstructorDashboardController;
 use App\Http\Controllers\Cadet\CadetDashboardController;
 use App\Http\Controllers\Instructor\LearningHubController as InstructorLearningHubController;
 use App\Http\Controllers\Cadet\LearningHubController as CadetLearningHubController;
+use App\Http\Controllers\Instructor\CadetManagementController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -51,9 +52,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('instructor.dashboard');
 
     // Instructor Cadet Management
-    Route::get('/instructor/cadet_management', function () {
-        return view('instructor.cadet_management');
-    })->name('instructor.cadet_management');
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/instructor/cadet_management', [CadetManagementController::class, 'index'])->name('instructor.cadet_management');
+        Route::get('/instructor/cadets/{cadet}', [CadetManagementController::class, 'show'])->name('instructor.cadets.show');
+        Route::post('/instructor/cadets/positions', [CadetManagementController::class, 'updatePositions'])->name('instructor.cadets.positions.update');
+        Route::delete('/instructor/cadets/{cadet}', [CadetManagementController::class, 'destroy'])->name('instructor.cadets.destroy');
+    });
 
     // Training route
     Route::get('/instructor/training', function () {
@@ -72,7 +76,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Learning Hub route
     Route::get('/instructor/learning_hub', [InstructorLearningHubController::class, 'index'])->name('instructor.learning_hub');
-    // Add this route for category creation
+    
+    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+    // Learning Materials routes
+    Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
+    Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
+    Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
+    Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
+    Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
+
+    // Category route
+    Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
+});
 
     // Gallery route
     Route::get('/instructor/gallery', function () {
@@ -163,18 +178,6 @@ Route::post('/instructor/increment-duty', [InstructorDashboardController::class,
 
 Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
-});
-
-Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-    // Learning Materials routes
-    Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
-    Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
-    Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
-    Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
-    Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
-
-    // Category route
-    Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
 });
 
 require __DIR__.'/auth.php';
