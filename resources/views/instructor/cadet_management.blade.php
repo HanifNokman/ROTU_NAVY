@@ -10,9 +10,9 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
                 <div class="p-6 text-gray-900">
 <!-- Top Section: Filters and Sort Options -->
-<div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+<div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
     <!-- Left Side Filters -->
-    <div class="flex flex-col sm:flex-row space-y-0 sm:space-y-0 sm:space-x-6 items-center">
+    <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
         <!-- Intake Filter -->
         <div class="flex flex-col">
             <label class="text-sm font-medium text-gray-700 mb-1">Cadet Intake</label>
@@ -248,7 +248,7 @@
 
                     <!-- Save Changes Button for Position Management -->
                     @if($infoType == 'position' && $cadets->count() > 0)
-                        <div class="mt-6 flex justify-end">
+                        <div class="mt-4 sm:mt-0 sm:ml-4 flex justify-end w-full sm:w-auto flex-shrink-0">
                             <button id="savePositionsBtn" 
                                     class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
                                 Save Changes
@@ -428,15 +428,18 @@ function updateFilters(infoType = null) {
             fetch(`/instructor/cadets/${cadetId}`)
                 .then(response => response.json())
                 .then(data => {
+                    let profilePicHtml = '';
+                    if (data.cadet.profile_pic) {
+                        const profilePicUrl = `/storage/${data.cadet.profile_pic}`;
+                        profilePicHtml = `<img src="${profilePicUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
+                    } else {
+                        const fallbackAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name)}`;
+                        profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
+                    }
                     const profileContent = `
                         <div class="flex items-center space-x-4 mb-6">
                             <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center">
-                                ${data.cadet.profile_pic ? 
-                                    `<img src="${data.cadet.profile_pic}" alt="Profile" class="w-20 h-20 rounded-full object-cover">` :
-                                    `<svg class="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                    </svg>`
-                                }
+                                ${profilePicHtml}
                             </div>
                             <div>
                                 <h4 class="text-xl font-semibold text-gray-900">${data.user.name}</h4>
