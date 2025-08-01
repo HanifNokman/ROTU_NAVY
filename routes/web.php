@@ -77,18 +77,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Learning Hub route
     Route::get('/instructor/learning_hub', [InstructorLearningHubController::class, 'index'])->name('instructor.learning_hub');
-    
-    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-    // Learning Materials routes
-    Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
-    Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
-    Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
-    Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
-    Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
 
-    // Category route
-    Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
-});
+    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+        // Learning Materials routes
+        Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
+        Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
+        Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
+        Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
+        Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
+
+        // Category routes
+        Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
+        Route::delete('/categories/{category}', [InstructorLearningHubController::class, 'destroyCategory'])->name('learning_material_categories.destroy');
+    });
 
     // Gallery route
     Route::get('/instructor/gallery', function () {
