@@ -24,7 +24,7 @@ class Cadet extends Model
         'past_cgpa',
         'ic_number',
         'BMI',
-        'bmi_updated_at',
+        'BMI_update_date',
         'swimming_qualification',
         'service_number',
     ];
@@ -33,16 +33,13 @@ class Cadet extends Model
         // Add any fields you want hidden
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'bmi_updated_at' => 'datetime',
-            'current_cgpa' => 'decimal:2',
-            'BMI' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'BMI_update_date' => 'datetime',
+        'current_cgpa' => 'decimal:2',
+        'BMI' => 'decimal:2',
+    ];
 
     // Relationships
     public function user()
@@ -90,7 +87,7 @@ class Cadet extends Model
 
     public function getFormattedBmiUpdatedAttribute()
     {
-        return $this->bmi_updated_at ? $this->bmi_updated_at->format('d/m/Y') : 'Not updated';
+        return $this->BMI_update_date ? $this->BMI_update_date->format('d/m/Y') : 'Not updated';
     }
 
     // Static methods
@@ -114,11 +111,11 @@ class Cadet extends Model
     public static function getPositions()
     {
         return [
-            'CO' => 'CO',
+            'CO' => 'CO Intake',
             'Thana' => 'Thana',
             'Zayn' => 'Zayn',
             'PMC' => 'PMC',
-            'Normal Cadet' => 'Normal Cadet'
+            'Normal' => 'Normal Cadet'
         ];
     }
 

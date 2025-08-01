@@ -17,10 +17,19 @@ class CadetManagementController extends Controller
         ]);
 
         // Initialize ALL variables with safe defaults - be very explicit
-        $infoType = $request->get('info_type', 'seniority');
-        $intakeYear = $request->get('intake_year', now()->year);
+        $infoType = $request->get('info_type', 'cgpa');
+        $intakeYear = $request->get('intake_year', Cadet::max('intake_year') ?? now()->year);
+if ($infoType === 'seniority') {
+    $sortBy = 'asc';
+    $filterBy = 'all';
+} else {
+    if ($infoType === 'cgpa') {
+        $sortBy = 'asc'; // fixed ascending sort order for CGPA
+    } else {
         $sortBy = $request->get('sort_by', 'asc');
-        $filterBy = $request->get('filter_by', 'all');
+    }
+    $filterBy = $request->get('filter_by', 'all');
+}
 
         // Debug: Log the variables
         \Log::info('Variables set', [
@@ -45,9 +54,9 @@ class CadetManagementController extends Controller
         // Basic query - check if Cadet model exists and has data
         try {
             // Check if Cadet table exists and has User relationship
-            if (!\Schema::hasTable('cadets')) {
+                if (!\Schema::hasTable('cadets')) {
                 \Log::warning('Cadets table does not exist');
-                $cadets = collect()->paginate(20);
+                $cadets = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20, 1);
             } else {
                 $query = Cadet::query();
                 
@@ -64,14 +73,14 @@ class CadetManagementController extends Controller
                 // Simple sorting based on info type
                 switch ($infoType) {
                     case 'seniority':
-                        if (\Schema::hasColumn('cadets', 'ic_number')) {
-                            $query->orderBy('ic_number', $sortBy);
+                        if (\Schema::hasColumn('cadets', 'service_number')) {
+                            $query->orderBy('service_number', $sortBy);
                         }
                         break;
                     case 'position':
                         if ($filterBy === 'rank_holders' && \Schema::hasColumn('cadets', 'position')) {
-                            $query->whereNotNull('position')
-                                  ->where('position', '!=', 'Normal Cadet');
+                            $query->whereIn('position', ['CO', 'Thana', 'Zayn', 'PMC'])
+                                  ->orderByRaw("FIELD(position, 'CO', 'Thana', 'Zayn', 'PMC')");
                         }
                         break;
                     case 'gender':
@@ -79,11 +88,29 @@ class CadetManagementController extends Controller
                             $query->where('gender', ucfirst($filterBy));
                         }
                         break;
-                    case 'cgpa':
-                        if (\Schema::hasColumn('cadets', 'current_cgpa')) {
-                            $query->orderBy('current_cgpa', $sortBy);
-                        }
-                        break;
+case 'cgpa':
+    if (\Schema::hasColumn('cadets', 'current_cgpa')) {
+        switch ($filterBy) {
+            case '3.67_and_above':
+                $query->where('current_cgpa', '>=', 3.67);
+                break;
+            case '3.00_to_3.66':
+                $query->whereBetween('current_cgpa', [3.00, 3.66]);
+                break;
+            case '2.50_to_2.99':
+                $query->whereBetween('current_cgpa', [2.50, 2.99]);
+                break;
+            case '2.49_and_below':
+                $query->where('current_cgpa', '<=', 2.49);
+                break;
+            case 'all':
+            default:
+                // no filter
+                break;
+        }
+        $query->orderBy('current_cgpa', $sortBy);
+    }
+    break;
                     case 'swimming':
                         if (in_array($filterBy, ['pass', 'in_progress', 'fail']) && \Schema::hasColumn('cadets', 'swimming_qualification')) {
                             $status = str_replace('_', ' ', ucwords($filterBy, '_'));
@@ -93,10 +120,10 @@ class CadetManagementController extends Controller
                     case 'bmi':
                         if (\Schema::hasColumn('cadets', 'BMI')) {
                             switch ($filterBy) {
-                                case 'high_bmi':
+                                case 'overweight':
                                     $query->where('BMI', '>', 26.9);
                                     break;
-                                case 'low_bmi':
+                                case 'underweight':
                                     $query->where('BMI', '<', 18.0);
                                     break;
                             }
@@ -111,7 +138,7 @@ class CadetManagementController extends Controller
         } catch (\Exception $e) {
             // If there's an error, return empty collection
             \Log::error('Error in Cadet Management: ' . $e->getMessage());
-            $cadets = collect()->paginate(20);
+            $cadets = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20, 1);
         }
 
         // Prepare data array with ALL required variables
@@ -160,6 +187,10 @@ class CadetManagementController extends Controller
             $intakeYear = $request->intake_year;
             
             foreach ($positions as $cadetId => $position) {
+                // Map "Normal Cadet" to "Normal" to match enum values in DB
+                if ($position === 'Normal Cadet') {
+                    $position = 'Normal';
+                }
                 Cadet::where('id', $cadetId)
                      ->where('intake_year', $intakeYear)
                      ->update(['position' => $position]);
