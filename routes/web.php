@@ -8,6 +8,8 @@ use App\Http\Controllers\Cadet\CadetDashboardController;
 use App\Http\Controllers\Instructor\LearningHubController as InstructorLearningHubController;
 use App\Http\Controllers\Cadet\LearningHubController as CadetLearningHubController;
 use App\Http\Controllers\Instructor\CadetManagementController;
+use App\Http\Controllers\Instructor\InventoryController as InstructorInventoryController;
+use App\Http\Controllers\Cadet\InventoryController as CadetInventoryController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -71,9 +73,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('instructor.allowance');
 
     // Inventory route
-    Route::get('/instructor/inventory', function () {
-        return view('instructor.inventory');
-    })->name('instructor.inventory');
+    Route::get('/instructor/inventory', [InstructorInventoryController::class, 'index'])->name('instructor.inventory');
+
+    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+    Route::get('/inventory', [InstructorInventoryController::class, 'index'])->name('inventory');
+    Route::patch('/inventory/loan/{loan}', [InstructorInventoryController::class, 'updateLoanStatus'])->name('inventory.update-loan');
+    Route::get('/inventory/export/uniforms', [InstructorInventoryController::class, 'exportUniformSizes'])->name('inventory.export.uniforms');
+    Route::get('/inventory/export/loans', [InstructorInventoryController::class, 'exportEquipmentLoans'])->name('inventory.export.loans');
+});
 
     // Learning Hub route
     Route::get('/instructor/learning_hub', [InstructorLearningHubController::class, 'index'])->name('instructor.learning_hub');
@@ -134,9 +141,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cadet/learning_hub', [CadetLearningHubController::class, 'index'])->name('cadet.learning_hub');
 
     // Cadet Inventory
-    Route::get('/cadet/inventory', function () {
-        return view('cadet.inventory');
-    })->name('cadet.inventory');
+    Route::get('/cadet/inventory', [CadetInventoryController::class, 'index'])->name('cadet.inventory');
+
+    Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
+    Route::get('/inventory', [CadetInventoryController::class, 'index'])->name('inventory');
+    Route::get('/inventory/profile', [CadetInventoryController::class, 'myProfile'])->name('inventory.profile');
+    Route::post('/inventory/uniform-size', [CadetInventoryController::class, 'updateUniformSize'])->name('inventory.uniform-size.update');
+    Route::delete('/inventory/uniform-size/{cadetSize}', [CadetInventoryController::class, 'deleteUniformSize'])->name('inventory.uniform-size.delete');
+    Route::post('/inventory/loan', [CadetInventoryController::class, 'createLoan'])->name('inventory.loan.create');
+    Route::patch('/inventory/loan/{loan}/return', [CadetInventoryController::class, 'returnLoan'])->name('inventory.loan.return');
+});
 
     // Cadet Gallery
     Route::get('/cadet/gallery', function () {
