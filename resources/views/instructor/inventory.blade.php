@@ -32,7 +32,7 @@
                                 <select name="uniform_intake_year" id="uniform_intake_year" 
                                         class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     @foreach($intakeYears as $intake)
-                                        <option value="{{ $intake['year'] }}" {{ $selectedIntakeYear == $intake['year'] ? 'selected' : '' }}>
+                                        <option value="{{ $intake['year'] }}" {{ $selectedUniformIntakeYear == $intake['year'] ? 'selected' : '' }}>
                                             {{ $intake['label'] }}
                                         </option>
                                     @endforeach
@@ -128,7 +128,7 @@
                                 <select name="loan_intake_year" id="loan_intake_year" 
                                         class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                                     @foreach($intakeYears as $intake)
-                                        <option value="{{ $intake['year'] }}" {{ $selectedIntakeYear == $intake['year'] ? 'selected' : '' }}>
+                                        <option value="{{ $intake['year'] }}" {{ $selectedLoanIntakeYear == $intake['year'] ? 'selected' : '' }}>
                                             {{ $intake['label'] }}
                                         </option>
                                     @endforeach
@@ -143,6 +143,25 @@
                                     <option value="equipment">Equipment</option>
                                     <option value="uniform">Uniform</option>
                                 </select>
+                            </div>
+                            
+                            <!-- Loan Status Toggle -->
+                            <div class="flex flex-col">
+                                <label class="text-sm font-medium text-gray-700 mb-1">Loan Status</label>
+                                <div class="flex rounded-md shadow-sm">
+                                    <button type="button" 
+                                            id="activeLoansBtn"
+                                            class="px-4 py-2 text-sm font-medium rounded-l-md {{ $selectedStatus === 'active' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
+                                            onclick="switchLoanStatus('active')">
+                                        Active Loans
+                                    </button>
+                                    <button type="button" 
+                                            id="returnedLoansBtn"
+                                            class="px-4 py-2 text-sm font-medium rounded-r-md {{ $selectedStatus === 'returned' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
+                                            onclick="switchLoanStatus('returned')">
+                                        Past Loans
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
@@ -916,7 +935,7 @@
             }
         }
 
-        // Filter functionality
+        // Filter functionality for Uniform Size Summary
         document.addEventListener('DOMContentLoaded', function() {
             // Uniform filters
             const uniformIntakeSelect = document.getElementById('uniform_intake_year');
@@ -927,82 +946,296 @@
             const loanIntakeSelect = document.getElementById('loan_intake_year');
             const equipmentCategorySelect = document.getElementById('equipment_category');
 
-            // Dynamic component loading based on uniform type
-            uniformTypeSelect.addEventListener('change', function() {
-                const uniformTypeId = this.value;
-                const componentSelect = document.getElementById('uniform_component');
-                
-                // Clear component options
-                componentSelect.innerHTML = '<option value="">Select Component</option>';
-                
-                if (uniformTypeId) {
-                    fetch(`/instructor/inventory/uniform-types/${uniformTypeId}/components`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                data.data.forEach(component => {
-                                    const option = document.createElement('option');
-                                    option.value = component.id;
-                                    option.textContent = component.component_name;
-                                    componentSelect.appendChild(option);
-                                });
-                            }
-                        })
-                        .catch(error => console.error('Error loading components:', error));
-                }
-                
-                // Submit form to filter
+            // Handle uniform intake filter change
+            if (uniformIntakeSelect) {
+                uniformIntakeSelect.addEventListener('change', function() {
+                    filterUniformSection();
+                });
+            }
+
+            // Handle uniform type filter change
+            if (uniformTypeSelect) {
+                uniformTypeSelect.addEventListener('change', function() {
+                    // Dynamic component loading based on uniform type
+                    const uniformTypeId = this.value;
+                    const componentSelect = document.getElementById('uniform_component');
+                    
+                    // Clear component options
+                    componentSelect.innerHTML = '<option value="">All Component</option>';
+                    
+                    if (uniformTypeId) {
+                        fetch(`/instructor/inventory/uniform-types/${uniformTypeId}/components`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    data.data.forEach(component => {
+                                        const option = document.createElement('option');
+                                        option.value = component.id;
+                                        option.textContent = component.component_name;
+                                        componentSelect.appendChild(option);
+                                    });
+                                }
+                            })
+                            .catch(error => console.error('Error loading components:', error));
+                    }
+                    
+                    filterUniformSection();
+                });
+            }
+
+            // Handle uniform component filter change
+            if (uniformComponentSelect) {
+                uniformComponentSelect.addEventListener('change', function() {
+                    filterUniformSection();
+                });
+            }
+
+            // Handle equipment intake filter change
+            if (loanIntakeSelect) {
+                loanIntakeSelect.addEventListener('change', function() {
+                    filterEquipmentSection();
+                });
+            }
+
+            // Handle equipment category filter change
+            if (equipmentCategorySelect) {
+                equipmentCategorySelect.addEventListener('change', function() {
+                    filterEquipmentSection();
+                });
+            }
+
+            // Function to filter uniform section independently
+            function filterUniformSection() {
                 const form = document.createElement('form');
                 form.method = 'GET';
                 
+                // Add uniform section filters
+                if (uniformIntakeSelect && uniformIntakeSelect.value) {
+                    const intakeInput = document.createElement('input');
+                    intakeInput.type = 'hidden';
+                    intakeInput.name = 'intake_year';
+                    intakeInput.value = uniformIntakeSelect.value;
+                    form.appendChild(intakeInput);
+                }
+                
+                if (uniformTypeSelect && uniformTypeSelect.value) {
+                    const typeInput = document.createElement('input');
+                    typeInput.type = 'hidden';
+                    typeInput.name = 'uniform_type';
+                    typeInput.value = uniformTypeSelect.value;
+                    form.appendChild(typeInput);
+                }
+                
+                if (uniformComponentSelect && uniformComponentSelect.value) {
+                    const componentInput = document.createElement('input');
+                    componentInput.type = 'hidden';
+                    componentInput.name = 'uniform_component';
+                    componentInput.value = uniformComponentSelect.value;
+                    form.appendChild(componentInput);
+                }
+                
+                // Add equipment section filters if they exist and have values
+                if (loanIntakeSelect && loanIntakeSelect.value) {
+                    const loanIntakeInput = document.createElement('input');
+                    loanIntakeInput.type = 'hidden';
+                    loanIntakeInput.name = 'loan_intake_year';
+                    loanIntakeInput.value = loanIntakeSelect.value;
+                    form.appendChild(loanIntakeInput);
+                }
+                
+                if (equipmentCategorySelect && equipmentCategorySelect.value) {
+                    const categoryInput = document.createElement('input');
+                    categoryInput.type = 'hidden';
+                    categoryInput.name = 'equipment_category';
+                    categoryInput.value = equipmentCategorySelect.value;
+                    form.appendChild(categoryInput);
+                }
+                
+                // Add loan status if it exists
+                const activeBtn = document.getElementById('activeLoansBtn');
+                const returnedBtn = document.getElementById('returnedLoansBtn');
+                if (activeBtn && activeBtn.classList.contains('bg-green-600')) {
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'hidden';
+                    statusInput.name = 'loan_status';
+                    statusInput.value = 'active';
+                    form.appendChild(statusInput);
+                } else if (returnedBtn && returnedBtn.classList.contains('bg-green-600')) {
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'hidden';
+                    statusInput.name = 'loan_status';
+                    statusInput.value = 'returned';
+                    form.appendChild(statusInput);
+                } else {
+                    // Default to active if no status is selected
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'hidden';
+                    statusInput.name = 'loan_status';
+                    statusInput.value = 'active';
+                    form.appendChild(statusInput);
+                }
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            // Function to filter equipment section independently
+            function filterEquipmentSection() {
+                const form = document.createElement('form');
+                form.method = 'GET';
+                
+                // Add equipment section filters
+                if (loanIntakeSelect && loanIntakeSelect.value) {
+                    const loanIntakeInput = document.createElement('input');
+                    loanIntakeInput.type = 'hidden';
+                    loanIntakeInput.name = 'loan_intake_year';
+                    loanIntakeInput.value = loanIntakeSelect.value;
+                    form.appendChild(loanIntakeInput);
+                }
+                
+                if (equipmentCategorySelect && equipmentCategorySelect.value) {
+                    const categoryInput = document.createElement('input');
+                    categoryInput.type = 'hidden';
+                    categoryInput.name = 'equipment_category';
+                    categoryInput.value = equipmentCategorySelect.value;
+                    form.appendChild(categoryInput);
+                }
+                
+                // Add loan status if it exists
+                const activeBtn = document.getElementById('activeLoansBtn');
+                const returnedBtn = document.getElementById('returnedLoansBtn');
+                if (activeBtn && activeBtn.classList.contains('bg-green-600')) {
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'hidden';
+                    statusInput.name = 'loan_status';
+                    statusInput.value = 'active';
+                    form.appendChild(statusInput);
+                } else if (returnedBtn && returnedBtn.classList.contains('bg-green-600')) {
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'hidden';
+                    statusInput.name = 'loan_status';
+                    statusInput.value = 'returned';
+                    form.appendChild(statusInput);
+                } else {
+                    // Default to active if no status is selected
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'hidden';
+                    statusInput.name = 'loan_status';
+                    statusInput.value = 'active';
+                    form.appendChild(statusInput);
+                }
+                
+                // Add uniform section filters if they exist and have values
+                if (uniformIntakeSelect && uniformIntakeSelect.value) {
+                    const intakeInput = document.createElement('input');
+                    intakeInput.type = 'hidden';
+                    intakeInput.name = 'intake_year';
+                    intakeInput.value = uniformIntakeSelect.value;
+                    form.appendChild(intakeInput);
+                }
+                
+                if (uniformTypeSelect && uniformTypeSelect.value) {
+                    const typeInput = document.createElement('input');
+                    typeInput.type = 'hidden';
+                    typeInput.name = 'uniform_type';
+                    typeInput.value = uniformTypeSelect.value;
+                    form.appendChild(typeInput);
+                }
+                
+                if (uniformComponentSelect && uniformComponentSelect.value) {
+                    const componentInput = document.createElement('input');
+                    componentInput.type = 'hidden';
+                    componentInput.name = 'uniform_component';
+                    componentInput.value = uniformComponentSelect.value;
+                    form.appendChild(componentInput);
+                }
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+        
+        // Function to switch loan status filter
+        function switchLoanStatus(status) {
+            // Update button styles
+            document.getElementById('activeLoansBtn').className = 
+                status === 'active' 
+                ? 'px-4 py-2 text-sm font-medium rounded-l-md bg-green-600 text-white'
+                : 'px-4 py-2 text-sm font-medium rounded-l-md bg-gray-200 text-gray-700 hover:bg-gray-300';
+                
+            document.getElementById('returnedLoansBtn').className = 
+                status === 'returned' 
+                ? 'px-4 py-2 text-sm font-medium rounded-r-md bg-green-600 text-white'
+                : 'px-4 py-2 text-sm font-medium rounded-r-md bg-gray-200 text-gray-700 hover:bg-gray-300';
+            
+            // Filter equipment section with new status
+            filterEquipmentSectionWithStatus(status);
+        }
+        
+        // Function to filter equipment section with specific status
+        function filterEquipmentSectionWithStatus(status) {
+            const form = document.createElement('form');
+            form.method = 'GET';
+            
+            // Get current filter values
+            const loanIntakeSelect = document.getElementById('loan_intake_year');
+            const equipmentCategorySelect = document.getElementById('equipment_category');
+            const uniformIntakeSelect = document.getElementById('uniform_intake_year');
+            const uniformTypeSelect = document.getElementById('uniform_type');
+            const uniformComponentSelect = document.getElementById('uniform_component');
+            
+            // Add equipment section filters
+            if (loanIntakeSelect && loanIntakeSelect.value) {
+                const loanIntakeInput = document.createElement('input');
+                loanIntakeInput.type = 'hidden';
+                loanIntakeInput.name = 'loan_intake_year';
+                loanIntakeInput.value = loanIntakeSelect.value;
+                form.appendChild(loanIntakeInput);
+            }
+            
+            if (equipmentCategorySelect && equipmentCategorySelect.value) {
+                const categoryInput = document.createElement('input');
+                categoryInput.type = 'hidden';
+                categoryInput.name = 'equipment_category';
+                categoryInput.value = equipmentCategorySelect.value;
+                form.appendChild(categoryInput);
+            }
+            
+            // Add loan status
+            const statusInput = document.createElement('input');
+            statusInput.type = 'hidden';
+            statusInput.name = 'loan_status';
+            statusInput.value = status;
+            form.appendChild(statusInput);
+            
+            // Add uniform section filters if they exist and have values
+            if (uniformIntakeSelect && uniformIntakeSelect.value) {
                 const intakeInput = document.createElement('input');
                 intakeInput.type = 'hidden';
                 intakeInput.name = 'intake_year';
                 intakeInput.value = uniformIntakeSelect.value;
                 form.appendChild(intakeInput);
-                
+            }
+            
+            if (uniformTypeSelect && uniformTypeSelect.value) {
                 const typeInput = document.createElement('input');
                 typeInput.type = 'hidden';
                 typeInput.name = 'uniform_type';
-                typeInput.value = uniformTypeId;
+                typeInput.value = uniformTypeSelect.value;
                 form.appendChild(typeInput);
-                
-                document.body.appendChild(form);
-                form.submit();
-            });
-
-            // Add event listeners for other filters
-            [uniformIntakeSelect, uniformComponentSelect, loanIntakeSelect, equipmentCategorySelect].forEach(select => {
-                if (select) {
-                    select.addEventListener('change', function() {
-                        // Create form with current filter values
-                        const form = document.createElement('form');
-                        form.method = 'GET';
-                        
-                        const filters = {
-                            'intake_year': uniformIntakeSelect.value,
-                            'uniform_type': uniformTypeSelect.value,
-                            'uniform_component': uniformComponentSelect.value,
-                            'loan_intake_year': loanIntakeSelect.value,
-                            'equipment_category': equipmentCategorySelect.value
-                        };
-                        
-                        Object.keys(filters).forEach(key => {
-                            if (filters[key]) {
-                                const input = document.createElement('input');
-                                input.type = 'hidden';
-                                input.name = key;
-                                input.value = filters[key];
-                                form.appendChild(input);
-                            }
-                        });
-                        
-                        document.body.appendChild(form);
-                        form.submit();
-                    });
-                }
-            });
-        });
+            }
+            
+            if (uniformComponentSelect && uniformComponentSelect.value) {
+                const componentInput = document.createElement('input');
+                componentInput.type = 'hidden';
+                componentInput.name = 'uniform_component';
+                componentInput.value = uniformComponentSelect.value;
+                form.appendChild(componentInput);
+            }
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 
     <!-- Font Awesome for Icons -->

@@ -29,12 +29,13 @@ class InventoryController extends Controller
             ];
         }
 
-        // Get selected intake year (default to latest)
-        $selectedIntakeYear = $request->get('intake_year', $intakeYears[0]['year']);
+        // Get selected intake years for each section (default to latest)
+        $selectedUniformIntakeYear = $request->get('intake_year', $intakeYears[0]['year']);
+        $selectedLoanIntakeYear = $request->get('loan_intake_year', $intakeYears[0]['year']);
         $selectedUniformType = $request->get('uniform_type');
         $selectedUniformComponent = $request->get('uniform_component');
-        $selectedLoanIntake = $request->get('loan_intake_year', $selectedIntakeYear);
         $selectedCategory = $request->get('equipment_category');
+        $selectedStatus = $request->get('loan_status', 'active'); // Default to active loans
 
         // Get uniform types and components for dropdowns
         $uniformTypes = UniformType::all();
@@ -43,21 +44,22 @@ class InventoryController extends Controller
         })->get();
 
         // Get uniform size summary for selected intake year
-        $uniformSizeSummary = $this->getUniformSizeSummary($selectedIntakeYear, $selectedUniformType, $selectedUniformComponent);
+        $uniformSizeSummary = $this->getUniformSizeSummary($selectedUniformIntakeYear, $selectedUniformType, $selectedUniformComponent);
 
-        // Get equipment loan records
-        $equipmentLoans = $this->getEquipmentLoans($selectedLoanIntake, $selectedCategory);
+        // Get equipment loan records with status filter
+        $equipmentLoans = $this->getEquipmentLoans($selectedLoanIntakeYear, $selectedCategory, $selectedStatus);
 
         // Get inventory summary
         $inventorySummary = $this->getInventorySummary();
 
         return view('instructor.inventory', compact(
             'intakeYears',
-            'selectedIntakeYear',
+            'selectedUniformIntakeYear',
+            'selectedLoanIntakeYear',
             'selectedUniformType',
             'selectedUniformComponent',
-            'selectedLoanIntake',
             'selectedCategory',
+            'selectedStatus',
             'uniformTypes',
             'uniformComponents',
             'uniformSizeSummary',
@@ -98,7 +100,7 @@ class InventoryController extends Controller
         return $results->isNotEmpty() ? $results->groupBy('component_name') : collect();
     }
 
-    private function getEquipmentLoans($intakeYear = null, $category = null)
+    private function getEquipmentLoans($intakeYear = null, $category = null, $status = null)
     {
         $query = EquipmentLoan::with(['cadet.user', 'inventoryItem'])
             ->join('cadets', 'equipment_loans.cadet_id', '=', 'cadets.id')
@@ -111,6 +113,15 @@ class InventoryController extends Controller
 
         if ($category) {
             $query->where('inventory_items.category', $category);
+        }
+
+        // Filter by status if provided
+        if ($status) {
+            if ($status === 'active') {
+                $query->where('equipment_loans.status', 'Borrowed');
+            } elseif ($status === 'returned') {
+                $query->where('equipment_loans.status', 'Returned');
+            }
         }
 
         return $query->orderBy('equipment_loans.borrow_date', 'desc')
