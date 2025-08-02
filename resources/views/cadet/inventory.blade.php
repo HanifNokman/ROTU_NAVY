@@ -161,86 +161,241 @@
             <!-- Equipment Loans Management -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Equipment Loans</h3>
-                    
-                    <!-- New Loan Form -->
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Equipment & Uniform Loans</h3>
+                
+                    <!-- Category Filter -->
                     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h4 class="font-medium text-gray-800 mb-3">Borrow Equipment</h4>
-                        <form method="POST" action="{{ route('cadet.inventory.loan.create') }}" class="flex flex-wrap items-end gap-4">
-                            @csrf
-                            <div class="flex-1 min-w-48">
-                                <label for="item_id" class="block text-sm font-medium text-gray-700 mb-1">Equipment Item</label>
-                                <select name="item_id" id="item_id" required
-                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">Select Item</option>
-                                    @foreach($availableItems as $item)
-                                        <option value="{{ $item->id }}">
-                                            {{ $item->name }} ({{ $item->available_quantity }} available)
-                                        </option>
-                                    @endforeach
+                        <h4 class="font-medium text-gray-800 mb-3 flex items-center justify-between">
+                            Filter by Category
+                            <div>
+                                <select id="category_filter" name="category_filter" onchange="filterItemsByCategory(this.value)"
+                                        class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">All Categories</option>
+                                    <option value="equipment">Equipment</option>
+                                    <option value="uniform">Uniform</option>
                                 </select>
                             </div>
-                            <div class="flex-1 min-w-24">
-                                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                                <input type="number" name="quantity" id="quantity" min="1" required
-                                       class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                            <div class="flex-1 min-w-36">
-                                <label for="borrow_date" class="block text-sm font-medium text-gray-700 mb-1">Borrow Date</label>
-                                <input type="date" name="borrow_date" id="borrow_date" required
-                                       value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}"
-                                       class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
-                                Borrow Item
-                            </button>
-                        </form>
+                        </h4>
                     </div>
 
-                    <!-- Active Loans -->
-                    @if($activeLoans->isNotEmpty())
-                        <div class="mb-6">
-                            <h4 class="font-medium text-gray-800 mb-3">Active Loans</h4>
-                            <div class="overflow-x-auto">
+                    <!-- Items List with Checkboxes -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium text-gray-800 mb-3">Select Items to Borrow</h4>
+                        
+                        <!-- Items Container -->
+                        <div id="items-container" class="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">
+                            @if($availableItems->count() > 0)
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                                    <thead class="bg-gray-100">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrow Date</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Date</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available Quantity</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($pastLoans as $loan)
-                                            <tr>
+                                        @foreach($availableItems as $item)
+                                            <tr class="item-row" data-category="{{ $item->category }}">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <input type="checkbox" name="selected_items[]" value="{{ $item->id }}" 
+                                                           class="item-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                                           data-item-id="{{ $item->id }}"
+                                                           data-item-name="{{ $item->name }}"
+                                                           data-available-quantity="{{ $item->available_quantity }}"
+                                                           data-category="{{ $item->category }}">
+                                                </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ $loan->inventoryItem->name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $loan->quantity }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $loan->borrow_date->format('M d, Y') }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $loan->return_date->format('M d, Y') }}
+                                                    {{ $item->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $loan->borrow_date->diffInDays($loan->return_date) }} days
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                        {{ $item->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                        {{ $item->category }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {{ $item->available_quantity }}
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
-                            </div>
+                            @else
+                                <div class="text-center py-8 text-gray-500">
+                                    <p>No items available for borrowing</p>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Select Items Button -->
+                        <div class="mt-4 flex justify-end">
+                            <button type="button" id="selectItemsBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Select Items
+                            </button>
+                        </div>
+                    </div>
 
-                            <!-- Pagination -->
-                            <div class="mt-4">
-                                {{ $pastLoans->links() }}
+                </div>
+            </div>
+
+            <!-- Active Loans Section -->
+            @if($activeLoans->isNotEmpty())
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Active Loans</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrow Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Borrowed</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($activeLoans as $loan)
+                                        <tr class="{{ $loan->isOverdue() ? 'bg-red-50' : '' }}">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                {{ $loan->inventoryItem->name }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                    {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                    {{ $loan->inventoryItem->category }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $loan->quantity }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $loan->borrow_date->format('M d, Y') }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ $loan->borrow_date->diffInDays(now()) }} days
+                                                @if($loan->isOverdue())
+                                                    <span class="text-red-600 font-semibold">(Overdue)</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                    {{ $loan->status }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button onclick="openReturnModal({{ $loan->id }}, '{{ $loan->inventoryItem->name }}')"
+                                                        class="text-green-600 hover:text-green-900">
+                                                    Return
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Past Loans Section -->
+            @if($pastLoans->isNotEmpty())
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Past Loans</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrow Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($pastLoans as $loan)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                {{ $loan->inventoryItem->name }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                    {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                    {{ $loan->inventoryItem->category }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $loan->quantity }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $loan->borrow_date->format('M d, Y') }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $loan->return_date->format('M d, Y') }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ $loan->borrow_date->diffInDays($loan->return_date) }} days
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            {{ $pastLoans->links() }}
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Borrow Details Modal -->
+            <div id="borrowModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-3xl shadow-lg rounded-md bg-white">
+                    <div class="mt-3">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Borrow Selected Items</h3>
+                        <form id="borrowForm" method="POST" action="{{ route('cadet.inventory.loan.create') }}">
+                            @csrf
+                            <div class="overflow-y-auto max-h-96">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="borrowItemsContainer" class="bg-white divide-y divide-gray-200">
+                                        <!-- Selected items will be populated here -->
+                                    </tbody>
+                                </table>
                             </div>
-                        @endif
+                            
+                            <div class="mt-6">
+                                <label for="borrow_date" class="block text-sm font-medium text-gray-700 mb-1">Borrow Date</label>
+                                <input type="date" name="borrow_date" id="borrow_date" required
+                                    value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            
+                            <div class="mt-6 flex justify-end space-x-4">
+                                <button type="button" onclick="closeBorrowModal()" 
+                                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                    Cancel
+                                </button>
+                                <button type="submit" id="confirmBorrowBtn" 
+                                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                    Confirm Borrow
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -658,4 +813,203 @@
             }
         });
     </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loanForm');
+    const itemSelect = document.getElementById('item_id');
+    const quantityInput = document.getElementById('quantity');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Update max quantity based on selected item
+    itemSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            const maxQuantity = selectedOption.dataset.available;
+            quantityInput.max = maxQuantity;
+            quantityInput.placeholder = `Max: ${maxQuantity}`;
+            console.log('Item selected:', {
+                itemId: selectedOption.value,
+                itemName: selectedOption.text,
+                maxQuantity: maxQuantity
+            });
+        } else {
+            quantityInput.max = '';
+            quantityInput.placeholder = '';
+        }
+    });
+
+    // Form submission handler with debug
+    form.addEventListener('submit', function(e) {
+        console.log('=== FORM SUBMISSION DEBUG ===');
+        
+        const formData = new FormData(form);
+        const data = {};
+        
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
+            console.log(key + ':', value);
+        }
+        
+        // Basic validation
+        if (!data.item_id || !data.quantity || !data.borrow_date) {
+            console.error('Validation failed: Missing required fields');
+            alert('Please fill all required fields');
+            e.preventDefault();
+            return false;
+        }
+        
+        if (parseInt(data.quantity) <= 0) {
+            console.error('Validation failed: Invalid quantity');
+            alert('Quantity must be greater than 0');
+            e.preventDefault();
+            return false;
+        }
+        
+        // Check against available quantity
+        const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+        const maxQuantity = parseInt(selectedOption.dataset.available);
+        if (parseInt(data.quantity) > maxQuantity) {
+            console.error('Validation failed: Quantity exceeds available');
+            alert(`Quantity cannot exceed ${maxQuantity}`);
+            e.preventDefault();
+            return false;
+        }
+        
+        console.log('Form validation passed, submitting...');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+    });
+});
+</script>
+
+<script>
+// New JavaScript for borrowing multiple items
+document.addEventListener('DOMContentLoaded', function() {
+    const selectItemsBtn = document.getElementById('selectItemsBtn');
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+    const borrowModal = document.getElementById('borrowModal');
+    const borrowItemsContainer = document.getElementById('borrowItemsContainer');
+    const borrowForm = document.getElementById('borrowForm');
+    
+    // Update select items button state when checkboxes change
+    itemCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+            selectItemsBtn.disabled = checkedItems.length === 0;
+        });
+    });
+    
+    // Filter items by category
+    window.filterItemsByCategory = function(category) {
+        const rows = document.querySelectorAll('.item-row');
+        rows.forEach(row => {
+            if (category === '' || row.dataset.category === category) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    };
+    
+    // Select items button click handler
+    selectItemsBtn.addEventListener('click', function() {
+        const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+        
+        if (selectedCheckboxes.length === 0) {
+            alert('Please select at least one item to borrow.');
+            return;
+        }
+        
+        // Clear previous items in the modal
+        borrowItemsContainer.innerHTML = '';
+        
+        // Add selected items to the modal
+        selectedCheckboxes.forEach(checkbox => {
+            const itemId = checkbox.value;
+            const itemName = checkbox.dataset.itemName;
+            const availableQuantity = parseInt(checkbox.dataset.availableQuantity);
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    ${itemName}
+                    <input type="hidden" name="item_ids[]" value="${itemId}">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    ${availableQuantity}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <input type="number" name="quantities[${itemId}]" min="1" max="${availableQuantity}" value="1" 
+                           class="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 quantity-input"
+                           data-item-id="${itemId}" data-max-quantity="${availableQuantity}">
+                </td>
+            `;
+            
+            borrowItemsContainer.appendChild(row);
+            
+            // Add event listener to update max quantity
+            const quantityInput = row.querySelector('.quantity-input');
+            quantityInput.addEventListener('change', function() {
+                const value = parseInt(this.value);
+                const max = parseInt(this.dataset.maxQuantity);
+                
+                if (value < 1) {
+                    this.value = 1;
+                } else if (value > max) {
+                    this.value = max;
+                }
+            });
+        });
+        
+        // Show the modal
+        borrowModal.classList.remove('hidden');
+    });
+    
+    // Close borrow modal
+    window.closeBorrowModal = function() {
+        borrowModal.classList.add('hidden');
+    };
+    
+    // Close modal when clicking outside
+    borrowModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeBorrowModal();
+        }
+    });
+    
+    // Form submission handler
+    borrowForm.addEventListener('submit', function(e) {
+        const quantityInputs = document.querySelectorAll('.quantity-input');
+        let isValid = true;
+        let errorMessage = '';
+        
+        // Validate quantities
+        quantityInputs.forEach(input => {
+            const value = parseInt(input.value);
+            const max = parseInt(input.dataset.maxQuantity);
+            
+            if (value < 1) {
+                isValid = false;
+                errorMessage = 'Quantity must be at least 1.';
+            } else if (value > max) {
+                isValid = false;
+                errorMessage = `Quantity cannot exceed ${max}.`;
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert(errorMessage);
+            return false;
+        }
+        
+        // Show loading state
+        const confirmBtn = document.getElementById('confirmBorrowBtn');
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Processing...';
+    });
+});
+</script>
+
 </x-app-layout>

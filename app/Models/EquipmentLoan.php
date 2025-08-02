@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
 class EquipmentLoan extends Model
@@ -21,9 +22,12 @@ class EquipmentLoan extends Model
     protected $casts = [
         'borrow_date' => 'date',
         'return_date' => 'date',
-        'quantity' => 'integer'
+        'quantity' => 'integer',
+        'cadet_id' => 'integer',
+        'item_id' => 'integer'
     ];
 
+    // Relationships
     public function cadet(): BelongsTo
     {
         return $this->belongsTo(Cadet::class);
@@ -34,6 +38,7 @@ class EquipmentLoan extends Model
         return $this->belongsTo(InventoryItem::class, 'item_id');
     }
 
+    // Helper methods for loan status
     public function isOverdue(): bool
     {
         if ($this->status === 'Returned') {
@@ -51,5 +56,157 @@ class EquipmentLoan extends Model
         }
         
         return $this->borrow_date->addDays(30)->diffInDays(now());
+    }
+
+    public function getDaysBorrowedAttribute(): int
+    {
+        if ($this->status === 'Returned' && $this->return_date) {
+            return $this->borrow_date->diffInDays($this->return_date);
+        }
+        
+        return $this->borrow_date->diffInDays(now());
+    }
+
+    public function getDueDateAttribute(): Carbon
+    {
+        return $this->borrow_date->addDays(30);
+    }
+
+    // Helper methods for item categories
+    public function isEquipment(): bool
+    {
+        return $this->inventoryItem?->category === 'equipment';
+    }
+
+    public function isUniform(): bool
+    {
+        return $this->inventoryItem?->category === 'uniform';
+    }
+
+    public function getCategoryBadgeColorAttribute(): string
+    {
+        return match($this->inventoryItem?->category) {
+            'equipment' => 'blue',
+            'uniform' => 'purple',
+            default => 'gray'
+        };
+    }
+
+    public function getItemCategoryAttribute(): string
+    {
+        return $this->inventoryItem?->category ?? 'Unknown';
+    }
+
+    // Status helper methods
+    public function isActive(): bool
+    {
+        return $this->status === 'Borrowed';
+    }
+
+    public function isReturned(): bool
+    {
+        return $this->status === 'Returned';
+    }
+
+    public function getStatusBadgeColorAttribute(): string
+    {
+        return match($this->status) {
+            'Borrowed' => $this->isOverdue() ? 'red' : 'yellow',
+            'Returned' => 'green',
+            'Overdue' => 'red',
+            default => 'gray'
+        };
+    }
+
+    // Query scopes
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 'Borrowed');
+    }
+
+    public function scopeReturned(Builder $query): Builder
+    {
+        return $query->where('status', 'Returned');
+    }
+
+    public function scopeOverdue(Builder $query): Builder
+    {
+        return $query->where('status', 'Borrowed')
+                    ->where('borrow_date', '<', now()->subDays(30));
+    }
+
+    public function scopeEquipmentOnly(Builder $query): Builder
+    {
+        return $query->whereHas('inventoryItem', function($q) {
+            $q->where('category', 'equipment');
+        });
+    }
+
+    public function scopeUniformOnly(Builder $query): Builder
+    {
+        return $query->whereHas('inventoryItem', function($q) {
+            $q->where('category', 'uniform');
+        });
+    }
+
+    public function scopeForCadet(Builder $query, int $cadetId): Builder
+    {
+        return $query->where('cadet_id', $cadetId);
+    }
+
+    public function scopeForItem(Builder $query, int $itemId): Builder
+    {
+        return $query->where('item_id', $itemId);
+    }
+
+    // Utility methods
+    public function canBeReturned(): bool
+    {
+        return $this->status === 'Borrowed';
+    }
+
+    public function markAsReturned(string $returnDate = null): bool
+    {
+        if (!$this->canBeReturned()) {
+            return false;
+        }
+
+        $this->update([
+            'status' => 'Returned',
+            'return_date' => $returnDate ?? now()->toDateString()
+        ]);
+
+        // Update inventory quantity
+        $this->inventoryItem->increment('available_quantity', $this->quantity);
+
+        return true;
+    }
+
+    public function getFormattedBorrowDateAttribute(): string
+    {
+        return $this->borrow_date->format('M d, Y');
+    }
+
+    public function getFormattedReturnDateAttribute(): string
+    {
+        return $this->return_date ? $this->return_date->format('M d, Y') : 'Not returned';
+    }
+
+    public function getFormattedDueDateAttribute(): string
+    {
+        return $this->due_date->format('M d, Y');
+    }
+
+    // Boot method for model events
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Automatically update status to overdue when checking
+        static::retrieved(function ($loan) {
+            if ($loan->status === 'Borrowed' && $loan->isOverdue()) {
+                $loan->update(['status' => 'Overdue']);
+            }
+        });
     }
 }

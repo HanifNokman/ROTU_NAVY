@@ -11,6 +11,8 @@ use App\Models\UniformComponent;
 use App\Models\UniformType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class InventoryController extends Controller
@@ -52,11 +54,22 @@ class InventoryController extends Controller
         // Get active equipment loans
         $activeLoans = $cadet->activeLoans()->with('inventoryItem')->get();
 
-        // Get available equipment items for borrowing
-        $availableItems = InventoryItem::where('category', 'Equipment')
+        // Get available items for borrowing - BOTH Equipment and Uniform
+        $availableItems = InventoryItem::whereIn('category', ['equipment', 'uniform'])
             ->where('available_quantity', '>', 0)
+            ->orderBy('category')
             ->orderBy('name')
             ->get();
+
+        // Debug log
+        \Log::info('Index method - Available items: ', [
+            'total_inventory_items' => InventoryItem::count(),
+            'equipment_items' => InventoryItem::where('category', 'equipment')->count(),
+            'uniform_items' => InventoryItem::where('category', 'uniform')->count(),
+            'available_borrowable_items' => $availableItems->count(),
+            'available_items_by_category' => $availableItems->groupBy('category')->map->count(),
+            'all_categories' => InventoryItem::distinct('category')->pluck('category')->toArray()
+        ]);
 
         return view('cadet.inventory', compact(
             'cadet',
@@ -207,11 +220,34 @@ class InventoryController extends Controller
 
     public function createLoan(Request $request)
     {
+        \Log::info('=== LOAN CREATION DEBUG START ===');
+        \Log::info('Request Data: ', $request->all());
+
         $cadet = $this->getCurrentCadet();
         
         if (!$cadet) {
             return redirect()->back()->with('error', 'Cadet profile not found.');
         }
+
+        // Check if we're handling multiple items or a single item
+        if ($request->has('item_ids')) {
+            // Handle multiple items
+            return $this->createMultipleLoans($request, $cadet);
+        } else {
+            // Handle single item (existing functionality)
+            return $this->createSingleLoan($request, $cadet);
+        }
+    }
+
+    private function createSingleLoan(Request $request, $cadet)
+    {
+        // Debug the specific item being requested
+        $requestedItem = InventoryItem::find($request->item_id);
+        \Log::info('Requested Item Details: ', [
+            'item' => $requestedItem?->toArray(),
+            'item_exists' => $requestedItem ? 'Yes' : 'No',
+            'item_category' => $requestedItem?->category ?? 'N/A'
+        ]);
 
         $request->validate([
             'item_id' => [
@@ -219,8 +255,16 @@ class InventoryController extends Controller
                 'exists:inventory_items,id',
                 function ($attribute, $value, $fail) {
                     $item = InventoryItem::find($value);
-                    if ($item && $item->category !== 'Equipment') {
-                        $fail('Only equipment items can be borrowed.');
+                    \Log::info('Validation check for item: ', [
+                        'item_id' => $value,
+                        'item_found' => $item ? 'Yes' : 'No',
+                        'item_category' => $item?->category ?? 'N/A',
+                        'is_borrowable' => $item && in_array($item->category, ['equipment', 'uniform']) ? 'Yes' : 'No'
+                    ]);
+                    
+                    // Updated validation - allow both Equipment and Uniform
+                    if ($item && !in_array($item->category, ['equipment', 'uniform'])) {
+                        $fail("Only equipment and uniform items can be borrowed. This item is categorized as: {$item->category}");
                     }
                 }
             ],
@@ -240,6 +284,18 @@ class InventoryController extends Controller
 
         $item = InventoryItem::find($request->item_id);
         
+        if (!$item) {
+            \Log::error('Item not found: ' . $request->item_id);
+            return redirect()->back()->with('error', 'Item not found.');
+        }
+
+        \Log::info('Item found: ', [
+            'item_id' => $item->id,
+            'item_name' => $item->name,
+            'available_quantity' => $item->available_quantity,
+            'category' => $item->category
+        ]);
+
         // Check if cadet already has an active loan for this item
         $existingLoan = EquipmentLoan::where('cadet_id', $cadet->id)
             ->where('item_id', $request->item_id)
@@ -247,22 +303,189 @@ class InventoryController extends Controller
             ->first();
 
         if ($existingLoan) {
+            \Log::warning('Existing active loan found: ', ['existing_loan_id' => $existingLoan->id]);
             return redirect()->back()->with('error', 'You already have an active loan for this item.');
         }
 
-        // Create the loan
-        EquipmentLoan::create([
-            'cadet_id' => $cadet->id,
-            'item_id' => $request->item_id,
-            'quantity' => $request->quantity,
-            'borrow_date' => $request->borrow_date,
-            'status' => 'Borrowed'
+        \Log::info('No existing active loan found');
+
+        try {
+            // Start database transaction
+            \DB::beginTransaction();
+            \Log::info('Database transaction started');
+
+            // Prepare loan data
+            $loanData = [
+                'cadet_id' => $cadet->id,
+                'item_id' => (int)$request->item_id,
+                'quantity' => (int)$request->quantity,
+                'borrow_date' => $request->borrow_date,
+                'status' => 'Borrowed'
+            ];
+
+            \Log::info('Loan data prepared: ', $loanData);
+
+            // Create the loan
+            $loan = EquipmentLoan::create($loanData);
+            
+            \Log::info('Loan created successfully: ', [
+                'loan_id' => $loan->id,
+                'loan_data' => $loan->toArray()
+            ]);
+
+            // Update available quantity
+            $oldQuantity = $item->available_quantity;
+            $item->decrement('available_quantity', $request->quantity);
+            $item->refresh();
+            
+            \Log::info('Inventory updated: ', [
+                'old_quantity' => $oldQuantity,
+                'new_quantity' => $item->available_quantity,
+                'decremented_by' => $request->quantity
+            ]);
+
+            // Commit transaction
+            \DB::commit();
+            \Log::info('Database transaction committed successfully');
+
+            // Verify the loan was actually saved
+            $savedLoan = EquipmentLoan::find($loan->id);
+            if ($savedLoan) {
+                \Log::info('Loan verification successful: ', $savedLoan->toArray());
+            } else {
+                \Log::error('Loan verification failed - loan not found in database');
+            }
+
+            \Log::info('=== LOAN CREATION DEBUG END - SUCCESS ===');
+            return redirect()->back()->with('success', 'Item borrowed successfully.');
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            
+            \Log::error('=== LOAN CREATION DEBUG END - ERROR ===');
+            \Log::error('Exception occurred: ', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to create loan: ' . $e->getMessage());
+        }
+    }
+
+    private function createMultipleLoans(Request $request, $cadet)
+    {
+        \Log::info('Creating multiple loans', ['item_ids' => $request->item_ids, 'quantities' => $request->quantities]);
+
+        // Validate the request
+        $request->validate([
+            'item_ids' => 'required|array',
+            'item_ids.*' => 'exists:inventory_items,id',
+            'quantities' => 'required|array',
+            'borrow_date' => 'required|date|before_or_equal:today'
         ]);
 
-        // Update available quantity
-        $item->decrement('available_quantity', $request->quantity);
+        // Validate each item and quantity
+        foreach ($request->item_ids as $itemId) {
+            $item = InventoryItem::find($itemId);
+            $quantity = (int)($request->quantities[$itemId] ?? 0);
 
-        return redirect()->back()->with('success', 'Equipment loan created successfully.');
+            if (!$item) {
+                return redirect()->back()->with('error', "Item with ID {$itemId} not found.");
+            }
+
+            if (!in_array($item->category, ['equipment', 'uniform'])) {
+                return redirect()->back()->with('error', "Only equipment and uniform items can be borrowed. {$item->name} is categorized as: {$item->category}");
+            }
+
+            if ($quantity < 1) {
+                return redirect()->back()->with('error', "Quantity for {$item->name} must be at least 1.");
+            }
+
+            if ($quantity > $item->available_quantity) {
+                return redirect()->back()->with('error', "Only {$item->available_quantity} {$item->name} items are available.");
+            }
+
+            // Check if cadet already has an active loan for this item
+            $existingLoan = EquipmentLoan::where('cadet_id', $cadet->id)
+                ->where('item_id', $itemId)
+                ->where('status', 'Borrowed')
+                ->first();
+
+            if ($existingLoan) {
+                return redirect()->back()->with('error', "You already have an active loan for {$item->name}.");
+            }
+        }
+
+        try {
+            // Start database transaction
+            \DB::beginTransaction();
+            \Log::info('Database transaction started for multiple loans');
+
+            $loanCount = 0;
+
+            // Create loans for each item
+            foreach ($request->item_ids as $itemId) {
+                $item = InventoryItem::find($itemId);
+                $quantity = (int)($request->quantities[$itemId] ?? 0);
+
+                if ($quantity > 0) {
+                    // Prepare loan data
+                    $loanData = [
+                        'cadet_id' => $cadet->id,
+                        'item_id' => $itemId,
+                        'quantity' => $quantity,
+                        'borrow_date' => $request->borrow_date,
+                        'status' => 'Borrowed'
+                    ];
+
+                    \Log::info('Loan data prepared: ', $loanData);
+
+                    // Create the loan
+                    $loan = EquipmentLoan::create($loanData);
+                    $loanCount++;
+
+                    \Log::info('Loan created successfully: ', [
+                        'loan_id' => $loan->id,
+                        'loan_data' => $loan->toArray()
+                    ]);
+
+                    // Update available quantity
+                    $oldQuantity = $item->available_quantity;
+                    $item->decrement('available_quantity', $quantity);
+                    $item->refresh();
+                    
+                    \Log::info('Inventory updated: ', [
+                        'item_id' => $itemId,
+                        'item_name' => $item->name,
+                        'old_quantity' => $oldQuantity,
+                        'new_quantity' => $item->available_quantity,
+                        'decremented_by' => $quantity
+                    ]);
+                }
+            }
+
+            // Commit transaction
+            \DB::commit();
+            \Log::info('Database transaction committed successfully for multiple loans');
+
+            \Log::info('=== MULTIPLE LOANS CREATION DEBUG END - SUCCESS ===');
+            return redirect()->back()->with('success', "{$loanCount} item(s) borrowed successfully.");
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            
+            \Log::error('=== MULTIPLE LOANS CREATION DEBUG END - ERROR ===');
+            \Log::error('Exception occurred: ', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to create loans: ' . $e->getMessage());
+        }
     }
 
     public function returnLoan(Request $request, EquipmentLoan $loan)
