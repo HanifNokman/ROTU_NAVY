@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEquipmentLoansTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
@@ -16,12 +16,7 @@ class CreateEquipmentLoansTable extends Migration
             $table->date('borrow_date');
             $table->date('return_date')->nullable();
             $table->enum('status', ['Borrowed', 'Returned'])->default('Borrowed');
-            $table->text('notes')->nullable();
             $table->timestamps();
-            
-            $table->index(['cadet_id', 'status']);
-            $table->index(['item_id', 'status']);
-            $table->index('borrow_date');
         });
     }
 
@@ -29,4 +24,4 @@ class CreateEquipmentLoansTable extends Migration
     {
         Schema::dropIfExists('equipment_loans');
     }
-}
+};
