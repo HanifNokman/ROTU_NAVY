@@ -43,7 +43,7 @@
                                 <label for="uniform_type" class="text-sm font-medium text-gray-700 mb-1">Uniform Type</label>
                                 <select name="uniform_type" id="uniform_type" 
                                         class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Type</option>
+                                    <option value="">All Type</option>
                                     @foreach($uniformTypes as $type)
                                         <option value="{{ $type->id }}" {{ $selectedUniformType == $type->id ? 'selected' : '' }}>
                                             {{ $type->type_name }}
@@ -56,7 +56,7 @@
                                 <label for="uniform_component" class="text-sm font-medium text-gray-700 mb-1">Uniform Component</label>
                                 <select name="uniform_component" id="uniform_component" 
                                         class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Component</option>
+                                    <option value="">All Component</option>
                                     @foreach($uniformComponents as $component)
                                         <option value="{{ $component->id }}" {{ $selectedUniformComponent == $component->id ? 'selected' : '' }}>
                                             {{ $component->component_name }}

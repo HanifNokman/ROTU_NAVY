@@ -8,13 +8,14 @@ use App\Models\CadetSize;
 use App\Models\EquipmentLoan;
 use App\Models\InventoryItem;
 use App\Models\UniformComponent;
+use App\Models\UniformType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class InventoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $cadet = $this->getCurrentCadet();
         
@@ -22,14 +23,28 @@ class InventoryController extends Controller
             return redirect()->back()->with('error', 'Cadet profile not found.');
         }
 
-        // Get cadet's uniform sizes
-        $uniformSizes = CadetSize::with('uniformComponent')
-            ->where('cadet_id', $cadet->id)
-            ->get()
-            ->keyBy('component_id');
+        $selectedUniformType = $request->get('uniform_type');
 
-        // Get all uniform components
-        $uniformComponents = UniformComponent::orderBy('component_name')->get();
+        // Get all uniform types
+        $uniformTypes = UniformType::orderBy('type_name')->get();
+
+        // Get uniform components related to selected uniform type
+        $uniformComponents = collect();
+        if ($selectedUniformType) {
+            $uniformComponents = UniformComponent::where('uniform_type_id', $selectedUniformType)
+                ->orderBy('component_name')
+                ->get();
+        }
+
+        // Get cadet's uniform sizes for components of selected uniform type
+        $uniformSizes = collect();
+        if ($selectedUniformType) {
+            $uniformSizes = CadetSize::with('uniformComponent')
+                ->where('cadet_id', $cadet->id)
+                ->whereIn('component_id', $uniformComponents->pluck('id'))
+                ->get()
+                ->keyBy('component_id');
+        }
 
         // Get past equipment loans
         $pastLoans = $cadet->pastLoans()->with('inventoryItem')->paginate(10, ['*'], 'past_page');
@@ -49,8 +64,47 @@ class InventoryController extends Controller
             'uniformComponents',
             'pastLoans',
             'activeLoans',
-            'availableItems'
+            'availableItems',
+            'uniformTypes',
+            'selectedUniformType'
         ));
+    }
+
+    public function getComponentsByType($uniformTypeId)
+    {
+        $cadet = $this->getCurrentCadet();
+        
+        if (!$cadet) {
+            return response()->json(['error' => 'Cadet profile not found.'], 404);
+        }
+
+        // Get uniform components for the selected type
+        $uniformComponents = UniformComponent::where('uniform_type_id', $uniformTypeId)
+            ->orderBy('component_name')
+            ->get();
+
+        // Get cadet's existing sizes for these components
+        $uniformSizes = CadetSize::where('cadet_id', $cadet->id)
+            ->whereIn('component_id', $uniformComponents->pluck('id'))
+            ->get()
+            ->keyBy('component_id');
+
+        // Prepare the response data
+        $components = $uniformComponents->map(function ($component) use ($uniformSizes) {
+            $sizeEntry = $uniformSizes->get($component->id);
+            return [
+                'id' => $component->id,
+                'name' => $component->component_name,
+                'size' => $sizeEntry ? $sizeEntry->size : '',
+                'is_issued' => $sizeEntry ? $sizeEntry->is_issued : false,
+                'can_delete' => $sizeEntry && !$sizeEntry->is_issued,
+                'size_entry_id' => $sizeEntry ? $sizeEntry->id : null
+            ];
+        });
+
+        return response()->json([
+            'components' => $components
+        ]);
     }
 
     public function updateUniformSize(Request $request)
@@ -61,26 +115,94 @@ class InventoryController extends Controller
             return redirect()->back()->with('error', 'Cadet profile not found.');
         }
 
+        // Validate all the components and sizes at once
         $request->validate([
-            'component_id' => [
+            'component_id' => 'required|array',
+            'component_id.*' => 'required|exists:uniform_components,id',
+            'size' => 'required|array',
+            'size.*' => [
                 'required',
-                'exists:uniform_components,id'
-            ],
-            'size' => 'required|string|max:10'
+                'string',
+                'max:10'
+            ]
         ]);
 
-        CadetSize::updateOrCreate(
-            [
-                'cadet_id' => $cadet->id,
-                'component_id' => $request->component_id
-            ],
-            [
-                'size' => $request->size,
-                'is_issued' => false // Reset issued status when size changes
-            ]
-        );
+        $componentIds = $request->input('component_id');
+        $sizes = $request->input('size');
+        $updatedCount = 0;
 
-        return redirect()->back()->with('success', 'Uniform size updated successfully.');
+        // Process each component-size pair
+        foreach ($componentIds as $index => $componentId) {
+            $size = $sizes[$index] ?? null;
+            
+            if (!$size || trim($size) === '') {
+                continue; // Skip if no size provided
+            }
+
+            // Validate size format based on component
+            $component = UniformComponent::find($componentId);
+            if (!$component) {
+                continue;
+            }
+
+            $name = strtolower($component->component_name);
+            $isValidSize = $this->validateSizeFormat($name, $size);
+
+            if (!$isValidSize) {
+                return redirect()->back()->with('error', "Invalid size format for {$component->component_name}. Please check the format requirements.");
+            }
+
+            // Check if this component already has an issued uniform
+            $existingSize = CadetSize::where('cadet_id', $cadet->id)
+                ->where('component_id', $componentId)
+                ->first();
+
+            if ($existingSize && $existingSize->is_issued) {
+                continue; // Skip updating issued uniforms
+            }
+
+            // Update or create the size entry
+            CadetSize::updateOrCreate(
+                [
+                    'cadet_id' => $cadet->id,
+                    'component_id' => $componentId
+                ],
+                [
+                    'size' => trim($size),
+                    'is_issued' => false // Reset issued status when size changes
+                ]
+            );
+
+            $updatedCount++;
+        }
+
+        if ($updatedCount > 0) {
+            return redirect()->back()->with('success', "Successfully updated {$updatedCount} uniform size(s).");
+        } else {
+            return redirect()->back()->with('info', 'No uniform sizes were updated.');
+        }
+    }
+
+    private function validateSizeFormat($componentName, $size)
+    {
+        $size = strtoupper(trim($size)); // Normalize to uppercase
+
+        if (strpos($componentName, 'hat') !== false || strpos($componentName, 'cap') !== false) {
+            // Hat sizes: e.g. 6 3/4, 7 1/2, 7
+            return preg_match('/^\d{1,2}( \d\/\d)?$/', $size);
+        } elseif (strpos($componentName, 'boot') !== false || strpos($componentName, 'shoe') !== false) {
+            // Boot/shoe sizes: 6, 7.5, 10, etc.
+            return preg_match('/^\d{1,2}(\.\d)?$/', $size);
+        } elseif (strpos($componentName, 'shirt') !== false || strpos($componentName, 'jacket') !== false || 
+                strpos($componentName, 'uniform') !== false || strpos($componentName, 'blouse') !== false) {
+            // Only allow XS, S, M, L, XL, XXL, XXXL (uppercase only)
+            return preg_match('/^X{0,3}(S|M|L)$/', $size);
+        } elseif (strpos($componentName, 'trouser') !== false || strpos($componentName, 'pant') !== false) {
+            return preg_match('/^\d{1,2}$/', $size);
+        } else {
+            // General fallback rule
+            return preg_match('/^(X{0,3}(S|M|L)|\d{1,2}|\d{1,3}(\.\d)?|\d{1,2} \d\/\d)$/', $size);
+        }
     }
 
     public function createLoan(Request $request)
@@ -156,7 +278,7 @@ class InventoryController extends Controller
         }
 
         $request->validate([
-            'return_date' => 'nullable|date|after_or_equal:' . $loan->borrow_date->format('Y-m-d')
+            'return_date' => 'nullable|date|after_or_equal:' . $loan->borrow_date->format('Y-m-d') . '|before_or_equal:today'
         ]);
 
         $loan->update([
@@ -182,9 +304,10 @@ class InventoryController extends Controller
             return redirect()->back()->with('error', 'Cannot delete size for issued uniform item.');
         }
 
+        $componentName = $cadetSize->uniformComponent->component_name;
         $cadetSize->delete();
 
-        return redirect()->back()->with('success', 'Uniform size removed successfully.');
+        return redirect()->back()->with('success', "Uniform size for {$componentName} removed successfully.");
     }
 
     private function getCurrentCadet()

@@ -1,6 +1,5 @@
 <?php
 
-// app/Models/CadetSize.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -27,5 +26,13 @@ class CadetSize extends Model
     public function uniformComponent(): BelongsTo
     {
         return $this->belongsTo(UniformComponent::class, 'component_id');
+    }
+
+    /**
+     * Automatically convert size to uppercase before saving.
+     */
+    public function setSizeAttribute($value)
+    {
+        $this->attributes['size'] = strtoupper(trim($value));
     }
 }
