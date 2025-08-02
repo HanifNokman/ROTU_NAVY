@@ -17,7 +17,7 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <!-- Intake Year Filter -->
@@ -39,7 +39,7 @@
             </div>
 
             <!-- Uniform Size Summary -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">
                         Uniform Size Summary - {{ collect($intakeYears)->firstWhere('year', $selectedIntakeYear)['label'] ?? 'Intake ' . $selectedIntakeYear }}
@@ -71,7 +71,7 @@
             </div>
 
             <!-- Equipment Loan Records -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Equipment Loan Records</h3>
                     
@@ -153,7 +153,7 @@
             </div>
 
             <!-- Inventory Summary -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Inventory Summary</h3>
                     
