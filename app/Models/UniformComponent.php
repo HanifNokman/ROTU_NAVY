@@ -5,13 +5,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UniformComponent extends Model
 {
     protected $fillable = [
-        'uniform_id',
+        'uniform_type_id',
         'component_name'
     ];
+
+    public function uniformType(): BelongsTo
+    {
+        return $this->belongsTo(UniformType::class);
+    }
 
     public function cadetSizes(): HasMany
     {

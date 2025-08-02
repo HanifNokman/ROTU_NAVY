@@ -8,12 +8,9 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('inventory_items', function (Blueprint $table) {
+        Schema::create('uniform_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->enum('category', ['equipment', 'uniform']);
-            $table->integer('total_quantity')->default(0);
-            $table->integer('available_quantity')->default(0);
+            $table->string('type_name')->unique();
             $table->text('description')->nullable();
             $table->timestamps();
         });
@@ -21,6 +18,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('inventory_items');
+        Schema::dropIfExists('uniform_types');
     }
 };

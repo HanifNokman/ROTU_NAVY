@@ -73,11 +73,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('instructor.allowance');
 
     // Inventory route
-    Route::get('/instructor/inventory', [InstructorInventoryController::class, 'index'])->name('instructor.inventory');
-
-    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+    
+    // Main inventory page
     Route::get('/inventory', [InstructorInventoryController::class, 'index'])->name('inventory');
-    Route::patch('/inventory/loan/{loan}', [InstructorInventoryController::class, 'updateLoanStatus'])->name('inventory.update-loan');
+    
+    // Uniform Type routes
+    Route::post('/inventory/uniform-types', [InstructorInventoryController::class, 'storeUniformType'])->name('inventory.uniform-types.store');
+    Route::get('/inventory/uniform-types', [InstructorInventoryController::class, 'getUniformTypes'])->name('inventory.uniform-types.index');
+    Route::delete('/inventory/uniform-types/{id}', [InstructorInventoryController::class, 'deleteUniformType'])->name('inventory.uniform-types.destroy');
+    
+    // Uniform Component routes
+    Route::post('/inventory/uniform-components', [InstructorInventoryController::class, 'storeUniformComponent'])->name('inventory.uniform-components.store');
+    Route::get('/inventory/uniform-components', [InstructorInventoryController::class, 'getUniformComponents'])->name('inventory.uniform-components.index');
+    Route::delete('/inventory/uniform-components/{id}', [InstructorInventoryController::class, 'deleteUniformComponent'])->name('inventory.uniform-components.destroy');
+    Route::get('/inventory/uniform-types/{uniformTypeId}/components', [InstructorInventoryController::class, 'getComponentsByType'])->name('inventory.components-by-type');
+    
+    // Equipment routes
+    Route::post('/inventory/equipment', [InstructorInventoryController::class, 'storeEquipment'])->name('inventory.equipment.store');
+    Route::get('/inventory/equipment', [InstructorInventoryController::class, 'getEquipment'])->name('inventory.equipment.index');
+    Route::delete('/inventory/equipment/{id}', [InstructorInventoryController::class, 'deleteEquipment'])->name('inventory.equipment.destroy');
+    
+    // Loan management
+    Route::patch('/inventory/loans/{loan}', [InstructorInventoryController::class, 'updateLoanStatus'])->name('inventory.update-loan');
+    
+    // Export routes
     Route::get('/inventory/export/uniforms', [InstructorInventoryController::class, 'exportUniformSizes'])->name('inventory.export.uniforms');
     Route::get('/inventory/export/loans', [InstructorInventoryController::class, 'exportEquipmentLoans'])->name('inventory.export.loans');
 });
