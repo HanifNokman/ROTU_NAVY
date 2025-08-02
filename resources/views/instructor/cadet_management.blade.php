@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
                 <div class="p-6 text-gray-900">
-<!-- Top Section: Filters and Sort Options -->
+<!-- Top Section: Filters and Sort Options - STATIC -->
 <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
     <!-- Left Side Filters -->
     <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
@@ -123,15 +123,37 @@
 </div>
                     </div>
 
-                    <!-- Cadet Information Table -->
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Number</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <!-- Save Changes Button for Position Management - STATIC -->
+                    @if($infoType == 'position' && $cadets->count() > 0)
+                        <div class="mb-4 flex justify-end">
+                            <button id="savePositionsBtn" 
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Save Changes
+                            </button>
+                        </div>
+                    @endif
+
+                    <!-- Mark as Passed Button for Swimming Management - STATIC -->
+                    @if($infoType == 'swimming' && $cadets->count() > 0)
+                        <div class="mb-4 flex justify-end">
+                            <button id="markAsPassedBtn" 
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                    disabled>
+                                Mark Selected as Passed
+                            </button>
+                        </div>
+                    @endif
+
+                    <!-- SCROLLABLE Cadet Information Table Container -->
+                    <div class="border border-gray-200 rounded-lg">
+                        <!-- Fixed Table Header -->
+                        <div class="bg-gray-50 border-b border-gray-200">
+                            <div class="px-6 py-3">
+                                <div class="grid grid-cols-5 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div>No.</div>
+                                    <div>Service Number</div>
+                                    <div>Name</div>
+                                    <div>
                                         @switch($infoType)
                                             @case('seniority')
                                                 IC Number
@@ -152,8 +174,8 @@
                                                 BMI & Last Updated
                                                 @break
                                         @endswitch
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    </div>
+                                    <div>
                                         @if($infoType == 'swimming')
                                             <div class="flex items-center">
                                                 <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
@@ -162,131 +184,125 @@
                                         @else
                                             Actions
                                         @endif
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Scrollable Table Body - MAX 10 ROWS VISIBLE -->
+                        <div class="overflow-y-auto" style="max-height: 600px;">
+                            <div class="bg-white">
                                 @forelse($cadets as $index => $cadet)
-                                    <tr class="hover:bg-gray-50 cursor-pointer cadet-row" data-cadet-id="{{ $cadet->id }}">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $cadets->firstItem() + $index }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $cadet->service_number ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {{ $cadet->user->name ?? 'Unknown' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            @switch($infoType)
-                                                @case('seniority')
-                                                    {{ $cadet->ic_number ?? 'N/A' }}
-                                                    @break
-                                                @case('position')
-                                                    {{ $cadet->position ?? 'Normal Cadet' }}
-                                                    @break
-                                                @case('gender')
-                                                    {{ $cadet->gender ?? 'N/A' }}
-                                                    @break
-                                                @case('cgpa')
-                                                    {{ $cadet->current_cgpa ? number_format($cadet->current_cgpa, 2) : 'N/A' }}
-                                                    @break
-                                                @case('swimming')
-                                                    @if($cadet->swimming_qualification)
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                            {{ $cadet->swimming_qualification == 'Pass' ? 'bg-green-100 text-green-800' : 
-                                                               ($cadet->swimming_qualification == 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                                            {{ $cadet->swimming_qualification }}
-                                                        </span>
-                                                    @else
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                            N/A
-                                                        </span>
-                                                    @endif
-                                                    @break
-                                                @case('bmi')
-                                                    <div>
-                                                        <div class="font-medium">{{ $cadet->BMI ? number_format($cadet->BMI, 1) : 'N/A' }}</div>
-                                                        <div class="text-xs text-gray-500">
-                                                            {{ $cadet->BMI_update_date ? $cadet->BMI_update_date->format('d/m/Y') : 'Not updated' }}
+                                    <div class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer cadet-row px-6 py-4" data-cadet-id="{{ $cadet->id }}">
+                                        <div class="grid grid-cols-5 gap-4 items-center">
+                                            <!-- No. -->
+                                            <div class="text-sm text-gray-900">
+                                                {{ $cadets->firstItem() + $index }}
+                                            </div>
+                                            
+                                            <!-- Service Number -->
+                                            <div class="text-sm text-gray-900">
+                                                {{ $cadet->service_number ?? 'N/A' }}
+                                            </div>
+                                            
+                                            <!-- Name -->
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $cadet->user->name ?? 'Unknown' }}
+                                            </div>
+                                            
+                                            <!-- Dynamic Info Column -->
+                                            <div class="text-sm text-gray-900">
+                                                @switch($infoType)
+                                                    @case('seniority')
+                                                        {{ $cadet->ic_number ?? 'N/A' }}
+                                                        @break
+                                                    @case('position')
+                                                        {{ $cadet->position ?? 'Normal Cadet' }}
+                                                        @break
+                                                    @case('gender')
+                                                        {{ $cadet->gender ?? 'N/A' }}
+                                                        @break
+                                                    @case('cgpa')
+                                                        {{ $cadet->current_cgpa ? number_format($cadet->current_cgpa, 2) : 'N/A' }}
+                                                        @break
+                                                    @case('swimming')
+                                                        @if($cadet->swimming_qualification)
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                                {{ $cadet->swimming_qualification == 'Pass' ? 'bg-green-100 text-green-800' : 
+                                                                   ($cadet->swimming_qualification == 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                                                {{ $cadet->swimming_qualification }}
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                                N/A
+                                                            </span>
+                                                        @endif
+                                                        @break
+                                                    @case('bmi')
+                                                        <div>
+                                                            <div class="font-medium">{{ $cadet->BMI ? number_format($cadet->BMI, 1) : 'N/A' }}</div>
+                                                            <div class="text-xs text-gray-500">
+                                                                {{ $cadet->BMI_update_date ? $cadet->BMI_update_date->format('d/m/Y') : 'Not updated' }}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    @break
-                                            @endswitch
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            @switch($infoType)
-                                                @case('seniority')
-                                                    <button class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 remove-cadet-btn" 
-                                                            data-cadet-id="{{ $cadet->id }}" 
-                                                            data-cadet-name="{{ $cadet->user->name }}">
-                                                        Remove Cadet
-                                                    </button>
-                                                    @break
-                                                @case('position')
-                                                    <select class="position-select border-gray-300 rounded text-sm" 
-                                                            data-cadet-id="{{ $cadet->id }}"
-                                                            name="positions[{{ $cadet->id }}]">
-                                                        @foreach(App\Models\Cadet::getPositions() as $value => $label)
-                                                            <option value="{{ $value }}" 
-                                                                    {{ ($cadet->position ?? 'Normal Cadet') == $value ? 'selected' : '' }}>
-                                                                {{ $label }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @break
-                                                @case('swimming')
-                                                    @if($cadet->swimming_qualification != 'Pass')
-                                                        <input type="checkbox" 
-                                                               class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
-                                                               data-cadet-id="{{ $cadet->id }}"
-                                                               onclick="event.stopPropagation()">
-                                                    @else
-                                                        <span class="text-green-600 font-medium">Passed</span>
-                                                    @endif
-                                                    @break
-                                                @default
-                                                    <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn" 
-                                                            data-cadet-id="{{ $cadet->id }}">
-                                                        View Profile
-                                                    </button>
-                                                    @break
-                                            @endswitch
-                                        </td>
-                                    </tr>
+                                                        @break
+                                                @endswitch
+                                            </div>
+                                            
+                                            <!-- Actions Column -->
+                                            <div class="text-sm font-medium">
+                                                @switch($infoType)
+                                                    @case('seniority')
+                                                        <button class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 remove-cadet-btn" 
+                                                                data-cadet-id="{{ $cadet->id }}" 
+                                                                data-cadet-name="{{ $cadet->user->name }}">
+                                                            Remove Cadet
+                                                        </button>
+                                                        @break
+                                                    @case('position')
+                                                        <select class="position-select border-gray-300 rounded text-sm" 
+                                                                data-cadet-id="{{ $cadet->id }}"
+                                                                name="positions[{{ $cadet->id }}]">
+                                                            @foreach(App\Models\Cadet::getPositions() as $value => $label)
+                                                                <option value="{{ $value }}" 
+                                                                        {{ ($cadet->position ?? 'Normal Cadet') == $value ? 'selected' : '' }}>
+                                                                    {{ $label }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        @break
+                                                    @case('swimming')
+                                                        @if($cadet->swimming_qualification != 'Pass')
+                                                            <input type="checkbox" 
+                                                                   class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                                                                   data-cadet-id="{{ $cadet->id }}"
+                                                                   onclick="event.stopPropagation()">
+                                                        @else
+                                                            <span class="text-green-600 font-medium">Passed</span>
+                                                        @endif
+                                                        @break
+                                                    @default
+                                                        <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn" 
+                                                                data-cadet-id="{{ $cadet->id }}">
+                                                            View Profile
+                                                        </button>
+                                                        @break
+                                                @endswitch
+                                            </div>
+                                        </div>
+                                    </div>
                                 @empty
-                                    <tr>
-                                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    <div class="px-6 py-8 text-center">
+                                        <div class="text-sm text-gray-500">
                                             No cadets found matching the current filters.
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </div>
                                 @endforelse
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Save Changes Button for Position Management -->
-                    @if($infoType == 'position' && $cadets->count() > 0)
-                        <div class="mt-4 sm:mt-0 sm:ml-4 flex justify-end w-full sm:w-auto flex-shrink-0">
-                            <button id="savePositionsBtn" 
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                                Save Changes
-                            </button>
-                        </div>
-                    @endif
-
-                    <!-- Mark as Passed Button for Swimming Management -->
-                    @if($infoType == 'swimming' && $cadets->count() > 0)
-                        <div class="mt-4 flex justify-end">
-                            <button id="markAsPassedBtn" 
-                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                    disabled>
-                                Mark Selected as Passed
-                            </button>
-                        </div>
-                    @endif
-
-                    <!-- Pagination -->
+                    <!-- Pagination - STATIC -->
                     <div class="mt-6">
                         {{ $cadets->appends(request()->query())->links() }}
                     </div>
@@ -460,7 +476,7 @@
                         return;
                     }
                     
-                    const cadetId = this.dataset.cadetId || this.closest('tr').dataset.cadetId;
+                    const cadetId = this.dataset.cadetId || this.closest('.cadet-row').dataset.cadetId;
                     showCadetProfile(cadetId);
                 });
             });

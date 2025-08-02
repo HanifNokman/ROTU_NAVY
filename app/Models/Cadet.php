@@ -127,4 +127,27 @@ class Cadet extends Model
             'Fail' => 'Fail'
         ];
     }
+
+    public function cadetSizes()
+    {
+        return $this->hasMany(CadetSize::class);
+    }
+
+    public function equipmentLoans()
+    {
+        return $this->hasMany(EquipmentLoan::class);
+    }
+
+    public function activeLoans()
+    {
+        return $this->hasMany(EquipmentLoan::class)
+                ->where('status', 'Borrowed');
+    }
+
+    public function pastLoans()
+    {
+        return $this->hasMany(EquipmentLoan::class)
+                ->where('status', 'Returned')
+                ->orderBy('return_date', 'desc');
+    }
 }
