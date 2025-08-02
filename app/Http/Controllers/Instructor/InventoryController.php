@@ -29,9 +29,12 @@ class InventoryController extends Controller
             ];
         }
 
-        // Get selected intake years for each section (default to latest)
+        // Get selected intake years for each section
+        // For uniform section, default to latest if not provided
         $selectedUniformIntakeYear = $request->get('intake_year', $intakeYears[0]['year']);
+        // For loan section, default to latest if not provided
         $selectedLoanIntakeYear = $request->get('loan_intake_year', $intakeYears[0]['year']);
+        
         $selectedUniformType = $request->get('uniform_type');
         $selectedUniformComponent = $request->get('uniform_component');
         $selectedCategory = $request->get('equipment_category');

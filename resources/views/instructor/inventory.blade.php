@@ -10,6 +10,11 @@
     <!-- Add CSRF token for AJAX requests -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <script>
+        // Reset submitting flag on page load
+        window.submitting = false;
+    </script>
+
     <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
@@ -140,8 +145,8 @@
                                 <select name="equipment_category" id="equipment_category" 
                                         class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                                     <option value="">All Categories</option>
-                                    <option value="equipment">Equipment</option>
-                                    <option value="uniform">Uniform</option>
+                                    <option value="equipment" {{ $selectedCategory === 'equipment' ? 'selected' : '' }}>Equipment</option>
+                                    <option value="uniform" {{ $selectedCategory === 'uniform' ? 'selected' : '' }}>Uniform</option>
                                 </select>
                             </div>
                             
@@ -935,7 +940,7 @@
             }
         }
 
-        // Filter functionality for Uniform Size Summary
+        // Filter functionality - keeping it simple and similar to working uniform filters
         document.addEventListener('DOMContentLoaded', function() {
             // Uniform filters
             const uniformIntakeSelect = document.getElementById('uniform_intake_year');
@@ -946,14 +951,14 @@
             const loanIntakeSelect = document.getElementById('loan_intake_year');
             const equipmentCategorySelect = document.getElementById('equipment_category');
 
-            // Handle uniform intake filter change
+            // Handle uniform intake filter change (this works)
             if (uniformIntakeSelect) {
                 uniformIntakeSelect.addEventListener('change', function() {
-                    filterUniformSection();
+                    submitFormWithAllFilters();
                 });
             }
 
-            // Handle uniform type filter change
+            // Handle uniform type filter change (this works)
             if (uniformTypeSelect) {
                 uniformTypeSelect.addEventListener('change', function() {
                     // Dynamic component loading based on uniform type
@@ -979,37 +984,43 @@
                             .catch(error => console.error('Error loading components:', error));
                     }
                     
-                    filterUniformSection();
+                    submitFormWithAllFilters();
                 });
             }
 
-            // Handle uniform component filter change
+            // Handle uniform component filter change (this works)
             if (uniformComponentSelect) {
                 uniformComponentSelect.addEventListener('change', function() {
-                    filterUniformSection();
+                    submitFormWithAllFilters();
                 });
             }
 
-            // Handle equipment intake filter change
+            // Handle equipment intake filter change (making this work like uniform filters)
             if (loanIntakeSelect) {
                 loanIntakeSelect.addEventListener('change', function() {
-                    filterEquipmentSection();
+                    submitFormWithAllFilters();
                 });
             }
 
-            // Handle equipment category filter change
+            // Handle equipment category filter change (making this work like uniform filters)
             if (equipmentCategorySelect) {
                 equipmentCategorySelect.addEventListener('change', function() {
-                    filterEquipmentSection();
+                    submitFormWithAllFilters();
                 });
             }
 
-            // Function to filter uniform section independently
-            function filterUniformSection() {
+            // Function to submit form with all current filter values
+            function submitFormWithAllFilters() {
+                // Prevent multiple submissions
+                if (window.submitting) return;
+                window.submitting = true;
+                
                 const form = document.createElement('form');
                 form.method = 'GET';
+                form.style.display = 'none';
                 
-                // Add uniform section filters
+                // Add all filter values to the form
+                // Uniform section filters
                 if (uniformIntakeSelect && uniformIntakeSelect.value) {
                     const intakeInput = document.createElement('input');
                     intakeInput.type = 'hidden';
@@ -1034,7 +1045,7 @@
                     form.appendChild(componentInput);
                 }
                 
-                // Add equipment section filters if they exist and have values
+                // Equipment section filters
                 if (loanIntakeSelect && loanIntakeSelect.value) {
                     const loanIntakeInput = document.createElement('input');
                     loanIntakeInput.type = 'hidden';
@@ -1051,7 +1062,7 @@
                     form.appendChild(categoryInput);
                 }
                 
-                // Add loan status if it exists
+                // Loan status
                 const activeBtn = document.getElementById('activeLoansBtn');
                 const returnedBtn = document.getElementById('returnedLoansBtn');
                 if (activeBtn && activeBtn.classList.contains('bg-green-600')) {
@@ -1073,81 +1084,6 @@
                     statusInput.name = 'loan_status';
                     statusInput.value = 'active';
                     form.appendChild(statusInput);
-                }
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-
-            // Function to filter equipment section independently
-            function filterEquipmentSection() {
-                const form = document.createElement('form');
-                form.method = 'GET';
-                
-                // Add equipment section filters
-                if (loanIntakeSelect && loanIntakeSelect.value) {
-                    const loanIntakeInput = document.createElement('input');
-                    loanIntakeInput.type = 'hidden';
-                    loanIntakeInput.name = 'loan_intake_year';
-                    loanIntakeInput.value = loanIntakeSelect.value;
-                    form.appendChild(loanIntakeInput);
-                }
-                
-                if (equipmentCategorySelect && equipmentCategorySelect.value) {
-                    const categoryInput = document.createElement('input');
-                    categoryInput.type = 'hidden';
-                    categoryInput.name = 'equipment_category';
-                    categoryInput.value = equipmentCategorySelect.value;
-                    form.appendChild(categoryInput);
-                }
-                
-                // Add loan status if it exists
-                const activeBtn = document.getElementById('activeLoansBtn');
-                const returnedBtn = document.getElementById('returnedLoansBtn');
-                if (activeBtn && activeBtn.classList.contains('bg-green-600')) {
-                    const statusInput = document.createElement('input');
-                    statusInput.type = 'hidden';
-                    statusInput.name = 'loan_status';
-                    statusInput.value = 'active';
-                    form.appendChild(statusInput);
-                } else if (returnedBtn && returnedBtn.classList.contains('bg-green-600')) {
-                    const statusInput = document.createElement('input');
-                    statusInput.type = 'hidden';
-                    statusInput.name = 'loan_status';
-                    statusInput.value = 'returned';
-                    form.appendChild(statusInput);
-                } else {
-                    // Default to active if no status is selected
-                    const statusInput = document.createElement('input');
-                    statusInput.type = 'hidden';
-                    statusInput.name = 'loan_status';
-                    statusInput.value = 'active';
-                    form.appendChild(statusInput);
-                }
-                
-                // Add uniform section filters if they exist and have values
-                if (uniformIntakeSelect && uniformIntakeSelect.value) {
-                    const intakeInput = document.createElement('input');
-                    intakeInput.type = 'hidden';
-                    intakeInput.name = 'intake_year';
-                    intakeInput.value = uniformIntakeSelect.value;
-                    form.appendChild(intakeInput);
-                }
-                
-                if (uniformTypeSelect && uniformTypeSelect.value) {
-                    const typeInput = document.createElement('input');
-                    typeInput.type = 'hidden';
-                    typeInput.name = 'uniform_type';
-                    typeInput.value = uniformTypeSelect.value;
-                    form.appendChild(typeInput);
-                }
-                
-                if (uniformComponentSelect && uniformComponentSelect.value) {
-                    const componentInput = document.createElement('input');
-                    componentInput.type = 'hidden';
-                    componentInput.name = 'uniform_component';
-                    componentInput.value = uniformComponentSelect.value;
-                    form.appendChild(componentInput);
                 }
                 
                 document.body.appendChild(form);
@@ -1168,47 +1104,24 @@
                 ? 'px-4 py-2 text-sm font-medium rounded-r-md bg-green-600 text-white'
                 : 'px-4 py-2 text-sm font-medium rounded-r-md bg-gray-200 text-gray-700 hover:bg-gray-300';
             
-            // Filter equipment section with new status
-            filterEquipmentSectionWithStatus(status);
-        }
-        
-        // Function to filter equipment section with specific status
-        function filterEquipmentSectionWithStatus(status) {
+            // Submit form with all filters including the new status
+            // Prevent multiple submissions
+            if (window.submitting) return;
+            window.submitting = true;
+            
             const form = document.createElement('form');
             form.method = 'GET';
+            form.style.display = 'none';
             
             // Get current filter values
-            const loanIntakeSelect = document.getElementById('loan_intake_year');
-            const equipmentCategorySelect = document.getElementById('equipment_category');
             const uniformIntakeSelect = document.getElementById('uniform_intake_year');
             const uniformTypeSelect = document.getElementById('uniform_type');
             const uniformComponentSelect = document.getElementById('uniform_component');
+            const loanIntakeSelect = document.getElementById('loan_intake_year');
+            const equipmentCategorySelect = document.getElementById('equipment_category');
             
-            // Add equipment section filters
-            if (loanIntakeSelect && loanIntakeSelect.value) {
-                const loanIntakeInput = document.createElement('input');
-                loanIntakeInput.type = 'hidden';
-                loanIntakeInput.name = 'loan_intake_year';
-                loanIntakeInput.value = loanIntakeSelect.value;
-                form.appendChild(loanIntakeInput);
-            }
-            
-            if (equipmentCategorySelect && equipmentCategorySelect.value) {
-                const categoryInput = document.createElement('input');
-                categoryInput.type = 'hidden';
-                categoryInput.name = 'equipment_category';
-                categoryInput.value = equipmentCategorySelect.value;
-                form.appendChild(categoryInput);
-            }
-            
-            // Add loan status
-            const statusInput = document.createElement('input');
-            statusInput.type = 'hidden';
-            statusInput.name = 'loan_status';
-            statusInput.value = status;
-            form.appendChild(statusInput);
-            
-            // Add uniform section filters if they exist and have values
+            // Add all filter values to the form
+            // Uniform section filters
             if (uniformIntakeSelect && uniformIntakeSelect.value) {
                 const intakeInput = document.createElement('input');
                 intakeInput.type = 'hidden';
@@ -1232,6 +1145,30 @@
                 componentInput.value = uniformComponentSelect.value;
                 form.appendChild(componentInput);
             }
+            
+            // Equipment section filters
+            if (loanIntakeSelect && loanIntakeSelect.value) {
+                const loanIntakeInput = document.createElement('input');
+                loanIntakeInput.type = 'hidden';
+                loanIntakeInput.name = 'loan_intake_year';
+                loanIntakeInput.value = loanIntakeSelect.value;
+                form.appendChild(loanIntakeInput);
+            }
+            
+            if (equipmentCategorySelect && equipmentCategorySelect.value) {
+                const categoryInput = document.createElement('input');
+                categoryInput.type = 'hidden';
+                categoryInput.name = 'equipment_category';
+                categoryInput.value = equipmentCategorySelect.value;
+                form.appendChild(categoryInput);
+            }
+            
+            // Add loan status
+            const statusInput = document.createElement('input');
+            statusInput.type = 'hidden';
+            statusInput.name = 'loan_status';
+            statusInput.value = status;
+            form.appendChild(statusInput);
             
             document.body.appendChild(form);
             form.submit();
