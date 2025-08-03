@@ -10,6 +10,8 @@ use App\Http\Controllers\Cadet\LearningHubController as CadetLearningHubControll
 use App\Http\Controllers\Instructor\CadetManagementController;
 use App\Http\Controllers\Instructor\InventoryController as InstructorInventoryController;
 use App\Http\Controllers\Cadet\InventoryController as CadetInventoryController;
+use App\Http\Controllers\Instructor\GalleryController as InstructorGalleryController;
+use App\Http\Controllers\Cadet\GalleryController as CadetGalleryController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -102,12 +104,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/inventory/export/loans', [InstructorInventoryController::class, 'exportEquipmentLoans'])->name('inventory.export.loans');
     });
 
-    // Learning Hub route
-    Route::get('/instructor/learning_hub', [InstructorLearningHubController::class, 'index'])->name('instructor.learning_hub');
-
+    // Learning Hub routes
     Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+        // Main learning hub page
+        Route::get('/learning_hub', [InstructorLearningHubController::class, 'index'])->name('learning_hub');
+        
         // Learning Materials routes
-        Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
         Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
         Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
         Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
@@ -118,14 +120,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/categories/{category}', [InstructorLearningHubController::class, 'destroyCategory'])->name('learning_material_categories.destroy');
     });
 
-    // Gallery route
-    Route::get('/instructor/gallery', function () {
-        $user = auth()->user();
-        if (!$user || $user->status !== 'accepted') {
-            abort(403, 'Your account is not accepted.');
-        }
-        return view('instructor.gallery');
-    })->name('instructor.gallery');
+    // Gallery routes - FIXED
+    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+        
+        // Gallery routes - Using the correct controller
+        Route::get('/gallery', [InstructorGalleryController::class, 'index'])->name('gallery');
+        Route::post('/gallery', [InstructorGalleryController::class, 'store'])->name('gallery.store');
+        Route::put('/gallery/{gallery}', [InstructorGalleryController::class, 'update'])->name('gallery.update');
+        Route::delete('/gallery/{gallery}', [InstructorGalleryController::class, 'destroy'])->name('gallery.destroy');
+        
+        // Gallery category routes
+        Route::post('/gallery-categories', [InstructorGalleryController::class, 'storeCategory'])->name('gallery_categories.store');
+        Route::delete('/gallery-categories/{category}', [InstructorGalleryController::class, 'destroyCategory'])->name('gallery_categories.destroy');
+        
+    });
 
     // Pending Verification routes
     Route::get('/instructor/pending-verification', [PendingVerificationController::class, 'index'])->name('pending.verification');
@@ -176,9 +184,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Cadet Gallery
-    Route::get('/cadet/gallery', function () {
-        return view('cadet.gallery');
-    })->name('cadet.gallery');
+     Route::get('/cadet/gallery', [CadetGalleryController::class, 'index'])->name('cadet.gallery');
 
     // Cadet Attendance
     Route::get('/cadet/attendance', function () {
@@ -214,9 +220,5 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
-
-Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
-    Route::get('/learning-materials', [InstructorLearningHubController::class, 'index'])->name('learning_materials');
-});
 
 require __DIR__.'/auth.php';
