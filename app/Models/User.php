@@ -46,4 +46,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the galleries for the user (instructor).
+     */
+    public function galleries()
+    {
+        return $this->hasMany(Gallery::class, 'instructor_id');
+    }
+
+    /**
+     * Get the gallery categories for the user (instructor).
+     */
+    public function galleryCategories()
+    {
+        return $this->hasMany(GalleryCategory::class, 'instructor_id');
+    }
 }
