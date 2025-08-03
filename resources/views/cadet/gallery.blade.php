@@ -9,45 +9,31 @@
         <div class="bg-white shadow rounded-lg p-6 transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
             <div class="p-6 text-gray-900 w-full">
                 
-                <!-- Filters Section -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <!-- Category Filter -->
-                        <form method="GET" action="{{ route('cadet.gallery') }}" class="flex items-center gap-2">
-                            <input type="hidden" name="instructor" value="{{ request('instructor') }}">
-                            <label for="category" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Category:</label>
-                            <select name="category" id="category" onchange="this.form.submit()" class="border-gray-300 rounded-md shadow-sm">
-                                <option value="">All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </form>
-
-                        <!-- Instructor Filter -->
-                        <form method="GET" action="{{ route('cadet.gallery') }}" class="flex items-center gap-2">
-                            <input type="hidden" name="category" value="{{ request('category') }}">
-                            <label for="instructor" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Instructor:</label>
-                            <select name="instructor" id="instructor" onchange="this.form.submit()" class="border-gray-300 rounded-md shadow-sm">
-                                <option value="">All Instructors</option>
-                                @foreach($instructors as $instructor)
-                                    <option value="{{ $instructor->id }}" @if(request('instructor') == $instructor->id) selected @endif>
-                                        {{ $instructor->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </form>
-                    </div>
-
-                    <!-- Clear Filters -->
-                    @if(request()->hasAny(['category', 'instructor']))
+                <!-- Category Toggle Buttons -->
+                <div class="mb-6">
+                    <div class="flex flex-wrap gap-3">
+                        <!-- All Categories Button -->
                         <a href="{{ route('cadet.gallery') }}" 
-                           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200">
-                            Clear Filters
+                           class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ !request('category') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                            All
                         </a>
-                    @endif
+                        
+                        <!-- Individual Category Buttons -->
+                        @foreach($categories as $category)
+                            <a href="{{ route('cadet.gallery', ['category' => $category->id]) }}" 
+                               class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ request('category') == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                                {{ $category->name }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Gallery Stats -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <div class="flex flex-wrap gap-4 text-sm text-blue-800">
+                        <span><strong>Total Pictures:</strong> {{ $galleries->count() }}</span>
+                        <span><strong>Categories:</strong> {{ $categories->count() }}</span>
+                    </div>
                 </div>
 
                 <!-- Category Grouped Gallery -->
@@ -60,11 +46,11 @@
                 @if($galleriesByCategory->isNotEmpty())
                     @foreach($galleriesByCategory as $categoryName => $categoryGalleries)
                         <!-- Category Header Button -->
-                        <div class="mb-5">
-                            <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-8 py-2 rounded-xl shadow-lg mb-6">
+                        <div class="mb-8">
+                            <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-8 py-1 rounded-xl shadow-lg mb-6">
                                 <div class="flex items-center justify-between">
                                     <h2 class="text-2xl md:text-3xl font-bold tracking-wide">{{ $categoryName }}</h2>
-                                    <span class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-full text-sm font-medium">
+                                    <span class="bg-white bg-opacity-20 text-white px-3 py-1 rounded-full text-sm font-medium">
                                         {{ $categoryGalleries->count() }} {{ Str::plural('Photo', $categoryGalleries->count()) }}
                                     </span>
                                 </div>
@@ -80,7 +66,7 @@
                                             <img src="{{ asset($gallery->image_path) }}" 
                                                  alt="{{ $gallery->title }}" 
                                                  class="w-full h-full object-cover cursor-pointer"
-                                                 onclick="openImageModal('{{ asset($gallery->image_path) }}', '{{ $gallery->title }}', '{{ $gallery->description }}', '{{ $gallery->instructor->name ?? 'Unknown' }}', '{{ $gallery->category->name ?? 'N/A' }}')">
+                                                 onclick="openImageModal('{{ asset($gallery->image_path) }}', '{{ $gallery->title }}', '{{ $gallery->description }}', '{{ $gallery->instructor->name ?? 'Unknown' }}', '{{ $gallery->category->name ?? 'N/A' }}', '{{ $gallery->created_at->format('M d, Y') }}')">>
                                         @else
                                             <div class="w-full h-full flex items-center justify-center text-gray-400">
                                                 <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,8 +95,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         <p class="mt-2 text-gray-500">
-                            @if(request()->hasAny(['category', 'instructor']))
-                                No gallery items found with the current filters.
+                            @if(request('category'))
+                                No gallery items found in this category.
                             @else
                                 No gallery items available yet.
                             @endif
@@ -163,12 +149,13 @@
 
     <script>
         // Image Preview Functions
-        function openImageModal(imageSrc, title, description, instructor, category) {
+        function openImageModal(imageSrc, title, description, instructor, category, uploadDate) {
             document.getElementById('previewImage').src = imageSrc;
             document.getElementById('previewTitle').textContent = title;
             document.getElementById('previewDescription').textContent = description || 'No description available.';
             document.getElementById('previewInstructor').textContent = instructor;
             document.getElementById('previewCategory').textContent = category;
+            document.getElementById('previewDate').textContent = uploadDate;
             document.getElementById('imagePreviewModal').classList.remove('hidden');
             
             // Prevent body scroll when modal is open
