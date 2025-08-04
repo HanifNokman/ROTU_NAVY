@@ -12,6 +12,8 @@ use App\Http\Controllers\Instructor\InventoryController as InstructorInventoryCo
 use App\Http\Controllers\Cadet\InventoryController as CadetInventoryController;
 use App\Http\Controllers\Instructor\GalleryController as InstructorGalleryController;
 use App\Http\Controllers\Cadet\GalleryController as CadetGalleryController;
+use App\Http\Controllers\Instructor\TrainingController as InstructorTrainingController;
+use App\Http\Controllers\Cadet\TrainingController as CadetTrainingController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -65,9 +67,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Training route
-    Route::get('/instructor/training', function () {
-        return view('instructor.training');
-    })->name('instructor.training');
+    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+        Route::get('/training', [InstructorTrainingController::class, 'index'])->name('training');
+        Route::post('/training', [InstructorTrainingController::class, 'store'])->name('training.store');
+        Route::get('/training/{training}', [InstructorTrainingController::class, 'show'])->name('training.show');
+        Route::put('/training/{training}', [InstructorTrainingController::class, 'update'])->name('training.update');
+        Route::delete('/training/{training}', [InstructorTrainingController::class, 'destroy'])->name('training.destroy');
+    });
 
     // Allowance route
     Route::get('/instructor/allowance', function () {
@@ -154,9 +160,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('cadet.dashboard');
 
     // Cadet Training
-    Route::get('/cadet/training', function () {
-        return view('cadet.training');
-    })->name('cadet.training');
+    Route::get('/cadet/training', [CadetTrainingController::class, 'index'])->name('cadet.training');
 
     // Cadet Allowance
     Route::get('/cadet/allowance', function () {
