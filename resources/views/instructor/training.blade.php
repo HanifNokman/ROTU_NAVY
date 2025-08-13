@@ -150,295 +150,539 @@
                 </div>
             </div>
 
-            <!-- Attendance List Modal -->
-    <div id="attendanceListModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
-                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-900">Attendance List</h3>
-                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100" title="Close">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+<!-- Updated Attendance List Modal Section -->
+<div id="attendanceListModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-900">Attendance List</h3>
+                <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100" title="Close">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <!-- Loading State -->
+                <div id="attendanceListLoading" class="text-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p class="mt-2 text-gray-600">Loading attendance data...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="attendanceListError" class="hidden text-center py-8">
+                    <div class="text-red-500 mb-4">
+                        <i class="fas fa-exclamation-triangle text-4xl"></i>
+                    </div>
+                    <p class="text-gray-600 mb-4" id="attendanceListErrorMessage">Failed to load attendance data</p>
+                    <button onclick="fetchAttendanceListData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                        <i class="fas fa-refresh mr-2"></i>
+                        Retry
                     </button>
                 </div>
-                <div class="p-6">
-                    <!-- Loading State -->
-                    <div id="attendanceListLoading" class="text-center py-8">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                        <p class="mt-2 text-gray-600">Loading attendance data...</p>
-                    </div>
 
-                    <!-- Error State -->
-                    <div id="attendanceListError" class="hidden text-center py-8">
-                        <div class="text-red-500 mb-4">
-                            <i class="fas fa-exclamation-triangle text-4xl"></i>
-                        </div>
-                        <p class="text-gray-600 mb-4" id="attendanceListErrorMessage">Failed to load attendance data</p>
-                        <button onclick="fetchAttendanceListData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
-                            <i class="fas fa-refresh mr-2"></i>
-                            Retry
-                        </button>
-                    </div>
-
-                    <!-- Main Content -->
-                    <div id="attendanceListContent" class="hidden">
-                        <div class="flex flex-wrap items-end gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                <!-- Main Content -->
+                <div id="attendanceListContent" class="hidden">
+                    <!-- First Row: Filters -->
+                    <div class="flex flex-wrap items-end justify-between gap-3 mb-6 p-4 bg-gray-50 rounded-lg">
+                        <!-- Left Side: Year, Month, Intake Filters -->
+                        <div class="flex flex-wrap items-end gap-3">
                             <div class="flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Year</label>
-                                <select id="attendanceListYearFilter" class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                                <select id="attendanceListYearFilter" class="w-24 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                                     <option value="">Select Year</option>
                                 </select>
                             </div>
                             <div class="flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Month</label>
-                                <select id="attendanceListMonthFilter" class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                                <select id="attendanceListMonthFilter" class="w-36 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                                     <option value="">Select Month</option>
                                 </select>
                             </div>
                             <div id="attendanceListIntakeSection" class="hidden flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Intake</label>
-                                <select id="attendanceListIntakeFilter" class="w-28 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
-                                    <option value="">All</option>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Intake</label>
+                                <select id="attendanceListIntakeFilter" class="w-32 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                                    <option value="">All Intakes</option>
                                 </select>
                             </div>
-                            <div class="flex-grow"></div>
-                            <div class="flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                                <div class="flex gap-1">
-                                    <button id="attendanceListAll" class="px-2 py-1 text-xs rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200" onclick="setAttendanceListFilter('all')">All</button>
-                                    <button id="attendanceListPresent" class="px-2 py-1 text-xs rounded bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 transition-colors duration-200" onclick="setAttendanceListFilter('present')">Present</button>
-                                    <button id="attendanceListAbsent" class="px-2 py-1 text-xs rounded bg-red-100 text-red-800 hover:bg-red-200 border border-red-300 transition-colors duration-200" onclick="setAttendanceListFilter('absent')">Absent</button>
-                                </div>
-                            </div>
-                            <div id="attendanceListSummary" class="hidden flex-shrink-0 ml-4">
-                                <div class="bg-white px-3 py-2 rounded border border-gray-200">
-                                    <div class="text-xs text-gray-700">
-                                        <div class="flex justify-between">
-                                            <span>Total:</span>
-                                            <span id="summaryTotal" class="font-semibold ml-2">0</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Present:</span>
-                                            <span id="summaryPresent" class="font-semibold ml-2">0</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Absent:</span>
-                                            <span id="summaryAbsent" class="font-semibold ml-2">0</span>
-                                        </div>
-                                    </div>
-                                </div>
+                        </div>
+
+                        <!-- Right Side: Attendance Status Filter -->
+                        <div class="flex-shrink-0">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Attendance Status</label>
+                            <div class="flex gap-1">
+                                <button id="attendanceListAll" class="px-3 py-2 text-sm rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200 hover:bg-blue-700" onclick="setAttendanceListFilter('all')">All</button>
+                                <button id="attendanceListPresent" class="px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-800 border border-gray-300 transition-colors duration-200" onclick="setAttendanceListFilter('present')">Present</button>
+                                <button id="attendanceListAbsent" class="px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-800 border border-gray-300 transition-colors duration-200" onclick="setAttendanceListFilter('absent')">Absent</button>
                             </div>
                         </div>
-                        <div id="attendanceListCadets"></div>
-                        <div id="attendanceListEmpty" class="hidden text-center py-8 text-gray-400">No trainings found for selected filters.</div>
+                    </div>
+
+                    <!-- Second Row: Training Dropdowns/Accordions -->
+                    <div id="attendanceListTrainings" class="space-y-4">
+                        <!-- Training accordions will be populated here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="attendanceListEmpty" class="hidden text-center py-12 text-gray-400">
+                        <i class="fas fa-calendar-times text-4xl mb-4"></i>
+                        <h4 class="text-lg font-medium text-gray-500 mb-2">No Trainings Found</h4>
+                        <p class="text-sm">No training sessions found for the selected filters.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-    // Enhanced Attendance List Modal Logic
-    let attendanceListData = [];
-    let attendanceListMonths = [];
-    let currentAttendanceListYear = '';
-    let currentAttendanceListMonth = '';
-    let currentAttendanceListIntake = '';
-    let currentAttendanceListFilter = 'all';
-    let openTrainingId = null;
+<script>
+// Enhanced Attendance List Modal Logic
+let attendanceListData = [];
+let attendanceListMonths = [];
+let currentAttendanceListYear = '';
+let currentAttendanceListMonth = '';
+let currentAttendanceListIntake = '';
+let currentAttendanceListFilter = 'all';
+let openAccordionId = null;
+let allAvailableIntakes = [];
 
-    function openAttendanceListModal() {
-        document.getElementById('attendanceListModal').classList.remove('hidden');
-        resetAttendanceListModal();
-        fetchAttendanceListYears();
-    }
+function openAttendanceListModal() {
+    document.getElementById('attendanceListModal').classList.remove('hidden');
+    resetAttendanceListModal();
+    fetchAttendanceListYears();
+}
 
-    function closeAttendanceListModal() {
-        document.getElementById('attendanceListModal').classList.add('hidden');
-        resetAttendanceListModal();
-    }
+function closeAttendanceListModal() {
+    document.getElementById('attendanceListModal').classList.add('hidden');
+    resetAttendanceListModal();
+}
 
-    function resetAttendanceListModal() {
-        attendanceListData = [];
-        attendanceListMonths = [];
-        currentAttendanceListYear = '';
+function resetAttendanceListModal() {
+    attendanceListData = [];
+    attendanceListMonths = [];
+    allAvailableIntakes = [];
+    currentAttendanceListYear = '';
+    currentAttendanceListMonth = '';
+    currentAttendanceListIntake = '';
+    openAccordionId = null;
+    
+    // Reset UI states
+    document.getElementById('attendanceListLoading').classList.remove('hidden');
+    document.getElementById('attendanceListContent').classList.add('hidden');
+    document.getElementById('attendanceListError').classList.add('hidden');
+    document.getElementById('attendanceListYearFilter').innerHTML = '<option value="">Select Year</option>';
+    document.getElementById('attendanceListMonthFilter').innerHTML = '<option value="">Select Month</option>';
+    document.getElementById('attendanceListIntakeSection').classList.add('hidden');
+    document.getElementById('attendanceListTrainings').innerHTML = '';
+    
+    // Reset filter buttons
+    setAttendanceListFilter('all');
+}
+
+function fetchAttendanceListYears() {
+    fetch('/instructor/getYears')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.years) {
+                const yearSelect = document.getElementById('attendanceListYearFilter');
+                yearSelect.innerHTML = '<option value="">Select Year</option>';
+                
+                data.years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+                
+                // Set current year as default
+                const currentYear = new Date().getFullYear();
+                if (data.years.includes(currentYear)) {
+                    yearSelect.value = currentYear;
+                    currentAttendanceListYear = currentYear;
+                    fetchAttendanceListMonths();
+                }
+            }
+            
+            document.getElementById('attendanceListLoading').classList.add('hidden');
+            document.getElementById('attendanceListContent').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error fetching years:', error);
+            showAttendanceListError('Failed to load years');
+        });
+
+    // Set up event listeners
+    document.getElementById('attendanceListYearFilter').onchange = function() {
+        currentAttendanceListYear = this.value;
         currentAttendanceListMonth = '';
         currentAttendanceListIntake = '';
-        openTrainingId = null;
-        document.getElementById('attendanceListLoading').classList.remove('hidden');
-        document.getElementById('attendanceListContent').classList.add('hidden');
-        document.getElementById('attendanceListError').classList.add('hidden');
-        document.getElementById('attendanceListYearFilter').innerHTML = '<option value="">Select Year</option>';
         document.getElementById('attendanceListMonthFilter').innerHTML = '<option value="">Select Month</option>';
+        document.getElementById('attendanceListTrainings').innerHTML = '';
         document.getElementById('attendanceListIntakeSection').classList.add('hidden');
-        setAttendanceListFilter('all');
-    }
-
-    function fetchAttendanceListYears() {
-        const currentYear = new Date().getFullYear();
-        const years = [];
-        for (let i = 0; i < 4; i++) {
-            years.push(currentYear - i);
-        }
-        const yearSelect = document.getElementById('attendanceListYearFilter');
-        yearSelect.innerHTML = '<option value="">Select Year</option>';
-        years.forEach(year => {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = year;
-            yearSelect.appendChild(option);
-        });
-        yearSelect.value = currentYear;
-        currentAttendanceListYear = currentYear;
-        fetchAttendanceListMonths();
-        yearSelect.onchange = function() {
-            currentAttendanceListYear = this.value;
+        
+        if (currentAttendanceListYear) {
             fetchAttendanceListMonths();
-        };
-    }
+        }
+    };
+}
 
-    function fetchAttendanceListMonths() {
-        if (!currentAttendanceListYear) return;
+function fetchAttendanceListMonths() {
+    if (!currentAttendanceListYear) return;
+    
     fetch(`/instructor/getMonths?year=${currentAttendanceListYear}`)
-            .then(response => response.json())
-            .then(data => {
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.months) {
                 const monthSelect = document.getElementById('attendanceListMonthFilter');
                 monthSelect.innerHTML = '<option value="">Select Month</option>';
-                if (data.months && data.months.length > 0) {
-                    data.months.forEach(monthNum => {
-                        const date = new Date(currentAttendanceListYear, monthNum - 1);
-                        const monthDisplay = date.toLocaleString('en-US', { month: 'long' });
-                        const option = document.createElement('option');
-                        option.value = monthNum;
-                        option.textContent = monthDisplay;
-                        monthSelect.appendChild(option);
-                    });
-                    monthSelect.value = data.months[0];
-                    currentAttendanceListMonth = monthSelect.value;
-                    fetchAttendanceListData();
-                }
-                monthSelect.onchange = function() {
-                    currentAttendanceListMonth = this.value;
-                    fetchAttendanceListData();
-                };
-            });
-    }
-
-    function setAttendanceListFilter(filter) {
-        currentAttendanceListFilter = filter;
-        const buttons = ['attendanceListAll', 'attendanceListPresent', 'attendanceListAbsent'];
-        buttons.forEach(buttonId => {
-            document.getElementById(buttonId).className = 'px-2 py-1 text-xs rounded bg-gray-200 text-gray-700 border border-gray-300 font-medium transition-colors duration-200';
+                
+                // Sort months in descending order (most recent first)
+                const sortedMonths = data.months.sort((a, b) => b - a);
+                
+                sortedMonths.forEach(monthNum => {
+                    const date = new Date(currentAttendanceListYear, monthNum - 1);
+                    const monthDisplay = date.toLocaleString('en-US', { month: 'long' });
+                    const option = document.createElement('option');
+                    option.value = monthNum;
+                    option.textContent = monthDisplay;
+                    monthSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching months:', error);
         });
-        if (filter === 'all') {
-            document.getElementById('attendanceListAll').className += ' bg-blue-600 text-white border-blue-600';
-        } else if (filter === 'present') {
-            document.getElementById('attendanceListPresent').className += ' bg-green-600 text-white border-green-600';
-        } else if (filter === 'absent') {
-            document.getElementById('attendanceListAbsent').className += ' bg-red-600 text-white border-red-600';
+
+    document.getElementById('attendanceListMonthFilter').onchange = function() {
+        currentAttendanceListMonth = this.value;
+        currentAttendanceListIntake = '';
+        document.getElementById('attendanceListTrainings').innerHTML = '';
+        
+        if (currentAttendanceListMonth) {
+            fetchAttendanceListData();
         }
+    };
+}
+
+function setAttendanceListFilter(filter) {
+    currentAttendanceListFilter = filter;
+    
+    // Reset all button styles
+    const buttons = {
+        'all': document.getElementById('attendanceListAll'),
+        'present': document.getElementById('attendanceListPresent'),
+        'absent': document.getElementById('attendanceListAbsent')
+    };
+    
+    Object.values(buttons).forEach(btn => {
+        btn.className = 'px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 border border-gray-300 font-medium transition-colors duration-200';
+    });
+    
+    // Set active button style
+    if (filter === 'all') {
+        buttons.all.className = 'px-3 py-2 text-sm rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200 hover:bg-blue-700';
+    } else if (filter === 'present') {
+        buttons.present.className = 'px-3 py-2 text-sm rounded bg-green-600 text-white border border-green-600 font-medium transition-colors duration-200 hover:bg-green-700';
+    } else if (filter === 'absent') {
+        buttons.absent.className = 'px-3 py-2 text-sm rounded bg-red-600 text-white border border-red-600 font-medium transition-colors duration-200 hover:bg-red-700';
+    }
+    
+    if (currentAttendanceListYear && currentAttendanceListMonth) {
         fetchAttendanceListData();
     }
+}
 
-    function fetchAttendanceListData() {
-        let query = `?year=${currentAttendanceListYear}`;
-        if (currentAttendanceListMonth) query += `&month=${currentAttendanceListMonth}`;
-        if (currentAttendanceListIntake) query += `&intake=${encodeURIComponent(currentAttendanceListIntake)}`;
-        if (currentAttendanceListFilter !== 'all') query += `&status=${currentAttendanceListFilter}`;
+function fetchAttendanceListData() {
+    if (!currentAttendanceListYear || !currentAttendanceListMonth) return;
+    
+    let query = `?year=${currentAttendanceListYear}&month=${currentAttendanceListMonth}`;
+    if (currentAttendanceListIntake) {
+        query += `&intake=${encodeURIComponent(currentAttendanceListIntake)}`;
+    }
+    if (currentAttendanceListFilter !== 'all') {
+        query += `&status=${currentAttendanceListFilter}`;
+    }
+
     fetch(`/instructor/getCadetAttendanceList${query}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    attendanceListData = data.trainings;
-                    document.getElementById('attendanceListLoading').classList.add('hidden');
-                    document.getElementById('attendanceListContent').classList.remove('hidden');
-                    renderTrainingDropdowns();
-                } else {
-                    showAttendanceListError(data.message || 'Failed to load attendance data');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                showAttendanceListError('Network error occurred. Please try again.');
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                attendanceListData = data.trainings || [];
+                setupIntakeFilter();
+                renderTrainingAccordions();
+            } else {
+                showAttendanceListError(data.message || 'Failed to load attendance data');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            showAttendanceListError('Network error occurred. Please try again.');
+        });
+}
+
+function setupIntakeFilter() {
+    // Collect all available intakes from the data
+    allAvailableIntakes = [];
+    const intakeSet = new Set();
+    
+    attendanceListData.forEach(training => {
+        if (training.available_intakes && training.available_intakes.length > 0) {
+            training.available_intakes.forEach(intake => {
+                intakeSet.add(intake);
             });
+        }
+    });
+    
+    allAvailableIntakes = Array.from(intakeSet).sort();
+    
+    // Show/hide intake filter based on whether multiple intakes are available
+    const intakeSection = document.getElementById('attendanceListIntakeSection');
+    const intakeSelect = document.getElementById('attendanceListIntakeFilter');
+    
+    if (allAvailableIntakes.length > 1) {
+        intakeSection.classList.remove('hidden');
+        
+        // Populate intake filter options
+        intakeSelect.innerHTML = '<option value="">All Intakes</option>';
+        allAvailableIntakes.forEach(intake => {
+            const option = document.createElement('option');
+            option.value = intake;
+            option.textContent = intake;
+            intakeSelect.appendChild(option);
+        });
+        
+        // Set up event listener
+        intakeSelect.onchange = function() {
+            currentAttendanceListIntake = this.value;
+            fetchAttendanceListData();
+        };
+    } else {
+        intakeSection.classList.add('hidden');
+        currentAttendanceListIntake = '';
     }
+}
 
-    function showAttendanceListError(message) {
-        document.getElementById('attendanceListLoading').classList.add('hidden');
-        document.getElementById('attendanceListContent').classList.add('hidden');
-        document.getElementById('attendanceListError').classList.remove('hidden');
-        document.getElementById('attendanceListErrorMessage').textContent = message;
-    }
-
-    function renderTrainingDropdowns() {
-    const container = document.getElementById('attendanceListCadets');
+function renderTrainingAccordions() {
+    const container = document.getElementById('attendanceListTrainings');
     const emptyState = document.getElementById('attendanceListEmpty');
+    
     container.innerHTML = '';
-
+    
     if (!attendanceListData || attendanceListData.length === 0) {
         emptyState.classList.remove('hidden');
         return;
     }
+    
     emptyState.classList.add('hidden');
+    
+    // Sort trainings by date (most recent first)
+    const sortedTrainings = [...attendanceListData].sort((a, b) => 
+        new Date(b.start_datetime) - new Date(a.start_datetime)
+    );
 
-    attendanceListData.forEach(training => {
-        const table = document.createElement('table');
-        table.className = 'min-w-full border border-gray-300 text-sm mb-6';
-
-        // Table Header
-        table.innerHTML = `
-            <thead class="bg-gray-100">
-                <tr>
-                    <th colspan="5" class="px-4 py-2 text-left text-lg font-semibold border-b border-gray-300">
-                        ${training.title} <span class="text-sm text-gray-500">(${training.start_datetime})</span>
-                    </th>
-                </tr>
-                <tr>
-                    <th class="px-4 py-2 border-b border-gray-300">Service No.</th>
-                    <th class="px-4 py-2 border-b border-gray-300">Name</th>
-                    <th class="px-4 py-2 border-b border-gray-300">Matric No.</th>
-                    <th class="px-4 py-2 border-b border-gray-300">Rank</th>
-                    <th class="px-4 py-2 border-b border-gray-300">Status</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        `;
-
-        const tbody = table.querySelector('tbody');
-
-        // Sort cadets by service number
-        if (training.cadets && training.cadets.length > 0) {
-            training.cadets.sort((a, b) => {
-                const numA = parseInt(a.service_number, 10) || 0;
-                const numB = parseInt(b.service_number, 10) || 0;
-                return numA - numB;
-            }).forEach(cadet => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="px-4 py-2 border-b border-gray-200">${cadet.service_number || '-'}</td>
-                    <td class="px-4 py-2 border-b border-gray-200">${cadet.name}</td>
-                    <td class="px-4 py-2 border-b border-gray-200">${cadet.matric_no || '-'}</td>
-                    <td class="px-4 py-2 border-b border-gray-200">${cadet.rank || '-'}</td>
-                    <td class="px-4 py-2 border-b border-gray-200">
-                        ${cadet.present
-                            ? '<span class="text-green-600 font-medium">Present</span>'
-                            : '<span class="text-red-600 font-medium">Absent</span>'}
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        } else {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td colspan="5" class="px-4 py-2 border-b border-gray-200 text-center text-gray-500">No cadets found</td>`;
-            tbody.appendChild(row);
-        }
-
-        container.appendChild(table);
+    sortedTrainings.forEach((training, index) => {
+        const accordion = createTrainingAccordion(training, index);
+        container.appendChild(accordion);
     });
 }
 
-    </script>
+function createTrainingAccordion(training, index) {
+    const accordionDiv = document.createElement('div');
+    accordionDiv.className = 'border border-gray-200 rounded-lg overflow-hidden';
+    
+    // Calculate summary statistics
+    const totalCadets = training.cadets ? training.cadets.length : 0;
+    const presentCount = training.cadets ? training.cadets.filter(c => c.present).length : 0;
+    const absentCount = totalCadets - presentCount;
+    const attendancePercentage = totalCadets > 0 ? Math.round((presentCount / totalCadets) * 100) : 0;
+    
+    // Determine header color based on attendance
+    let headerClass = 'bg-gray-50 hover:bg-gray-100';
+    let statusIcon = 'fas fa-calendar';
+    let statusColor = 'text-gray-600';
+    
+    if (attendancePercentage >= 90) {
+        headerClass = 'bg-green-50 hover:bg-green-100';
+        statusIcon = 'fas fa-check-circle';
+        statusColor = 'text-green-600';
+    } else if (attendancePercentage >= 70) {
+        headerClass = 'bg-yellow-50 hover:bg-yellow-100';
+        statusIcon = 'fas fa-exclamation-triangle';
+        statusColor = 'text-yellow-600';
+    } else if (totalCadets > 0) {
+        headerClass = 'bg-red-50 hover:bg-red-100';
+        statusIcon = 'fas fa-times-circle';
+        statusColor = 'text-red-600';
+    }
+    
+    accordionDiv.innerHTML = `
+        <div class="accordion-header ${headerClass} transition-colors duration-200 cursor-pointer" 
+             onclick="toggleAccordion('accordion-${index}')">
+            <div class="px-6 py-4 flex justify-between items-center">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-3">
+                        <i class="${statusIcon} ${statusColor}"></i>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-900">${training.title}</h4>
+                            <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                <span><i class="fas fa-calendar-alt mr-1"></i>${training.start_datetime}</span>
+                                <span><i class="fas fa-map-marker-alt mr-1"></i>${training.location || 'N/A'}</span>
+                                ${training.involvement ? `<span><i class="fas fa-users mr-1"></i>${training.involvement}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Attendance Summary -->
+                    <div class="text-right">
+                        <div class="text-sm font-medium text-gray-700">
+                            ${attendancePercentage}% Attendance
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs text-gray-600 mt-1">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">
+                                <i class="fas fa-check-circle mr-1"></i>${presentCount}
+                            </span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+                                <i class="fas fa-times-circle mr-1"></i>${absentCount}
+                            </span>
+                            <span class="text-gray-500">/ ${totalCadets} total</span>
+                        </div>
+                    </div>
+                    <!-- Expand/Collapse Icon -->
+                    <div class="transform transition-transform duration-200" id="accordion-icon-${index}">
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-content hidden" id="accordion-content-${index}">
+            <div class="border-t border-gray-200">
+                ${createCadetTable(training.cadets || [], training.id)}
+            </div>
+        </div>
+    `;
+    
+    return accordionDiv;
+}
+
+function toggleAccordion(accordionId) {
+    const contentId = accordionId.replace('accordion-', 'accordion-content-');
+    const iconId = accordionId.replace('accordion-', 'accordion-icon-');
+    
+    const content = document.getElementById(contentId);
+    const icon = document.getElementById(iconId);
+    
+    // Close previously opened accordion
+    if (openAccordionId && openAccordionId !== accordionId) {
+        const prevContent = document.getElementById(openAccordionId.replace('accordion-', 'accordion-content-'));
+        const prevIcon = document.getElementById(openAccordionId.replace('accordion-', 'accordion-icon-'));
+        
+        if (prevContent) {
+            prevContent.classList.add('hidden');
+        }
+        if (prevIcon) {
+            prevIcon.style.transform = 'rotate(0deg)';
+        }
+    }
+    
+    // Toggle current accordion
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+        openAccordionId = accordionId;
+    } else {
+        content.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+        openAccordionId = null;
+    }
+}
+
+function createCadetTable(cadets, trainingId) {
+    if (!cadets || cadets.length === 0) {
+        return `
+            <div class="px-6 py-8 text-center text-gray-500">
+                <i class="fas fa-user-slash text-3xl mb-2"></i>
+                <p>No cadets found for this training session.</p>
+            </div>
+        `;
+    }
+    
+    // Sort cadets by service number (ascending)
+    const sortedCadets = [...cadets].sort((a, b) => {
+        const numA = parseInt(a.service_number, 10) || 0;
+        const numB = parseInt(b.service_number, 10) || 0;
+        return numA - numB;
+    });
+    
+    let tableHTML = `
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service No.</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matric No.</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+    `;
+    
+    sortedCadets.forEach(cadet => {
+        const statusBadge = cadet.present 
+            ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Present</span>'
+            : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i>Absent</span>';
+        
+        let detailsCell = '';
+        if (cadet.present) {
+            const method = cadet.method === 'qr_code' ? 'QR Code' : 'Manual';
+            const timeStr = cadet.marked_at ? `at ${cadet.marked_at}` : '';
+            detailsCell = `<span class="text-xs text-green-700">Marked via ${method} ${timeStr}</span>`;
+        } else {
+            // Show absence reason and file for absent cadets
+            let absenceDetails = [];
+            if (cadet.absence_reason) {
+                absenceDetails.push(`<div class="text-xs text-gray-700 mb-1"><i class="fas fa-info-circle mr-1 text-blue-500"></i><strong>Reason:</strong> ${cadet.absence_reason}</div>`);
+            }
+            if (cadet.file_url) {
+                absenceDetails.push(`<div class="text-xs text-blue-700"><i class="fas fa-file mr-1"></i><a href="${cadet.file_url}" target="_blank" class="underline hover:text-blue-900">View Supporting File</a></div>`);
+            }
+            detailsCell = absenceDetails.join('') || '<span class="text-xs text-gray-400">No additional details</span>';
+        }
+        
+        tableHTML += `
+            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cadet.service_number || '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.rank || '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900">${cadet.name}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.matric_no || '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                <td class="px-6 py-4 text-sm">${detailsCell}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    return tableHTML;
+}
+
+function showAttendanceListError(message) {
+    document.getElementById('attendanceListLoading').classList.add('hidden');
+    document.getElementById('attendanceListContent').classList.add('hidden');
+    document.getElementById('attendanceListError').classList.remove('hidden');
+    document.getElementById('attendanceListErrorMessage').textContent = message;
+}
+</script>
                 
             <!-- Combined Calendar & Activity Time Table Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
