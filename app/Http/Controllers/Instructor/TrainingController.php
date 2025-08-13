@@ -13,6 +13,58 @@ use Illuminate\Support\Str;
 class TrainingController extends Controller
 {
     /**
+     * AJAX endpoint for attendance list modal
+     */
+    public function getCadetAttendanceList(Request $request): JsonResponse
+    {
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $intake = $request->input('intake');
+        $status = $request->input('status');
+
+        $query = Training::query();
+        if ($year) {
+            $query->whereYear('start_datetime', $year);
+        }
+        if ($month) {
+            $query->whereMonth('start_datetime', $month);
+        }
+        if ($status && in_array($status, ['present', 'absent'])) {
+            $query->whereHas('trainingAttendances', function($q) use ($status) {
+                $q->where('present', $status === 'present');
+            });
+        }
+        if ($intake) {
+            $query->where('involvement', 'LIKE', "%$intake%");
+        }
+        $trainings = $query->orderBy('start_datetime', 'desc')->get();
+
+        $result = $trainings->map(function($training) {
+            $cadets = $training->trainingAttendances()->with('cadet.user')->get()->map(function($attendance) {
+                $cadet = $attendance->cadet;
+                return [
+                    'id' => $cadet->id,
+                    'name' => trim(($cadet->rank ? $cadet->rank . ' ' : '') . ($cadet->user->name ?? 'Unknown')),
+                    'matric_no' => $cadet->matric_no,
+                    'service_number' => $cadet->service_number,
+                    'rank' => $cadet->rank,
+                    'present' => $attendance->present,
+                ];
+            });
+            return [
+                'id' => $training->id,
+                'title' => $training->title,
+                'start_datetime' => $training->start_datetime->format('Y-m-d H:i'),
+                'cadets' => $cadets,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'trainings' => $result,
+        ]);
+    }
+    /**
      * Display the training schedule page
      */
     public function index()
@@ -20,7 +72,7 @@ class TrainingController extends Controller
         // Update statuses before displaying
         $this->updateExpiredTrainings();
         
-        $trainings = Training::orderBy('start_datetime', 'asc')->get();
+    $trainings = Training::with('trainingAttendances')->orderBy('start_datetime', 'asc')->get();
         
         // Get today's trainings
         $todaysTrainings = Training::where(function ($query) {
@@ -155,8 +207,7 @@ class TrainingController extends Controller
                     $updateData['absence_reason'] = null;
                     $updateData['file_url'] = null;
                 }
-                TrainingAttendance::updateOrCreate([
-                    'training_id' => $training->id,
+                $training->trainingAttendances()->updateOrCreate([
                     'cadet_id' => $record['cadet_id']
                 ], $updateData);
                 if ($record['present']) {
