@@ -13,6 +13,58 @@ use Illuminate\Support\Str;
 class TrainingController extends Controller
 {
     /**
+     * AJAX endpoint for attendance list modal
+     */
+    public function getCadetAttendanceList(Request $request): JsonResponse
+    {
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $intake = $request->input('intake');
+        $status = $request->input('status');
+
+        $query = Training::query();
+        if ($year) {
+            $query->whereYear('start_datetime', $year);
+        }
+        if ($month) {
+            $query->whereMonth('start_datetime', $month);
+        }
+        if ($status && in_array($status, ['present', 'absent'])) {
+            $query->whereHas('trainingAttendances', function($q) use ($status) {
+                $q->where('present', $status === 'present');
+            });
+        }
+        if ($intake) {
+            $query->where('involvement', 'LIKE', "%$intake%");
+        }
+        $trainings = $query->orderBy('start_datetime', 'desc')->get();
+
+        $result = $trainings->map(function($training) {
+            $cadets = $training->trainingAttendances()->with('cadet.user')->get()->map(function($attendance) {
+                $cadet = $attendance->cadet;
+                return [
+                    'id' => $cadet->id,
+                    'name' => trim(($cadet->rank ? $cadet->rank . ' ' : '') . ($cadet->user->name ?? 'Unknown')),
+                    'matric_no' => $cadet->matric_no,
+                    'service_number' => $cadet->service_number,
+                    'rank' => $cadet->rank,
+                    'present' => $attendance->present,
+                ];
+            });
+            return [
+                'id' => $training->id,
+                'title' => $training->title,
+                'start_datetime' => $training->start_datetime->format('Y-m-d H:i'),
+                'cadets' => $cadets,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'trainings' => $result,
+        ]);
+    }
+    /**
      * Display the training schedule page
      */
     public function index()
@@ -20,7 +72,7 @@ class TrainingController extends Controller
         // Update statuses before displaying
         $this->updateExpiredTrainings();
         
-        $trainings = Training::orderBy('start_datetime', 'asc')->get();
+    $trainings = Training::with('trainingAttendances')->orderBy('start_datetime', 'asc')->get();
         
         // Get today's trainings
         $todaysTrainings = Training::where(function ($query) {
@@ -106,7 +158,9 @@ class TrainingController extends Controller
                         'intake_label' => $intake['label'],
                         'present' => $attendance ? $attendance->present : false,
                         'attendance_method' => $attendance ? $attendance->method : null,
-                        'marked_at' => $attendance ? $attendance->marked_at : null
+                        'marked_at' => $attendance ? $attendance->marked_at : null,
+                        'absence_reason' => $attendance ? $attendance->absence_reason : null,
+                        'file_url' => $attendance ? $attendance->file_url : null
                     ];
                 });
             if ($intakeCadets->count() > 0) {
@@ -132,27 +186,34 @@ class TrainingController extends Controller
         $validated = $request->validate([
             'attendance' => 'required|array',
             'attendance.*.cadet_id' => 'required|integer|exists:cadets,id',
-            'attendance.*.present' => 'required|boolean'
+            'attendance.*.present' => 'required|boolean',
+            'attendance.*.absence_reason' => 'nullable|string',
+            'attendance.*.file_url' => 'nullable|string',
         ]);
 
         try {
             $presentCount = 0;
-            
             foreach ($validated['attendance'] as $record) {
-                TrainingAttendance::updateOrCreate([
-                    'training_id' => $training->id,
-                    'cadet_id' => $record['cadet_id']
-                ], [
+                $updateData = [
                     'present' => $record['present'],
                     'method' => 'manual',
                     'marked_at' => Carbon::now()
-                ]);
-                
+                ];
+                // Only update absence_reason and file_url if absent
+                if (!$record['present']) {
+                    $updateData['absence_reason'] = $record['absence_reason'] ?? null;
+                    $updateData['file_url'] = $record['file_url'] ?? null;
+                } else {
+                    $updateData['absence_reason'] = null;
+                    $updateData['file_url'] = null;
+                }
+                $training->trainingAttendances()->updateOrCreate([
+                    'cadet_id' => $record['cadet_id']
+                ], $updateData);
                 if ($record['present']) {
                     $presentCount++;
                 }
             }
-
             return response()->json([
                 'success' => true,
                 'message' => 'Attendance saved successfully',
@@ -415,7 +476,10 @@ class TrainingController extends Controller
 
         // Use Training model's roundToNearestHour method
         $now = Carbon::now();
-        $roundedEnd = \App\Models\Training::roundToNearestHour($now);
+        $roundedEnd = $now->copy()->minute(0)->second(0);
+        if ($now->minute >= 30) {
+            $roundedEnd->addHour();
+        }
         
         // Ensure end time is after start time
         if ($roundedEnd->lte($training->start_datetime)) {
@@ -425,20 +489,21 @@ class TrainingController extends Controller
         $training->end_datetime = $roundedEnd;
         $training->status = 'Completed';
         
-        // Calculate duration and allowance for single-day training
+        // Calculate duration and allowance
         $start = $training->start_datetime;
         $end = $training->end_datetime;
-        
-        // Check if it's single-day training (same date)
         $isSingleDay = $start->toDateString() === $end->toDateString();
-        
         if ($isSingleDay) {
             $hours = max(2, min(10, $start->diffInHours($end)));
             $training->duration_hours = $hours;
-            $training->allowance_amount = $hours * 8;
+            $training->allowance_amount = round($hours * 8, 2);
             $training->allowance_type = 'hourly';
+        } else {
+            $days = $start->diffInDays($end) + 1;
+            $training->duration_hours = null;
+            $training->allowance_amount = round($days * 50, 2);
+            $training->allowance_type = 'daily';
         }
-        
         $training->save();
 
         return response()->json([
@@ -491,8 +556,22 @@ class TrainingController extends Controller
     {
         // Update status before showing
         $this->updateTrainingStatus($training);
-        
-        return response()->json($training->fresh());
+
+        $training = $training->fresh();
+        // Build a more complete response for frontend
+        return response()->json([
+            'id' => $training->id,
+            'title' => $training->title,
+            'description' => $training->description,
+            'location' => $training->location,
+            'involvement' => $training->involvement,
+            'start_datetime' => $training->start_datetime ? $training->start_datetime->format('Y-m-d H:i:s') : null,
+            'end_datetime' => $training->end_datetime ? $training->end_datetime->format('Y-m-d H:i:s') : null,
+            'duration_hours' => $training->duration_hours,
+            'allowance_amount' => $training->allowance_amount,
+            'allowance_type' => $training->allowance_type,
+            'status' => $training->status,
+        ]);
     }
 
     /**

@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\ProfileController;
@@ -85,7 +86,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Attendance management
     Route::post('/training/{training}/attendance', [InstructorTrainingController::class, 'saveAttendance'])->name('training.attendance');
     Route::post('/training/{training}/attendance/qr', [InstructorTrainingController::class, 'recordQrAttendance'])->name('training.attendance.qr');
-});
+    Route::get('/attendance-list', [InstructorTrainingController::class, 'getAllAttendanceList'])->name('attendance.list.all');
+    // AJAX endpoints for instructor attendance filters (updated)
+    Route::get('/getYears', [InstructorTrainingController::class, 'getYears']);
+    Route::get('/getMonths', [InstructorTrainingController::class, 'getMonths']);
+    Route::get('/getCadetAttendanceList', [InstructorTrainingController::class, 'getCadetAttendanceList']);
+    });
 
     // Allowance route
     Route::get('/instructor/allowance', function () {
@@ -172,7 +178,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('cadet.dashboard');
 
     // Cadet Training
-    Route::get('/cadet/training', [CadetTrainingController::class, 'index'])->name('cadet.training');
+    Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
+        Route::get('/training', [CadetTrainingController::class, 'index'])->name('training');
+        Route::get('/training/{training}', [CadetTrainingController::class, 'show'])
+            ->whereNumber('training')
+            ->name('training.show');
+    });
+
 
     // Cadet Allowance
     Route::get('/cadet/allowance', function () {

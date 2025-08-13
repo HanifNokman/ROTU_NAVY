@@ -10,6 +10,50 @@ class Training extends Model
 {
     use HasFactory;
 
+    /**
+     * Relationship: Training has many TrainingAttendances
+     */
+    public function trainingAttendances()
+    {
+        return $this->hasMany(TrainingAttendance::class);
+    }
+
+    /**
+     * Relationships
+     */
+    public function attendances()
+    {
+        return $this->hasMany(TrainingAttendance::class);
+    }
+
+    public function presentAttendances()
+    {
+        return $this->hasMany(TrainingAttendance::class)->where('present', true);
+    }
+
+    public function absentAttendances()
+    {
+        return $this->hasMany(TrainingAttendance::class)->where('present', false);
+    }
+
+    /**
+     * Get attendance statistics
+     */
+    public function getAttendanceStats(): array
+    {
+        $total = $this->attendances()->count();
+        $present = $this->presentAttendances()->count();
+        $absent = $this->absentAttendances()->count();
+
+        return [
+            'total' => $total,
+            'present' => $present,
+            'absent' => $absent,
+            'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 2) : 0
+        ];
+    }
+    // ...existing code...
+
     protected $fillable = [
         'title',
         'description',
@@ -65,7 +109,7 @@ class Training extends Model
     protected $casts = [
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
-        'allowance_amount' => 'decimal:2',
+        'allowance_amount' => 'float',
     ];
 
     protected $attributes = [
@@ -217,38 +261,7 @@ class Training extends Model
         });
     }
 
-    /**
-     * Relationships
-     */
-    public function attendances()
-    {
-        return $this->hasMany(TrainingAttendance::class);
-    }
+    // ...existing code...
 
-    public function presentAttendances()
-    {
-        return $this->hasMany(TrainingAttendance::class)->where('present', true);
-    }
-
-    public function absentAttendances()
-    {
-        return $this->hasMany(TrainingAttendance::class)->where('present', false);
-    }
-
-    /**
-     * Get attendance statistics
-     */
-    public function getAttendanceStats(): array
-    {
-        $total = $this->attendances()->count();
-        $present = $this->presentAttendances()->count();
-        $absent = $this->absentAttendances()->count();
-
-        return [
-            'total' => $total,
-            'present' => $present,
-            'absent' => $absent,
-            'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 2) : 0
-        ];
-    }
+    // ...existing code...
 }

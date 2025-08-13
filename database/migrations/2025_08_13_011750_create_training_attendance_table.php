@@ -18,8 +18,9 @@ return new class extends Migration
             $table->boolean('present')->default(false);
             $table->enum('method', ['manual', 'qr_code'])->default('manual');
             $table->timestamp('marked_at')->nullable();
+            $table->text('absence_reason')->nullable();
+            $table->string('file_url')->nullable();
             $table->timestamps();
-            
             // Ensure one record per training per cadet
             $table->unique(['training_id', 'cadet_id']);
         });

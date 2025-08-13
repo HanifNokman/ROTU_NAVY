@@ -82,7 +82,47 @@ class TrainingController extends Controller
         // Update status if needed
         $this->updateTrainingStatus($training);
 
-        return response()->json($training->fresh());
+        // Prepare formatted fields for frontend
+        $freshTraining = $training->fresh();
+        $startDate = $freshTraining->start_datetime ? $freshTraining->start_datetime->format('Y-m-d') : null;
+        $startTime = $freshTraining->start_datetime ? $freshTraining->start_datetime->format('H:i') : null;
+        $endDate = $freshTraining->end_datetime ? $freshTraining->end_datetime->format('Y-m-d') : null;
+        $endTime = $freshTraining->end_datetime ? $freshTraining->end_datetime->format('H:i') : null;
+        $statusBadgeColor = match($freshTraining->status) {
+            'Active' => 'bg-green-100 text-green-800',
+            'Completed' => 'bg-gray-100 text-gray-800',
+            'Cancelled' => 'bg-red-100 text-red-800',
+            default => 'bg-blue-100 text-blue-800',
+        };
+
+        // Duration calculation (hours)
+        $durationHours = null;
+        if ($freshTraining->start_datetime && $freshTraining->end_datetime) {
+            $durationHours = $freshTraining->start_datetime->diffInHours($freshTraining->end_datetime);
+        }
+
+        // Allowance type and amount
+        $allowanceType = $freshTraining->allowance_type ?? ($durationHours && $durationHours >= 8 ? 'daily' : 'hourly');
+        $allowanceAmount = $freshTraining->allowance_amount ?? null;
+
+        return response()->json([
+            'id' => $freshTraining->id,
+            'title' => $freshTraining->title,
+            'description' => $freshTraining->description,
+            'location' => $freshTraining->location,
+            'involvement' => $freshTraining->involvement,
+            'start_datetime' => $freshTraining->start_datetime ? $freshTraining->start_datetime->format('Y-m-d H:i:s') : null,
+            'end_datetime' => $freshTraining->end_datetime ? $freshTraining->end_datetime->format('Y-m-d H:i:s') : null,
+            'formatted_start_date' => $startDate,
+            'formatted_start_time' => $startTime,
+            'formatted_end_date' => $endDate,
+            'formatted_end_time' => $endTime,
+            'status' => $freshTraining->status,
+            'status_badge_color' => $statusBadgeColor,
+            'duration_hours' => $durationHours,
+            'allowance_type' => $allowanceType,
+            'allowance_amount' => $allowanceAmount,
+        ]);
     }
 
     /**
