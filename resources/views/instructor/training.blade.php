@@ -469,14 +469,8 @@ function createTrainingAccordion(training, index) {
                         <div class="text-sm font-medium text-gray-700">
                             ${attendancePercentage}% Attendance
                         </div>
-                        <div class="flex items-center space-x-2 text-xs text-gray-600 mt-1">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">
-                                <i class="fas fa-check-circle mr-1"></i>${presentCount}
-                            </span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-800">
-                                <i class="fas fa-times-circle mr-1"></i>${absentCount}
-                            </span>
-                            <span class="text-gray-500">/ ${totalCadets} total</span>
+                        <div class="text-sm text-gray-700">
+                            ${presentCount} / ${totalCadets} present
                         </div>
                     </div>
                     <!-- Expand/Collapse Icon -->
