@@ -68,12 +68,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Training route
     Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-        Route::get('/training', [InstructorTrainingController::class, 'index'])->name('training');
-        Route::post('/training', [InstructorTrainingController::class, 'store'])->name('training.store');
-        Route::get('/training/{training}', [InstructorTrainingController::class, 'show'])->name('training.show');
-        Route::put('/training/{training}', [InstructorTrainingController::class, 'update'])->name('training.update');
-        Route::delete('/training/{training}', [InstructorTrainingController::class, 'destroy'])->name('training.destroy');
-    });
+    // Main training page
+    Route::get('/training', [InstructorTrainingController::class, 'index'])->name('training');
+    
+    // CRUD operations
+    Route::post('/training', [InstructorTrainingController::class, 'store'])->name('training.store');
+    Route::get('/training/{training}', [InstructorTrainingController::class, 'show'])->name('training.show');
+    Route::put('/training/{training}', [InstructorTrainingController::class, 'update'])->name('training.update');
+    Route::delete('/training/{training}', [InstructorTrainingController::class, 'destroy'])->name('training.destroy');
+    
+    // New endpoints for additional features
+    Route::post('/training/{training}/end', [InstructorTrainingController::class, 'endTraining'])->name('training.end');
+    Route::get('/training/{training}/qr-code', [InstructorTrainingController::class, 'generateQrCode'])->name('training.qr-code');
+    Route::get('/training/{training}/cadets', [InstructorTrainingController::class, 'getCadetsForAttendance'])->name('training.cadets');
+    
+    // Attendance management
+    Route::post('/training/{training}/attendance', [InstructorTrainingController::class, 'saveAttendance'])->name('training.attendance');
+    Route::post('/training/{training}/attendance/qr', [InstructorTrainingController::class, 'recordQrAttendance'])->name('training.attendance.qr');
+});
 
     // Allowance route
     Route::get('/instructor/allowance', function () {
