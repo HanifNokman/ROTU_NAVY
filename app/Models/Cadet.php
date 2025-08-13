@@ -47,6 +47,54 @@ class Cadet extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Training attendance relationship
+     * ADDED FOR ATTENDANCE IMPROVEMENTS
+     */
+    public function trainingAttendances()
+    {
+        return $this->hasMany(TrainingAttendance::class);
+    }
+
+    /**
+     * Get present attendances only
+     */
+    public function presentAttendances()
+    {
+        return $this->hasMany(TrainingAttendance::class)->where('present', true);
+    }
+
+    /**
+     * Get absent attendances only
+     */
+    public function absentAttendances()
+    {
+        return $this->hasMany(TrainingAttendance::class)->where('present', false);
+    }
+
+    public function cadetSizes()
+    {
+        return $this->hasMany(CadetSize::class);
+    }
+
+    public function equipmentLoans()
+    {
+        return $this->hasMany(EquipmentLoan::class);
+    }
+
+    public function activeLoans()
+    {
+        return $this->hasMany(EquipmentLoan::class)
+                ->where('status', 'Borrowed');
+    }
+
+    public function pastLoans()
+    {
+        return $this->hasMany(EquipmentLoan::class)
+                ->where('status', 'Returned')
+                ->orderBy('return_date', 'desc');
+    }
+
     // Scopes for filtering
     public function scopeByIntake($query, $intakeYear)
     {
@@ -78,6 +126,27 @@ class Cadet extends Model
         return $query->where('BMI', '<', 18.0);
     }
 
+    /**
+     * ADDED FOR ATTENDANCE IMPROVEMENTS
+     * Scope to get cadets with training attendance stats
+     */
+    public function scopeWithAttendanceStats($query, $trainingId = null)
+    {
+        $query->withCount([
+            'trainingAttendances',
+            'presentAttendances',
+            'absentAttendances'
+        ]);
+
+        if ($trainingId) {
+            $query->with(['trainingAttendances' => function($q) use ($trainingId) {
+                $q->where('training_id', $trainingId);
+            }]);
+        }
+
+        return $query;
+    }
+
     // Accessors
     public function getIntakeNameAttribute()
     {
@@ -85,9 +154,45 @@ class Cadet extends Model
         return "Intake - {$intakeNumber} ({$this->intake_year})";
     }
 
+    /**
+     * ADDED FOR ATTENDANCE IMPROVEMENTS  
+     * Get intake label in the format used by training involvement
+     */
+    public function getIntakeLabelAttribute()
+    {
+        $intakeNumber = 2025 - $this->intake_year + 14;
+        return "Intake - {$intakeNumber}";
+    }
+
     public function getFormattedBmiUpdatedAttribute()
     {
         return $this->BMI_update_date ? $this->BMI_update_date->format('d/m/Y') : 'Not updated';
+    }
+
+    /**
+     * ADDED FOR ATTENDANCE IMPROVEMENTS
+     * Get full name from user relationship
+     */
+    public function getFullNameAttribute()
+    {
+        return $this->user->name ?? 'Unknown';
+    }
+
+    /**
+     * ADDED FOR ATTENDANCE IMPROVEMENTS
+     * Get attendance percentage for a specific training or overall
+     */
+    public function getAttendancePercentage($trainingId = null)
+    {
+        if ($trainingId) {
+            $attendance = $this->trainingAttendances()->where('training_id', $trainingId)->first();
+            return $attendance && $attendance->present ? 100 : 0;
+        }
+
+        $total = $this->trainingAttendances()->count();
+        $present = $this->presentAttendances()->count();
+        
+        return $total > 0 ? round(($present / $total) * 100, 1) : 0;
     }
 
     // Static methods
@@ -101,11 +206,38 @@ class Cadet extends Model
             $intakeNumber = 14 - $i;
             $intakes[] = [
                 'year' => $year,
-                'label' => "Intake - {$intakeNumber} ({$year})"
+                'label' => "Intake - {$intakeNumber} ({$year})",
+                'short_label' => "Intake - {$intakeNumber}" // ADDED FOR ATTENDANCE COMPATIBILITY
             ];
         }
         
         return $intakes;
+    }
+
+    /**
+     * ADDED FOR ATTENDANCE IMPROVEMENTS
+     * Get cadets grouped by intake for attendance purposes
+     */
+    public static function getByIntakesForAttendance($intakeNumbers)
+    {
+        $result = [];
+        
+        foreach ($intakeNumbers as $intakeData) {
+            $cadets = static::byIntake($intakeData['year'])
+                ->with('user')
+                ->orderBy('service_number')
+                ->orderBy('matric_no')
+                ->get();
+
+            if ($cadets->count() > 0) {
+                $result[] = [
+                    'intake' => $intakeData,
+                    'cadets' => $cadets
+                ];
+            }
+        }
+
+        return $result;
     }
 
     public static function getPositions()
@@ -126,28 +258,5 @@ class Cadet extends Model
             'In Progress' => 'In Progress',
             'Fail' => 'Fail'
         ];
-    }
-
-    public function cadetSizes()
-    {
-        return $this->hasMany(CadetSize::class);
-    }
-
-    public function equipmentLoans()
-    {
-        return $this->hasMany(EquipmentLoan::class);
-    }
-
-    public function activeLoans()
-    {
-        return $this->hasMany(EquipmentLoan::class)
-                ->where('status', 'Borrowed');
-    }
-
-    public function pastLoans()
-    {
-        return $this->hasMany(EquipmentLoan::class)
-                ->where('status', 'Returned')
-                ->orderBy('return_date', 'desc');
     }
 }

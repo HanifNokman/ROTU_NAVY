@@ -19,6 +19,9 @@ return new class extends Migration
             $table->datetime('start_datetime');
             $table->datetime('end_datetime')->nullable();
             $table->string('involvement')->nullable(); // Groups or cadets involved
+            $table->integer('duration_hours')->nullable(); // Duration in hours (2-10)
+            $table->decimal('allowance_amount', 8, 2)->nullable(); // Calculated allowance
+            $table->enum('allowance_type', ['hourly', 'daily'])->nullable(); // Type of allowance calculation
             $table->enum('status', ['Active', 'Completed', 'Cancelled'])->default('Active');
             $table->timestamps();
         });
