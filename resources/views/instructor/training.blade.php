@@ -261,11 +261,12 @@ function resetAttendanceListModal() {
     attendanceListData = [];
     attendanceListMonths = [];
     allAvailableIntakes = [];
-    currentAttendanceListYear = '';
-    currentAttendanceListMonth = '';
+    // Set default year, month, and intake
+    const now = new Date();
+    currentAttendanceListYear = now.getFullYear();
+    currentAttendanceListMonth = now.getMonth() + 1; // JS months are 0-based
     currentAttendanceListIntake = '';
     openAccordionId = null;
-    
     // Reset UI states
     document.getElementById('attendanceListLoading').classList.remove('hidden');
     document.getElementById('attendanceListContent').classList.add('hidden');
@@ -274,7 +275,6 @@ function resetAttendanceListModal() {
     document.getElementById('attendanceListMonthFilter').innerHTML = '<option value="">Select Month</option>';
     document.getElementById('attendanceListIntakeSection').classList.add('hidden');
     document.getElementById('attendanceListTrainings').innerHTML = '';
-    
     // Reset filter buttons
     setAttendanceListFilter('all');
 }
@@ -338,7 +338,6 @@ function fetchAttendanceListMonths() {
                 
                 // Sort months in descending order (most recent first)
                 const sortedMonths = data.months.sort((a, b) => b - a);
-                
                 sortedMonths.forEach(monthNum => {
                     const date = new Date(currentAttendanceListYear, monthNum - 1);
                     const monthDisplay = date.toLocaleString('en-US', { month: 'long' });
@@ -347,6 +346,17 @@ function fetchAttendanceListMonths() {
                     option.textContent = monthDisplay;
                     monthSelect.appendChild(option);
                 });
+                // Set current month as default if available
+                const now = new Date();
+                const currentMonth = now.getMonth() + 1;
+                if (sortedMonths.includes(currentMonth)) {
+                    monthSelect.value = currentMonth;
+                    currentAttendanceListMonth = currentMonth;
+                } else {
+                    monthSelect.value = sortedMonths[0];
+                    currentAttendanceListMonth = sortedMonths[0];
+                }
+                fetchAttendanceListData();
             }
         })
         .catch(error => {
@@ -433,15 +443,14 @@ function setupIntakeFilter() {
         }
     });
     
-    allAvailableIntakes = Array.from(intakeSet).sort();
+    allAvailableIntakes = Array.from(intakeSet).sort((a, b) => a - b);
     
     // Show/hide intake filter based on whether multiple intakes are available
     const intakeSection = document.getElementById('attendanceListIntakeSection');
     const intakeSelect = document.getElementById('attendanceListIntakeFilter');
     
-    if (allAvailableIntakes.length > 1) {
+    if (allAvailableIntakes.length > 0) {
         intakeSection.classList.remove('hidden');
-        
         // Populate intake filter options
         intakeSelect.innerHTML = '<option value="">All Intakes</option>';
         allAvailableIntakes.forEach(intake => {
@@ -450,7 +459,9 @@ function setupIntakeFilter() {
             option.textContent = intake;
             intakeSelect.appendChild(option);
         });
-        
+        // Set lowest intake year as default
+        intakeSelect.value = allAvailableIntakes[0];
+        currentAttendanceListIntake = allAvailableIntakes[0];
         // Set up event listener
         intakeSelect.onchange = function() {
             currentAttendanceListIntake = this.value;
