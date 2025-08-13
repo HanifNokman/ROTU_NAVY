@@ -13,7 +13,53 @@ use Illuminate\Support\Str;
 class TrainingController extends Controller
 {
     /**
-     * AJAX endpoint for attendance list modal
+     * Get available years for attendance list filter
+     */
+    public function getYears(Request $request): JsonResponse
+    {
+        $currentYear = Carbon::now()->year;
+        $years = [];
+        
+        // Current year and 3 previous years
+        for ($i = 0; $i < 4; $i++) {
+            $year = $currentYear - $i;
+            $years[] = $year;
+        }
+        
+        return response()->json([
+            'success' => true,
+            'years' => $years
+        ]);
+    }
+
+    /**
+     * Get available months for a specific year
+     */
+    public function getMonths(Request $request): JsonResponse
+    {
+        $year = $request->input('year');
+        
+        if (!$year) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Year is required'
+            ]);
+        }
+
+        $months = Training::whereYear('start_datetime', $year)
+            ->selectRaw('DISTINCT MONTH(start_datetime) as month')
+            ->orderBy('month', 'desc')
+            ->pluck('month')
+            ->toArray();
+
+        return response()->json([
+            'success' => true,
+            'months' => $months
+        ]);
+    }
+
+    /**
+     * AJAX endpoint for attendance list modal - Enhanced version
      */
     public function getCadetAttendanceList(Request $request): JsonResponse
     {
@@ -22,48 +68,115 @@ class TrainingController extends Controller
         $intake = $request->input('intake');
         $status = $request->input('status');
 
-        $query = Training::query();
-        if ($year) {
-            $query->whereYear('start_datetime', $year);
+        if (!$year || !$month) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Year and month are required'
+            ]);
         }
-        if ($month) {
-            $query->whereMonth('start_datetime', $month);
-        }
-        if ($status && in_array($status, ['present', 'absent'])) {
-            $query->whereHas('trainingAttendances', function($q) use ($status) {
-                $q->where('present', $status === 'present');
-            });
-        }
+
+        // Get all trainings for the specified year and month
+        $query = Training::whereYear('start_datetime', $year)
+            ->whereMonth('start_datetime', $month);
+
+        // Filter by intake if specified
         if ($intake) {
             $query->where('involvement', 'LIKE', "%$intake%");
         }
+
         $trainings = $query->orderBy('start_datetime', 'desc')->get();
 
-        $result = $trainings->map(function($training) {
-            $cadets = $training->trainingAttendances()->with('cadet.user')->get()->map(function($attendance) {
+        $result = $trainings->map(function($training) use ($status, $intake) {
+            // Get attendance records with cadet and user information
+            $attendanceQuery = $training->trainingAttendances()
+                ->with(['cadet.user'])
+                ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
+                ->join('users', 'cadets.user_id', '=', 'users.id');
+
+            // Apply status filter if specified
+            if ($status && in_array($status, ['present', 'absent'])) {
+                $attendanceQuery->where('training_attendances.present', $status === 'present');
+            }
+
+            // Apply intake filter if specified
+            if ($intake && preg_match('/Intake - (\d+)/', $intake, $matches)) {
+                $intakeNumber = (int) $matches[1];
+                $intakeYear = 2011 + $intakeNumber;
+                $attendanceQuery->where('cadets.intake_year', $intakeYear);
+            }
+
+            $attendances = $attendanceQuery
+                ->select('training_attendances.*')
+                ->orderByRaw('CAST(cadets.service_number AS UNSIGNED) ASC')
+                ->get();
+
+            $cadets = $attendances->map(function($attendance) {
                 $cadet = $attendance->cadet;
+                $user = $cadet->user;
+                
                 return [
                     'id' => $cadet->id,
-                    'name' => trim(($cadet->rank ? $cadet->rank . ' ' : '') . ($cadet->user->name ?? 'Unknown')),
-                    'matric_no' => $cadet->matric_no,
-                    'service_number' => $cadet->service_number,
-                    'rank' => $cadet->rank,
+                    'service_number' => $cadet->service_number ?? '',
+                    'rank' => $cadet->rank ?? '',
+                    'name' => $user->name ?? 'Unknown',
+                    'matric_no' => $cadet->matric_no ?? '',
                     'present' => $attendance->present,
+                    'absence_reason' => $attendance->absence_reason,
+                    'file_url' => $attendance->file_url,
+                    'marked_at' => $attendance->marked_at ? $attendance->marked_at->format('H:i') : null,
+                    'method' => $attendance->method
                 ];
             });
+
+            // Get available intakes for this training
+            $availableIntakes = [];
+            if ($training->involvement) {
+                $involvements = explode(', ', $training->involvement);
+                foreach ($involvements as $involvement) {
+                    if (preg_match('/Intake - (\d+)/', $involvement, $matches)) {
+                        $availableIntakes[] = $involvement;
+                    }
+                }
+            }
+
             return [
                 'id' => $training->id,
                 'title' => $training->title,
-                'start_datetime' => $training->start_datetime->format('Y-m-d H:i'),
+                'location' => $training->location,
+                'start_datetime' => $training->start_datetime->format('d M Y, H:i'),
+                'involvement' => $training->involvement,
+                'available_intakes' => $availableIntakes,
                 'cadets' => $cadets,
+                'summary' => [
+                    'total' => $cadets->count(),
+                    'present' => $cadets->where('present', true)->count(),
+                    'absent' => $cadets->where('present', false)->count()
+                ]
             ];
+        });
+
+        // Filter out trainings with no cadets (if status filter applied)
+        $result = $result->filter(function($training) {
+            return $training['cadets']->count() > 0;
         });
 
         return response()->json([
             'success' => true,
-            'trainings' => $result,
+            'trainings' => $result->values()
         ]);
     }
+
+    /**
+     * Get all attendance list data for the modal
+     */
+    public function getAllAttendanceList(Request $request): JsonResponse
+    {
+        // This method can be used for any additional functionality needed
+        return $this->getCadetAttendanceList($request);
+    }
+
+    // ... rest of your existing methods remain unchanged ...
+
     /**
      * Display the training schedule page
      */
@@ -72,7 +185,7 @@ class TrainingController extends Controller
         // Update statuses before displaying
         $this->updateExpiredTrainings();
         
-    $trainings = Training::with('trainingAttendances')->orderBy('start_datetime', 'asc')->get();
+        $trainings = Training::with('trainingAttendances')->orderBy('start_datetime', 'asc')->get();
         
         // Get today's trainings
         $todaysTrainings = Training::where(function ($query) {
