@@ -5,13 +5,106 @@
         </h2>
     </x-slot>
 
+    <!-- Attendance List Modal (moved outside main content for full screen coverage) -->
+    <div id="attendanceListModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Attendance List</h3>
+                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100" title="Close">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <!-- Loading State -->
+                    <div id="attendanceListLoading" class="text-center py-8">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <p class="mt-2 text-gray-600">Loading attendance data...</p>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="attendanceListError" class="hidden text-center py-8">
+                        <div class="text-red-500 mb-4">
+                            <i class="fas fa-exclamation-triangle text-4xl"></i>
+                        </div>
+                        <p class="text-gray-600 mb-4" id="attendanceListErrorMessage">Failed to load attendance data</p>
+                        <button onclick="fetchAttendanceListData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                            <i class="fas fa-refresh mr-2"></i>
+                            Retry
+                        </button>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div id="attendanceListContent" class="hidden">
+                        <div class="flex flex-wrap items-end gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                            <div class="flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Year</label>
+                                <select id="attendanceListYearFilter" class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                    <option value="">Select Year</option>
+                                </select>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Month</label>
+                                <select id="attendanceListMonthFilter" class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                    <option value="">Select Month</option>
+                                </select>
+                            </div>
+                            <div id="attendanceListIntakeSection" class="hidden flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Intake</label>
+                                <select id="attendanceListIntakeFilter" class="w-28 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                    <option value="">All</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <div class="flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                                <div class="flex gap-1">
+                                    <button id="attendanceListAll" class="px-2 py-1 text-xs rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200" onclick="setAttendanceListFilter('all')">All</button>
+                                    <button id="attendanceListPresent" class="px-2 py-1 text-xs rounded bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 transition-colors duration-200" onclick="setAttendanceListFilter('present')">Present</button>
+                                    <button id="attendanceListAbsent" class="px-2 py-1 text-xs rounded bg-red-100 text-red-800 hover:bg-red-200 border border-red-300 transition-colors duration-200" onclick="setAttendanceListFilter('absent')">Absent</button>
+                                </div>
+                            </div>
+                            <div id="attendanceListSummary" class="hidden flex-shrink-0 ml-4">
+                                <div class="bg-white px-3 py-2 rounded border border-gray-200">
+                                    <div class="text-xs text-gray-700">
+                                        <div class="flex justify-between">
+                                            <span>Total:</span>
+                                            <span id="summaryTotal" class="font-semibold ml-2">0</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Present:</span>
+                                            <span id="summaryPresent" class="font-semibold ml-2">0</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Absent:</span>
+                                            <span id="summaryAbsent" class="font-semibold ml-2">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="attendanceListCadets"></div>
+                        <div id="attendanceListEmpty" class="hidden text-center py-8 text-gray-400">No trainings found for selected filters.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <!-- Today's Training Section (Always Visible) -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Attendance Management</h3>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Attendance Management</h3>
+                        <button onclick="openAttendanceListModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition duration-200 flex items-center">
+                            <i class="fas fa-list mr-2"></i> Attendance List
+                        </button>
+                    </div>
                     <div class="space-y-4">
                         @if($todaysTrainings->count() > 0)
                             @foreach($todaysTrainings as $training)
@@ -56,85 +149,378 @@
                     </div>
                 </div>
             </div>
-                
-            <!-- Calendar View -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Training Calendar</h3>
-                    <div id="calendar" style="max-height: 400px;"></div>
+
+            <!-- Attendance List Modal -->
+    <div id="attendanceListModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Attendance List</h3>
+                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100" title="Close">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <!-- Loading State -->
+                    <div id="attendanceListLoading" class="text-center py-8">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <p class="mt-2 text-gray-600">Loading attendance data...</p>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="attendanceListError" class="hidden text-center py-8">
+                        <div class="text-red-500 mb-4">
+                            <i class="fas fa-exclamation-triangle text-4xl"></i>
+                        </div>
+                        <p class="text-gray-600 mb-4" id="attendanceListErrorMessage">Failed to load attendance data</p>
+                        <button onclick="fetchAttendanceListData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                            <i class="fas fa-refresh mr-2"></i>
+                            Retry
+                        </button>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div id="attendanceListContent" class="hidden">
+                        <div class="flex flex-wrap items-end gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                            <div class="flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Year</label>
+                                <select id="attendanceListYearFilter" class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                    <option value="">Select Year</option>
+                                </select>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Month</label>
+                                <select id="attendanceListMonthFilter" class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                    <option value="">Select Month</option>
+                                </select>
+                            </div>
+                            <div id="attendanceListIntakeSection" class="hidden flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Intake</label>
+                                <select id="attendanceListIntakeFilter" class="w-28 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                                    <option value="">All</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <div class="flex-shrink-0">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                                <div class="flex gap-1">
+                                    <button id="attendanceListAll" class="px-2 py-1 text-xs rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200" onclick="setAttendanceListFilter('all')">All</button>
+                                    <button id="attendanceListPresent" class="px-2 py-1 text-xs rounded bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 transition-colors duration-200" onclick="setAttendanceListFilter('present')">Present</button>
+                                    <button id="attendanceListAbsent" class="px-2 py-1 text-xs rounded bg-red-100 text-red-800 hover:bg-red-200 border border-red-300 transition-colors duration-200" onclick="setAttendanceListFilter('absent')">Absent</button>
+                                </div>
+                            </div>
+                            <div id="attendanceListSummary" class="hidden flex-shrink-0 ml-4">
+                                <div class="bg-white px-3 py-2 rounded border border-gray-200">
+                                    <div class="text-xs text-gray-700">
+                                        <div class="flex justify-between">
+                                            <span>Total:</span>
+                                            <span id="summaryTotal" class="font-semibold ml-2">0</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Present:</span>
+                                            <span id="summaryPresent" class="font-semibold ml-2">0</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Absent:</span>
+                                            <span id="summaryAbsent" class="font-semibold ml-2">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="attendanceListCadets"></div>
+                        <div id="attendanceListEmpty" class="hidden text-center py-8 text-gray-400">No trainings found for selected filters.</div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Activity Time Table -->
+    <script>
+    // Enhanced Attendance List Modal Logic
+    let attendanceListData = [];
+    let attendanceListMonths = [];
+    let currentAttendanceListYear = '';
+    let currentAttendanceListMonth = '';
+    let currentAttendanceListIntake = '';
+    let currentAttendanceListFilter = 'all';
+    let openTrainingId = null;
+
+    function openAttendanceListModal() {
+        document.getElementById('attendanceListModal').classList.remove('hidden');
+        resetAttendanceListModal();
+        fetchAttendanceListYears();
+    }
+
+    function closeAttendanceListModal() {
+        document.getElementById('attendanceListModal').classList.add('hidden');
+        resetAttendanceListModal();
+    }
+
+    function resetAttendanceListModal() {
+        attendanceListData = [];
+        attendanceListMonths = [];
+        currentAttendanceListYear = '';
+        currentAttendanceListMonth = '';
+        currentAttendanceListIntake = '';
+        openTrainingId = null;
+        document.getElementById('attendanceListLoading').classList.remove('hidden');
+        document.getElementById('attendanceListContent').classList.add('hidden');
+        document.getElementById('attendanceListError').classList.add('hidden');
+        document.getElementById('attendanceListYearFilter').innerHTML = '<option value="">Select Year</option>';
+        document.getElementById('attendanceListMonthFilter').innerHTML = '<option value="">Select Month</option>';
+        document.getElementById('attendanceListIntakeSection').classList.add('hidden');
+        setAttendanceListFilter('all');
+    }
+
+    function fetchAttendanceListYears() {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let i = 0; i < 4; i++) {
+            years.push(currentYear - i);
+        }
+        const yearSelect = document.getElementById('attendanceListYearFilter');
+        yearSelect.innerHTML = '<option value="">Select Year</option>';
+        years.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+        });
+        yearSelect.value = currentYear;
+        currentAttendanceListYear = currentYear;
+        fetchAttendanceListMonths();
+        yearSelect.onchange = function() {
+            currentAttendanceListYear = this.value;
+            fetchAttendanceListMonths();
+        };
+    }
+
+    function fetchAttendanceListMonths() {
+        if (!currentAttendanceListYear) return;
+    fetch(`/instructor/getMonths?year=${currentAttendanceListYear}`)
+            .then(response => response.json())
+            .then(data => {
+                const monthSelect = document.getElementById('attendanceListMonthFilter');
+                monthSelect.innerHTML = '<option value="">Select Month</option>';
+                if (data.months && data.months.length > 0) {
+                    data.months.forEach(monthNum => {
+                        const date = new Date(currentAttendanceListYear, monthNum - 1);
+                        const monthDisplay = date.toLocaleString('en-US', { month: 'long' });
+                        const option = document.createElement('option');
+                        option.value = monthNum;
+                        option.textContent = monthDisplay;
+                        monthSelect.appendChild(option);
+                    });
+                    monthSelect.value = data.months[0];
+                    currentAttendanceListMonth = monthSelect.value;
+                    fetchAttendanceListData();
+                }
+                monthSelect.onchange = function() {
+                    currentAttendanceListMonth = this.value;
+                    fetchAttendanceListData();
+                };
+            });
+    }
+
+    function setAttendanceListFilter(filter) {
+        currentAttendanceListFilter = filter;
+        const buttons = ['attendanceListAll', 'attendanceListPresent', 'attendanceListAbsent'];
+        buttons.forEach(buttonId => {
+            document.getElementById(buttonId).className = 'px-2 py-1 text-xs rounded bg-gray-200 text-gray-700 border border-gray-300 font-medium transition-colors duration-200';
+        });
+        if (filter === 'all') {
+            document.getElementById('attendanceListAll').className += ' bg-blue-600 text-white border-blue-600';
+        } else if (filter === 'present') {
+            document.getElementById('attendanceListPresent').className += ' bg-green-600 text-white border-green-600';
+        } else if (filter === 'absent') {
+            document.getElementById('attendanceListAbsent').className += ' bg-red-600 text-white border-red-600';
+        }
+        fetchAttendanceListData();
+    }
+
+    function fetchAttendanceListData() {
+        let query = `?year=${currentAttendanceListYear}`;
+        if (currentAttendanceListMonth) query += `&month=${currentAttendanceListMonth}`;
+        if (currentAttendanceListIntake) query += `&intake=${encodeURIComponent(currentAttendanceListIntake)}`;
+        if (currentAttendanceListFilter !== 'all') query += `&status=${currentAttendanceListFilter}`;
+    fetch(`/instructor/getCadetAttendanceList${query}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    attendanceListData = data.trainings;
+                    document.getElementById('attendanceListLoading').classList.add('hidden');
+                    document.getElementById('attendanceListContent').classList.remove('hidden');
+                    renderTrainingDropdowns();
+                } else {
+                    showAttendanceListError(data.message || 'Failed to load attendance data');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                showAttendanceListError('Network error occurred. Please try again.');
+            });
+    }
+
+    function showAttendanceListError(message) {
+        document.getElementById('attendanceListLoading').classList.add('hidden');
+        document.getElementById('attendanceListContent').classList.add('hidden');
+        document.getElementById('attendanceListError').classList.remove('hidden');
+        document.getElementById('attendanceListErrorMessage').textContent = message;
+    }
+
+    function renderTrainingDropdowns() {
+    const container = document.getElementById('attendanceListCadets');
+    const emptyState = document.getElementById('attendanceListEmpty');
+    container.innerHTML = '';
+
+    if (!attendanceListData || attendanceListData.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+    }
+    emptyState.classList.add('hidden');
+
+    attendanceListData.forEach(training => {
+        const table = document.createElement('table');
+        table.className = 'min-w-full border border-gray-300 text-sm mb-6';
+
+        // Table Header
+        table.innerHTML = `
+            <thead class="bg-gray-100">
+                <tr>
+                    <th colspan="5" class="px-4 py-2 text-left text-lg font-semibold border-b border-gray-300">
+                        ${training.title} <span class="text-sm text-gray-500">(${training.start_datetime})</span>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="px-4 py-2 border-b border-gray-300">Service No.</th>
+                    <th class="px-4 py-2 border-b border-gray-300">Name</th>
+                    <th class="px-4 py-2 border-b border-gray-300">Matric No.</th>
+                    <th class="px-4 py-2 border-b border-gray-300">Rank</th>
+                    <th class="px-4 py-2 border-b border-gray-300">Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        `;
+
+        const tbody = table.querySelector('tbody');
+
+        // Sort cadets by service number
+        if (training.cadets && training.cadets.length > 0) {
+            training.cadets.sort((a, b) => {
+                const numA = parseInt(a.service_number, 10) || 0;
+                const numB = parseInt(b.service_number, 10) || 0;
+                return numA - numB;
+            }).forEach(cadet => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-2 border-b border-gray-200">${cadet.service_number || '-'}</td>
+                    <td class="px-4 py-2 border-b border-gray-200">${cadet.name}</td>
+                    <td class="px-4 py-2 border-b border-gray-200">${cadet.matric_no || '-'}</td>
+                    <td class="px-4 py-2 border-b border-gray-200">${cadet.rank || '-'}</td>
+                    <td class="px-4 py-2 border-b border-gray-200">
+                        ${cadet.present
+                            ? '<span class="text-green-600 font-medium">Present</span>'
+                            : '<span class="text-red-600 font-medium">Absent</span>'}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        } else {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="5" class="px-4 py-2 border-b border-gray-200 text-center text-gray-500">No cadets found</td>`;
+            tbody.appendChild(row);
+        }
+
+        container.appendChild(table);
+    });
+}
+
+    </script>
+                
+            <!-- Combined Calendar & Activity Time Table Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
                 <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Activity Time Table</h3>
-                        <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-1">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Training Calendar & Activity Time Table</h3>
+                            <p class="text-sm text-gray-500">View and manage all scheduled trainings in one place.</p>
+                        </div>
+                        <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                             <i class="fas fa-plus mr-2"></i>Add Training
                         </button>
                     </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200" id="trainingsTable">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Involvement</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse($trainings as $training)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">{{ $training->title }}</div>
-                                            @if($training->description)
-                                            <div class="text-sm text-gray-500">{{ Str::limit($training->description, 50) }}</div>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $training->involvement ?? 'Not specified' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $training->location }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div>{{ $training->formatted_start_date }}</div>
-                                            <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $training->duration_hours ? $training->duration_hours . 'h' : 'TBD' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">
-                                                {{ $training->status }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button onclick="editTraining({{ $training->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button onclick="deleteTraining({{ $training->id }})" class="text-red-600 hover:text-red-900">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                            No training sessions scheduled
-                                        </td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-md font-semibold text-gray-900 mb-3">Calendar</h4>
+                            <div id="calendar" style="max-height: 400px;"></div>
+                        </div>
+                        <div>
+                            <h4 class="text-md font-semibold text-gray-900 mb-3">Activity Time Table</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200" id="trainingsTable">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Involvement</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @forelse($trainings as $training)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900">{{ $training->title }}</div>
+                                                @if($training->description)
+                                                <div class="text-sm text-gray-500">{{ Str::limit($training->description, 50) }}</div>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $training->involvement ?? 'Not specified' }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $training->location }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <div>{{ $training->formatted_start_date }}</div>
+                                                <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $training->duration_hours ? $training->duration_hours . 'h' : 'TBD' }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">
+                                                    {{ $training->status }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button onclick="editTraining({{ $training->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </button>
+                                                <button onclick="deleteTraining({{ $training->id }})" class="text-red-600 hover:text-red-900">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                                No training sessions scheduled
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

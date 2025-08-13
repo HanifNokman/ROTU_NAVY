@@ -10,6 +10,14 @@ class Training extends Model
 {
     use HasFactory;
 
+    /**
+     * Relationship: Training has many TrainingAttendances
+     */
+    public function trainingAttendances()
+    {
+        return $this->hasMany(TrainingAttendance::class);
+    }
+
     protected $fillable = [
         'title',
         'description',
