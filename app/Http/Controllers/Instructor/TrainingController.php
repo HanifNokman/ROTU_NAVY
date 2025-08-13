@@ -69,16 +69,13 @@ class TrainingController extends Controller
             ]);
         }
 
-        // Parse involvement to extract intake numbers
+        // Only show involved intakes (from training->involvement)
         $involvements = explode(', ', $training->involvement);
         $intakeNumbers = [];
-        $cadets = collect();
-
         foreach ($involvements as $involvement) {
-            // Extract intake number from strings like "Intake - 14", "Intake - 13", etc.
             if (preg_match('/Intake - (\d+)/', $involvement, $matches)) {
                 $intakeNumber = (int) $matches[1];
-                $intakeYear = 2025 - $intakeNumber + 14; // Convert intake number to year
+                $intakeYear = 2011 + $intakeNumber;
                 $intakeNumbers[] = [
                     'number' => $intakeNumber,
                     'year' => $intakeYear,
@@ -86,6 +83,8 @@ class TrainingController extends Controller
                 ];
             }
         }
+        // Sort intakeNumbers by year ascending
+        usort($intakeNumbers, function($a, $b) { return $a['year'] <=> $b['year']; });
 
         // Get cadets for each intake with existing attendance data
         $cadetsByIntake = [];
@@ -96,12 +95,10 @@ class TrainingController extends Controller
                 ->byIntake($intake['year'])
                 ->get()
                 ->map(function ($cadet) use ($intake) {
-                    // Get existing attendance record
                     $attendance = $cadet->trainingAttendances->first();
-                    
                     return [
                         'id' => $cadet->id,
-                        'name' => $cadet->user->name ?? 'Unknown',
+                        'name' => trim(($cadet->rank ? $cadet->rank . ' ' : '') . ($cadet->user->name ?? 'Unknown')),
                         'matric_no' => $cadet->matric_no,
                         'service_number' => $cadet->service_number,
                         'rank' => $cadet->rank,
@@ -112,7 +109,6 @@ class TrainingController extends Controller
                         'marked_at' => $attendance ? $attendance->marked_at : null
                     ];
                 });
-
             if ($intakeCadets->count() > 0) {
                 $cadetsByIntake[] = [
                     'intake' => $intake,
@@ -255,19 +251,28 @@ class TrainingController extends Controller
         if (isset($validated['end_datetime'])) {
             $start = Carbon::parse($validated['start_datetime']);
             $end = Carbon::parse($validated['end_datetime']);
-            $hours = max(2, min(10, $start->diffInHours($end)));
-            $validated['duration_hours'] = $hours;
-
-            // Calculate allowance
-            $isMultiDay = $start->diffInDays($end) >= 1;
-            if ($isMultiDay) {
-                $days = $start->diffInDays($end) + 1;
-                $validated['allowance_amount'] = $days * 50;
-                $validated['allowance_type'] = 'daily';
-            } else {
+            
+            // Check if it's single-day or multi-day training
+            $isSingleDay = $start->toDateString() === $end->toDateString();
+            
+            if ($isSingleDay) {
+                // Single-day training: calculate hours and hourly allowance
+                $hours = max(2, min(10, $start->diffInHours($end)));
+                $validated['duration_hours'] = $hours;
                 $validated['allowance_amount'] = $hours * 8;
                 $validated['allowance_type'] = 'hourly';
+            } else {
+                // Multi-day training: calculate days and daily allowance
+                $days = $start->diffInDays($end) + 1;
+                $validated['duration_hours'] = null; // No duration for multi-day
+                $validated['allowance_amount'] = $days * 50;
+                $validated['allowance_type'] = 'daily';
             }
+        } else {
+            // No end date specified
+            $validated['duration_hours'] = null;
+            $validated['allowance_amount'] = null;
+            $validated['allowance_type'] = null;
         }
 
         $training = Training::create($validated);
@@ -310,19 +315,28 @@ class TrainingController extends Controller
         if (isset($validated['end_datetime'])) {
             $start = Carbon::parse($validated['start_datetime']);
             $end = Carbon::parse($validated['end_datetime']);
-            $hours = max(2, min(10, $start->diffInHours($end)));
-            $validated['duration_hours'] = $hours;
-
-            // Calculate allowance
-            $isMultiDay = $start->diffInDays($end) >= 1;
-            if ($isMultiDay) {
-                $days = $start->diffInDays($end) + 1;
-                $validated['allowance_amount'] = $days * 50;
-                $validated['allowance_type'] = 'daily';
-            } else {
+            
+            // Check if it's single-day or multi-day training
+            $isSingleDay = $start->toDateString() === $end->toDateString();
+            
+            if ($isSingleDay) {
+                // Single-day training: calculate hours and hourly allowance
+                $hours = max(2, min(10, $start->diffInHours($end)));
+                $validated['duration_hours'] = $hours;
                 $validated['allowance_amount'] = $hours * 8;
                 $validated['allowance_type'] = 'hourly';
+            } else {
+                // Multi-day training: calculate days and daily allowance
+                $days = $start->diffInDays($end) + 1;
+                $validated['duration_hours'] = null; // No duration for multi-day
+                $validated['allowance_amount'] = $days * 50;
+                $validated['allowance_type'] = 'daily';
             }
+        } else {
+            // No end date specified
+            $validated['duration_hours'] = null;
+            $validated['allowance_amount'] = null;
+            $validated['allowance_type'] = null;
         }
 
         $training->update($validated);
@@ -359,10 +373,11 @@ class TrainingController extends Controller
             // Extract intake number from strings like "Intake - 14", "Intake - 13", etc.
             if (preg_match('/Intake - (\d+)/', $involvement, $matches)) {
                 $intakeNumber = (int) $matches[1];
-                $intakeYear = 2025 - $intakeNumber + 14; // Convert intake number to year
+                // Intake year is 2011 + intakeNumber
+                $intakeYear = 2011 + $intakeNumber;
 
-                // Get all cadets from this intake
-                $intakeCadets = \App\Models\Cadet::byIntake($intakeYear)->pluck('id');
+                // Get all cadets from this intake year
+                $intakeCadets = \App\Models\Cadet::where('intake_year', $intakeYear)->pluck('id');
                 $cadetIds = $cadetIds->merge($intakeCadets);
             }
         }
@@ -401,6 +416,7 @@ class TrainingController extends Controller
         // Use Training model's roundToNearestHour method
         $now = Carbon::now();
         $roundedEnd = \App\Models\Training::roundToNearestHour($now);
+        
         // Ensure end time is after start time
         if ($roundedEnd->lte($training->start_datetime)) {
             $roundedEnd = $training->start_datetime->copy()->addHour();
@@ -408,7 +424,22 @@ class TrainingController extends Controller
 
         $training->end_datetime = $roundedEnd;
         $training->status = 'Completed';
-        $training->updateDurationAndAllowance();
+        
+        // Calculate duration and allowance for single-day training
+        $start = $training->start_datetime;
+        $end = $training->end_datetime;
+        
+        // Check if it's single-day training (same date)
+        $isSingleDay = $start->toDateString() === $end->toDateString();
+        
+        if ($isSingleDay) {
+            $hours = max(2, min(10, $start->diffInHours($end)));
+            $training->duration_hours = $hours;
+            $training->allowance_amount = $hours * 8;
+            $training->allowance_type = 'hourly';
+        }
+        
+        $training->save();
 
         return response()->json([
             'success' => true,
@@ -470,14 +501,8 @@ class TrainingController extends Controller
     private function updateExpiredTrainings(): void
     {
         Training::where('status', 'Active')
-            ->where(function ($query) {
-                $query->where('end_datetime', '<', Carbon::now())
-                      ->orWhere(function ($subQuery) {
-                          // If no end_datetime, check if start_datetime + 2 hours has passed
-                          $subQuery->whereNull('end_datetime')
-                                   ->where('start_datetime', '<', Carbon::now()->subHours(2));
-                      });
-            })
+            ->whereNotNull('end_datetime')
+            ->where('end_datetime', '<', Carbon::now())
             ->update(['status' => 'Completed']);
     }
 
@@ -486,18 +511,9 @@ class TrainingController extends Controller
      */
     private function updateTrainingStatus(Training $training): void
     {
-        if ($training->status === 'Active') {
+        if ($training->status === 'Active' && $training->end_datetime) {
             $now = Carbon::now();
-            $isExpired = false;
-
-            if ($training->end_datetime) {
-                $isExpired = $training->end_datetime < $now;
-            } else {
-                // If no end time, assume training is 2 hours long
-                $isExpired = $training->start_datetime->addHours(2) < $now;
-            }
-
-            if ($isExpired) {
+            if ($training->end_datetime < $now) {
                 $training->update(['status' => 'Completed']);
             }
         }
@@ -512,17 +528,12 @@ class TrainingController extends Controller
         $start = Carbon::parse($startDateTime);
         $end = $endDateTime ? Carbon::parse($endDateTime) : null;
 
-        // If training has ended
+        // Only mark as completed if training has explicitly ended (has end_datetime and it's in the past)
         if ($end && $end < $now) {
             return 'Completed';
         }
 
-        // If no end time specified, assume 2 hours duration
-        if (!$end && $start->copy()->addHours(2) < $now) {
-            return 'Completed';
-        }
-
-        // If training hasn't started yet or is currently active
+        // For trainings without end_datetime or that haven't ended yet, keep as Active
         return 'Active';
     }
 

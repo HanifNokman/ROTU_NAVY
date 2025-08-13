@@ -38,7 +38,7 @@
                                     @endif
                                 </div>
                                 <div class="flex space-x-2 ml-4">
-                                    @if($training->status === 'Active' && !$training->end_datetime)
+                                    @if($training->status === 'Active' && empty($training->end_datetime))
                                     <button onclick="endTraining({{ $training->id }})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
                                         <i class="fas fa-stop mr-1"></i>End Training
                                     </button>
@@ -177,36 +177,31 @@
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Involvement (Cadet Intakes)</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="involvement[]" value="Intake - 14" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Intake - 14</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="involvement[]" value="Intake - 13" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Intake - 13</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="involvement[]" value="Intake - 12" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Intake - 12</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="involvement[]" value="Intake - 11" class="mr-2 text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Intake - 11</span>
-                            </label>
+                        <div class="grid grid-cols-2 gap-2" id="dynamicIntakeCheckboxes">
+                            <!-- Dynamic intake checkboxes will be rendered here -->
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <label for="start_datetime" class="block text-sm font-medium text-gray-700 mb-2">Start Date & Time</label>
-                            <input type="datetime-local" id="start_datetime" name="start_datetime" step="300" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <p class="text-xs text-gray-500 mt-1">Use military time: 1300 = 1:00 PM, 1400 = 2:00 PM</p>
+                            <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                            <input type="date" id="start_date" name="start_date" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <label for="start_time" class="block text-sm font-medium text-gray-700 mt-2 mb-2">Start Time (Hour)</label>
+                            <select id="start_time" name="start_time" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                @foreach(\App\Models\Training::getHourOptions() as $option)
+                                    <option value="{{ $option }}">{{ $option }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div>
-                            <label for="end_datetime" class="block text-sm font-medium text-gray-700 mb-2">End Date & Time</label>
-                            <input type="datetime-local" id="end_datetime" name="end_datetime" step="300" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <p class="text-xs text-gray-500 mt-1">Optional - Use military time: 1300 = 1:00 PM</p>
+                            <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                            <input type="date" id="end_date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <label for="end_time" class="block text-sm font-medium text-gray-700 mt-2 mb-2">End Time (Hour)</label>
+                            <select id="end_time" name="end_time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                @foreach(\App\Models\Training::getHourOptions() as $option)
+                                    <option value="{{ $option }}">{{ $option }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
@@ -218,11 +213,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="duration_hours" class="block text-sm font-medium text-gray-700 mb-2">Duration (Hours)</label>
-                        <input type="number" id="duration_hours" name="duration_hours" min="2" max="10" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Minimum 2 hours, Maximum 10 hours. Auto-calculated if end datetime is provided.</p>
-                    </div>
+                    <!-- Duration is now auto-calculated, no manual input -->
 
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md">
@@ -258,6 +249,7 @@
     </div>
 
     <!-- Attendance Modal -->
+    <!-- Updated Attendance Modal Section -->
     <div id="attendanceModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen">
             <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
@@ -295,9 +287,9 @@
 
                         <!-- Manual Attendance Section -->
                         <div id="manualSection" class="block">
-                            <!-- Intake Filter -->
-                            <div class="mb-6" id="intakeFilterSection" style="display: none;">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Intake:</label>
+                            <!-- Intake Filter - Updated with better styling and functionality -->
+                            <div class="mb-6" id="intakeFilterSection">
+                                <label class="block text-sm font-medium text-gray-700 mb-3">Select Intake:</label>
                                 <div class="flex flex-wrap gap-2" id="intakeFilters">
                                     <!-- Intake filter buttons will be populated here -->
                                 </div>
@@ -312,12 +304,14 @@
                                         <span class="text-green-700">Present: <span id="presentCount" class="font-semibold">0</span></span> | 
                                         <span class="text-red-700">Absent: <span id="absentCount" class="font-semibold">0</span></span>
                                     </div>
-                                    <button onclick="markAllPresent()" class="px-3 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
-                                        Mark All Present
-                                    </button>
-                                    <button onclick="markAllAbsent()" class="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded-md ml-2 transition-colors duration-200">
-                                        Mark All Absent
-                                    </button>
+                                    <div class="flex space-x-2">
+                                        <button onclick="markAllPresent()" class="px-3 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
+                                            Mark All Present
+                                        </button>
+                                        <button onclick="markAllAbsent()" class="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors duration-200">
+                                            Mark All Absent
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -391,6 +385,7 @@
     @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+<!-- Updated JavaScript section for the view file -->
     <script>
         let calendar;
         let currentTrainingId = null;
@@ -401,10 +396,35 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             initializeCalendar();
-            
+            renderDynamicIntakeCheckboxes();
             // Form submission handler
             document.getElementById('trainingForm').addEventListener('submit', handleFormSubmit);
         });
+
+        // Dynamically render intake checkboxes based on current year
+        function renderDynamicIntakeCheckboxes() {
+            const container = document.getElementById('dynamicIntakeCheckboxes');
+            container.innerHTML = '';
+            const currentYear = new Date().getFullYear();
+            const startIntakeYear = currentYear - 3;
+            const intakes = [];
+            for (let year = startIntakeYear; year <= currentYear; year++) {
+                const intakeNum = year - 2011;
+                intakes.push({
+                    label: `Intake - ${intakeNum}`,
+                    value: `Intake - ${intakeNum}`
+                });
+            }
+            intakes.forEach(intake => {
+                const label = document.createElement('label');
+                label.className = 'flex items-center';
+                label.innerHTML = `
+                    <input type="checkbox" name="involvement[]" value="${intake.value}" class="mr-2 text-blue-600 focus:ring-blue-500">
+                    <span class="text-sm text-gray-700">${intake.label}</span>
+                `;
+                container.appendChild(label);
+            });
+        }
 
         function initializeCalendar() {
             const calendarEl = document.getElementById('calendar');
@@ -430,11 +450,14 @@
             document.getElementById('submitText').textContent = 'Create Training';
             document.getElementById('trainingForm').reset();
             document.getElementById('trainingId').value = '';
-            
             // Reset all checkboxes
             const involvementCheckboxes = document.querySelectorAll('input[name="involvement[]"]');
             involvementCheckboxes.forEach(checkbox => checkbox.checked = false);
-            
+            // Reset date and hour dropdowns
+            document.getElementById('start_date').value = '';
+            document.getElementById('end_date').value = '';
+            document.getElementById('start_time').selectedIndex = 0;
+            document.getElementById('end_time').selectedIndex = 0;
             currentTrainingId = null;
             document.getElementById('trainingModal').classList.remove('hidden');
         }
@@ -452,12 +475,9 @@
                     document.getElementById('title').value = data.title;
                     document.getElementById('description').value = data.description || '';
                     document.getElementById('location').value = data.location;
-                    document.getElementById('duration_hours').value = data.duration_hours || '';
-                    
                     // Handle involvement checkboxes
                     const involvementCheckboxes = document.querySelectorAll('input[name="involvement[]"]');
                     involvementCheckboxes.forEach(checkbox => checkbox.checked = false);
-                    
                     if (data.involvement) {
                         const selectedIntakes = data.involvement.split(', ');
                         involvementCheckboxes.forEach(checkbox => {
@@ -466,11 +486,30 @@
                             }
                         });
                     }
-                    
-                    document.getElementById('start_datetime').value = formatDateTimeForInput(data.start_datetime);
-                    document.getElementById('end_datetime').value = data.end_datetime ? formatDateTimeForInput(data.end_datetime) : '';
+                    // Set date and hour dropdowns using raw values from database
+                    if (data.start_datetime) {
+                        document.getElementById('start_date').value = data.start_datetime.substring(0,10);
+                        const startHour = data.start_datetime.substring(11,13) + '00H';
+                        const startTimeSelect = document.getElementById('start_time');
+                        for (let i = 0; i < startTimeSelect.options.length; i++) {
+                            if (startTimeSelect.options[i].value === startHour) {
+                                startTimeSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    if (data.end_datetime) {
+                        document.getElementById('end_date').value = data.end_datetime.substring(0,10);
+                        const endHour = data.end_datetime.substring(11,13) + '00H';
+                        const endTimeSelect = document.getElementById('end_time');
+                        for (let i = 0; i < endTimeSelect.options.length; i++) {
+                            if (endTimeSelect.options[i].value === endHour) {
+                                endTimeSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
                     document.getElementById('status').value = data.status;
-                    
                     document.getElementById('trainingModal').classList.remove('hidden');
                 })
                 .catch(error => {
@@ -553,7 +592,7 @@
                         // Set training title
                         document.getElementById('trainingTitle').textContent = data.training.title;
                         
-                        // Setup intake filters
+                        // Setup intake filters (this will set the default intake)
                         setupIntakeFilters();
                         
                         // Display cadets
@@ -584,21 +623,59 @@
 
         function setupIntakeFilters() {
             const filtersContainer = document.getElementById('intakeFilters');
+            const filterSection = document.getElementById('intakeFilterSection');
             filtersContainer.innerHTML = '';
             
-            // Add "All" filter
+            // Only show intake filters if there are multiple intakes
+            if (cadetsData.length <= 1) {
+                filterSection.style.display = 'none';
+                currentIntakeFilter = 'all';
+                return;
+            }
+            
+            filterSection.style.display = 'block';
+            
+            // Sort intakes by intake_year (ascending) to get the lowest year first
+            const sortedIntakes = [...cadetsData].sort((a, b) => {
+                // Extract year from intake label (e.g., "Intake - 12" -> 12, then convert to year)
+                const getYear = (intake) => {
+                    const match = intake.intake.label.match(/Intake - (\d+)/);
+                    if (match) {
+                        // Convert intake number to year (assuming Intake 1 = 2012)
+                        return 2011 + parseInt(match[1]);
+                    }
+                    return 0;
+                };
+                return getYear(a) - getYear(b);
+            });
+            
+            // Set default to lowest intake year (first in sorted array)
+            const defaultIntakeIndex = cadetsData.findIndex(intake => 
+                intake.intake.label === sortedIntakes[0].intake.label
+            );
+            currentIntakeFilter = defaultIntakeIndex;
+            
+            // Add "All Intakes" button
             const allButton = document.createElement('button');
-            allButton.className = 'px-3 py-1 text-sm rounded-md bg-blue-600 text-white';
-            allButton.textContent = 'All Intakes';
+            allButton.className = 'px-4 py-2 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 border border-gray-300';
+            allButton.textContent = `All Intakes (${cadetsData.reduce((sum, group) => sum + group.cadets.length, 0)})`;
             allButton.onclick = () => filterByIntake('all', allButton);
             filtersContainer.appendChild(allButton);
             
-            // Add individual intake filters
-            cadetsData.forEach((intakeGroup, index) => {
+            // Add individual intake filters (sorted by year)
+            sortedIntakes.forEach((intakeGroup) => {
+                const originalIndex = cadetsData.findIndex(group => 
+                    group.intake.label === intakeGroup.intake.label
+                );
+                
                 const button = document.createElement('button');
-                button.className = 'px-3 py-1 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300';
+                const isDefault = originalIndex === defaultIntakeIndex;
+                button.className = isDefault 
+                    ? 'px-4 py-2 text-sm rounded-md bg-blue-600 text-white transition-colors duration-200 border border-blue-600'
+                    : 'px-4 py-2 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 border border-gray-300';
+                
                 button.textContent = `${intakeGroup.intake.label} (${intakeGroup.cadets.length})`;
-                button.onclick = () => filterByIntake(index, button);
+                button.onclick = () => filterByIntake(originalIndex, button);
                 filtersContainer.appendChild(button);
             });
         }
@@ -608,14 +685,14 @@
             
             // Update button states
             document.querySelectorAll('#intakeFilters button').forEach(btn => {
-                btn.className = 'px-3 py-1 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300';
+                btn.className = 'px-4 py-2 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 border border-gray-300';
             });
-            buttonElement.className = 'px-3 py-1 text-sm rounded-md bg-blue-600 text-white';
+            buttonElement.className = 'px-4 py-2 text-sm rounded-md bg-blue-600 text-white transition-colors duration-200 border border-blue-600';
             
             displayCadets();
         }
 
-// Updated displayCadets function with existing attendance data
+        // Updated displayCadets function with proper attendance toggle functionality
         function displayCadets() {
             const cadetsContainer = document.getElementById('cadetsList');
             cadetsContainer.innerHTML = '';
@@ -637,13 +714,31 @@
                 const intakeHeader = document.createElement('div');
                 intakeHeader.className = 'mb-4';
                 intakeHeader.innerHTML = `
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h5 class="text-md font-semibold text-gray-800">
-                            ${intakeGroup.intake.label} (${totalInIntake} cadets)
+                    <div class="flex justify-between items-center border-b-2 border-gray-200 pb-3 mb-4">
+                        <h5 class="text-lg font-semibold text-gray-800">
+                            ${intakeGroup.intake.label}
+                            <span class="ml-2 text-sm font-normal text-gray-600">(${totalInIntake} cadets)</span>
                         </h5>
-                        <div class="text-sm text-gray-600">
-                            <span class="text-green-600 font-medium">${presentInIntake} present</span> | 
-                            <span class="text-red-600 font-medium">${totalInIntake - presentInIntake} absent</span>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-sm text-gray-600">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    ${presentInIntake} present
+                                </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2">
+                                    <i class="fas fa-times-circle mr-1"></i>
+                                    ${totalInIntake - presentInIntake} absent
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium text-gray-700">
+                                    ${Math.round((presentInIntake / totalInIntake) * 100)}% Attendance
+                                </div>
+                                <div class="w-24 bg-gray-200 rounded-full h-2 mt-1">
+                                    <div class="bg-green-600 h-2 rounded-full transition-all duration-300" 
+                                        style="width: ${(presentInIntake / totalInIntake) * 100}%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -656,34 +751,50 @@
                 intakeGroup.cadets.forEach(cadet => {
                     const cadetCard = document.createElement('div');
                     const cardClass = cadet.present ? 
-                        'flex items-center justify-between p-3 border-2 border-green-200 bg-green-50 rounded-lg' : 
-                        'flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50';
+                        'flex items-center justify-between p-4 border-2 border-green-200 bg-green-50 rounded-lg transition-all duration-200' : 
+                        'flex items-center justify-between p-4 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 transition-all duration-200';
                     cadetCard.className = cardClass;
+                    cadetCard.setAttribute('data-cadet-id', cadet.id);
                     
                     // Create attendance status indicator
                     let statusIndicator = '';
                     if (cadet.present) {
                         const method = cadet.attendance_method === 'qr_code' ? 'QR Code' : 'Manual';
                         const timeStr = cadet.marked_at ? new Date(cadet.marked_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-                        statusIndicator = `<div class="text-xs text-green-700 font-medium">✓ Present via ${method}${timeStr ? ` at ${timeStr}` : ''}</div>`;
+                        statusIndicator = `
+                            <div class="text-xs text-green-700 font-medium flex items-center mt-1">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Present via ${method}${timeStr ? ` at ${timeStr}` : ''}
+                            </div>
+                        `;
                     }
+                    
+                    // Show as 'Rank Name'
+                    let rankName = cadet.rank ? cadet.rank + ' ' : '';
+                    // Remove duplicate rank if present in name
+                    let displayName = cadet.name;
+                    if (cadet.rank && displayName.startsWith(cadet.rank + ' ')) {
+                        displayName = displayName.substring(cadet.rank.length + 1);
+                    }
+                    rankName += displayName;
                     
                     cadetCard.innerHTML = `
                         <div class="flex-1">
-                            <div class="font-medium text-gray-900">${cadet.name}</div>
-                            <div class="text-sm text-gray-600">
+                            <div class="font-medium text-gray-900 text-base">${rankName}</div>
+                            <div class="text-sm text-gray-600 mt-1">
                                 ${cadet.matric_no ? `Matric: ${cadet.matric_no}` : ''}
                                 ${cadet.service_number ? ` | Service: ${cadet.service_number}` : ''}
                             </div>
-                            <div class="text-xs text-gray-500">
-                                ${cadet.rank ? `${cadet.rank}` : ''}${cadet.position && cadet.position !== 'Normal Cadet' ? ` - ${cadet.position}` : ''}
-                            </div>
                             ${statusIndicator}
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer attendance-toggle" data-cadet-id="${cadet.id}" ${cadet.present ? 'checked' : ''} onchange="updateAttendanceCount()">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                        </label>
+                        <div class="flex items-center ml-4">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer attendance-toggle" 
+                                    data-cadet-id="${cadet.id}" ${cadet.present ? 'checked' : ''} 
+                                    onchange="toggleCadetAttendance(this)">
+                                <div class="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                            </label>
+                        </div>
                     `;
                     cadetsGrid.appendChild(cadetCard);
                 });
@@ -692,6 +803,75 @@
             });
             
             updateAttendanceCount();
+        }
+
+        // Updated function to handle individual cadet attendance toggle
+        function toggleCadetAttendance(checkbox) {
+            const cadetId = checkbox.dataset.cadetId;
+            const isPresent = checkbox.checked;
+            
+            // Update the cadet's attendance in the data
+            cadetsData.forEach(intakeGroup => {
+                const cadet = intakeGroup.cadets.find(c => c.id == cadetId);
+                if (cadet) {
+                    cadet.present = isPresent;
+                    if (isPresent) {
+                        cadet.attendance_method = 'manual';
+                        cadet.marked_at = new Date().toISOString();
+                    } else {
+                        cadet.attendance_method = null;
+                        cadet.marked_at = null;
+                    }
+                }
+            });
+            
+            // Update visual state of the card
+            const card = checkbox.closest('.flex');
+            if (isPresent) {
+                card.className = 'flex items-center justify-between p-4 border-2 border-green-200 bg-green-50 rounded-lg transition-all duration-200';
+            } else {
+                card.className = 'flex items-center justify-between p-4 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 transition-all duration-200';
+            }
+            
+            // Update attendance counts
+            updateAttendanceCount();
+            
+            // Refresh display to show updated status indicators
+            setTimeout(() => {
+                displayCadets();
+            }, 100);
+            
+            // Auto-save individual attendance change
+            autoSaveAttendance(cadetId, isPresent);
+        }
+
+        // Function to auto-save individual attendance changes
+        function autoSaveAttendance(cadetId, isPresent) {
+            const attendanceData = [{
+                cadet_id: cadetId,
+                present: isPresent
+            }];
+            
+            fetch(`/instructor/training/${currentTrainingId}/attendance`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    attendance: attendanceData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Error auto-saving attendance:', data.message);
+                    showNotification('Error saving attendance: ' + (data.message || 'Unknown error'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error auto-saving attendance:', error);
+            });
         }
 
         // Enhanced updateAttendanceCount function
@@ -711,40 +891,112 @@
             const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
             
             // Color-code the summary based on attendance percentage
-            const summaryElement = document.querySelector('#attendanceContent .bg-blue-50');
+            const summaryElement = document.querySelector('#attendanceContent .bg-blue-50, #attendanceContent .bg-green-50, #attendanceContent .bg-yellow-50, #attendanceContent .bg-red-50');
             if (summaryElement) {
+                // Remove all color classes
+                summaryElement.classList.remove('bg-blue-50', 'border-blue-200', 'bg-green-50', 'border-green-200', 'bg-yellow-50', 'border-yellow-200', 'bg-red-50', 'border-red-200');
+                
                 if (percentage >= 90) {
-                    summaryElement.className = summaryElement.className.replace('bg-blue-50 border-blue-200', 'bg-green-50 border-green-200');
+                    summaryElement.classList.add('bg-green-50', 'border-green-200');
                 } else if (percentage >= 70) {
-                    summaryElement.className = summaryElement.className.replace('bg-green-50 border-green-200', 'bg-yellow-50 border-yellow-200').replace('bg-blue-50 border-blue-200', 'bg-yellow-50 border-yellow-200');
+                    summaryElement.classList.add('bg-yellow-50', 'border-yellow-200');
                 } else {
-                    summaryElement.className = summaryElement.className.replace('bg-green-50 border-green-200', 'bg-red-50 border-red-200').replace('bg-yellow-50 border-yellow-200', 'bg-red-50 border-red-200').replace('bg-blue-50 border-blue-200', 'bg-red-50 border-red-200');
+                    summaryElement.classList.add('bg-red-50', 'border-red-200');
                 }
             }
         }
 
-        // New function to mark all cadets as present
+        // Updated function to mark all cadets as present
         function markAllPresent() {
-            const toggles = document.querySelectorAll('.attendance-toggle');
-            toggles.forEach(toggle => {
-                if (!toggle.checked) {
-                    toggle.checked = true;
-                }
+            // Update data for currently visible cadets
+            let displayData = [];
+            if (currentIntakeFilter === 'all') {
+                displayData = cadetsData;
+            } else {
+                displayData = [cadetsData[currentIntakeFilter]];
+            }
+            
+            const cadetIds = [];
+            displayData.forEach(intakeGroup => {
+                intakeGroup.cadets.forEach(cadet => {
+                    if (!cadet.present) {
+                        cadet.present = true;
+                        cadet.attendance_method = 'manual';
+                        cadet.marked_at = new Date().toISOString();
+                        cadetIds.push(cadet.id);
+                    }
+                });
             });
-            updateAttendanceCount();
-            displayCadets(); // Refresh display to show status changes
+            
+            // Refresh display
+            displayCadets();
+            
+            // Save all changes
+            if (cadetIds.length > 0) {
+                saveBulkAttendance(cadetIds, true);
+            }
         }
 
-        // New function to mark all cadets as absent
+        // Updated function to mark all cadets as absent
         function markAllAbsent() {
-            const toggles = document.querySelectorAll('.attendance-toggle');
-            toggles.forEach(toggle => {
-                if (toggle.checked) {
-                    toggle.checked = false;
-                }
+            // Update data for currently visible cadets
+            let displayData = [];
+            if (currentIntakeFilter === 'all') {
+                displayData = cadetsData;
+            } else {
+                displayData = [cadetsData[currentIntakeFilter]];
+            }
+            
+            const cadetIds = [];
+            displayData.forEach(intakeGroup => {
+                intakeGroup.cadets.forEach(cadet => {
+                    if (cadet.present) {
+                        cadet.present = false;
+                        cadet.attendance_method = null;
+                        cadet.marked_at = null;
+                        cadetIds.push(cadet.id);
+                    }
+                });
             });
-            updateAttendanceCount();
-            displayCadets(); // Refresh display to show status changes
+            
+            // Refresh display
+            displayCadets();
+            
+            // Save all changes
+            if (cadetIds.length > 0) {
+                saveBulkAttendance(cadetIds, false);
+            }
+        }
+
+        // Function to save bulk attendance changes
+        function saveBulkAttendance(cadetIds, isPresent) {
+            const attendanceData = cadetIds.map(cadetId => ({
+                cadet_id: cadetId,
+                present: isPresent
+            }));
+            
+            fetch(`/instructor/training/${currentTrainingId}/attendance`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    attendance: attendanceData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(`Successfully marked ${cadetIds.length} cadets as ${isPresent ? 'present' : 'absent'}!`, 'success');
+                } else {
+                    showNotification('Error saving bulk attendance: ' + (data.message || 'Unknown error'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving bulk attendance:', error);
+                showNotification('Error saving bulk attendance. Please try again.', 'error');
+            });
         }
 
         // Enhanced saveAttendance function with better feedback
@@ -777,7 +1029,7 @@
             .then(data => {
                 if (data.success) {
                     // Show success message
-                    showNotification('Attendance saved successfully!', 'success');
+                    showNotification('All attendance saved successfully!', 'success');
                     
                     // Update button
                     saveButton.innerHTML = '<i class="fas fa-check mr-2"></i>Saved!';
@@ -806,22 +1058,13 @@
 
         // Enhanced closeAttendanceModal with confirmation if unsaved changes
         function closeAttendanceModal() {
-            // Check for unsaved changes (this is a simple check - you might want to implement more sophisticated tracking)
-            const hasChanges = document.querySelectorAll('.attendance-toggle').length > 0;
-            
-            if (hasChanges) {
-                if (!confirm('Are you sure you want to close? Any unsaved changes will be lost.')) {
-                    return;
-                }
-            }
-            
             document.getElementById('attendanceModal').classList.add('hidden');
             
             // Clear intervals
             if (qrRefreshInterval) clearInterval(qrRefreshInterval);
             if (countdownInterval) clearInterval(countdownInterval);
             
-            // Reset data
+            // Reset data and filters
             cadetsData = [];
             currentIntakeFilter = 'all';
             currentTrainingId = null;
@@ -955,40 +1198,6 @@
             }, 1000);
         }
 
-        function saveAttendance() {
-            const attendanceData = [];
-            document.querySelectorAll('.attendance-toggle').forEach(toggle => {
-                attendanceData.push({
-                    cadet_id: toggle.dataset.cadetId,
-                    present: toggle.checked
-                });
-            });
-            
-            fetch(`/instructor/training/${currentTrainingId}/attendance`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    attendance: attendanceData
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Attendance saved successfully!');
-                    closeAttendanceModal();
-                } else {
-                    alert('Error saving attendance: ' + (data.message || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error saving attendance:', error);
-                alert('Error saving attendance');
-            });
-        }
-
         function handleFormSubmit(e) {
             e.preventDefault();
             
@@ -1005,16 +1214,25 @@
                     data[key] = value;
                 }
             }
-            
             // Add involvement as comma-separated string
             data.involvement = selectedIntakes.join(', ');
-            
-            const url = currentTrainingId ? 
-                `/instructor/training/${currentTrainingId}` : 
-                '/instructor/training';
-            
+            // Combine date and hour dropdowns into proper datetime string
+            function combineDateHour(date, hour) {
+                if (!date || !hour) return null;
+                // hour is in format 'HH00H', e.g. '0900H'
+                const hourNum = hour.substring(0,2);
+                return date + 'T' + hourNum + ':00:00';
+            }
+            data.start_datetime = combineDateHour(data.start_date, data.start_time);
+            data.end_datetime = data.end_date && data.end_time ? combineDateHour(data.end_date, data.end_time) : null;
+            // Remove raw date/time fields
+            delete data.start_date;
+            delete data.start_time;
+            delete data.end_date;
+            delete data.end_time;
+            // Set endpoint and method
+            const url = currentTrainingId ? `/instructor/training/${currentTrainingId}` : '/instructor/training';
             const method = currentTrainingId ? 'PUT' : 'POST';
-            
             fetch(url, {
                 method: method,
                 headers: {
@@ -1043,18 +1261,6 @@
 
         function closeDeleteModal() {
             document.getElementById('deleteModal').classList.add('hidden');
-        }
-
-        function closeAttendanceModal() {
-            document.getElementById('attendanceModal').classList.add('hidden');
-            
-            // Clear intervals
-            if (qrRefreshInterval) clearInterval(qrRefreshInterval);
-            if (countdownInterval) clearInterval(countdownInterval);
-            
-            // Reset data
-            cadetsData = [];
-            currentIntakeFilter = 'all';
         }
 
         function formatDateTimeForInput(datetime) {
