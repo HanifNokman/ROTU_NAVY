@@ -65,7 +65,7 @@ class Training extends Model
     protected $casts = [
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
-        'allowance_amount' => 'decimal:2',
+        'allowance_amount' => 'float',
     ];
 
     protected $attributes = [

@@ -172,7 +172,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('cadet.dashboard');
 
     // Cadet Training
-    Route::get('/cadet/training', [CadetTrainingController::class, 'index'])->name('cadet.training');
+    Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
+        Route::get('/training', [CadetTrainingController::class, 'index'])->name('training');
+        Route::get('/training/{training}', [CadetTrainingController::class, 'show'])
+            ->whereNumber('training')
+            ->name('training.show');
+    });
+
 
     // Cadet Allowance
     Route::get('/cadet/allowance', function () {

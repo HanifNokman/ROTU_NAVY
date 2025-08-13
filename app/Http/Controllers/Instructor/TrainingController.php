@@ -415,7 +415,10 @@ class TrainingController extends Controller
 
         // Use Training model's roundToNearestHour method
         $now = Carbon::now();
-        $roundedEnd = \App\Models\Training::roundToNearestHour($now);
+        $roundedEnd = $now->copy()->minute(0)->second(0);
+        if ($now->minute >= 30) {
+            $roundedEnd->addHour();
+        }
         
         // Ensure end time is after start time
         if ($roundedEnd->lte($training->start_datetime)) {
@@ -425,20 +428,21 @@ class TrainingController extends Controller
         $training->end_datetime = $roundedEnd;
         $training->status = 'Completed';
         
-        // Calculate duration and allowance for single-day training
+        // Calculate duration and allowance
         $start = $training->start_datetime;
         $end = $training->end_datetime;
-        
-        // Check if it's single-day training (same date)
         $isSingleDay = $start->toDateString() === $end->toDateString();
-        
         if ($isSingleDay) {
             $hours = max(2, min(10, $start->diffInHours($end)));
             $training->duration_hours = $hours;
-            $training->allowance_amount = $hours * 8;
+            $training->allowance_amount = round($hours * 8, 2);
             $training->allowance_type = 'hourly';
+        } else {
+            $days = $start->diffInDays($end) + 1;
+            $training->duration_hours = null;
+            $training->allowance_amount = round($days * 50, 2);
+            $training->allowance_type = 'daily';
         }
-        
         $training->save();
 
         return response()->json([
@@ -491,8 +495,22 @@ class TrainingController extends Controller
     {
         // Update status before showing
         $this->updateTrainingStatus($training);
-        
-        return response()->json($training->fresh());
+
+        $training = $training->fresh();
+        // Build a more complete response for frontend
+        return response()->json([
+            'id' => $training->id,
+            'title' => $training->title,
+            'description' => $training->description,
+            'location' => $training->location,
+            'involvement' => $training->involvement,
+            'start_datetime' => $training->start_datetime ? $training->start_datetime->format('Y-m-d H:i:s') : null,
+            'end_datetime' => $training->end_datetime ? $training->end_datetime->format('Y-m-d H:i:s') : null,
+            'duration_hours' => $training->duration_hours,
+            'allowance_amount' => $training->allowance_amount,
+            'allowance_type' => $training->allowance_type,
+            'status' => $training->status,
+        ]);
     }
 
     /**
