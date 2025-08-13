@@ -42,19 +42,19 @@
                             <div class="flex-shrink-0">
                                 <label class="block text-xs font-medium text-gray-700 mb-1">Year</label>
                                 <select id="attendanceListYearFilter" class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
-                                    <option value="">Select Year</option>
+                                    <!-- Removed 'Select Year' option -->
                                 </select>
                             </div>
                             <div class="flex-shrink-0">
                                 <label class="block text-xs font-medium text-gray-700 mb-1">Month</label>
                                 <select id="attendanceListMonthFilter" class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
-                                    <option value="">Select Month</option>
+                                    <!-- Removed 'Select Month' option -->
                                 </select>
                             </div>
                             <div id="attendanceListIntakeSection" class="hidden flex-shrink-0">
                                 <label class="block text-xs font-medium text-gray-700 mb-1">Intake</label>
                                 <select id="attendanceListIntakeFilter" class="w-28 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
-                                    <option value="">All</option>
+                                    <!-- Removed 'All' option -->
                                 </select>
                             </div>
                             <div class="flex-grow"></div>
@@ -190,19 +190,19 @@
                             <div class="flex-shrink-0">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
                                 <select id="attendanceListYearFilter" class="w-24 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <option value="">Select Year</option>
+                                    <!-- Removed 'Select Year' option -->
                                 </select>
                             </div>
                             <div class="flex-shrink-0">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
                                 <select id="attendanceListMonthFilter" class="w-36 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <option value="">Select Month</option>
+                                    <!-- Removed 'Select Month' option -->
                                 </select>
                             </div>
                             <div id="attendanceListIntakeSection" class="hidden flex-shrink-0">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Intake</label>
                                 <select id="attendanceListIntakeFilter" class="w-32 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <option value="">All Intakes</option>
+                                    <!-- Removed 'All Intakes' option -->
                                 </select>
                             </div>
                         </div>
@@ -211,9 +211,9 @@
                         <div class="flex-shrink-0">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Attendance Status</label>
                             <div class="flex gap-1">
-                                <button id="attendanceListAll" class="px-3 py-2 text-sm rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200 hover:bg-blue-700" onclick="setAttendanceListFilter('all')">All</button>
                                 <button id="attendanceListPresent" class="px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-800 border border-gray-300 transition-colors duration-200" onclick="setAttendanceListFilter('present')">Present</button>
                                 <button id="attendanceListAbsent" class="px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-800 border border-gray-300 transition-colors duration-200" onclick="setAttendanceListFilter('absent')">Absent</button>
+                                <!-- Removed 'All' button -->
                             </div>
                         </div>
                     </div>
@@ -271,8 +271,8 @@ function resetAttendanceListModal() {
     document.getElementById('attendanceListLoading').classList.remove('hidden');
     document.getElementById('attendanceListContent').classList.add('hidden');
     document.getElementById('attendanceListError').classList.add('hidden');
-    document.getElementById('attendanceListYearFilter').innerHTML = '<option value="">Select Year</option>';
-    document.getElementById('attendanceListMonthFilter').innerHTML = '<option value="">Select Month</option>';
+    document.getElementById('attendanceListYearFilter').innerHTML = '';
+    document.getElementById('attendanceListMonthFilter').innerHTML = '';
     document.getElementById('attendanceListIntakeSection').classList.add('hidden');
     document.getElementById('attendanceListTrainings').innerHTML = '';
     // Reset filter buttons
@@ -285,20 +285,22 @@ function fetchAttendanceListYears() {
         .then(data => {
             if (data.success && data.years) {
                 const yearSelect = document.getElementById('attendanceListYearFilter');
-                yearSelect.innerHTML = '<option value="">Select Year</option>';
-                
+                yearSelect.innerHTML = '';
                 data.years.forEach(year => {
                     const option = document.createElement('option');
                     option.value = year;
                     option.textContent = year;
                     yearSelect.appendChild(option);
                 });
-                
                 // Set current year as default
                 const currentYear = new Date().getFullYear();
                 if (data.years.includes(currentYear)) {
                     yearSelect.value = currentYear;
                     currentAttendanceListYear = currentYear;
+                    fetchAttendanceListMonths();
+                } else if (data.years.length > 0) {
+                    yearSelect.value = data.years[0];
+                    currentAttendanceListYear = data.years[0];
                     fetchAttendanceListMonths();
                 }
             }
@@ -316,7 +318,7 @@ function fetchAttendanceListYears() {
         currentAttendanceListYear = this.value;
         currentAttendanceListMonth = '';
         currentAttendanceListIntake = '';
-        document.getElementById('attendanceListMonthFilter').innerHTML = '<option value="">Select Month</option>';
+        document.getElementById('attendanceListMonthFilter').innerHTML = '';
         document.getElementById('attendanceListTrainings').innerHTML = '';
         document.getElementById('attendanceListIntakeSection').classList.add('hidden');
         
@@ -334,8 +336,7 @@ function fetchAttendanceListMonths() {
         .then(data => {
             if (data.success && data.months) {
                 const monthSelect = document.getElementById('attendanceListMonthFilter');
-                monthSelect.innerHTML = '<option value="">Select Month</option>';
-                
+                monthSelect.innerHTML = '';
                 // Sort months in descending order (most recent first)
                 const sortedMonths = data.months.sort((a, b) => b - a);
                 sortedMonths.forEach(monthNum => {
@@ -352,7 +353,7 @@ function fetchAttendanceListMonths() {
                 if (sortedMonths.includes(currentMonth)) {
                     monthSelect.value = currentMonth;
                     currentAttendanceListMonth = currentMonth;
-                } else {
+                } else if (sortedMonths.length > 0) {
                     monthSelect.value = sortedMonths[0];
                     currentAttendanceListMonth = sortedMonths[0];
                 }
@@ -379,19 +380,18 @@ function setAttendanceListFilter(filter) {
     
     // Reset all button styles
     const buttons = {
-        'all': document.getElementById('attendanceListAll'),
         'present': document.getElementById('attendanceListPresent'),
         'absent': document.getElementById('attendanceListAbsent')
     };
     
     Object.values(buttons).forEach(btn => {
-        btn.className = 'px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 border border-gray-300 font-medium transition-colors duration-200';
+        if (btn) {
+            btn.className = 'px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-gray-100 hover:text-green-800 border border-gray-300 transition-colors duration-200';
+        }
     });
     
     // Set active button style
-    if (filter === 'all') {
-        buttons.all.className = 'px-3 py-2 text-sm rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200 hover:bg-blue-700';
-    } else if (filter === 'present') {
+    if (filter === 'present') {
         buttons.present.className = 'px-3 py-2 text-sm rounded bg-green-600 text-white border border-green-600 font-medium transition-colors duration-200 hover:bg-green-700';
     } else if (filter === 'absent') {
         buttons.absent.className = 'px-3 py-2 text-sm rounded bg-red-600 text-white border border-red-600 font-medium transition-colors duration-200 hover:bg-red-700';
@@ -416,7 +416,9 @@ function fetchAttendanceListData() {
     fetch(`/instructor/getCadetAttendanceList${query}`)
         .then(response => response.json())
         .then(data => {
+            console.log('Attendance data received:', data); // Debug log
             if (data.success) {
+                // The response structure is different now - it's { trainings: [...] }
                 attendanceListData = data.trainings || [];
                 setupIntakeFilter();
                 renderTrainingAccordions();
@@ -443,16 +445,21 @@ function setupIntakeFilter() {
         }
     });
     
-    allAvailableIntakes = Array.from(intakeSet).sort((a, b) => a - b);
+    allAvailableIntakes = Array.from(intakeSet).sort((a, b) => {
+        // Extract number from "Intake - X" format and sort numerically
+        const aNum = parseInt(a.match(/Intake - (\d+)/)?.[1] || '0');
+        const bNum = parseInt(b.match(/Intake - (\d+)/)?.[1] || '0');
+        return aNum - bNum;
+    });
     
     // Show/hide intake filter based on whether multiple intakes are available
     const intakeSection = document.getElementById('attendanceListIntakeSection');
     const intakeSelect = document.getElementById('attendanceListIntakeFilter');
     
-    if (allAvailableIntakes.length > 0) {
+    if (allAvailableIntakes.length > 1) {
         intakeSection.classList.remove('hidden');
         // Populate intake filter options
-        intakeSelect.innerHTML = '<option value="">All Intakes</option>';
+        intakeSelect.innerHTML = '';
         allAvailableIntakes.forEach(intake => {
             const option = document.createElement('option');
             option.value = intake;
@@ -479,6 +486,8 @@ function renderTrainingAccordions() {
     
     container.innerHTML = '';
     
+    console.log('Rendering training accordions with data:', attendanceListData); // Debug log
+    
     if (!attendanceListData || attendanceListData.length === 0) {
         emptyState.classList.remove('hidden');
         return;
@@ -501,9 +510,10 @@ function createTrainingAccordion(training, index) {
     const accordionDiv = document.createElement('div');
     accordionDiv.className = 'border border-gray-200 rounded-lg overflow-hidden';
     
-    // Calculate summary statistics
-    const totalCadets = training.cadets ? training.cadets.length : 0;
-    const presentCount = training.cadets ? training.cadets.filter(c => c.present).length : 0;
+    // Calculate summary statistics - the data structure has changed
+    const cadets = training.cadets || [];
+    const totalCadets = cadets.length;
+    const presentCount = cadets.filter(c => c.present).length;
     const absentCount = totalCadets - presentCount;
     const attendancePercentage = totalCadets > 0 ? Math.round((presentCount / totalCadets) * 100) : 0;
     
@@ -569,7 +579,7 @@ function createTrainingAccordion(training, index) {
         
         <div class="accordion-content hidden" id="accordion-content-${index}">
             <div class="border-t border-gray-200">
-                ${createCadetTable(training.cadets || [], training.id)}
+                ${createCadetTable(cadets, training.id)}
             </div>
         </div>
     `;
