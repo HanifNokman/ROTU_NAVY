@@ -5,93 +5,6 @@
         </h2>
     </x-slot>
 
-    <!-- Attendance List Modal (moved outside main content for full screen coverage) -->
-    <div id="attendanceListModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
-                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-900">Attendance List</h3>
-                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100" title="Close">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div class="p-6">
-                    <!-- Loading State -->
-                    <div id="attendanceListLoading" class="text-center py-8">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                        <p class="mt-2 text-gray-600">Loading attendance data...</p>
-                    </div>
-
-                    <!-- Error State -->
-                    <div id="attendanceListError" class="hidden text-center py-8">
-                        <div class="text-red-500 mb-4">
-                            <i class="fas fa-exclamation-triangle text-4xl"></i>
-                        </div>
-                        <p class="text-gray-600 mb-4" id="attendanceListErrorMessage">Failed to load attendance data</p>
-                        <button onclick="fetchAttendanceListData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
-                            <i class="fas fa-refresh mr-2"></i>
-                            Retry
-                        </button>
-                    </div>
-
-                    <!-- Main Content -->
-                    <div id="attendanceListContent" class="hidden">
-                        <div class="flex flex-wrap items-end gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Year</label>
-                                <select id="attendanceListYearFilter" class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
-                                    <!-- Removed 'Select Year' option -->
-                                </select>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Month</label>
-                                <select id="attendanceListMonthFilter" class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
-                                    <!-- Removed 'Select Month' option -->
-                                </select>
-                            </div>
-                            <div id="attendanceListIntakeSection" class="hidden flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Intake</label>
-                                <select id="attendanceListIntakeFilter" class="w-28 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
-                                    <!-- Removed 'All' option -->
-                                </select>
-                            </div>
-                            <div class="flex-grow"></div>
-                            <div class="flex-shrink-0">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                                <div class="flex gap-1">
-                                    <button id="attendanceListAll" class="px-2 py-1 text-xs rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200" onclick="setAttendanceListFilter('all')">All</button>
-                                    <button id="attendanceListPresent" class="px-2 py-1 text-xs rounded bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 transition-colors duration-200" onclick="setAttendanceListFilter('present')">Present</button>
-                                    <button id="attendanceListAbsent" class="px-2 py-1 text-xs rounded bg-red-100 text-red-800 hover:bg-red-200 border border-red-300 transition-colors duration-200" onclick="setAttendanceListFilter('absent')">Absent</button>
-                                </div>
-                            </div>
-                            <div id="attendanceListSummary" class="hidden flex-shrink-0 ml-4">
-                                <div class="bg-white px-3 py-2 rounded border border-gray-200">
-                                    <div class="text-xs text-gray-700">
-                                        <div class="flex justify-between">
-                                            <span>Total:</span>
-                                            <span id="summaryTotal" class="font-semibold ml-2">0</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Present:</span>
-                                            <span id="summaryPresent" class="font-semibold ml-2">0</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Absent:</span>
-                                            <span id="summaryAbsent" class="font-semibold ml-2">0</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="attendanceListCadets"></div>
-                        <div id="attendanceListEmpty" class="hidden text-center py-8 text-gray-400">No trainings found for selected filters.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -151,9 +64,9 @@
             </div>
 
 <!-- Updated Attendance List Modal Section -->
-<div id="attendanceListModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
+<div id="attendanceListModal" class="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-60 hidden z-50">
+    <div class="flex items-center justify-center w-full h-full">
+        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h3 class="text-lg font-semibold text-gray-900">Attendance List</h3>
                 <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100" title="Close">
@@ -189,21 +102,15 @@
                         <div class="flex flex-wrap items-end gap-3">
                             <div class="flex-shrink-0">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                                <select id="attendanceListYearFilter" class="w-24 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <!-- Removed 'Select Year' option -->
-                                </select>
+                                <select id="attendanceListYearFilter" class="w-24 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"></select>
                             </div>
                             <div class="flex-shrink-0">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
-                                <select id="attendanceListMonthFilter" class="w-36 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <!-- Removed 'Select Month' option -->
-                                </select>
+                                <select id="attendanceListMonthFilter" class="w-36 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"></select>
                             </div>
                             <div id="attendanceListIntakeSection" class="hidden flex-shrink-0">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Intake</label>
-                                <select id="attendanceListIntakeFilter" class="w-32 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <!-- Removed 'All Intakes' option -->
-                                </select>
+                                <select id="attendanceListIntakeFilter" class="w-32 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"></select>
                             </div>
                         </div>
 
@@ -211,17 +118,15 @@
                         <div class="flex-shrink-0">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Attendance Status</label>
                             <div class="flex gap-1">
+                                <button id="attendanceListAll" class="px-3 py-2 text-sm rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200 hover:bg-blue-700" onclick="setAttendanceListFilter('all')">All</button>
                                 <button id="attendanceListPresent" class="px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-800 border border-gray-300 transition-colors duration-200" onclick="setAttendanceListFilter('present')">Present</button>
                                 <button id="attendanceListAbsent" class="px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-800 border border-gray-300 transition-colors duration-200" onclick="setAttendanceListFilter('absent')">Absent</button>
-                                <!-- Removed 'All' button -->
                             </div>
                         </div>
                     </div>
 
                     <!-- Second Row: Training Dropdowns/Accordions -->
-                    <div id="attendanceListTrainings" class="space-y-4">
-                        <!-- Training accordions will be populated here -->
-                    </div>
+                    <div id="attendanceListTrainings" class="space-y-4"></div>
 
                     <!-- Empty State -->
                     <div id="attendanceListEmpty" class="hidden text-center py-12 text-gray-400">
@@ -380,18 +285,19 @@ function setAttendanceListFilter(filter) {
     
     // Reset all button styles
     const buttons = {
+        'all': document.getElementById('attendanceListAll'),
         'present': document.getElementById('attendanceListPresent'),
         'absent': document.getElementById('attendanceListAbsent')
     };
-    
     Object.values(buttons).forEach(btn => {
         if (btn) {
-            btn.className = 'px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-gray-100 hover:text-green-800 border border-gray-300 transition-colors duration-200';
+            btn.className = 'px-3 py-2 text-sm rounded bg-gray-100 text-gray-700 border border-gray-300 font-medium transition-colors duration-200';
         }
     });
-    
     // Set active button style
-    if (filter === 'present') {
+    if (filter === 'all') {
+        buttons.all.className = 'px-3 py-2 text-sm rounded bg-blue-600 text-white border border-blue-600 font-medium transition-colors duration-200 hover:bg-blue-700';
+    } else if (filter === 'present') {
         buttons.present.className = 'px-3 py-2 text-sm rounded bg-green-600 text-white border border-green-600 font-medium transition-colors duration-200 hover:bg-green-700';
     } else if (filter === 'absent') {
         buttons.absent.className = 'px-3 py-2 text-sm rounded bg-red-600 text-white border border-red-600 font-medium transition-colors duration-200 hover:bg-red-700';
@@ -466,9 +372,13 @@ function setupIntakeFilter() {
             option.textContent = intake;
             intakeSelect.appendChild(option);
         });
-        // Set lowest intake year as default
-        intakeSelect.value = allAvailableIntakes[0];
-        currentAttendanceListIntake = allAvailableIntakes[0];
+        // Preserve user's selection if possible, otherwise set default
+        if (currentAttendanceListIntake && allAvailableIntakes.includes(currentAttendanceListIntake)) {
+            intakeSelect.value = currentAttendanceListIntake;
+        } else {
+            intakeSelect.value = allAvailableIntakes[0];
+            currentAttendanceListIntake = allAvailableIntakes[0];
+        }
         // Set up event listener
         intakeSelect.onchange = function() {
             currentAttendanceListIntake = this.value;
