@@ -106,7 +106,9 @@ class TrainingController extends Controller
                         'intake_label' => $intake['label'],
                         'present' => $attendance ? $attendance->present : false,
                         'attendance_method' => $attendance ? $attendance->method : null,
-                        'marked_at' => $attendance ? $attendance->marked_at : null
+                        'marked_at' => $attendance ? $attendance->marked_at : null,
+                        'absence_reason' => $attendance ? $attendance->absence_reason : null,
+                        'file_url' => $attendance ? $attendance->file_url : null
                     ];
                 });
             if ($intakeCadets->count() > 0) {
@@ -132,27 +134,35 @@ class TrainingController extends Controller
         $validated = $request->validate([
             'attendance' => 'required|array',
             'attendance.*.cadet_id' => 'required|integer|exists:cadets,id',
-            'attendance.*.present' => 'required|boolean'
+            'attendance.*.present' => 'required|boolean',
+            'attendance.*.absence_reason' => 'nullable|string',
+            'attendance.*.file_url' => 'nullable|string',
         ]);
 
         try {
             $presentCount = 0;
-            
             foreach ($validated['attendance'] as $record) {
-                TrainingAttendance::updateOrCreate([
-                    'training_id' => $training->id,
-                    'cadet_id' => $record['cadet_id']
-                ], [
+                $updateData = [
                     'present' => $record['present'],
                     'method' => 'manual',
                     'marked_at' => Carbon::now()
-                ]);
-                
+                ];
+                // Only update absence_reason and file_url if absent
+                if (!$record['present']) {
+                    $updateData['absence_reason'] = $record['absence_reason'] ?? null;
+                    $updateData['file_url'] = $record['file_url'] ?? null;
+                } else {
+                    $updateData['absence_reason'] = null;
+                    $updateData['file_url'] = null;
+                }
+                TrainingAttendance::updateOrCreate([
+                    'training_id' => $training->id,
+                    'cadet_id' => $record['cadet_id']
+                ], $updateData);
                 if ($record['present']) {
                     $presentCount++;
                 }
             }
-
             return response()->json([
                 'success' => true,
                 'message' => 'Attendance saved successfully',

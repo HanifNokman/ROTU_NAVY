@@ -14,6 +14,8 @@ class TrainingAttendance extends Model
         'training_id',
         'cadet_id',
         'present',
+        'absence_reason',
+        'file_url',
         'method',
         'marked_at'
     ];

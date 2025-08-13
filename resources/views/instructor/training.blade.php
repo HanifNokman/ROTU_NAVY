@@ -8,52 +8,54 @@
     <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            <!-- Today's Training Section -->
-            @if($todaysTrainings->count() > 0)
+            <!-- Today's Training Section (Always Visible) -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Today's Training</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Attendance Management</h3>
                     <div class="space-y-4">
-                        @foreach($todaysTrainings as $training)
-                        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h4 class="font-semibold text-gray-900">{{ $training->title }}</h4>
-                                    <p class="text-sm text-gray-600">{{ $training->location }}</p>
-                                    <p class="text-sm text-gray-600">
-                                        {{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}
-                                        @if($training->end_datetime)
-                                            - {{ $training->end_datetime->format('h:i A') }}
-                                        @endif
-                                    </p>
-                                    <p class="text-sm text-gray-600">{{ $training->involvement ?? 'Not specified' }}</p>
-                                    @if($training->duration_hours && $training->allowance_amount)
-                                    <div class="mt-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Duration: {{ $training->duration_hours }}h | 
-                                            Allowance: RM{{ $training->allowance_amount }} 
-                                            ({{ $training->allowance_type === 'daily' ? 'daily' : 'hourly' }})
-                                        </span>
+                        @if($todaysTrainings->count() > 0)
+                            @foreach($todaysTrainings as $training)
+                            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-gray-900">{{ $training->title }}</h4>
+                                        <p class="text-sm text-gray-600">{{ $training->location }}</p>
+                                        <p class="text-sm text-gray-600">
+                                            {{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}
+                                            @if($training->end_datetime)
+                                                - {{ $training->end_datetime->format('h:i A') }}
+                                            @endif
+                                        </p>
+                                        <p class="text-sm text-gray-600">{{ $training->involvement ?? 'Not specified' }}</p>
                                     </div>
-                                    @endif
-                                </div>
-                                <div class="flex space-x-2 ml-4">
-                                    @if($training->status === 'Active' && empty($training->end_datetime))
-                                    <button onclick="endTraining({{ $training->id }})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
-                                        <i class="fas fa-stop mr-1"></i>End Training
-                                    </button>
-                                    @endif
-                                    <button onclick="openAttendanceModal({{ $training->id }})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
-                                        <i class="fas fa-users mr-1"></i>Attendance
-                                    </button>
+                                    <div class="flex flex-col w-40 ml-4 gap-3">
+                                        <button onclick="openAttendanceModal({{ $training->id }})" class="bg-green-600 hover:bg-green-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center">
+                                            <span class="flex items-center justify-center w-full">
+                                                <i class="fas fa-users mr-2 text-lg"></i>
+                                                <span class="w-full text-center">Attendance</span>
+                                            </span>
+                                        </button>
+                                        @if($training->status === 'Active' && empty($training->end_datetime))
+                                        <button onclick="endTraining({{ $training->id }})" class="bg-red-600 hover:bg-red-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center">
+                                            <span class="flex items-center justify-center w-full">
+                                                <i class="fas fa-stop mr-2 text-lg"></i>
+                                                <span class="w-full text-center">End Training</span>
+                                            </span>
+                                        </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        @endforeach
+                            @endforeach
+                        @else
+                            <div class="border border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 text-center">
+                                <h4 class="font-semibold text-gray-500 mb-2">No training sessions scheduled for today</h4>
+                                <p class="text-sm text-gray-400">There are no nearby training sessions. Please check the calendar or add a new training session.</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
-            @endif
                 
             <!-- Calendar View -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
@@ -84,7 +86,6 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Allowance</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
@@ -110,14 +111,6 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $training->duration_hours ? $training->duration_hours . 'h' : 'TBD' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            @if($training->allowance_amount)
-                                                <div>RM{{ $training->allowance_amount }}</div>
-                                                <div class="text-xs text-gray-500">({{ $training->allowance_type }})</div>
-                                            @else
-                                                <span class="text-gray-400">TBD</span>
-                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">
@@ -275,23 +268,23 @@
 
                     <!-- Main Content -->
                     <div id="attendanceContent" class="hidden">
-                        <!-- Toggle Buttons -->
+                        <!-- Attendance Tabs -->
                         <div class="flex mb-6">
-                            <button id="manualTab" onclick="switchTab('manual')" class="px-4 py-2 bg-blue-600 text-white rounded-l-md focus:outline-none transition-colors duration-200">
-                                Manual Attendance
-                            </button>
-                            <button id="qrTab" onclick="switchTab('qr')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-r-md focus:outline-none transition-colors duration-200">
-                                QR Code Attendance
-                            </button>
+                            <button id="manualTab" onclick="switchTab('manual')" class="px-4 py-2 bg-blue-600 text-white rounded-l-md focus:outline-none transition-colors duration-200">Manual Attendance</button>
+                            <button id="qrTab" onclick="switchTab('qr')" class="px-4 py-2 bg-gray-200 text-gray-700 focus:outline-none transition-colors duration-200">QR Code Attendance</button>
                         </div>
 
                         <!-- Manual Attendance Section -->
                         <div id="manualSection" class="block">
-                            <!-- Intake Filter - Updated with better styling and functionality -->
-                            <div class="mb-6" id="intakeFilterSection">
-                                <label class="block text-sm font-medium text-gray-700 mb-3">Select Intake:</label>
-                                <div class="flex flex-wrap gap-2" id="intakeFilters">
-                                    <!-- Intake filter buttons will be populated here -->
+                            <div class="flex items-center justify-between mb-6">
+                                <div id="intakeFilterSection" class="flex-1">
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">Select Intake:</label>
+                                    <div class="flex flex-wrap gap-2" id="intakeFilters"></div>
+                                </div>
+                                <div id="attendanceFilterSection" class="flex gap-2 ml-4" style="display: flex;">
+                                    <button id="filterAll" class="px-3 py-1 text-xs rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 border border-gray-300" onclick="setAttendanceFilter('all')">All</button>
+                                    <button id="filterPresent" class="px-3 py-1 text-xs rounded-md bg-green-100 text-green-800 hover:bg-green-200 border border-green-300" onclick="setAttendanceFilter('present')">Present</button>
+                                    <button id="filterAbsent" class="px-3 py-1 text-xs rounded-md bg-red-100 text-red-800 hover:bg-red-200 border border-red-300" onclick="setAttendanceFilter('absent')">Absent</button>
                                 </div>
                             </div>
 
@@ -362,6 +355,17 @@
                     </div>
 
                     <!-- Error State -->
+                        <!-- Absent Cadets Section -->
+                        <div id="absentSection" class="hidden">
+                            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="text-sm text-red-800 font-semibold">
+                                    <i class="fas fa-user-slash mr-2"></i>Absent Cadets
+                                </div>
+                            </div>
+                            <div id="absentCadetsList">
+                                <!-- Absent cadets will be populated here -->
+                            </div>
+                        </div>
                     <div id="attendanceError" class="hidden text-center py-8">
                         <div class="text-red-500 mb-4">
                             <i class="fas fa-exclamation-triangle text-4xl"></i>
@@ -393,12 +397,15 @@
         let countdownInterval = null;
         let cadetsData = [];
         let currentIntakeFilter = 'all';
+        let currentAttendanceFilter = 'all';
+        let currentTab = 'manual';
 
         document.addEventListener('DOMContentLoaded', function() {
             initializeCalendar();
             renderDynamicIntakeCheckboxes();
             // Form submission handler
             document.getElementById('trainingForm').addEventListener('submit', handleFormSubmit);
+            switchTab('manual');
         });
 
         // Dynamically render intake checkboxes based on current year
@@ -655,12 +662,7 @@
             );
             currentIntakeFilter = defaultIntakeIndex;
             
-            // Add "All Intakes" button
-            const allButton = document.createElement('button');
-            allButton.className = 'px-4 py-2 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 border border-gray-300';
-            allButton.textContent = `All Intakes (${cadetsData.reduce((sum, group) => sum + group.cadets.length, 0)})`;
-            allButton.onclick = () => filterByIntake('all', allButton);
-            filtersContainer.appendChild(allButton);
+            // Removed "All Intakes" button
             
             // Add individual intake filters (sorted by year)
             sortedIntakes.forEach((intakeGroup) => {
@@ -703,14 +705,14 @@
             } else {
                 displayData = [cadetsData[currentIntakeFilter]];
             }
-            
+
             displayData.forEach(intakeGroup => {
                 if (!intakeGroup || !intakeGroup.cadets) return;
-                
+
                 // Intake header with attendance summary
                 const presentInIntake = intakeGroup.cadets.filter(c => c.present).length;
                 const totalInIntake = intakeGroup.cadets.length;
-                
+
                 const intakeHeader = document.createElement('div');
                 intakeHeader.className = 'mb-4';
                 intakeHeader.innerHTML = `
@@ -743,19 +745,27 @@
                     </div>
                 `;
                 cadetsContainer.appendChild(intakeHeader);
-                
+
                 // Cadets grid
                 const cadetsGrid = document.createElement('div');
                 cadetsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 mb-6';
-                
-                intakeGroup.cadets.forEach(cadet => {
+
+                // Filter cadets by attendance status
+                let filteredCadets = intakeGroup.cadets;
+                if (currentAttendanceFilter === 'present') {
+                    filteredCadets = intakeGroup.cadets.filter(c => c.present);
+                } else if (currentAttendanceFilter === 'absent') {
+                    filteredCadets = intakeGroup.cadets.filter(c => !c.present);
+                }
+
+                filteredCadets.forEach(cadet => {
                     const cadetCard = document.createElement('div');
                     const cardClass = cadet.present ? 
                         'flex items-center justify-between p-4 border-2 border-green-200 bg-green-50 rounded-lg transition-all duration-200' : 
                         'flex items-center justify-between p-4 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 transition-all duration-200';
                     cadetCard.className = cardClass;
                     cadetCard.setAttribute('data-cadet-id', cadet.id);
-                    
+
                     // Create attendance status indicator
                     let statusIndicator = '';
                     if (cadet.present) {
@@ -767,8 +777,18 @@
                                 Present via ${method}${timeStr ? ` at ${timeStr}` : ''}
                             </div>
                         `;
+                    } else {
+                        // For absent cadets, show absence_reason and file_url if available
+                        let absenceInfo = '';
+                        if (cadet.absence_reason) {
+                            absenceInfo += `<div class='text-xs text-red-700 font-medium flex items-center mt-1'><i class='fas fa-info-circle mr-1'></i>Reason: ${cadet.absence_reason}</div>`;
+                        }
+                        if (cadet.file_url) {
+                            absenceInfo += `<div class='text-xs text-blue-700 font-medium flex items-center mt-1'><i class='fas fa-file mr-1'></i>Proof: <a href='${cadet.file_url}' target='_blank' class='underline text-blue-600'>View File</a></div>`;
+                        }
+                        statusIndicator = absenceInfo;
                     }
-                    
+
                     // Show as 'Rank Name'
                     let rankName = cadet.rank ? cadet.rank + ' ' : '';
                     // Remove duplicate rank if present in name
@@ -777,7 +797,7 @@
                         displayName = displayName.substring(cadet.rank.length + 1);
                     }
                     rankName += displayName;
-                    
+
                     cadetCard.innerHTML = `
                         <div class="flex-1">
                             <div class="font-medium text-gray-900 text-base">${rankName}</div>
@@ -798,11 +818,75 @@
                     `;
                     cadetsGrid.appendChild(cadetCard);
                 });
-                
+
                 cadetsContainer.appendChild(cadetsGrid);
             });
-            
+
             updateAttendanceCount();
+        }
+
+        // Attendance filter toggle logic
+        function setAttendanceFilter(filter) {
+            currentAttendanceFilter = filter;
+            // Update button states
+            document.getElementById('filterAll').className = 'px-3 py-1 text-xs rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 border border-gray-300';
+            document.getElementById('filterPresent').className = 'px-3 py-1 text-xs rounded-md bg-green-100 text-green-800 hover:bg-green-200 border border-green-300';
+            document.getElementById('filterAbsent').className = 'px-3 py-1 text-xs rounded-md bg-red-100 text-red-800 hover:bg-red-200 border border-red-300';
+            if (filter === 'all') {
+                document.getElementById('filterAll').className += ' font-bold border-2';
+            } else if (filter === 'present') {
+                document.getElementById('filterPresent').className += ' font-bold border-2';
+            } else if (filter === 'absent') {
+                document.getElementById('filterAbsent').className += ' font-bold border-2';
+            }
+            displayCadets();
+        }
+
+        // Attendance tab switch logic
+
+        // Display only absent cadets in absent tab
+        function displayAbsentCadets() {
+            const absentContainer = document.getElementById('absentCadetsList');
+            absentContainer.innerHTML = '';
+            let displayData = [];
+            if (currentIntakeFilter === 'all') {
+                displayData = cadetsData;
+            } else {
+                displayData = [cadetsData[currentIntakeFilter]];
+            }
+            displayData.forEach(intakeGroup => {
+                if (!intakeGroup || !intakeGroup.cadets) return;
+                const absentCadets = intakeGroup.cadets.filter(c => !c.present);
+                absentCadets.forEach(cadet => {
+                    const cadetCard = document.createElement('div');
+                    cadetCard.className = 'flex flex-col md:flex-row items-start md:items-center justify-between p-4 border border-red-200 bg-red-50 rounded-lg mb-3';
+                    cadetCard.setAttribute('data-cadet-id', cadet.id);
+                    let rankName = cadet.rank ? cadet.rank + ' ' : '';
+                    let displayName = cadet.name;
+                    if (cadet.rank && displayName.startsWith(cadet.rank + ' ')) {
+                        displayName = displayName.substring(cadet.rank.length + 1);
+                    }
+                    rankName += displayName;
+                    let absenceInfo = '';
+                    if (cadet.absence_reason) {
+                        absenceInfo += `<div class='text-xs text-red-700 font-medium flex items-center mt-1'><i class='fas fa-info-circle mr-1'></i>Reason: ${cadet.absence_reason}</div>`;
+                    }
+                    if (cadet.file_url) {
+                        absenceInfo += `<div class='text-xs text-blue-700 font-medium flex items-center mt-1'><i class='fas fa-file mr-1'></i>Proof: <a href='${cadet.file_url}' target='_blank' class='underline text-blue-600'>View File</a></div>`;
+                    }
+                    cadetCard.innerHTML = `
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-base">${rankName}</div>
+                            <div class="text-sm text-gray-600 mt-1">
+                                ${cadet.matric_no ? `Matric: ${cadet.matric_no}` : ''}
+                                ${cadet.service_number ? ` | Service: ${cadet.service_number}` : ''}
+                            </div>
+                            ${absenceInfo}
+                        </div>
+                    `;
+                    absentContainer.appendChild(cadetCard);
+                });
+            });
         }
 
         // Updated function to handle individual cadet attendance toggle
@@ -1125,15 +1209,19 @@
             const manualSection = document.getElementById('manualSection');
             const qrSection = document.getElementById('qrSection');
 
+            // Make tabs longer to fit the whole section
+            manualTab.style.width = '50%';
+            qrTab.style.width = '50%';
+
             if (tab === 'manual') {
                 manualTab.classList.add('bg-blue-600', 'text-white');
                 manualTab.classList.remove('bg-gray-200', 'text-gray-700');
                 qrTab.classList.add('bg-gray-200', 'text-gray-700');
                 qrTab.classList.remove('bg-blue-600', 'text-white');
-                
+
                 manualSection.classList.remove('hidden');
                 qrSection.classList.add('hidden');
-                
+
                 // Clear QR intervals
                 if (qrRefreshInterval) clearInterval(qrRefreshInterval);
                 if (countdownInterval) clearInterval(countdownInterval);
@@ -1142,10 +1230,10 @@
                 qrTab.classList.remove('bg-gray-200', 'text-gray-700');
                 manualTab.classList.add('bg-gray-200', 'text-gray-700');
                 manualTab.classList.remove('bg-blue-600', 'text-white');
-                
+
                 qrSection.classList.remove('hidden');
                 manualSection.classList.add('hidden');
-                
+
                 // Start QR code generation
                 generateQRCode();
             }
