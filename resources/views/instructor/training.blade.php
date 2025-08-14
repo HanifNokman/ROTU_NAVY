@@ -191,7 +191,9 @@
                             <input type="date" id="start_date" name="start_date" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <label for="start_time" class="block text-sm font-medium text-gray-700 mt-2 mb-2">Start Time (Hour)</label>
                             <select id="start_time" name="start_time" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <!-- Hour options would be populated here -->
+                                @foreach(\App\Models\Training::getHourOptions() as $hour)
+                                    <option value="{{ $hour }}">{{ $hour }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
@@ -199,7 +201,9 @@
                             <input type="date" id="end_date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <label for="end_time" class="block text-sm font-medium text-gray-700 mt-2 mb-2">End Time (Hour)</label>
                             <select id="end_time" name="end_time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <!-- Hour options would be populated here -->
+                                @foreach(\App\Models\Training::getHourOptions() as $hour)
+                                    <option value="{{ $hour }}">{{ $hour }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
