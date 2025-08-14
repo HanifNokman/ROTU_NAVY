@@ -222,6 +222,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cadet/attendance', [AttendanceController::class, 'index'])->name('cadet.attendance');
     Route::post('/cadet/attendance/mark', [AttendanceController::class, 'markPresent'])->name('cadet.attendance.mark');
     Route::post('/cadet/attendance/absence/{attendance}', [AttendanceController::class, 'submitAbsence'])->name('cadet.attendance.absence');
+    Route::post('/cadet/attendance/verify-qr', [AttendanceController::class, 'verifyQR'])->name('cadet.attendance.verify-qr');
 
     // Admin Dashboard
     Route::get('/admin/dashboard', function () {
