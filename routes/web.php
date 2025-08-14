@@ -15,6 +15,7 @@ use App\Http\Controllers\Instructor\GalleryController as InstructorGalleryContro
 use App\Http\Controllers\Cadet\GalleryController as CadetGalleryController;
 use App\Http\Controllers\Instructor\TrainingController as InstructorTrainingController;
 use App\Http\Controllers\Cadet\TrainingController as CadetTrainingController;
+use App\Http\Controllers\Instructor\AllowanceController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -94,9 +95,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Allowance route
-    Route::get('/instructor/allowance', function () {
-        return view('instructor.allowance');
-    })->name('instructor.allowance');
+    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+        Route::get('/allowance', [AllowanceController::class, 'index'])->name('allowance');
+        Route::get('/allowance/training/{training}/details', [AllowanceController::class, 'getTrainingDetails'])->name('allowance.training.details');
+    });
 
     // Inventory route
     Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
