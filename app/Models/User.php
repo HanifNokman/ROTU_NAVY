@@ -62,4 +62,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(GalleryCategory::class, 'instructor_id');
     }
+
+    /**
+     * Get the cadet record associated with the user.
+     */
+    public function cadet()
+    {
+        return $this->hasOne(Cadet::class, 'user_id');
+    }
 }

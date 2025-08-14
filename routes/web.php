@@ -16,6 +16,7 @@ use App\Http\Controllers\Cadet\GalleryController as CadetGalleryController;
 use App\Http\Controllers\Instructor\TrainingController as InstructorTrainingController;
 use App\Http\Controllers\Cadet\TrainingController as CadetTrainingController;
 use App\Http\Controllers\Instructor\AllowanceController;
+use App\Http\Controllers\Cadet\AttendanceController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -189,9 +190,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // Cadet Allowance
-    Route::get('/cadet/allowance', function () {
-        return view('cadet.allowance');
-    })->name('cadet.allowance');
+    Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
+    Route::get('/allowance', [\App\Http\Controllers\Cadet\AllowanceController::class, 'index'])->name('allowance');
+    Route::get('/allowance/ajax', [\App\Http\Controllers\Cadet\AllowanceController::class, 'ajax'])->name('allowance.ajax');
+    });
 
     // Cadet Learning Hub
     Route::get('/cadet/learning_hub', [CadetLearningHubController::class, 'index'])->name('cadet.learning_hub');
@@ -217,9 +219,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
      Route::get('/cadet/gallery', [CadetGalleryController::class, 'index'])->name('cadet.gallery');
 
     // Cadet Attendance
-    Route::get('/cadet/attendance', function () {
-        return view('cadet.attendance');
-    })->name('cadet.attendance');
+    Route::get('/cadet/attendance', [AttendanceController::class, 'index'])->name('cadet.attendance');
+    Route::post('/cadet/attendance/mark', [AttendanceController::class, 'markPresent'])->name('cadet.attendance.mark');
+    Route::post('/cadet/attendance/absence/{attendance}', [AttendanceController::class, 'submitAbsence'])->name('cadet.attendance.absence');
 
     // Admin Dashboard
     Route::get('/admin/dashboard', function () {
