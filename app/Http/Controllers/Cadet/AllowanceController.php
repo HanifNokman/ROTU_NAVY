@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Cadet;
 
 use App\Http\Controllers\Controller;
-
-
 use App\Models\Training;
 use App\Models\TrainingAttendance;
 use Illuminate\Http\Request;
@@ -25,7 +23,13 @@ class AllowanceController extends Controller
             return response()->view('cadet.allowance_missing', [], 403);
         }
 
-        $intakeYear = $cadet->intake_year ?? Carbon::now()->year;
+        // Validate intake year exists and is reasonable
+        $intakeYear = $cadet->intake_year;
+        if (!$intakeYear || $intakeYear < 2000 || $intakeYear > Carbon::now()->year + 1) {
+            // Handle invalid intake year - set to current year as fallback
+            $intakeYear = Carbon::now()->year;
+        }
+
         $currentYear = Carbon::now()->year;
         
         // Year filtering logic: max 3 years after intake or current year, whichever comes first
@@ -44,8 +48,7 @@ class AllowanceController extends Controller
             ->with('training')
             ->get();
 
-
-        // Get months with attended trainings for selected year using DB query (instructor logic)
+        // Get months with attended trainings for selected year using DB query
         $monthsWithTrainings = TrainingAttendance::where('cadet_id', $cadet->id)
             ->where('present', true)
             ->whereHas('training', function($q) use ($selectedYear) {
@@ -72,59 +75,72 @@ class AllowanceController extends Controller
             }
         }
 
-        // If no months with trainings, show empty months array
-        if (empty($months)) {
-            $months = [];
+        // Improved month selection logic
+        $selectedMonth = (int) $request->get('month');
+
+        // If no month specified or month not available, select first available
+        if (!$selectedMonth || !array_key_exists($selectedMonth, $months)) {
+            $selectedMonth = !empty($months) ? array_key_first($months) : null;
         }
 
-        $selectedMonth = (int) $request->get('month', array_key_first($months) ?? 1);
-        if (!array_key_exists($selectedMonth, $months)) {
-            $selectedMonth = array_key_first($months) ?? 1;
-        }
+        // Handle case where no months are available
+        if (empty($months) || $selectedMonth === null) {
+            $trainings = collect(); // Empty collection
+            $totalHours = 0;
+            $totalDays = 0;
+            $hourlyAllowance = 0;
+            $dailyAllowance = 0;
+            $totalAllowance = 0;
+        } else {
+            // Get attended trainings for this cadet in selected year/month
+            $attendances = $allAttendances->filter(function($attendance) use ($selectedYear, $selectedMonth) {
+                $dt = Carbon::parse($attendance->training->start_datetime);
+                return $dt->year == $selectedYear && $dt->month == $selectedMonth;
+            });
 
-        // Get attended trainings for this cadet in selected year/month
-        $attendances = $allAttendances->filter(function($attendance) use ($selectedYear, $selectedMonth) {
-            $dt = Carbon::parse($attendance->training->start_datetime);
-            return $dt->year == $selectedYear && $dt->month == $selectedMonth;
-        });
-
-        $trainings = $attendances->map(function($attendance) {
-            $training = $attendance->training;
-            $duration = '';
-            if ($training->end_datetime) {
-                $start = Carbon::parse($training->start_datetime);
-                $end = Carbon::parse($training->end_datetime);
-                $diffInMinutes = $start->diffInMinutes($end);
-                $hours = floor($diffInMinutes / 60);
-                $minutes = $diffInMinutes % 60;
-                if ($hours > 0 && $minutes > 0) {
-                    $duration = $hours . 'h ' . $minutes . 'm';
-                } elseif ($hours > 0) {
-                    $duration = $hours . 'h';
+            $trainings = $attendances->map(function($attendance) {
+                $training = $attendance->training;
+                $duration = '';
+                
+                if ($training->end_datetime) {
+                    $start = Carbon::parse($training->start_datetime);
+                    $end = Carbon::parse($training->end_datetime);
+                    $diffInMinutes = $start->diffInMinutes($end);
+                    $hours = floor($diffInMinutes / 60);
+                    $minutes = $diffInMinutes % 60;
+                    
+                    if ($hours > 0 && $minutes > 0) {
+                        $duration = $hours . 'h ' . $minutes . 'm';
+                    } elseif ($hours > 0) {
+                        $duration = $hours . 'h';
+                    } else {
+                        $duration = $minutes . 'm';
+                    }
                 } else {
-                    $duration = $minutes . 'm';
+                    $duration = 'N/A';
                 }
-            } else {
-                $duration = 'N/A';
-            }
-            return [
-                'id' => $training->id,
-                'title' => $training->title,
-                'date' => $training->start_datetime->format('d/m/Y'),
-                'location' => $training->location,
-                'duration' => $duration,
-                'type' => $training->allowance_type,
-                'hours' => $training->allowance_type === 'hourly' ? ($training->end_datetime ? Carbon::parse($training->start_datetime)->diffInHours(Carbon::parse($training->end_datetime)) : 0) : 0,
-                'days' => $training->allowance_type === 'daily' ? ($training->end_datetime ? Carbon::parse($training->start_datetime)->diffInDays(Carbon::parse($training->end_datetime)) + 1 : 1) : 0,
-            ];
-        });
 
-        // Calculate totals
-        $totalHours = $trainings->where('type', 'hourly')->sum('hours');
-        $totalDays = $trainings->where('type', 'daily')->sum('days');
-        $hourlyAllowance = $totalHours * 8;
-        $dailyAllowance = $totalDays * 50;
-        $totalAllowance = $hourlyAllowance + $dailyAllowance;
+                return [
+                    'id' => $training->id,
+                    'title' => $training->title,
+                    'date' => $training->start_datetime->format('d/m/Y'),
+                    'location' => $training->location,
+                    'duration' => $duration,
+                    'type' => $training->allowance_type,
+                    'hours' => $training->allowance_type === 'hourly' ? 
+                        ($training->end_datetime ? Carbon::parse($training->start_datetime)->diffInHours(Carbon::parse($training->end_datetime)) : 0) : 0,
+                    'days' => $training->allowance_type === 'daily' ? 
+                        ($training->end_datetime ? Carbon::parse($training->start_datetime)->diffInDays(Carbon::parse($training->end_datetime)) + 1 : 1) : 0,
+                ];
+            });
+
+            // Calculate totals
+            $totalHours = $trainings->where('type', 'hourly')->sum('hours');
+            $totalDays = $trainings->where('type', 'daily')->sum('days');
+            $hourlyAllowance = $totalHours * 8;
+            $dailyAllowance = $totalDays * 50;
+            $totalAllowance = $hourlyAllowance + $dailyAllowance;
+        }
 
         // If AJAX request, return only the table and calculation section
         if ($request->ajax()) {
@@ -140,12 +156,27 @@ class AllowanceController extends Controller
                 'dailyAllowance',
                 'totalAllowance'
             ))->render();
-            // Extract only the allowance-content div
-            preg_match('/<div id="allowance-content">([\s\S]*?)<\/div>/i', $html, $matches);
+            
+            // Improved regex to extract allowance-content div with nested content
+            if (preg_match('/<div id="allowance-content">(.*?)<\/div>\s*<script/s', $html, $matches)) {
+                return response()->json([
+                    'html' => $matches[1]
+                ]);
+            }
+            
+            // Fallback: try to find the div without script tag
+            if (preg_match('/<div id="allowance-content">(.*?)<\/div>(?:\s*<\/div>)*\s*$/s', $html, $matches)) {
+                return response()->json([
+                    'html' => $matches[1]
+                ]);
+            }
+            
+            // If regex fails, return error
             return response()->json([
-                'html' => $matches[1] ?? ''
-            ]);
+                'html' => '<div class="text-center py-8 text-red-600"><p>Error loading content. Please refresh the page.</p></div>'
+            ], 500);
         }
+
         return view('cadet.allowance', compact(
             'trainings',
             'years',
