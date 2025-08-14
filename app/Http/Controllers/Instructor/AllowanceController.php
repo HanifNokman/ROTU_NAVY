@@ -70,7 +70,6 @@ class AllowanceController extends Controller
             'selectedMonth'
         ));
     }
-
     /**
      * Render only the training list content for AJAX requests
      */
@@ -89,19 +88,34 @@ class AllowanceController extends Controller
             $html .= '<div class="space-y-4">';
             
             foreach ($trainings as $training) {
+                // Calculate duration
+                $duration = '';
+                if($training->end_datetime) {
+                    $start = \Carbon\Carbon::parse($training->start_datetime);
+                    $end = \Carbon\Carbon::parse($training->end_datetime);
+                    $diffInMinutes = $start->diffInMinutes($end);
+                    $hours = floor($diffInMinutes / 60);
+                    $minutes = $diffInMinutes % 60;
+                    
+                    if ($hours > 0 && $minutes > 0) {
+                        $duration = $hours . 'h ' . $minutes . 'm';
+                    } elseif ($hours > 0) {
+                        $duration = $hours . 'h';
+                    } else {
+                        $duration = $minutes . 'm';
+                    }
+                } else {
+                    $duration = 'N/A';
+                }
+
                 $html .= '<div class="border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
                             <!-- Training Header (Clickable) -->
                             <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50 cursor-pointer hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 training-header" 
-                                 data-training-id="' . $training->id . '">
-                                <div class="flex justify-between items-center">
+                                data-training-id="' . $training->id . '">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                    <!-- Training Name -->
                                     <div class="flex-1">
                                         <h4 class="font-semibold text-gray-900 text-base mb-1">' . e($training->title) . '</h4>
-                                        <div class="flex items-center text-xs text-gray-600 mb-1">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                            ' . $training->start_datetime->format('M d, Y') . ' at ' . $training->start_datetime->format('h:i A') . '
-                                        </div>
                                         <div class="flex items-center text-xs text-gray-500">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -110,14 +124,32 @@ class AllowanceController extends Controller
                                             ' . e($training->location) . '
                                         </div>
                                     </div>
-                                    <div class="flex items-center">
-                                        <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full mr-2">
-                                            View Details
-                                        </span>
-                                        <svg class="w-5 h-5 text-gray-400 transform transition-transform duration-300 training-arrow" 
-                                             id="arrow-' . $training->id . '">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                        </svg>
+                                    
+                                    <!-- Date -->
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center text-sm text-gray-600 mb-1">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            ' . $training->start_datetime->format('d/m/Y') . '
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            ' . $training->start_datetime->format('h:i A') . '
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Duration and Actions -->
+                                    <div class="text-center">
+                                        <div class="text-sm font-medium text-gray-700 mb-2">' . $duration . '</div>
+                                        <div class="flex items-center justify-center">
+                                            <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full mr-2">
+                                                View Details
+                                            </span>
+                                            <svg class="w-5 h-5 text-gray-400 transform transition-transform duration-300 training-arrow" 
+                                                id="arrow-' . $training->id . '">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -147,6 +179,9 @@ class AllowanceController extends Controller
                                         <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden" id="cadets-table-' . $training->id . '">
                                             <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
                                                 <tr>
+                                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                        No
+                                                    </th>
                                                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                         Service Number
                                                     </th>
@@ -188,7 +223,7 @@ class AllowanceController extends Controller
                                 No trainings found for <span id="selected-month-empty" class="font-medium text-blue-600">' . $months[$selectedMonth] . '</span> <span id="selected-year-empty" class="font-medium text-blue-600">' . $selectedYear . '</span>.
                             </p>
                         </div>
-                      </div>';
+                    </div>';
         }
 
         $html .= '</div>';
@@ -246,7 +281,9 @@ class AllowanceController extends Controller
         $totalAllowance = $totalCadets * $allowanceRate;
         
         return response()->json([
-            'cadets' => $presentAttendances->map(function($attendance) {
+            'cadets' => $presentAttendances->sortBy(function($attendance) {
+                return $attendance->cadet->service_number ?? '';
+            })->values()->map(function($attendance) {
                 $intakeNum = $attendance->cadet && $attendance->cadet->intake_year ? $attendance->cadet->intake_year - 2011 : null;
                 $intakeLabel = $attendance->cadet && $attendance->cadet->intake_year ? 'Intake - ' . $intakeNum : 'N/A';
                 return [
