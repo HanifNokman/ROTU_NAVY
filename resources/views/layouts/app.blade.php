@@ -202,45 +202,44 @@
                                 </div>
                             </div>
                         </nav>
-                        <!-- Special Action Buttons - Mobile -->
-                        <div class="px-4 py-4 flex flex-col space-y-4">
-                            @if(Auth::user()->role === 'instructor')
-                                <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                    </svg>
-                                    Pending Verification
-                                </a>
-                            @elseif(Auth::user()->role === 'cadet')
-                                <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#60bc8c] text-white rounded-2xl font-semibold hover:bg-green-700 transition-colors border border-[#60bc8c]">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    Attendance
-                                </a>
-                            @endif
-
-                            <!-- Log Out Link -->
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:bg-[#ec6c6c] hover:text-white transition-colors border border-transparent hover:border-[#ec6c6c]">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
-                                    </svg>
-                                    Log Out
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Bottom Logo Section -->
-                        <div class="p-6 border-t border-[#373a46]">
-                            <a href="{{ url('/') }}" class="flex items-center justify-center">
-                                @if(View::exists('components.application-logo'))
-                                    <x-application-logo class="h-8 w-auto fill-current text-white" />
-                                @else
-                                    <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
+                        <!-- Bottom Section -->
+                        <div class="border-t border-[#373a46]">
+                            <div class="p-6 flex flex-col space-y-4">
+                                @if(Auth::user()->role === 'instructor')
+                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                        </svg>
+                                        Pending Verification
+                                    </a>
+                                @elseif(Auth::user()->role === 'cadet')
+                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Attendance
+                                    </a>
                                 @endif
-                            </a>
+
+                                <a href="{{ url('/') }}" class="flex items-center justify-center">
+                                    @if(View::exists('components.application-logo'))
+                                        <x-application-logo class="h-8 w-auto fill-current text-white" />
+                                    @else
+                                        <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
+                                    @endif
+                                </a>
+
+                                <!-- Log Out Link -->
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:bg-[#ec6c6c] hover:text-white transition-colors border border-transparent hover:border-[#ec6c6c]">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
+                                        </svg>
+                                        Log Out
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </aside>
@@ -403,38 +402,25 @@
                                 </div>
                             </nav>
                             
-                        <!-- Special Action Buttons - Desktop -->
-                        <div class="px-4 py-4 flex flex-col space-y-4">
-                            @if(Auth::user()->role === 'instructor')
-                                <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                    </svg>
-                                    Pending Verification
-                                </a>
-                            @elseif(Auth::user()->role === 'cadet')
-                                <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-green-700 transition-colors border border-[#3c92d9]">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    Attendance
-                                </a>
-                            @endif
+                        <!-- Bottom Section -->
+                        <div class="border-t border-[#373a46]">
+                            <div class="p-6 flex flex-col space-y-4">
+                                @if(Auth::user()->role === 'instructor')
+                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                        </svg>
+                                        Pending Verification
+                                    </a>
+                                @elseif(Auth::user()->role === 'cadet')
+                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Attendance
+                                    </a>
+                                @endif
 
-                            <!-- Log Out Link -->
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:bg-[#ec6c6c] hover:text-white transition-colors border border-transparent hover:border-[#ec6c6c]">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
-                                    </svg>
-                                    Log Out
-                                </button>
-                            </form>
-                        </div>
-
-                            <!-- Bottom Logo Section -->
-                            <div class="p-6 border-t border-[#373a46]">
                                 <a href="{{ url('/') }}" class="flex items-center justify-center">
                                     @if(View::exists('components.application-logo'))
                                         <x-application-logo class="h-8 w-auto fill-current text-white" />
@@ -442,7 +428,19 @@
                                         <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
                                     @endif
                                 </a>
+
+                                <!-- Log Out Link -->
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:bg-[#ec6c6c] hover:text-white transition-colors border border-transparent hover:border-[#ec6c6c]">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
+                                        </svg>
+                                        Log Out
+                                    </button>
+                                </form>
                             </div>
+                        </div>
                         </div>
                     </aside>
 
