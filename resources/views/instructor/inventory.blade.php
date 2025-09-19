@@ -15,13 +15,13 @@
         window.submitting = false;
     </script>
 
-    <div class="py-1">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
+
             <!-- Section 1: Cadet Uniform Size Summary -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
-                    <h3 class="text-lg font-semibold text-white flex items-center">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-50 to-blue-50 p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                         <i class="fas fa-tshirt mr-2"></i>
                         Cadet Uniform Size Summary
                     </h3>
@@ -115,9 +115,9 @@
             </div>
 
             <!-- Section 2: Equipment Loan Section -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
-                <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
-                    <h3 class="text-lg font-semibold text-white flex items-center">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-50 to-blue-50 p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                         <i class="fas fa-tools mr-2"></i>
                         Equipment Loan Section
                     </h3>
@@ -268,12 +268,14 @@
             </div>
 
             <!-- Inventory Summary (Optional - can be moved to separate page) -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <i class="fas fa-chart-bar mr-2 text-gray-600"></i>
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-50 to-blue-50 p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-chart-bar mr-2"></i>
                         Inventory Summary
                     </h3>
+                </div>
+                <div class="p-6">
                     
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
