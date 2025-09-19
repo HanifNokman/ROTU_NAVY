@@ -5,48 +5,88 @@
         </h2>
     </x-slot>
 
-
-    <div class="py-1">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            <!-- Today's Training Section (Always Visible) -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Attendance Management</h3>
-                        <button onclick="openAttendanceListModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition duration-200 flex items-center">
-                            <i class="fas fa-list mr-2"></i> Attendance List
+            <!-- Header Section -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Training Schedule Management
+                </h1>
+                <p class="text-gray-600">Manage training sessions and track attendance</p>
+            </div>
+            
+            <!-- Today's Training Section -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                                <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Today's Training Sessions
+                            </h2>
+                            <p class="text-gray-600">Manage attendance for ongoing training sessions</p>
+                        </div>
+                        <button onclick="openAttendanceListModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition duration-200 flex items-center shadow-lg hover:shadow-xl">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Attendance List
                         </button>
                     </div>
+                </div>
+                <div class="p-6">
                     <div class="space-y-4">
                         @if($todaysTrainings->count() > 0)
                             @foreach($todaysTrainings as $training)
-                            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="border-2 border-gray-200 rounded-lg p-6 bg-gradient-to-r from-gray-50 to-blue-50 hover:shadow-lg transition-all duration-300">
                                 <div class="flex justify-between items-start">
                                     <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">{{ $training->title }}</h4>
-                                        <p class="text-sm text-gray-600">{{ $training->location }}</p>
-                                        <p class="text-sm text-gray-600">
-                                            {{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}
-                                            @if($training->end_datetime)
-                                                - {{ $training->end_datetime->format('h:i A') }}
-                                            @endif
-                                        </p>
-                                        <p class="text-sm text-gray-600">{{ $training->involvement ?? 'Not specified' }}</p>
+                                        <h4 class="text-xl font-semibold text-gray-900 mb-2">{{ $training->title }}</h4>
+                                        <div class="space-y-1 text-gray-600">
+                                            <p class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                </svg>
+                                                {{ $training->location }}
+                                            </p>
+                                            <p class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                {{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}
+                                                @if($training->end_datetime)
+                                                    - {{ $training->end_datetime->format('h:i A') }}
+                                                @endif
+                                            </p>
+                                            <p class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                {{ $training->involvement ?? 'Not specified' }}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="flex flex-col w-40 ml-4 gap-3">
-                                        <button onclick="openAttendanceModal({{ $training->id }})" class="bg-green-600 hover:bg-green-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center">
-                                            <span class="flex items-center justify-center w-full">
-                                                <i class="fas fa-users mr-2 text-lg"></i>
-                                                <span class="w-full text-center">Attendance</span>
-                                            </span>
+                                    <div class="flex flex-col w-48 ml-6 gap-3">
+                                        <button onclick="openAttendanceModal({{ $training->id }})" class="bg-green-600 hover:bg-green-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center shadow-lg hover:shadow-xl">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                            Attendance
                                         </button>
                                         @if($training->status === 'Active' && empty($training->end_datetime))
-                                        <button onclick="endTraining({{ $training->id }})" class="bg-red-600 hover:bg-red-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center">
-                                            <span class="flex items-center justify-center w-full">
-                                                <i class="fas fa-stop mr-2 text-lg"></i>
-                                                <span class="w-full text-center">End Training</span>
-                                            </span>
+                                        <button onclick="endTraining({{ $training->id }})" class="bg-red-600 hover:bg-red-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center shadow-lg hover:shadow-xl">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
+                                            </svg>
+                                            End Training
                                         </button>
                                         @endif
                                     </div>
@@ -54,8 +94,11 @@
                             </div>
                             @endforeach
                         @else
-                            <div class="border border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 text-center">
-                                <h4 class="font-semibold text-gray-500 mb-2">No training sessions scheduled for today</h4>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 bg-gray-50 text-center">
+                                <svg class="w-12 h-12 text-gray-300 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <h4 class="text-lg font-semibold text-gray-500 mb-2">No training sessions scheduled for today</h4>
                                 <p class="text-sm text-gray-400">There are no nearby training sessions. Please check the calendar or add a new training session.</p>
                             </div>
                         @endif
@@ -63,88 +106,113 @@
                 </div>
             </div>
                 
-            <!-- Combined Calendar & Activity Time Table Section -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
-                <div class="p-6">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+            <!-- Training Calendar Section -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Training Calendar & Activity Time Table</h3>
-                            <p class="text-sm text-gray-500">View and manage all scheduled trainings in one place.</p>
+                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Training Calendar
+                            </h2>
+                            <p class="text-gray-600">View scheduled trainings in calendar format</p>
                         </div>
-                        <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <i class="fas fa-plus mr-2"></i>Add Training
+                            Add Training
                         </button>
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="text-md font-semibold text-gray-900 mb-3">Calendar</h4>
-                            <div id="calendar" style="max-height: 400px;"></div>
-                        </div>
-                        <div>
-                            <h4 class="text-md font-semibold text-gray-900 mb-3">Activity Time Table</h4>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200" id="trainingsTable">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Involvement</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @forelse($trainings as $training)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $training->title }}</div>
-                                                @if($training->description)
-                                                <div class="text-sm text-gray-500">{{ Str::limit($training->description, 50) }}</div>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $training->involvement ?? 'Not specified' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $training->location }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <div>{{ $training->formatted_start_date }}</div>
-                                                <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $training->duration_hours ? $training->duration_hours . 'h' : 'TBD' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">
-                                                    {{ $training->status }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button onclick="editTraining({{ $training->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                                <button onclick="deleteTraining({{ $training->id }})" class="text-red-600 hover:text-red-900">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                                No training sessions scheduled
-                                            </td>
-                                        </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                </div>
+                <div class="p-6">
+                    <div id="calendar" style="min-height: 500px;"></div>
+                </div>
+            </div>
+
+            <!-- Activity Time Table Section -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        Activity Time Table
+                    </h2>
+                    <p class="text-gray-600">Detailed list of all training sessions and their status</p>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+                            <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Title</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Involvement</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Duration</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($trainings as $training)
+                                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ $training->title }}</div>
+                                        @if($training->description)
+                                        <div class="text-sm text-gray-500">{{ Str::limit($training->description, 50) }}</div>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $training->involvement ?? 'Not specified' }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $training->location }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <div>{{ $training->formatted_start_date }}</div>
+                                        <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $training->duration_hours ? $training->duration_hours . 'h' : 'TBD' }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">
+                                            {{ $training->status }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="editTraining({{ $training->id }})" class="text-indigo-600 hover:text-indigo-900 mr-4 transition-colors duration-150">
+                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                        <button onclick="deleteTraining({{ $training->id }})" class="text-red-600 hover:text-red-900 transition-colors duration-150">
+                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-8 text-center">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <svg class="w-12 h-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                            </svg>
+                                            <p class="text-gray-500 text-sm">No training sessions scheduled</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -559,7 +627,7 @@
                 eventClick: function(info) {
                     editTraining(info.event.id);
                 },
-                height: 350,
+                height: 'auto',
                 eventDisplay: 'block'
             });
             calendar.render();
