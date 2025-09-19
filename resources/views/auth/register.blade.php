@@ -121,7 +121,7 @@
         
         .form-content {
             width: 100%;
-            max-width: 400px;
+            max-width: 550px;
         }
         
         .form-grid {
@@ -160,7 +160,7 @@
             padding: 0.875rem 1rem;
             border: 2px solid #E5E5E5;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.875rem;
             transition: border-color 0.2s ease;
             background: #FAFAFA;
         }
@@ -177,7 +177,7 @@
             padding: 0.875rem 1rem;
             border: 2px solid #E5E5E5;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.875rem;
             background: #FAFAFA;
             cursor: pointer;
             transition: border-color 0.2s ease;
@@ -499,14 +499,14 @@
                         <!-- Full Name -->
                         <div class="form-group">
                             <label for="name" class="form-label">{{ __('Full Name') }}</label>
-                            <input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Enter your full name" />
+                            <input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Your Full Name" />
                             <x-input-error :messages="$errors->get('name')" class="error-message" />
                         </div>
 
                         <!-- Email Address -->
                         <div class="form-group">
                             <label for="email" class="form-label">{{ __('E-mail') }}</label>
-                            <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="Enter your email" />
+                            <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="Your Email" />
                             <x-input-error :messages="$errors->get('email')" class="error-message" />
                         </div>
 
@@ -514,7 +514,7 @@
                         <div class="form-group">
                             <label for="password" class="form-label">{{ __('Password') }}</label>
                             <div class="password-field">
-                                <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" placeholder="Create a password" />
+                                <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" placeholder="Your Password" />
                                 <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                     <i class="fas fa-eye" id="password-eye"></i>
                                 </button>
@@ -526,7 +526,7 @@
                         <div class="form-group">
                             <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}</label>
                             <div class="password-field">
-                                <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm your password" />
+                                <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Your Password" />
                                 <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation')">
                                     <i class="fas fa-eye" id="password_confirmation-eye"></i>
                                 </button>

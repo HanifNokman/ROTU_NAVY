@@ -121,7 +121,7 @@
         
         .form-content {
             width: 100%;
-            max-width: 400px;
+            max-width: 550px;
         }
         
         .form-title {
@@ -154,7 +154,7 @@
             padding: 0.875rem 1rem;
             border: 2px solid #E5E5E5;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.875rem;
             transition: border-color 0.2s ease;
             background: #FAFAFA;
         }
@@ -445,7 +445,7 @@
                     <!-- Email Address -->
                     <div class="form-group">
                         <label for="email" class="form-label">{{ __('E-mail') }}</label>
-                        <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Enter your email" />
+                        <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Your Email" />
                         <x-input-error :messages="$errors->get('email')" class="error-message" />
                     </div>
 
@@ -453,7 +453,7 @@
                     <div class="form-group">
                         <label for="password" class="form-label">{{ __('Password') }}</label>
                         <div class="password-field">
-                            <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password" />
+                            <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" placeholder="Your Password" />
                             <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                 <i class="fas fa-eye" id="password-eye"></i>
                             </button>
