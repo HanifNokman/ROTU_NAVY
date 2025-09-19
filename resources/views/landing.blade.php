@@ -16,9 +16,10 @@
 <!-- ✅ Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
-        <!-- Right side: Logo -->
-        <a class="navbar-brand" href="#">
-            <img src="{{ asset('images/navy-logo.png') }}" alt="Logo" height="40">
+        <!-- Right side: Logo with text -->
+        <a class="navbar-brand flex items-center space-x-2" href="#">
+            <img src="{{ asset('storage/logo/PSS-LOGO.png') }}" alt="Logo" height="40" class="h-10">
+            <span class="text-xl font-bold text-gray-800">ROTU NAVY UMS</span>
         </a>
 
         <!-- Toggle for mobile -->
