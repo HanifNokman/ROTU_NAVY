@@ -36,10 +36,10 @@ class AllowanceController extends Controller
         $maxYear = min($intakeYear + 3, $currentYear);
         $years = range($intakeYear, $maxYear);
 
-        // Determine selected year
-        $selectedYear = (int) $request->get('year', $intakeYear);
+        // Determine selected year - default to current year
+        $selectedYear = (int) $request->get('year', $currentYear);
         if (!in_array($selectedYear, $years)) {
-            $selectedYear = $intakeYear;
+            $selectedYear = $currentYear;
         }
 
         // Get all attended trainings for this cadet (all years)

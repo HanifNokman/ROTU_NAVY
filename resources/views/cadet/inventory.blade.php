@@ -7,12 +7,23 @@
         </div>
     </x-slot>
 
-    <div class="py-1">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 ">
-            
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Header Section -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    My Inventory
+                </h1>
+                <p class="text-gray-600">Manage your uniform sizes and equipment loans</p>
+            </div>
+
             <!-- Active Equipment Loans Alert -->
             @if($activeLoans->isNotEmpty())
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -21,7 +32,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm text-yellow-700">
-                                You have {{ $activeLoans->count() }} active equipment loan(s). 
+                                You have {{ $activeLoans->count() }} active equipment loan(s).
                                 @php $overdueCount = $activeLoans->filter(fn($loan) => $loan->isOverdue())->count(); @endphp
                                 @if($overdueCount > 0)
                                     <span class="font-semibold text-red-600">{{ $overdueCount }} overdue!</span>
@@ -33,9 +44,18 @@
             @endif
 
             <!-- Uniform Sizes Management -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        My Uniform Sizes
+                    </h3>
+                    <p class="text-gray-600">Manage your uniform component sizes</p>
+                </div>
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">My Uniform Sizes</h3>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">Size Guidelines</h4>
                     
                     <!-- Size Guidelines -->
                     <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -159,10 +179,17 @@
             </div>
 
             <!-- Equipment Loans Management -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                        Equipment & Uniform Loans
+                    </h3>
+                    <p class="text-gray-600">Borrow equipment and uniform items</p>
+                </div>
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Equipment & Uniform Loans</h3>
-                
                     <!-- Category Filter -->
                     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                         <h4 class="font-medium text-gray-800 mb-3 flex items-center justify-between">
@@ -241,9 +268,17 @@
 
             <!-- Active Loans Section -->
             @if($activeLoans->isNotEmpty())
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Active Loans
+                        </h3>
+                        <p class="text-gray-600">Items currently borrowed</p>
+                    </div>
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Active Loans</h3>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -264,7 +299,7 @@
                                                 {{ $loan->inventoryItem->name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                     {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
                                                     {{ $loan->inventoryItem->category }}
                                                 </span>
@@ -287,7 +322,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button onclick="openReturnModal({{ $loan->id }}, '{{ $loan->inventoryItem->name }}')"
+                                                <button onclick="openReturnModal({{ $loan->id }}, '{{ $loan->inventoryItem->name }}', '{{ $loan->borrow_date->format('Y-m-d') }}')"
                                                         class="text-green-600 hover:text-green-900">
                                                     Return
                                                 </button>
@@ -303,9 +338,17 @@
 
             <!-- Past Loans Section -->
             @if($pastLoans->isNotEmpty())
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-green-100">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Past Loans
+                        </h3>
+                        <p class="text-gray-600">Completed loan history</p>
+                    </div>
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Past Loans</h3>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -325,7 +368,7 @@
                                                 {{ $loan->inventoryItem->name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                     {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
                                                     {{ $loan->inventoryItem->category }}
                                                 </span>

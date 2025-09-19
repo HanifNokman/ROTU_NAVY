@@ -9,26 +9,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-            
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
             <!-- Header Section -->
-            <div class="text-center animate-fade-in">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">
-                    <i class="fas fa-clipboard-check text-blue-600 mr-3"></i>
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                     Attendance Portal
                 </h1>
                 <p class="text-gray-600">Mark your attendance and manage absence records</p>
             </div>
 
             <!-- Today's Training Section -->
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl border border-gray-100">
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
-                    <h2 class="text-2xl font-semibold mb-2">
-                        <i class="fas fa-calendar-day mr-2"></i>
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
                         Today's Training
                     </h2>
-                    <p class="text-blue-100">Current training session</p>
+                    <p class="text-gray-600">Current training session</p>
                 </div>
                 
                 <div class="p-8">
@@ -113,7 +117,9 @@
                         @endforeach
                     @else
                         <div class="text-center py-12">
-                            <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+                            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
                             <h3 class="text-xl font-semibold text-gray-600 mb-2">No Training Today</h3>
                             <p class="text-gray-500">There's no training scheduled for today. Enjoy your day off!</p>
                         </div>
@@ -122,13 +128,15 @@
             </div>
 
             <!-- Absence Records Section -->
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl border border-gray-100">
-                <div class="bg-gradient-to-r from-orange-600 to-red-600 text-white p-6">
-                    <h2 class="text-2xl font-semibold mb-2">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-orange-50 to-red-50 p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                        <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
                         Absence Records
                     </h2>
-                    <p class="text-orange-100">Submit reasons for your absences</p>
+                    <p class="text-gray-600">Submit reasons for your absences</p>
                 </div>
                 
                 <div class="p-8">
@@ -208,7 +216,9 @@
                         </div>
                     @else
                         <div class="text-center py-12">
-                            <i class="fas fa-check-circle text-6xl text-green-300 mb-4"></i>
+                            <svg class="w-16 h-16 text-green-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                             <h3 class="text-xl font-semibold text-gray-600 mb-2">All Clear!</h3>
                             <p class="text-gray-500">You have no pending absence records that require attention.</p>
                         </div>

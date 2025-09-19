@@ -2,93 +2,137 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('My Training Schedule') }}
-            @if(isset($cadetIntake))
-                <span class="text-sm font-normal text-gray-600 ml-2">({{ $cadetIntake }})</span>
-            @endif
         </h2>
     </x-slot>
 
-    <div class="py-1">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Header Section -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    Training Schedule
+                </h1>
+                <p class="text-gray-600">View your upcoming training sessions and schedule</p>
+            </div>
             @if(isset($error))
-                <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                     <strong class="font-bold">Error:</strong>
                     <span class="block sm:inline">{{ $error }}</span>
                 </div>
             @else
                 <!-- Calendar View -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Training Calendar</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Training Calendar
+                        </h3>
                         <div id="calendar"></div>
                         @if(empty($calendarEvents))
-                            <p class="mt-4 text-gray-500 text-sm">No training sessions scheduled for your intake.</p>
+                            <div class="mt-4 text-center py-8">
+                                <div class="text-gray-500">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-900 mb-2">No training sessions found</h3>
+                                    <p class="text-sm text-gray-500">No training sessions scheduled for your intake.</p>
+                                </div>
+                            </div>
                         @endif
                     </div>
                 </div>
 
                 <!-- Training List -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="p-6">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-6 py-3"></th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($trainings as $training)
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Training Sessions
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+                                <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
                                     <tr>
-                                        <td class="px-6 py-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ $training->title }}</div>
-                                            @if($training->description)
-                                                <div class="text-sm text-gray-500 mt-1">{{ Str::limit($training->description, 60) }}</div>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <i class="fas fa-map-marker-alt text-gray-400 mr-1"></i>
-                                            {{ $training->location }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div class="font-medium">{{ $training->formatted_start_date }}</div>
-                                            <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            @if($training->end_datetime)
-                                                {{ $training->start_datetime->diffForHumans($training->end_datetime, true) }}
-                                            @else
-                                                <span class="text-gray-400">Not specified</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">
-                                                {{ $training->status }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button onclick="viewTraining({{ $training->id }})" class="text-blue-600 hover:text-blue-900">
-                                                <i class="fas fa-eye mr-1"></i>View Details
-                                            </button>
-                                        </td>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Title</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Start</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Duration</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="px-6 py-8 text-center">
-                                            <div class="text-gray-500">
-                                                <i class="fas fa-calendar-times text-4xl mb-3"></i>
-                                                <div class="text-lg font-medium">No Training Sessions</div>
-                                                <div class="text-sm">There are no training sessions scheduled for your intake at this time.</div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @forelse($trainings as $training)
+                                        <tr class="hover:bg-blue-50 transition-colors duration-200">
+                                            <td class="px-6 py-4">
+                                                <div class="text-sm font-medium text-gray-900">{{ $training->title }}</div>
+                                                @if($training->description)
+                                                    <div class="text-sm text-gray-500 mt-1">{{ Str::limit($training->description, 60) }}</div>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <div class="flex items-center">
+                                                    <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    </svg>
+                                                    {{ $training->location }}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <div class="font-medium">{{ $training->formatted_start_date }}</div>
+                                                <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                @if($training->end_datetime)
+                                                    {{ $training->start_datetime->diffForHumans($training->end_datetime, true) }}
+                                                @else
+                                                    <span class="text-gray-400">Not specified</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                                    @if($training->status === 'Active') bg-green-100 text-green-800
+                                                    @elseif($training->status === 'Completed') bg-gray-100 text-gray-800
+                                                    @elseif($training->status === 'Cancelled') bg-red-100 text-red-800
+                                                    @else bg-blue-100 text-blue-800 @endif">
+                                                    {{ $training->status }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button onclick="viewTraining({{ $training->id }})" class="text-blue-600 hover:text-blue-900 transition-colors duration-200">
+                                                    <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    </svg>
+                                                    View Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="px-6 py-8 text-center">
+                                                <div class="text-gray-500">
+                                                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <h3 class="text-base font-medium text-gray-900 mb-2">No training sessions found</h3>
+                                                    <p class="text-sm text-gray-500">There are no training sessions scheduled for your intake at this time.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             @endif
