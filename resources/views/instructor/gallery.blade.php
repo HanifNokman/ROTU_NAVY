@@ -1,47 +1,91 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Gallery (Instructors)') }}
+            {{ __('Gallery') }}
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg p-6 flex flex-col md:flex-row gap-6 transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
-            <div class="p-6 text-gray-900 w-full">
-                @if(session('success'))
-                    <div class="mb-4 text-green-600">{{ session('success') }}</div>
-                @endif
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-                <!-- Top controls: filter + buttons -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                    <!-- Left side: Filter only -->
-                    <form method="GET" action="{{ route('instructor.gallery') }}" class="flex items-center gap-2">
-                        <label for="category" class="text-sm font-medium text-gray-700">Filter by Category:</label>
-                        <select name="category" id="category" onchange="this.form.submit()" class="border-gray-300 rounded-md shadow-sm">
-                            <option value="">All</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
+            <!-- Header Section -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"/>
+                    </svg>
+                    Gallery
+                </h1>
+                <p class="text-gray-600">Browse and manage photos from training sessions</p>
+            </div>
 
-                    <!-- Right side: Buttons -->
-                    <div class="flex gap-2">
-                        <button onclick="openGalleryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
+            @if(session('success'))
+                <div class="mb-4 text-green-600">{{ session('success') }}</div>
+            @endif
+
+            <!-- Main Content Card -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                        Photo Collection
+                    </h2>
+                    <p class="text-gray-600">View and manage training photos organized by category</p>
+                </div>
+
+                <div class="p-6">
+
+                <!-- Category Toggle Buttons -->
+                <div class="mb-6">
+                    <div class="flex flex-wrap gap-3">
+                        <!-- All Categories Button -->
+                        <a href="{{ route('instructor.gallery') }}" 
+                           class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ !request('category') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                             </svg>
-                            Add Picture
-                        </button>
-                        <button onclick="openCategoryModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
+                            All
+                        </a>
+
+                        <!-- Individual Category Buttons -->
+                        @foreach($categories as $category)
+                            <a href="{{ route('instructor.gallery', ['category' => $category->id]) }}" 
+                               class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ request('category') == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                                {{ $category->name }}
+                            </a>
+                        @endforeach
+
+                        <!-- Add Category Button -->
+                        <button onclick="openCategoryModal()" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-green-100 text-green-700 hover:bg-green-200 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                             Add Category
                         </button>
                     </div>
+                </div>
+
+                <!-- Gallery Stats -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <div class="flex flex-wrap gap-4 text-sm text-blue-800">
+                        <span><strong>Total Pictures:</strong> {{ $galleries->count() }}</span>
+                        <span><strong>Categories:</strong> {{ $categories->count() }}</span>
+                    </div>
+                </div>
+
+                <!-- Add Picture Button -->
+                <div class="mb-6 flex justify-end">
+                    <button onclick="openGalleryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Picture
+                    </button>
                 </div>
 
                 <!-- Alpine State for Edit and Delete Modal -->

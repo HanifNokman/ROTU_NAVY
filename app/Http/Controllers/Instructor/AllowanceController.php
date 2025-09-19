@@ -59,7 +59,12 @@ class AllowanceController extends Controller
 
         // Handle AJAX request for filtered content
         if ($request->ajax() || $request->get('ajax')) {
-            return $this->renderTrainingListContent($trainings, $months, $selectedYear, $selectedMonth);
+            $html = $this->renderTrainingListContent($trainings, $months, $selectedYear, $selectedMonth);
+            return response()->json([
+                'html' => $html,
+                'monthName' => $months[$selectedMonth] ?? $allMonths[$selectedMonth],
+                'year' => $selectedYear
+            ]);
         }
 
         return view('instructor.allowance', compact(
@@ -75,14 +80,18 @@ class AllowanceController extends Controller
      */
     private function renderTrainingListContent($trainings, $months, $selectedYear, $selectedMonth)
     {
-        $html = '<h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6 flex items-center">
-                    <span class="text-sm sm:text-base">Trainings for</span>
-                    <span id="selected-month" class="text-blue-600 ml-1 text-sm sm:text-base">' . $months[$selectedMonth] . '</span> 
-                    <span id="selected-year" class="text-blue-600 ml-1 text-sm sm:text-base">' . $selectedYear . '</span>
-                </h3>
-                
-                <div id="training-list-inner">';
-
+        $html = ''; // Initialize the variable
+        
+        // Month names fallback
+        $allMonths = [
+            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+            5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+        ];
+        
+        // Get the month name safely
+        $monthName = $months[$selectedMonth] ?? $allMonths[$selectedMonth] ?? 'Unknown';
+        
         if ($trainings->count() > 0) {
             $html .= '<div class="space-y-3 sm:space-y-4">';
             
@@ -220,13 +229,11 @@ class AllowanceController extends Controller
                             </svg>
                             <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-2">No trainings found</h3>
                             <p class="text-sm text-gray-500">
-                                No trainings found for <span id="selected-month-empty" class="font-medium text-blue-600">' . $months[$selectedMonth] . '</span> <span id="selected-year-empty" class="font-medium text-blue-600">' . $selectedYear . '</span>.
+                                No trainings found for <span id="selected-month-empty" class="font-medium text-blue-600">' . $monthName . '</span> <span id="selected-year-empty" class="font-medium text-blue-600">' . $selectedYear . '</span>.
                             </p>
                         </div>
                     </div>';
         }
-
-        $html .= '</div>';
 
         return $html;
     }
