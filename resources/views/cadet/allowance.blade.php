@@ -1,13 +1,37 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Allowance Estimation (Cadet)
+            Allowance Estimation
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg transition duration-300 hover:shadow-2xl hover:border-blue-300">
-            <div class="p-6 text-gray-900">
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Header Section -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                    </svg>
+                    Allowance Estimation
+                </h1>
+                <p class="text-gray-600">Calculate your training allowances and compensation</p>
+            </div>
+
+            <!-- Main Content Card -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                        <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        Training Records & Allowances
+                    </h2>
+                    <p class="text-gray-600">View your training participation and calculate earned allowances</p>
+                </div>
+
+                <div class="p-6">
                 <form id="allowance-filter-form" class="mb-6 flex flex-wrap gap-4">
                     <div>
                         <label for="year" class="block text-sm font-medium text-gray-700">Year</label>

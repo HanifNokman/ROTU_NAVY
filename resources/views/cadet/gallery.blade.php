@@ -5,9 +5,33 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg p-6 transition duration-300 hover:shadow-2xl hover:border hover:border-blue-300">
-            <div class="p-6 text-gray-900 w-full">
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Header Section -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Gallery
+                </h1>
+                <p class="text-gray-600">Browse photos and memories from training sessions</p>
+            </div>
+
+            <!-- Main Content Card -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                        Photo Collection
+                    </h2>
+                    <p class="text-gray-600">View training photos organized by category</p>
+                </div>
+
+                <div class="p-6">
                 
                 <!-- Category Toggle Buttons -->
                 <div class="mb-6">
