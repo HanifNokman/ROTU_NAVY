@@ -1141,6 +1141,8 @@
 
             .footer-section h3 {
                 text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
