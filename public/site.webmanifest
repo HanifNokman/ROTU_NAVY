@@ -1,0 +1,20 @@
+{
+    "name": "ROTU NAVY UMS",
+    "short_name": "ROTU NAVY",
+    "description": "ROTU NAVY University Management System",
+    "icons": [
+        {
+            "src": "/storage/logo/PSS-LOGO.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/storage/logo/PSS-LOGO.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#3c92d9",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}
