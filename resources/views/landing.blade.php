@@ -907,11 +907,11 @@
         }
 
         .footer-content {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
         }
 
         .footer-section h3 {
@@ -1133,7 +1133,14 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
-        }
+
+            .footer-section {
+                padding: 0;
+                margin-bottom: 1rem;
+            }
+
+            .footer-section h3 {
+                text-align: center;
     </style>
 </head>
 <body>
@@ -1392,7 +1399,7 @@
             </div>
 
             <div class="enhanced-card animate-on-scroll" style="text-align: center; margin-top: 4rem;">
-                <img src="storage/landing/3.png" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+                <img src="storage/landing/palapes.jpg" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
                 <h3 style="color: var(--primary-blue); font-size: 2rem; margin-bottom: 1.5rem;">Building Tomorrow's Leaders</h3>
                 <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; max-width: 800px; margin: 0 auto;">
                     Our comprehensive program goes beyond traditional military training, fostering critical thinking, ethical leadership, and the adaptability required to excel in an ever-changing global environment. Graduates emerge as confident, capable leaders ready to make meaningful contributions to society.
@@ -1743,6 +1750,21 @@
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <i class="fas fa-envelope" style="color: var(--primary-blue);"></i>
                     <p>palapeslautums@ums.edu.my</p>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Find Us Here</h3>
+                <div style="width: 100%; height: 200px; background: rgba(60, 146, 217, 0.1); border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; overflow: hidden;">
+                    <!-- Embedded Google Map -->
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d991.9088727330876!2d116.1296105786893!3d6.044647273346967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2smy!4v1758376029404!5m2!1sen!2smy" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-blue); margin-top: 0.25rem;"></i>
+                    <div>
+                        <p style="margin-bottom: 0.25rem; font-weight: 600; color: var(--text-primary);">Visit Our Campus</p>
+                        <p style="margin: 0; font-size: 0.9rem;">Block B, Universiti Malaysia Sabah<br>Jalan UMS, 88400 Kota Kinabalu<br>Sabah, Malaysia</p>
+                    </div>
                 </div>
             </div>
         </div>
