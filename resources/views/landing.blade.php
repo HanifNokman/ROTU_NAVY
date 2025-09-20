@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESERVE OFFICER TRAINING UNIT - UMS</title>
+    <title>ROTU NAVY UMS</title>
     <style>
         * {
             margin: 0;
@@ -62,13 +62,13 @@
         .nav-logo {
             display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 0px;
             text-decoration: none;
             cursor: pointer;
         }
 
         .nav-logo img {
-            width: 80px;
+            width: auto;
             height: 80px;
             border-radius: 50%;
         }
@@ -124,17 +124,22 @@
 
         .btn-primary {
             background: linear-gradient(135deg, #3c92d9, #2980b9);
-            padding: 20px 48px;
+            padding: 16px 32px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             transition: all 0.3s ease;
             color: white;
             text-decoration: none;
             position: relative;
             font-weight: 600;
+            font-size: 16px;
             box-shadow: 0 4px 15px rgba(60, 146, 217, 0.3);
-            min-width: 180px;
+            min-width: 120px;
             text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
         }
 
         .btn-primary:hover {
@@ -700,6 +705,12 @@
             .benefits-grid {
                 grid-template-columns: 1fr;
             }
+
+            .btn-primary {
+                padding: 14px 24px;
+                font-size: 14px;
+                min-width: 100px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -722,6 +733,12 @@
             .qr-code {
                 width: 150px;
                 height: 150px;
+            }
+
+            .btn-primary {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 90px;
             }
         }
     </style>
