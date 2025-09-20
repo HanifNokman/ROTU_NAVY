@@ -3,8 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROTU NAVY UMS</title>
+    <title>ROTU NAVY UMS - Reserve Officer Training Unit</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-blue: #3c92d9;
+            --secondary-blue: #2980b9;
+            --accent-pink: #ec6c6c;
+            --dark-navy: #2e313c;
+            --darker-navy: #10141c;
+            --light-gray: #f8fafc;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --gradient-primary: linear-gradient(135deg, #3c92d9, #2980b9);
+            --gradient-accent: linear-gradient(90deg, #3c92d9, #ec6c6c);
+            --shadow-primary: 0 10px 30px rgba(60, 146, 217, 0.3);
+            --shadow-hover: 0 20px 50px rgba(60, 146, 217, 0.4);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,26 +30,26 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            background-color: #2e313c;
-            color: white;
-            line-height: 1.6;
+            background-color: var(--dark-navy);
+            color: var(--text-primary);
+            line-height: 1.7;
+            scroll-behavior: smooth;
         }
 
-        /* Gradient utilities */
-        .gradient-divider {
-            width: 80%;
-            height: 2px;
-            background: linear-gradient(90deg, #3c92d9, #ec6c6c);
-            margin: 4rem auto;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .gradient-divider-angled {
-            width: 80%;
-            height: 2px;
-            background: linear-gradient(90deg, #3c92d9, #ec6c6c);
-            margin: 4rem auto;
+        ::-webkit-scrollbar-track {
+            background: var(--dark-navy);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: 4px;
         }
 
         /* Navigation */
@@ -39,81 +57,107 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: #10141c;
-            backdrop-filter: blur(10px);
-            padding: 0.5rem 2rem;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(16, 20, 28, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            z-index: 2000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .navbar.scrolled {
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            background: rgba(16, 20, 28, 0.98);
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+            padding: 0.75rem 2rem;
         }
 
         .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
-            padding: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 0.5rem; 
+            padding-right: 1rem; 
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
-            gap: 0px;
+            gap: 0.25rem;
             text-decoration: none;
             cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.02);
         }
 
         .nav-logo img {
             width: auto;
-            height: 80px;
+            height: 70px;
             border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
         .nav-logo-text {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 2px;
         }
 
-        .nav-logo span {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
+        .nav-logo-text .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 0.25rem; /* Added spacing between lines */
+        }
+
+        .nav-logo-text .sub-title {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             line-height: 1;
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 2.5rem;
             align-items: center;
         }
 
         .nav-links a {
-            color: white;
+            color: var(--text-secondary);
             text-decoration: none;
             position: relative;
             transition: all 0.3s ease;
-            padding: 0.5rem 0;
+            padding: 0.5rem 0;  /* Change this line */
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-links .btn-primary {
+            padding: 12px 24px !important;
+            margin: 0 1rem;
         }
 
         .nav-links a:hover {
-            color: #ffffff;
+            color: var(--text-primary);
         }
 
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: 0;
+            bottom: -2px;
             left: 50%;
             width: 0;
             height: 2px;
-            background: #3c92d9;
+            background: var(--primary-blue);
             transition: all 0.3s ease;
             transform: translateX(-50%);
         }
@@ -123,34 +167,38 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #3c92d9, #2980b9);
-            padding: 16px 32px;
+            background: var(--gradient-primary);
+            padding: 12px 28px;
             border: none;
-            border-radius: 6px;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             color: white;
             text-decoration: none;
-            position: relative;
             font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(60, 146, 217, 0.3);
-            min-width: 120px;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-primary);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #2980b9, #1f5f99);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(60, 146, 217, 0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(60, 146, 217, 0.4);
         }
 
-        /* Remove underline hover effect specifically for buttons */
         .btn-primary::after {
             display: none !important;
+        }
+
+        .btn-instructor {
+            background: linear-gradient(135deg, #ec6c6c, #d64545);
+            margin-left: 0.5rem;
+        }
+
+        .btn-instructor:hover {
+            background: linear-gradient(135deg, #d64545, #b83838);
+            box-shadow: 0 8px 25px rgba(236, 108, 108, 0.5);
         }
 
         /* Mobile Menu */
@@ -158,389 +206,777 @@
             display: none;
             flex-direction: column;
             cursor: pointer;
+            padding: 8px;
         }
 
         .mobile-menu-toggle span {
             width: 25px;
-            height: 3px;
-            background: white;
+            height: 2px;
+            background: var(--text-primary);
             margin: 3px 0;
             transition: 0.3s;
+            border-radius: 1px;
         }
 
-        /* Hero Carousel Section */
-        .hero-carousel {
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Notification Banner */
+        .notification-banner {
+            background: var(--gradient-primary);
+            padding: 2rem 2rem 1rem 2rem;  /* Add top padding */
+            text-align: center;
+            margin-top: 81px;
+            border-bottom: 2px solid rgba(60, 146, 217, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .notification-banner.hidden {
+            display: none;
+        }
+
+        .notification-banner h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .notification-banner p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .notification-close {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification-close:hover {
+            opacity: 1;
+        }
+
+        /* Hero Section with Parallax */
+        .hero-section {
             position: relative;
             height: 100vh;
             overflow: hidden;
-            margin-top: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .carousel-container {
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 120%;
+            height: 120%;
+            background: linear-gradient(rgba(46, 49, 60, 0.7), rgba(60, 146, 217, 0.5)),
+                        url('storage/landing/3.png') center/cover;
+            animation: parallaxFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes parallaxFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.02); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 1000px;
+            padding: 0 2rem;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease 0.4s both;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.6s both;
+            font-weight: 400;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.8s both;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
+            background: var(--primary-blue);
+            transition: left 0.3s ease;
+            z-index: -1;
         }
 
-        .carousel-slide {
+        .btn-secondary:hover::before {
+            left: 0;
+        }
+
+        .btn-secondary:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Floating Elements */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(60, 146, 217, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 30%; right: 15%; animation-delay: 2s; }
+        .floating-icon:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; }
+        .floating-icon:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 1s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Statistics Section */
+        .stats-section {
+            background: rgba(16, 20, 28, 0.95);
+            padding: 4rem 2rem;
+            margin-top: -1px;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: rgba(60, 146, 217, 0.1);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(60, 146, 217, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .stat-item:hover::before {
+            left: 100%;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-blue);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Enhanced Sections */
+        .section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(60, 146, 217, 0.1);
+            border: 1px solid var(--primary-blue);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Enhanced Cards */
+        .enhanced-card {
+            background: rgba(60, 146, 217, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enhanced-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .enhanced-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .enhanced-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(60, 146, 217, 0.2);
+            border-color: rgba(60, 146, 217, 0.3);
+        }
+
+        /* Interactive Timeline */
+        .timeline {
+            position: relative;
+            margin: 4rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient-primary);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 4rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-content {
+            background: rgba(60, 146, 217, 0.1);
+            border-radius: 16px;
+            padding: 0;
+            width: 45%;
+            position: relative;
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+            height: 300px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 15px 40px rgba(60, 146, 217, 0.2);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: auto;
+        }
+
+        .timeline-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.4s ease;
+        }
+
+        .timeline-text {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: rgba(46, 49, 60, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            transition: opacity 0.4s ease;
         }
 
-        .carousel-slide.active {
+        .timeline-content:hover .timeline-image {
+            opacity: 0.2;
+        }
+
+        .timeline-content:hover .timeline-text {
             opacity: 1;
         }
 
-        .carousel-slide:nth-child(1) {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('storage/landing/3.png') center/cover;
-        }
-
-        .carousel-slide:nth-child(2) {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('storage/landing/11.png') center/cover;
-        }
-
-        .carousel-slide:nth-child(3) {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('storage/landing/36.png') center/cover;
-        }
-
-        .carousel-caption {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 2;
-        }
-
-        .carousel-caption h1 {
-            font-size: 4rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            animation: fadeInUp 1s ease;
-            color: white;
-        }
-
-        .carousel-caption p {
-            font-size: 1.8rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            animation: fadeInUp 1s ease 0.3s both;
-        }
-
-        .carousel-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(46, 49, 60, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
+        .timeline-text h3 {
+            color: var(--primary-blue);
             font-size: 1.5rem;
-            padding: 0.8rem 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            border-radius: 4px;
-        }
-
-        .carousel-nav:hover {
-            background: rgba(60, 146, 217, 0.8);
-            border-color: #3c92d9;
-        }
-
-        .carousel-prev {
-            left: 2rem;
-        }
-
-        .carousel-next {
-            right: 2rem;
-        }
-
-        .carousel-dots {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 1rem;
-        }
-
-        .carousel-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .carousel-dot.active {
-            background: #3c92d9;
-            transform: scale(1.2);
-        }
-
-        .carousel-dot:hover {
-            background: #3c92d9;
-        }
-
-        /* Section Container */
-        .section {
-            margin: 0;
-            padding: 6rem 2rem;
-            position: relative;
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .card {
-            background: rgba(46, 49, 60, 0.8);
-            backdrop-filter: blur(15px);
-            border-radius: 8px;
-            padding: 3rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Introduction Section */
-        .introduction-section {
-            background: linear-gradient(rgba(46, 49, 60, 0.3), rgba(46, 49, 60, 0.3)),
-                        url('storage/landing/white.png') center/cover;
-        }
-
-        .two-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .intro-image {
-            width: 100%;
-            border-radius: 8px;
-            border: 2px solid rgba(60, 146, 217, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .intro-image:hover {
-            transform: scale(1.02);
-            border-color: #3c92d9;
-        }
-
-        /* About Section */
-        .about-section {
-            background: #2e313c;
-            text-align: center;
-        }
-
-        .about-photo {
-            max-width: 100%;
-            border-radius: 8px;
-            margin-top: 3rem;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Transition Image */
-        .transition-image {
-            height: 400px;
-            background: linear-gradient(rgba(46, 49, 60, 0.4), rgba(46, 49, 60, 0.4)),
-                        url('storage/landing/white.png') center/cover;
-            margin: 0;
-        }
-
-        /* Benefits Section */
-        .benefits-section {
-            background: linear-gradient(to bottom, 
-                        transparent 0%, 
-                        rgba(46, 49, 60, 0.8) 50%, 
-                        #2e313c 100%),
-                        url('storage/landing/black.png') top/cover;
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .benefit-card {
-            background: rgba(46, 49, 60, 0.9);
-            padding: 2rem;
-            border-radius: 8px;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: bounceIn 0.8s ease forwards;
-        }
-
-        .benefit-card:nth-child(1) { animation-delay: 0.1s; }
-        .benefit-card:nth-child(2) { animation-delay: 0.2s; }
-        .benefit-card:nth-child(3) { animation-delay: 0.3s; }
-        .benefit-card:nth-child(4) { animation-delay: 0.4s; }
-        .benefit-card:nth-child(5) { animation-delay: 0.5s; }
-
-        .benefit-card:hover {
-            transform: translateY(-10px);
-            background: rgba(60, 146, 217, 0.1);
-            border-color: #3c92d9;
-        }
-
-        .benefit-icon {
-            font-size: 3rem;
             margin-bottom: 1rem;
-            color: #3c92d9;
-        }
-
-        /* Requirements Section */
-        .requirements-section {
-            background: linear-gradient(rgba(46, 49, 60, 0.3), rgba(46, 49, 60, 0.3)),
-                        url('storage/landing/black.png') center/cover;
-        }
-
-        .requirements-image {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid rgba(60, 146, 217, 0.3);
-        }
-
-        .requirements-list {
-            background: rgba(46, 49, 60, 0.9);
-            padding: 3rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Join Us Section */
-        .join-section {
-            background: linear-gradient(rgba(46, 49, 60, 0.3), rgba(46, 49, 60, 0.3)),
-                        url('storage/landing/white.png') center/cover;
-        }
-
-        .qr-card {
-            background: rgba(46, 49, 60, 0.9);
-            padding: 2rem;
-            border-radius: 8px;
             text-align: center;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
         }
 
-        .qr-card:hover {
-            transform: scale(1.05);
-            border: 2px solid #3c92d9;
-            box-shadow: 0 0 30px rgba(60, 146, 217, 0.3);
+        .timeline-text p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            text-align: center;
         }
 
-        .qr-code {
-            width: 200px;
-            height: 200px;
-            background: white;
-            margin: 0 auto;
-            border-radius: 6px;
+        .timeline-icon {
+            position: absolute;
+            left: 50%;
+            top: 30%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: black;
-            font-size: 0.8rem;
+            font-size: 1.5rem;
+            color: white;
+            border: 4px solid var(--dark-navy);
+            z-index: 10;
         }
 
-        /* Footer */
-        .footer {
-            background: #2e313c;
-            padding: 4rem 2rem 2rem;
+        /* Interactive Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background: rgba(60, 146, 217, 0.05);
+            border-radius: 16px;
+            padding: 3.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(60, 146, 217, 0.05) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 20px 40px rgba(60, 146, 217, 0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--gradient-accent);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Requirements Section */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .requirement-card {
+            background: rgba(60, 146, 217, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 20px 40px rgba(60, 146, 217, 0.15);
+        }
+
+        .requirement-card h3 {
+            color: var(--primary-blue);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-blue);
+            padding-bottom: 0.5rem;
+        }
+
+        .requirement-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirement-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .requirement-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--dark-navy);
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid rgba(60, 146, 217, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(60, 146, 217, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-blue);
+            margin-bottom: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--accent-pink);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #ff4444;
+            transform: scale(1.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 2px solid rgba(60, 146, 217, 0.3);
+            background: rgba(60, 146, 217, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 10px rgba(60, 146, 217, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary-modal {
+            background: rgba(108, 117, 125, 0.8);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-secondary-modal:hover {
+            background: rgba(108, 117, 125, 1);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced Footer */
+        .footer {
+            background: rgba(16, 20, 28, 0.98);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-accent);
         }
 
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 3rem;
         }
 
         .footer-section h3 {
-            color: #3c92d9;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #3c92d9;
-            padding-bottom: 0.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
         }
 
-        .footer-map {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            padding: 2rem;
-            height: 200px;
+        .footer-section p, .footer-section li {
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-blue);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(60, 146, 217, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        .social-icon:hover {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-3px);
+            border-color: var(--primary-blue);
         }
 
         .footer-bottom {
             text-align: center;
             margin-top: 3rem;
             padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .social-icon:hover {
-            background: #3c92d9;
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 5px 15px rgba(60, 146, 217, 0.4);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
         }
 
         /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(50px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -548,34 +984,11 @@
             }
         }
 
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3) translateY(30px);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.1) translateY(-10px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .slide-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            animation: slideInLeft 1s ease forwards;
-        }
-
-        .slide-right {
-            opacity: 0;
-            transform: translateX(50px);
-            animation: slideInRight 1s ease forwards;
-        }
-
         @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -583,61 +996,59 @@
         }
 
         @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
             to {
                 opacity: 1;
                 transform: translateX(0);
             }
         }
 
-        .fade-in {
+        .animate-on-scroll {
             opacity: 0;
             transform: translateY(30px);
-            transition: all 0.8s ease;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .fade-in.visible {
+        .animate-on-scroll.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .zoom-in {
+        /* Page Loader */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.loaded {
             opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.8s ease;
+            visibility: hidden;
         }
 
-        .zoom-in.visible {
-            opacity: 1;
-            transform: scale(1);
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(60, 146, 217, 0.1);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        h2 {
-            font-size: 2.8rem;
-            text-align: center;
-            margin-bottom: 1rem;
-            position: relative;
-            color: white;
-        }
-
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            width: 80px;
-            height: 2px;
-            background: #3c92d9;
-            transform: translateX(-50%);
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        li {
-            padding: 0.8rem 0;
-            position: relative;
-            font-size: 1.1rem;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Responsive Design */
@@ -648,11 +1059,12 @@
                 top: 100%;
                 left: 0;
                 width: 100%;
-                background: #2e313c;
+                background: rgba(16, 20, 28, 0.98);
+                backdrop-filter: blur(20px);
                 flex-direction: column;
                 padding: 2rem;
-                gap: 1rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                gap: 1.5rem;
+                border-top: 1px solid var(--border-color);
             }
 
             .nav-links.active {
@@ -663,103 +1075,91 @@
                 display: flex;
             }
 
-            .carousel-caption h1 {
-                font-size: 2.5rem;
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
             }
 
-            .carousel-caption p {
-                font-size: 1.2rem;
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
             }
 
-            .carousel-nav {
-                font-size: 1.2rem;
-                padding: 0.6rem 0.8rem;
+            .timeline::before {
+                left: 30px;
             }
 
-            .carousel-prev {
-                left: 1rem;
+            .timeline-content {
+                width: calc(100% - 80px);
+                margin-left: 80px !important;
+                height: 250px;
             }
 
-            .carousel-next {
-                right: 1rem;
+            .timeline-icon {
+                left: 30px;
             }
 
-            .two-column {
+            .features-grid {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+            }
+
+            .requirements-grid {
+                grid-template-columns: 1fr;
             }
 
             .section {
                 padding: 4rem 1rem;
-                min-height: auto;
             }
 
-            .card {
+            .enhanced-card {
                 padding: 2rem;
-            }
-
-            h2 {
-                font-size: 2.2rem;
-            }
-
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .btn-primary {
-                padding: 14px 24px;
-                font-size: 14px;
-                min-width: 100px;
             }
         }
 
         @media (max-width: 480px) {
-            .carousel-caption h1 {
-                font-size: 2rem;
+            .stats-container {
+                grid-template-columns: 1fr;
             }
 
-            .carousel-caption p {
-                font-size: 1rem;
-            }
-
-            .section {
-                padding: 3rem 1rem;
-            }
-
-            .benefit-icon {
+            .stat-number {
                 font-size: 2.5rem;
             }
 
-            .qr-code {
-                width: 150px;
-                height: 150px;
+            .feature-card {
+                padding: 2rem;
             }
 
-            .btn-primary {
-                padding: 12px 20px;
-                font-size: 14px;
-                min-width: 90px;
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader"></div>
+    </div>
+
+   <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="#top" class="nav-logo" id="logoLink">
+            <a href="#home" class="nav-logo" id="logoLink">
                 <img src="storage/landing/PSS-LOGO.png" alt="ROTU Logo">
                 <div class="nav-logo-text">
-                    <span>PALAPES</span>
-                    <span>LAUT UMS</span>
+                    <span class="main-title">PALAPES</span>
+                    <span class="sub-title">LAUT UMS</span>
                 </div>
             </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#timeline">Journey</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#benefits">Benefits</a></li>
                 <li><a href="#requirements">Requirements</a></li>
-                <li><a href="#join">Join Us</a></li>
+                <li><a href="#selection">Selection</a></li>
+                <li><a href="#application">Apply</a></li>
                 
                 <!-- Authentication-based navigation -->
                 <!-- @auth -->
@@ -779,6 +1179,16 @@
                     <li><a href="{{ route('login') }}" class="btn-primary">Log In</a></li>
                 <!-- @endauth -->
             </ul>
+            
+            <!-- Instructor Edit Button (moved outside nav-links for separation) -->
+            <!-- @auth -->
+                <!-- @if(auth()->user()->role === 'instructor') -->
+                    <button class="btn-primary btn-instructor" id="editBtn">
+                        <i class="fas fa-edit"></i> Edit Page
+                    </button>
+                <!-- @endif -->
+            <!-- @endauth -->
+            
             <div class="mobile-menu-toggle" id="mobileToggle">
                 <span></span>
                 <span></span>
@@ -787,362 +1197,742 @@
         </div>
     </nav>
 
-    <!-- Hero Carousel Section -->
-    <section class="hero-carousel" id="top">
-        <div class="carousel-container">
-            <div class="carousel-slide active">
-                <div class="carousel-caption">
-                    <h1>RESERVE OFFICER TRAINING UNIT</h1>
-                    <p>Universiti Malaysia Sabah</p>
-                </div>
-            </div>
-            <div class="carousel-slide">
-                <div class="carousel-caption">
-                    <h1>LEADERSHIP EXCELLENCE</h1>
-                    <p>Developing Tomorrow's Naval Leaders</p>
-                </div>
-            </div>
-            <div class="carousel-slide">
-                <div class="carousel-caption">
-                    <h1>MARITIME TRAINING</h1>
-                    <p>Professional Naval & Leadership Skills</p>
-                </div>
-            </div>
+    <!-- Notification Banner -->
+    <section class="notification-banner" id="notificationBanner" style="position: relative;">
+        <h3 id="notificationTitle">
+            <i class="fas fa-bullhorn"></i>
+            Next Intake Application Open!
+        </h3>
+        <p id="notificationText">Applications for the upcoming semester are now open. Deadline: Loading...</p>
+        <button class="notification-close" id="closeNotification" onclick="hideNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+    </section>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="floating-elements">
+            <i class="fas fa-anchor floating-icon"></i>
+            <i class="fas fa-shield-alt floating-icon"></i>
+            <i class="fas fa-medal floating-icon"></i>
+            <i class="fas fa-graduation-cap floating-icon"></i>
         </div>
-        
-        <button class="carousel-nav carousel-prev" id="prevBtn">‹</button>
-        <button class="carousel-nav carousel-next" id="nextBtn">›</button>
-        
-        <div class="carousel-dots">
-            <span class="carousel-dot active" data-slide="0"></span>
-            <span class="carousel-dot" data-slide="1"></span>
-            <span class="carousel-dot" data-slide="2"></span>
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">Excellence in Maritime Leadership</h1>
+            <p class="hero-subtitle" id="heroSubtitle">Forge your path as a naval officer through comprehensive training, leadership development, and academic excellence at Universiti Malaysia Sabah</p>
+            <div class="hero-cta">
+                <a href="#application" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Apply Now
+                </a>
+                <a href="#introduction" class="btn-primary">
+                    <i class="fas fa-info-circle"></i> Learn More
+                </a>
+            </div>
         </div>
     </section>
 
-    <div class="gradient-divider"></div>
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-count="500">0</span>
+                <span class="stat-label">Graduates</span>
+            </div>
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-count="11">0</span>
+                <span class="stat-label">Intakes Commisioned</span>
+            </div>
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-count="95">0</span>
+                <span class="stat-label">% Success Rate</span>
+            </div>
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-count="120">0</span>
+                <span class="stat-label">Active Cadets</span>
+            </div>
+        </div>
+    </section>
 
     <!-- Introduction Section -->
-    <section id="introduction" class="section introduction-section">
-        <div class="section-content">
-            <div class="two-column">
-                <div class="slide-right">
-                    <img src="storage/landing/5.jpeg" alt="Introduction Image" class="intro-image">
+    <section id="introduction" class="section">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Program Overview</div>
+                <h2 class="section-title">About PALAPES Laut UMS</h2>
+                <p class="section-description" id="introDescription">
+                    The Reserve Officer Training Unit (PALAPES) represents Malaysia's premier naval leadership development program, combining rigorous academic excellence with comprehensive military training to forge the next generation of maritime leaders.
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
+                <div class="enhanced-card animate-on-scroll">
+                    <img src="storage/landing/5.jpeg" alt="PALAPES Training" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 1.5rem;">Our Mission</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        To develop exceptional maritime leaders through comprehensive training that combines academic excellence, military discipline, and character development, preparing graduates to serve with honor in Malaysia's naval forces and civilian sectors.
+                    </p>
                 </div>
-                <div class="slide-left">
-                    <div class="card">
-                        <h2>Introduction</h2>
-                        <p style="font-size: 1.1rem; line-height: 1.8; margin-top: 2rem;">
-                            The Reserve Officer Training Unit (PALAPES) Laut UMS is a structured military training program designed to develop leadership, discipline, and maritime skills among university students. It combines rigorous training in navigation, seamanship, physical fitness, and military skills.
-                        </p>
+
+                <div class="enhanced-card animate-on-scroll">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.5rem;">Program Highlights</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-graduation-cap" style="color: white;"></i>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Academic Integration</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Seamless blend of military training with university education</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-users" style="color: white;"></i>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Leadership Development</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Comprehensive leadership training and practical experience</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-anchor" style="color: white;"></i>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Naval Excellence</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Advanced maritime skills and naval operations training</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="gradient-divider"></div>
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
+
+    <!-- Cadet Timeline Section -->
+    <section id="timeline" class="section">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Training Excellence</div>
+                <h2 class="section-title">Cadet Journey Timeline</h2>
+                <p class="section-description">
+                    Follow the comprehensive path from application to commission, designed to transform dedicated students into exceptional naval officers through structured training phases.
+                </p>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <img src="storage/landing/5.jpeg" alt="Foundation Training" class="timeline-image">
+                        <div class="timeline-text">
+                            <h3>Foundation Training</h3>
+                            <p>Comprehensive introduction to naval traditions, basic seamanship, military fundamentals, discipline, and core competencies in leadership and maritime knowledge. Duration: 6 months intensive training.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-anchor"></i>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <img src="storage/landing/11.png" alt="Advanced Maritime Skills" class="timeline-image">
+                        <div class="timeline-text">
+                            <h3>Advanced Maritime Skills</h3>
+                            <p>Specialized training in navigation systems, vessel operations, maritime law, advanced seamanship, and practical experience through simulations and real-world exercises. Duration: 12 months advanced training.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-compass"></i>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <img src="storage/landing/36.png" alt="Leadership Development" class="timeline-image">
+                        <div class="timeline-text">
+                            <h3>Leadership Development</h3>
+                            <p>Intensive leadership training, command responsibilities, strategic thinking, team management, and preparation for officer-level decision making and personnel management. Take on leadership roles and mentor junior cadets.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <img src="storage/landing/3.png" alt="Commission Readiness" class="timeline-image">
+                        <div class="timeline-text">
+                            <h3>Commission Readiness</h3>
+                            <p>Final preparation for commissioning as Second Lieutenant Officers Naval Volunteer Reserve (NVR), comprehensive evaluation, and graduation ceremony. Ready to serve Malaysia's naval defense with distinction.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
 
     <!-- About Section -->
-    <section id="about" class="section about-section">
-        <div class="section-content">
-            <div class="card fade-in">
-                <h2>About</h2>
-                <p style="text-align: center; font-size: 1.1rem; line-height: 1.8; margin: 3rem 0;">
-                    The Reserve Officer Training Unit (PALAPES) is a university-level program that Graduate can be commissioned as Second Lieutenant Officers Naval Volunteer Reserve (NVR). Developing leadership excellence and instilling discipline, PALAPES offers a unique opportunity for cadets seeking dynamic leadership in both military and civilian careers. Beyond the physical and technical skills, PALAPES builds character, teamwork, and resilience.
+    <section id="about" class="section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Our Legacy</div>
+                <h2 class="section-title">Excellence Through Tradition</h2>
+                <p class="section-description" id="aboutDescription">
+                    With decades of proven success, PALAPES has established itself as the premier institution for developing maritime leaders who serve with distinction in both military and civilian capacities, upholding the highest standards of honor, courage, and commitment.
                 </p>
-                <img src="storage/landing/3.png" alt="Large Cadet Group Photo" class="about-photo zoom-in">
+            </div>
+
+            <div class="enhanced-card animate-on-scroll" style="text-align: center; margin-top: 4rem;">
+                <img src="storage/landing/3.png" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+                <h3 style="color: var(--primary-blue); font-size: 2rem; margin-bottom: 1.5rem;">Building Tomorrow's Leaders</h3>
+                <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; max-width: 800px; margin: 0 auto;">
+                    Our comprehensive program goes beyond traditional military training, fostering critical thinking, ethical leadership, and the adaptability required to excel in an ever-changing global environment. Graduates emerge as confident, capable leaders ready to make meaningful contributions to society.
+                </p>
             </div>
         </div>
     </section>
 
-    <!-- Transition Image -->
-    <div class="transition-image"></div>
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
 
     <!-- Benefits Section -->
-    <section id="benefits" class="section benefits-section">
-        <div class="section-content">
-            <h2>Benefits</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <h3>Monthly Allowance</h3>
-                    <p>Receive financial support throughout your training period</p>
+    <section id="benefits" class="section">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Program Benefits</div>
+                <h2 class="section-title">Comprehensive Support System</h2>
+                <p class="section-description">
+                    PALAPES provides extensive support to ensure cadet success through financial assistance, accommodation, equipment provision, and unparalleled career development opportunities.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h3 class="feature-title">Monthly Allowance</h3>
+                    <p class="feature-description">Competitive monthly stipend throughout the training period to support living expenses and reduce financial burden, allowing you to focus entirely on your development.</p>
                 </div>
-                <div class="benefit-card">
-                    <h3>Issued Uniform & Gear</h3>
-                    <p>Complete uniform and equipment provided by the program</p>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <h3 class="feature-title">Complete Uniform & Equipment</h3>
+                    <p class="feature-description">Full provision of military uniforms, ceremonial dress, training gear, and specialized equipment required for all program activities and formal occasions.</p>
                 </div>
-                <div class="benefit-card">
-                    <h3>Guaranteed Campus Accommodation</h3>
-                    <p>Secure housing during your university years</p>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 class="feature-title">Guaranteed Campus Housing</h3>
+                    <p class="feature-description">Priority accommodation in university residential facilities with specialized cadet quarters designed to foster camaraderie and academic success.</p>
                 </div>
-                <div class="benefit-card">
-                    <h3>Firearms & Naval Training</h3>
-                    <p>Professional military and maritime skills development</p>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-crosshairs"></i>
+                    </div>
+                    <h3 class="feature-title">Professional Military Training</h3>
+                    <p class="feature-description">Comprehensive firearms training, advanced naval operations, tactical planning, and specialized maritime skills under expert military instruction.</p>
                 </div>
-                <div class="benefit-card">
-                    <h3>Leadership Development</h3>
-                    <p>Build essential leadership capabilities for your future</p>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="feature-title">Leadership Excellence</h3>
+                    <p class="feature-description">Develop essential leadership capabilities, strategic thinking, decision-making skills, and command presence that will distinguish you throughout your career.</p>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="feature-title">Elite Professional Network</h3>
+                    <p class="feature-description">Access to exclusive alumni networks, military associations, and leadership communities across Malaysia and internationally for lifelong career benefits.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="gradient-divider"></div>
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
 
     <!-- Requirements Section -->
-    <section id="requirements" class="section requirements-section">
-        <div class="section-content">
-            <div class="two-column">
-                <div class="slide-left">
-                    <img src="storage/landing/requirement.jpeg" alt="Cadets Teamwork Exercise" class="requirements-image">
+    <section id="requirements" class="section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Eligibility Criteria</div>
+                <h2 class="section-title">Application Requirements</h2>
+                <p class="section-description">
+                    We seek exceptional individuals who demonstrate academic excellence, physical fitness, moral character, and the potential for outstanding military leadership development.
+                </p>
+            </div>
+
+            <div class="requirements-grid">
+                <div class="requirement-card animate-on-scroll">
+                    <h3>General Requirements</h3>
+                    <ul>
+                        <li>Malaysian citizen by birth</li>
+                        <li>Full-time university student at UMS</li>
+                        <li>Age 18-25 years</li>
+                        <li>Clean criminal record</li>
+                        <li>CGPA ≥ 2.5 minimum</li>
+                        <li>Demonstrated leadership potential</li>
+                    </ul>
                 </div>
-                <div class="slide-right">
-                    <div class="requirements-list">
-                        <h2>Requirements</h2>
-                        <ul style="margin-top: 2rem;">
-                            <li>Malaysian Citizen</li>
-                            <li>Enrolled as full-time university student</li>
-                            <li>Physically and mentally fit</li>
-                            <li>Able to commit to training schedules</li>
-                            <li>Pass medical and fitness assessment</li>
-                            <li>Willing to serve in the Armed Forces Reserve upon graduation</li>
-                        </ul>
-                    </div>
+                
+                <div class="requirement-card animate-on-scroll">
+                    <h3>Physical Requirements</h3>
+                    <ul>
+                        <li>Excellent physical fitness level</li>
+                        <li>Swimming proficiency (200m)</li>
+                        <li>Pass standardized fitness test</li>
+                        <li>Height: Min 160cm (M), 155cm (F)</li>
+                        <li>BMI within military standards</li>
+                        <li>No chronic physical disabilities</li>
+                    </ul>
+                </div>
+                
+                <div class="requirement-card animate-on-scroll">
+                    <h3>Medical Requirements</h3>
+                    <ul>
+                        <li>Complete medical clearance</li>
+                        <li>Normal vision (correctable to 6/6)</li>
+                        <li>Normal hearing capacity</li>
+                        <li>No serious mental health history</li>
+                        <li>Drug-free medical screening</li>
+                        <li>Current vaccination records</li>
+                    </ul>
+                </div>
+                
+                <div class="requirement-card animate-on-scroll">
+                    <h3>Required Documents</h3>
+                    <ul>
+                        <li>Completed application form</li>
+                        <li>Academic transcripts</li>
+                        <li>Identity card copy</li>
+                        <li>Birth certificate copy</li>
+                        <li>Medical examination report</li>
+                        <li>Character reference letters (2)</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="gradient-divider"></div>
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
 
-    <!-- Join Us Section -->
-    <section id="join" class="section join-section">
-        <div class="section-content">
-            <div class="two-column">
-                <div class="slide-left">
-                    <div class="card">
-                        <h2>Join Us</h2>
-                        <h3 style="margin-top: 2rem; color: #3c92d9;">How to Apply:</h3>
-                        <ol style="list-style: decimal; padding-left: 2rem; margin: 1rem 0; font-size: 1.1rem;">
-                            <li style="padding-left: 0;">Ensure you meet all the requirements</li>
-                            <li style="padding-left: 0;">Submit Application - Follow the university's recruitment process</li>
-                            <li style="padding-left: 0;">Attend Selection - Prepare your physical and mental assessments</li>
-                            <li style="padding-left: 0;">Begin Your Training - Start your journey as a PALAPES cadet!</li>
+    <!-- Selection Process Section -->
+    <section id="selection" class="section">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Selection Process</div>
+                <h2 class="section-title">Path to Acceptance</h2>
+                <p class="section-description">
+                    Our comprehensive selection process ensures we identify candidates with the highest potential for success in military leadership and academic excellence.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="enhanced-card animate-on-scroll" style="position: relative;">
+                    <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">1</div>
+                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Document Review</h3>
+                    <p style="color: var(--text-secondary);">Initial screening of application documents, academic records, and eligibility verification by our expert selection committee.</p>
+                </div>
+                
+                <div class="enhanced-card animate-on-scroll" style="position: relative;">
+                    <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">2</div>
+                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Written Examination</h3>
+                    <p style="color: var(--text-secondary);">Comprehensive written test covering general knowledge, current affairs, mathematics, logical reasoning, and maritime awareness.</p>
+                </div>
+                
+                <div class="enhanced-card animate-on-scroll" style="position: relative;">
+                    <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">3</div>
+                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Physical Assessment</h3>
+                    <p style="color: var(--text-secondary);">Rigorous physical fitness evaluation including endurance tests, strength assessments, swimming proficiency, and obstacle courses.</p>
+                </div>
+                
+                <div class="enhanced-card animate-on-scroll" style="position: relative;">
+                    <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">4</div>
+                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Medical Examination</h3>
+                    <p style="color: var(--text-secondary);">Comprehensive medical screening conducted by certified military medical officers to ensure complete fitness for naval service.</p>
+                </div>
+                
+                <div class="enhanced-card animate-on-scroll" style="position: relative;">
+                    <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">5</div>
+                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Panel Interview</h3>
+                    <p style="color: var(--text-secondary);">In-depth interview with senior officers and instructors to assess leadership potential, motivation, character, and commitment to service.</p>
+                </div>
+                
+                <div class="enhanced-card animate-on-scroll" style="position: relative;">
+                    <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">6</div>
+                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Final Selection</h3>
+                    <p style="color: var(--text-secondary);">Successful candidates receive formal offer letters and begin their transformative journey as PALAPES cadets.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
+
+    <!-- Application Section -->
+    <section id="application" class="section">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Join PALAPES</div>
+                <h2 class="section-title">Begin Your Leadership Journey</h2>
+                <p class="section-description">
+                    Take the first decisive step toward becoming a commissioned naval officer. Our comprehensive application process ensures we select the most qualified and dedicated candidates for this prestigious program.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
+                <div class="enhanced-card animate-on-scroll">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Application Process</h3>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-file-alt" style="color: var(--primary-blue);"></i>
+                            Required Steps
+                        </h4>
+                        <ol style="color: var(--text-secondary); font-size: 1rem; line-height: 1.8; padding-left: 1.5rem;">
+                            <li style="margin-bottom: 0.75rem;">Verify you meet all program requirements</li>
+                            <li style="margin-bottom: 0.75rem;">Complete online application form</li>
+                            <li style="margin-bottom: 0.75rem;">Submit all required documents</li>
+                            <li style="margin-bottom: 0.75rem;">Attend selection assessments</li>
+                            <li style="margin-bottom: 0.75rem;">Begin your PALAPES journey!</li>
                         </ol>
-                        <p style="margin-top: 2rem; font-size: 1.1rem; line-height: 1.6;">
-                            Ready to embark on leadership journey? Apply today to join PALAPES Laut UMS and develop the leadership skills that will benefit you for life.
-                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Ready to serve Malaysia?</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Apply today to join PALAPES Laut UMS and develop the leadership skills, discipline, and character that will distinguish you for life.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="#" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
+                            <i class="fas fa-external-link-alt"></i>
+                            Access Application Portal
+                        </a>
                     </div>
                 </div>
-                <div class="slide-right">
-                    <div class="qr-card">
-                        <h3 style="margin-bottom: 1rem; color: #3c92d9;">Scan to Apply</h3>
-                        <div class="qr-code">
-                            <svg width="180" height="180" viewBox="0 0 180 180">
-                                <!-- QR Code Pattern -->
-                                <rect width="180" height="180" fill="white"/>
-                                <!-- Corner squares -->
-                                <rect x="10" y="10" width="50" height="50" fill="black"/>
-                                <rect x="20" y="20" width="30" height="30" fill="white"/>
-                                <rect x="25" y="25" width="20" height="20" fill="black"/>
-                                
-                                <rect x="120" y="10" width="50" height="50" fill="black"/>
-                                <rect x="130" y="20" width="30" height="30" fill="white"/>
-                                <rect x="135" y="25" width="20" height="20" fill="black"/>
-                                
-                                <rect x="10" y="120" width="50" height="50" fill="black"/>
-                                <rect x="20" y="130" width="30" height="30" fill="white"/>
-                                <rect x="25" y="135" width="20" height="20" fill="black"/>
-                                
-                                <!-- Data pattern -->
-                                <rect x="70" y="10" width="5" height="5" fill="black"/>
-                                <rect x="80" y="10" width="5" height="5" fill="black"/>
-                                <rect x="90" y="15" width="5" height="5" fill="black"/>
-                                <rect x="70" y="25" width="5" height="5" fill="black"/>
-                                <rect x="85" y="30" width="5" height="5" fill="black"/>
-                                <!-- Center finder -->
-                                <rect x="75" y="75" width="30" height="30" fill="black"/>
-                                <rect x="80" y="80" width="20" height="20" fill="white"/>
-                                <rect x="85" y="85" width="10" height="10" fill="black"/>
-                                
-                                <!-- Additional data dots -->
-                                <circle cx="40" cy="80" r="3" fill="black"/>
-                                <circle cx="50" cy="90" r="3" fill="black"/>
-                                <circle cx="130" cy="80" r="3" fill="black"/>
-                                <circle cx="80" cy="130" r="3" fill="black"/>
-                                <circle cx="140" cy="140" r="3" fill="black"/>
-                                <circle cx="160" cy="120" r="3" fill="black"/>
-                            </svg>
-                        </div>
-                        <p style="margin-top: 1rem; color: white;">Scan with your phone to access the application form</p>
+
+                <div class="enhanced-card animate-on-scroll" style="text-align: center;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Quick Access QR Code</h3>
+                    
+                    <div style="width: 280px; height: 280px; background: white; margin: 0 auto 2rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+                        <svg width="240" height="240" viewBox="0 0 240 240" style="border-radius: 8px;">
+                            <!-- Enhanced QR Code Pattern -->
+                            <rect width="240" height="240" fill="white"/>
+                            
+                            <!-- Corner Detection Patterns -->
+                            <rect x="20" y="20" width="60" height="60" fill="black"/>
+                            <rect x="30" y="30" width="40" height="40" fill="white"/>
+                            <rect x="40" y="40" width="20" height="20" fill="black"/>
+                            
+                            <rect x="160" y="20" width="60" height="60" fill="black"/>
+                            <rect x="170" y="30" width="40" height="40" fill="white"/>
+                            <rect x="180" y="40" width="20" height="20" fill="black"/>
+                            
+                            <rect x="20" y="160" width="60" height="60" fill="black"/>
+                            <rect x="30" y="170" width="40" height="40" fill="white"/>
+                            <rect x="40" y="180" width="20" height="20" fill="black"/>
+                            
+                            <!-- Timing Patterns -->
+                            <rect x="90" y="20" width="8" height="8" fill="black"/>
+                            <rect x="106" y="20" width="8" height="8" fill="black"/>
+                            <rect x="122" y="20" width="8" height="8" fill="black"/>
+                            <rect x="138" y="20" width="8" height="8" fill="black"/>
+                            
+                            <!-- Alignment Pattern -->
+                            <rect x="100" y="100" width="40" height="40" fill="black"/>
+                            <rect x="110" y="110" width="20" height="20" fill="white"/>
+                            <rect x="115" y="115" width="10" height="10" fill="black"/>
+                            
+                            <!-- Data Modules -->
+                            <rect x="20" y="100" width="8" height="8" fill="black"/>
+                            <rect x="36" y="100" width="8" height="8" fill="black"/>
+                            <rect x="52" y="108" width="8" height="8" fill="black"/>
+                            <rect x="68" y="116" width="8" height="8" fill="black"/>
+                            
+                            <rect x="160" y="100" width="8" height="8" fill="black"/>
+                            <rect x="176" y="108" width="8" height="8" fill="black"/>
+                            <rect x="192" y="116" width="8" height="8" fill="black"/>
+                            <rect x="208" y="124" width="8" height="8" fill="black"/>
+                            
+                            <!-- Additional Data Pattern -->
+                            <rect x="100" y="160" width="8" height="8" fill="black"/>
+                            <rect x="116" y="168" width="8" height="8" fill="black"/>
+                            <rect x="132" y="176" width="8" height="8" fill="black"/>
+                            <rect x="148" y="184" width="8" height="8" fill="black"/>
+                            
+                            <!-- Format Information -->
+                            <rect x="88" y="200" width="8" height="8" fill="black"/>
+                            <rect x="104" y="208" width="8" height="8" fill="black"/>
+                            <rect x="120" y="200" width="8" height="8" fill="black"/>
+                            <rect x="136" y="192" width="8" height="8" fill="black"/>
+                            <rect x="152" y="200" width="8" height="8" fill="black"/>
+                        </svg>
+                    </div>
+                    
+                    <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">Scan for Instant Access</p>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">Use your mobile device to scan this QR code and access the PALAPES application portal directly</p>
+                    
+                    <div style="background: rgba(60, 146, 217, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(60, 146, 217, 0.2);">
+                        <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Need Assistance?</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Contact our admissions team for application support and program inquiries</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="gradient-divider-angled"></div>
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
 
-    <!-- Footer -->
+    <!-- Enhanced Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
+                <h3>PALAPES Laut UMS</h3>
+                <p>The Reserve Officer Training Unit at Universiti Malaysia Sabah is committed to developing exceptional maritime leaders through comprehensive training, academic excellence, and character development.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-icon" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-icon" title="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="#" class="social-icon" title="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="#" class="social-icon" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section">
                 <h3>Contact Information</h3>
-                <p>📧 palapeslautums@email.com</p>
-                <p>📞 +60-123-456789</p>
-                <p>🏢 Universiti Malaysia Sabah</p>
-                <p>Jalan UMS, 88400 Kota Kinabalu</p>
-                <p>Sabah, Malaysia</p>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding-left: 0;"><a href="#introduction" style="color: white; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='white'" onmouseout="this.style.color='white'">Introduction</a></li>
-                    <li style="padding-left: 0;"><a href="#about" style="color: white; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='white'" onmouseout="this.style.color='white'">About</a></li>
-                    <li style="padding-left: 0;"><a href="#benefits" style="color: white; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='white'" onmouseout="this.style.color='white'">Benefits</a></li>
-                    <li style="padding-left: 0;"><a href="#requirements" style="color: white; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='white'" onmouseout="this.style.color='white'">Requirements</a></li>
-                    <li style="padding-left: 0;"><a href="#join" style="color: white; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='white'" onmouseout="this.style.color='white'">Join Us</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Location</h3>
-                <div class="footer-map">
-                    <div style="text-align: center;">
-                        <div style="font-size: 2rem; margin-bottom: 1rem; color: #3c92d9;">📍</div>
-                        <p style="color: #3c92d9; font-weight: bold;">Interactive Map</p>
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-blue); margin-top: 0.25rem;"></i>
+                    <div>
+                        <p>PALAPES Office, Block B</p>
                         <p>Universiti Malaysia Sabah</p>
-                        <p>Campus Location</p>
+                        <p>Jalan UMS, 88400 Kota Kinabalu</p>
+                        <p>Sabah, Malaysia</p>
                     </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <i class="fas fa-phone" style="color: var(--primary-blue);"></i>
+                    <p>+60 88-320-000 ext. 5001</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-envelope" style="color: var(--primary-blue);"></i>
+                    <p>palapeslautums@ums.edu.my</p>
                 </div>
             </div>
         </div>
-        
+
         <div class="footer-bottom">
-            <div class="social-icons">
-                <a href="#" class="social-icon">F</a>
-                <a href="#" class="social-icon">I</a>
-                <a href="#" class="social-icon">Y</a>
-            </div>
-            <p style="margin-top: 1rem;">&copy; 2024 PALAPES Laut UMS | Reserve Officer Training Unit</p>
+            <p>&copy; 2024 PALAPES Laut UMS - Reserve Officer Training Unit, Universiti Malaysia Sabah. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                Developing Maritime Leaders | Building Character | Serving Malaysia
+            </p>
         </div>
     </footer>
 
+    <!-- Instructor Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Landing Page Content</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="heroTitle">Hero Section Title:</label>
+                    <input type="text" id="heroTitle" name="heroTitle" value="Excellence in Maritime Leadership">
+                </div>
+                
+                <div class="form-group">
+                    <label for="heroSubtitle">Hero Section Subtitle:</label>
+                    <textarea id="heroSubtitle" name="heroSubtitle" rows="2">Forge your path as a naval officer through comprehensive training, leadership development, and academic excellence at Universiti Malaysia Sabah</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="introDescription">Introduction Description:</label>
+                    <textarea id="introDescription" name="introDescription" rows="3">The Reserve Officer Training Unit (PALAPES) represents Malaysia's premier naval leadership development program, combining rigorous academic excellence with comprehensive military training to forge the next generation of maritime leaders.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="aboutDescription">About Section Description:</label>
+                    <textarea id="aboutDescription" name="aboutDescription" rows="3">With decades of proven success, PALAPES has established itself as the premier institution for developing maritime leaders who serve with distinction in both military and civilian capacities, upholding the highest standards of honor, courage, and commitment.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="applicationDeadline">Application Deadline Date:</label>
+                    <input type="date" id="applicationDeadline" name="applicationDeadline" min="2024-01-01">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                        <i class="fas fa-info-circle"></i> 
+                        Banner will show 1 month before deadline and disappear the day after
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="heroImage1">Hero Background Image 1:</label>
+                    <input type="file" id="heroImage1" name="heroImage1" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="heroImage2">Hero Background Image 2:</label>
+                    <input type="file" id="heroImage2" name="heroImage2" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="heroImage3">Hero Background Image 3:</label>
+                    <input type="file" id="heroImage3" name="heroImage3" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="introImage">Introduction Section Image:</label>
+                    <input type="file" id="introImage" name="introImage" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="aboutImage">About Section Image:</label>
+                    <input type="file" id="aboutImage" name="aboutImage" accept="image/*">
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary-modal" id="cancelEdit">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript -->
     <script>
-        // Carousel functionality
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.carousel-slide');
-        const dots = document.querySelectorAll('.carousel-dot');
-        const totalSlides = slides.length;
-
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.toggle('active', i === index);
-            });
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-            currentSlide = index;
-        }
-
-        function nextSlide() {
-            showSlide((currentSlide + 1) % totalSlides);
-        }
-
-        function prevSlide() {
-            showSlide((currentSlide - 1 + totalSlides) % totalSlides);
-        }
-
-        // Auto-advance carousel
-        setInterval(nextSlide, 5000);
-
-        // Manual navigation
-        document.getElementById('nextBtn').addEventListener('click', nextSlide);
-        document.getElementById('prevBtn').addEventListener('click', prevSlide);
-
-        // Dot navigation
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => showSlide(index));
-        });
-
-        // Touch/swipe support for mobile
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        document.querySelector('.carousel-container').addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        document.querySelector('.carousel-container').addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const diff = touchStartX - touchEndX;
+        // Notification banner smart display logic
+        function checkNotificationDisplay() {
+            const storedDeadline = localStorage.getItem('applicationDeadline');
+            const banner = document.getElementById('notificationBanner');
             
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    nextSlide();
+            if (storedDeadline) {
+                const deadline = new Date(storedDeadline);
+                const today = new Date();
+                const oneMonthBefore = new Date(deadline);
+                oneMonthBefore.setMonth(oneMonthBefore.getMonth() - 1);
+                const oneDayAfter = new Date(deadline);
+                oneDayAfter.setDate(oneDayAfter.getDate() + 1);
+                
+                if (today >= oneMonthBefore && today <= oneDayAfter) {
+                    banner.classList.remove('hidden');
+                    updateNotificationText(deadline);
                 } else {
-                    prevSlide();
+                    banner.classList.add('hidden');
                 }
+            } else {
+                // Default deadline for demonstration
+                const defaultDeadline = new Date('2025-03-31');
+                updateNotificationText(defaultDeadline);
             }
         }
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
+        function updateNotificationText(deadline) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = deadline.toLocaleDateString('en-US', options);
+            document.getElementById('notificationText').textContent = 
+                `Applications for the upcoming semester are now open. Deadline: ${formattedDate}`;
+        }
+
+        function hideNotification() {
+            document.getElementById('notificationBanner').classList.add('hidden');
+        }
+
+        // Advanced page loading with smooth transitions
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('pageLoader');
+            setTimeout(() => {
+                loader.classList.add('loaded');
+                checkNotificationDisplay();
+            }, 1000);
+        });
+
+        // Enhanced navbar scroll effects
+        let lastScrollY = window.scrollY;
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY > 100) {
                 navbar.classList.add('scrolled');
+                if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
             } else {
                 navbar.classList.remove('scrolled');
+                navbar.style.transform = 'translateY(0)';
             }
+            
+            lastScrollY = currentScrollY;
         });
 
-        // Mobile menu toggle
+        // Mobile menu toggle with animations
         const mobileToggle = document.getElementById('mobileToggle');
         const navLinks = document.getElementById('navLinks');
         
         mobileToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
             navLinks.classList.toggle('active');
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
         });
 
-        // Logo click functionality - scroll to top
-        document.getElementById('logoLink').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // Smooth scrolling for navigation links
+        // Smooth scrolling with offset for fixed navbar
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
+                    const offsetTop = target.offsetTop - 100;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
                     });
-                    // Close mobile menu if open
+                    // Close mobile menu
                     navLinks.classList.remove('active');
+                    mobileToggle.classList.remove('active');
+                    document.body.style.overflow = '';
                 }
             });
         });
 
-        // Scroll animations
+        // Advanced intersection observer for animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
 
-        const observer = new IntersectionObserver(function(entries) {
+        const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
@@ -1150,26 +1940,281 @@
             });
         }, observerOptions);
 
-        // Observe elements for animations
-        document.querySelectorAll('.fade-in, .zoom-in, .slide-left, .slide-right').forEach(el => {
+        // Observe all animated elements
+        document.querySelectorAll('.animate-on-scroll, .timeline-item').forEach(el => {
             observer.observe(el);
         });
 
-        // Enhanced hover effects for cards
-        document.querySelectorAll('.card, .benefit-card, .qr-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
+        // Animated counter for statistics
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 16);
+            });
+        }
+
+        // Trigger counter animation when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Simple card hover effects
+        document.querySelectorAll('.enhanced-card, .feature-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
             });
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
             });
         });
 
-        // Initialize animations when page loads
-        window.addEventListener('load', function() {
-            document.body.style.opacity = '1';
-            document.body.style.transition = 'opacity 1s ease-in-out';
+        // Parallax effect for hero background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero-bg');
+            if (parallax) {
+                const speed = scrolled * 0.5;
+                parallax.style.transform = `translateY(${speed}px)`;
+            }
+        });
+
+        // Dynamic navigation highlighting
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', updateActiveNavLink);
+
+        // Interactive timeline animations
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 200);
+                }
+            });
+        }, { threshold: 0.3 });
+        
+        timelineItems.forEach(item => {
+            timelineObserver.observe(item);
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('editModal');
+        const editBtn = document.getElementById('editBtn');
+        const closeModal = document.getElementById('closeModal');
+        const cancelEdit = document.getElementById('cancelEdit');
+        const editForm = document.getElementById('editForm');
+
+        // Open modal
+        editBtn?.addEventListener('click', function() {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            // Load current deadline from storage
+            const storedDeadline = localStorage.getItem('applicationDeadline');
+            if (storedDeadline) {
+                document.getElementById('applicationDeadline').value = storedDeadline;
+            }
+        });
+
+        // Close modal
+        function closeEditModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        closeModal.addEventListener('click', closeEditModal);
+        cancelEdit.addEventListener('click', closeEditModal);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        });
+
+        // Handle form submission
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(editForm);
+            
+            // Update content on the page
+            const heroTitle = formData.get('heroTitle');
+            const heroSubtitle = formData.get('heroSubtitle');
+            const introDescription = formData.get('introDescription');
+            const aboutDescription = formData.get('aboutDescription');
+            const applicationDeadline = formData.get('applicationDeadline');
+            
+            // Update content
+            if (heroTitle) {
+                document.getElementById('heroTitle').textContent = heroTitle;
+            }
+            
+            if (heroSubtitle) {
+                document.getElementById('heroSubtitle').textContent = heroSubtitle;
+            }
+            
+            if (introDescription) {
+                document.getElementById('introDescription').textContent = introDescription;
+            }
+            
+            if (aboutDescription) {
+                document.getElementById('aboutDescription').textContent = aboutDescription;
+            }
+            
+            // Store deadline and update notification
+            if (applicationDeadline) {
+                localStorage.setItem('applicationDeadline', applicationDeadline);
+                checkNotificationDisplay();
+            }
+            
+            // Handle image uploads (in real implementation, these would be uploaded to server)
+            const imageInputs = ['heroImage1', 'heroImage2', 'heroImage3', 'introImage', 'aboutImage'];
+            imageInputs.forEach(inputName => {
+                const file = formData.get(inputName);
+                if (file && file.size > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Update corresponding image
+                        if (inputName === 'introImage') {
+                            const introImg = document.querySelector('#introduction img');
+                            if (introImg) {
+                                introImg.src = e.target.result;
+                            }
+                        } else if (inputName === 'aboutImage') {
+                            const aboutImg = document.querySelector('#about img');
+                            if (aboutImg) {
+                                aboutImg.src = e.target.result;
+                            }
+                        }
+                        // For hero images, you would update the hero background
+                        // This requires more complex implementation for carousel backgrounds
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.innerHTML = `
+                <div style="position: fixed; top: 100px; right: 20px; background: var(--gradient-primary); color: white; padding: 1rem 2rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 3001; animation: slideInRight 0.3s ease;">
+                    <i class="fas fa-check-circle"></i> Content updated successfully!
+                </div>
+            `;
+            document.body.appendChild(successMsg);
+            setTimeout(() => successMsg.remove(), 3000);
+            
+            closeEditModal();
+        });
+
+        // Add CSS for active nav link
+        const style = document.createElement('style');
+        style.textContent = `
+            .nav-links a.active {
+                color: var(--primary-blue) !important;
+            }
+            .nav-links a.active::after {
+                width: 100% !important;
+            }
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth reveal for page elements
+            const elements = document.querySelectorAll('.enhanced-card, .feature-card, .section-header');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Initialize timeline items
+            timelineItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(30px)';
+                item.style.transition = 'all 0.6s ease';
+            });
+        });
+
+        // Performance optimization - lazy loading for heavy elements
+        if ('IntersectionObserver' in window) {
+            const lazyElements = document.querySelectorAll('[data-lazy]');
+            const lazyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        element.src = element.dataset.lazy;
+                        element.classList.remove('lazy');
+                        lazyObserver.unobserve(element);
+                    }
+                });
+            });
+            
+            lazyElements.forEach(el => lazyObserver.observe(el));
+        }
+
+        // Check notification display on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkNotificationDisplay, 1100);
         });
     </script>
 </body>
