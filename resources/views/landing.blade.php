@@ -39,9 +39,9 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: #2e313c;
+            background: #10141c;
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            padding: 0.5rem 2rem;
             z-index: 1000;
             transition: all 0.3s ease;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -55,26 +55,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            padding: 0;
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 2px;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .nav-logo img {
-            width: 40px;
-            height: 40px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
         }
 
+        .nav-logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
         .nav-logo span {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: white;
+            line-height: 1;
         }
 
         .nav-links {
@@ -113,19 +123,29 @@
         }
 
         .btn-primary {
-            background: #3c92d9;
-            padding: 14px 28px;
+            background: linear-gradient(135deg, #3c92d9, #2980b9);
+            padding: 20px 48px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             transition: all 0.3s ease;
             color: white;
             text-decoration: none;
+            position: relative;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(60, 146, 217, 0.3);
+            min-width: 180px;
+            text-align: center;
         }
 
         .btn-primary:hover {
-            background: #2980b9;
+            background: linear-gradient(135deg, #2980b9, #1f5f99);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(60, 146, 217, 0.4);
+            box-shadow: 0 8px 25px rgba(60, 146, 217, 0.5);
+        }
+
+        /* Remove underline hover effect specifically for buttons */
+        .btn-primary::after {
+            display: none !important;
         }
 
         /* Mobile Menu */
@@ -176,17 +196,17 @@
 
         .carousel-slide:nth-child(1) {
             background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect width="1200" height="600" fill="%23313541"/><rect x="0" y="200" width="1200" height="200" fill="%23373a46"/><circle cx="300" cy="300" r="50" fill="%233c92d9" opacity="0.3"/><circle cx="900" cy="200" r="80" fill="%2360bc8c" opacity="0.2"/><rect x="200" y="400" width="800" height="100" fill="%23373a46" opacity="0.8"/></svg>') center/cover;
+                        url('storage/landing/3.png') center/cover;
         }
 
         .carousel-slide:nth-child(2) {
             background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect width="1200" height="600" fill="%23373a46"/><rect x="100" y="100" width="1000" height="400" fill="%23313541"/><circle cx="600" cy="300" r="100" fill="%233c92d9" opacity="0.2"/><rect x="300" y="450" width="600" height="50" fill="%2360bc8c" opacity="0.3"/></svg>') center/cover;
+                        url('storage/landing/11.png') center/cover;
         }
 
         .carousel-slide:nth-child(3) {
             background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect width="1200" height="600" fill="%23313541"/><polygon points="0,0 400,100 800,50 1200,150 1200,600 0,600" fill="%23373a46"/><circle cx="200" cy="150" r="30" fill="%233c92d9" opacity="0.4"/><circle cx="1000" cy="250" r="40" fill="%2360bc8c" opacity="0.3"/></svg>') center/cover;
+                        url('storage/landing/36.png') center/cover;
         }
 
         .carousel-caption {
@@ -302,7 +322,7 @@
         /* Introduction Section */
         .introduction-section {
             background: linear-gradient(rgba(46, 49, 60, 0.3), rgba(46, 49, 60, 0.3)),
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect width="1200" height="800" fill="%23373a46"/><circle cx="200" cy="200" r="100" fill="%233c92d9" opacity="0.1"/><circle cx="1000" cy="600" r="150" fill="%2360bc8c" opacity="0.1"/><rect x="300" y="300" width="600" height="200" fill="%23313541" opacity="0.3"/></svg>') center/cover;
+                        url('storage/landing/white.png') center/cover;
         }
 
         .two-column {
@@ -341,7 +361,7 @@
         .transition-image {
             height: 400px;
             background: linear-gradient(rgba(46, 49, 60, 0.4), rgba(46, 49, 60, 0.4)),
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect width="1200" height="400" fill="%23313541"/><polygon points="0,100 300,50 600,120 900,70 1200,100 1200,400 0,400" fill="%23373a46"/><circle cx="400" cy="150" r="50" fill="%233c92d9" opacity="0.2"/><circle cx="800" cy="200" r="70" fill="%2360bc8c" opacity="0.2"/></svg>') center/cover;
+                        url('storage/landing/white.png') center/cover;
             margin: 0;
         }
 
@@ -351,7 +371,7 @@
                         transparent 0%, 
                         rgba(46, 49, 60, 0.8) 50%, 
                         #2e313c 100%),
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect width="1200" height="400" fill="%23313541"/><rect x="0" y="400" width="1200" height="400" fill="%232e313c"/></svg>') top/cover;
+                        url('storage/landing/black.png') top/cover;
         }
 
         .benefits-grid {
@@ -394,7 +414,7 @@
         /* Requirements Section */
         .requirements-section {
             background: linear-gradient(rgba(46, 49, 60, 0.3), rgba(46, 49, 60, 0.3)),
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect width="1200" height="800" fill="%23373a46"/><rect x="100" y="100" width="400" height="600" fill="%23313541" opacity="0.5"/><rect x="700" y="200" width="400" height="400" fill="%232e313c" opacity="0.5"/><circle cx="900" cy="400" r="80" fill="%233c92d9" opacity="0.2"/></svg>') center/cover;
+                        url('storage/landing/black.png') center/cover;
         }
 
         .requirements-image {
@@ -415,7 +435,7 @@
         /* Join Us Section */
         .join-section {
             background: linear-gradient(rgba(46, 49, 60, 0.3), rgba(46, 49, 60, 0.3)),
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect width="1200" height="800" fill="%23313541"/><polygon points="200,100 800,150 1000,200 1200,100 1200,800 0,800 0,200" fill="%23373a46" opacity="0.7"/><circle cx="300" cy="300" r="60" fill="%2360bc8c" opacity="0.3"/><circle cx="900" cy="500" r="90" fill="%233c92d9" opacity="0.2"/></svg>') center/cover;
+                        url('storage/landing/white.png') center/cover;
         }
 
         .qr-card {
@@ -710,10 +730,13 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiMzYzkyZDkiLz4KPHN2ZyB4PSI1IiB5PSI1IiB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xNSAyTDE4IDhIMjZMMjAgMTJMMjIgMjBIMTVMMTMgMjBMMjAgMTJMMTQgOEwyMiA4TDE5IDJIMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+" alt="ROTU Logo">
-                <span>ROTU NAVY UMS</span>
-            </div>
+            <a href="#top" class="nav-logo" id="logoLink">
+                <img src="storage/landing/PSS-LOGO.png" alt="ROTU Logo">
+                <div class="nav-logo-text">
+                    <span>PALAPES</span>
+                    <span>LAUT UMS</span>
+                </div>
+            </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#introduction">Introduction</a></li>
                 <li><a href="#about">About</a></li>
@@ -748,7 +771,7 @@
     </nav>
 
     <!-- Hero Carousel Section -->
-    <section class="hero-carousel">
+    <section class="hero-carousel" id="top">
         <div class="carousel-container">
             <div class="carousel-slide active">
                 <div class="carousel-caption">
@@ -787,7 +810,7 @@
         <div class="section-content">
             <div class="two-column">
                 <div class="slide-right">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzczYTQ2IiByeD0iOCIvPgo8c3ZnIHg9IjEwMCIgeT0iMTAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjM2M5MmQ5IiBvcGFjaXR5PSIwLjMiLz4KPC9Tdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCI+SW50cm9kdWN0aW9uIEltYWdlPC90ZXh0Pgo8c3ZnPgo=" alt="Introduction Image" class="intro-image">
+                    <img src="storage/landing/5.jpeg" alt="Introduction Image" class="intro-image">
                 </div>
                 <div class="slide-left">
                     <div class="card">
@@ -811,7 +834,7 @@
                 <p style="text-align: center; font-size: 1.1rem; line-height: 1.8; margin: 3rem 0;">
                     The Reserve Officer Training Unit (PALAPES) is a university-level program that Graduate can be commissioned as Second Lieutenant Officers Naval Volunteer Reserve (NVR). Developing leadership excellence and instilling discipline, PALAPES offers a unique opportunity for cadets seeking dynamic leadership in both military and civilian careers. Beyond the physical and technical skills, PALAPES builds character, teamwork, and resilience.
                 </p>
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSIzMDAiIHZpZXdCb3g9IjAgMCAxMDAwIDMwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzczYTQ2IiByeD0iOCIvPgo8c3ZnIHg9IjEwMCIgeT0iNTAiPgo8cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzNjOTJkOSIgb3BhY2l0eT0iMC4yIi8+CjwvU3ZnPgo8c3ZnIHg9IjIwMCIgeT0iMTAwIj4KPHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiM2MGJjOGMiIG9wYWNpdHk9IjAuMyIvPgo8L3N2Zz4KPHRleHQgeD0iNTAwIiB5PSIxNTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjI0Ij5MYXJnZSBDYWRldCBHcm91cCBQaG90bzwvdGV4dD4KPHN2Zz4K" alt="Large Cadet Group Photo" class="about-photo zoom-in">
+                <img src="storage/landing/3.png" alt="Large Cadet Group Photo" class="about-photo zoom-in">
             </div>
         </div>
     </section>
@@ -855,7 +878,7 @@
         <div class="section-content">
             <div class="two-column">
                 <div class="slide-left">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjMzczYTQ2IiByeD0iOCIvPgo8c3ZnIHg9IjUwIiB5PSI1MCI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjM2M5MmQ5IiBvcGFjaXR5PSIwLjIiLz4KPC9Tdmc+CjxjaXJjbGUgY3g9IjIwMCIgY3k9IjE1MCIgcj0iNTAiIGZpbGw9IiM2MGJjOGMiIG9wYWNpdHk9IjAuMyIvPgo8Y2lyY2xlIGN4PSIxNTAiIGN5PSIyNTAiIHI9IjMwIiBmaWxsPSIjM2M5MmQ5IiBvcGFjaXR5PSIwLjQiLz4KPHRleHQgeD0iMjAwIiB5PSIzNTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjE4Ij5UZWFtd29yayBFeGVyY2lzZTwvdGV4dD4KPHN2Zz4K" alt="Cadets Teamwork Exercise" class="requirements-image">
+                    <img src="storage/landing/requirement.jpeg" alt="Cadets Teamwork Exercise" class="requirements-image">
                 </div>
                 <div class="slide-right">
                     <div class="requirements-list">
@@ -1069,6 +1092,15 @@
         
         mobileToggle.addEventListener('click', function() {
             navLinks.classList.toggle('active');
+        });
+
+        // Logo click functionality - scroll to top
+        document.getElementById('logoLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
 
         // Smooth scrolling for navigation links

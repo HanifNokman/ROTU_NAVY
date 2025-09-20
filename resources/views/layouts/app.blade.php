@@ -60,7 +60,7 @@
                     x-transition:leave-end="opacity-0 translate-x-full"
                     class="fixed top-0 right-0 w-80 h-full bg-[#2e313c] shadow-lg flex flex-col justify-between z-50 border-l border-[#373a46] sm:hidden text-white"
                 >
-                    <div class="flex flex-col flex-1 space-y-6 px-4 pt-4">
+                    <div class="flex flex-col h-full space-y-6 px-4 pt-4">
                         <!-- Close (X) button -->
                         <div class="flex justify-end mb-2">
                             <button @click="sidebarOpen = false" class="text-white hover:text-gray-400">
@@ -96,7 +96,7 @@
                                 </x-slot>
                         </x-dropdown>
                         <!-- Navigation Links -->
-                        <nav class="flex flex-col space-y-2 flex-1 overflow-y-auto">
+                        <nav class="flex flex-col space-y-2">
                             <!-- Dashboard -->
                             <a href="{{ route('dashboard') }}" 
                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ (Auth::user()->role === 'instructor' && request()->routeIs('instructor.dashboard')) || (Auth::user()->role === 'cadet' && request()->routeIs('cadet.dashboard')) ? 'text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
@@ -207,7 +207,7 @@
                         </nav>
                         <!-- Bottom Section -->
                         <div class="border-t border-[#373a46]">
-                            <div class="p-6 flex flex-col space-y-4">
+                            <div class="p-6 flex flex-col space-y-1">
                                 @if(Auth::user()->role === 'instructor')
                                     <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -261,7 +261,7 @@
                     <aside class="w-80 bg-[#2e313c] shadow-lg flex-col justify-between border-r border-[#373a46] transform transition-transform duration-300 ease-in-out hidden sm:flex text-white"
                         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'">
 
-                        <div class="flex flex-col flex-1 space-y-6 px-4 pt-4">
+                        <div class="flex flex-col h-full space-y-6 px-4 pt-4">
                             <!-- Profile Section -->
                             <x-dropdown align="right" width="full" contentClasses="py-1 bg-white text-black border border-gray-300">
                                 <x-slot name="trigger">
@@ -290,7 +290,7 @@
                             </x-dropdown>
 
                             <!-- Navigation Links -->
-                            <nav class="flex flex-col space-y-2 flex-1 overflow-y-auto">
+                            <nav class="flex flex-col space-y-2">
                                 <!-- Dashboard -->
 <a href="{{ route('dashboard') }}"
                                 class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
@@ -416,10 +416,10 @@
                                     </div>
                                 </div>
                             </nav>
-                            
+
                         <!-- Bottom Section -->
                         <div class="border-t border-[#373a46]">
-                            <div class="p-6 flex flex-col space-y-4">
+                            <div class="p-6 flex flex-col space-y-2">
                                 @if(Auth::user()->role === 'instructor')
                                     <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-3 px-5 bg-[#3c92d9] text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
