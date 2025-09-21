@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROTU NAVY UMS - Reserve Officer Training Unit</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -1286,61 +1287,63 @@
     </nav>
 
 <!-- Notification Banner -->
-<section class="notification-banner" id="notificationBanner" style="position: relative;">
-    <h3 id="notificationTitle">
-        <i class="fas fa-bullhorn"></i>
-        Next Intake Application Open!
-    </h3>
-    <p id="notificationText">Applications for the upcoming semester are now open. Deadline: March 31, 2025</p>
-    <button class="notification-close" id="closeNotification" onclick="hideNotification()">
-        <i class="fas fa-times"></i>
-    </button>
-</section>
+    @if(\App\Models\ContentSetting::shouldShowDeadlineBanner())
+    <section class="notification-banner" id="notificationBanner" style="position: relative;">
+        <h3 id="notificationTitle">
+            <i class="fas fa-bullhorn"></i>
+            Next Intake Application Open!
+        </h3>
+        <p id="notificationText">Applications for the upcoming semester are now open. Deadline: {{ \App\Models\ContentSetting::getFormattedDeadline() }}</p>
+        <button class="notification-close" id="closeNotification" onclick="hideNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+    </section>
+    @endif
 
 <!-- Hero Section -->
-<section id="home" class="hero-section">
-    <div class="hero-carousel" id="heroCarousel">
-        <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1920&h=1080&fit=crop')"></div>
-        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1920&h=1080&fit=crop')"></div>
-        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&h=1080&fit=crop')"></div>
-        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1562408590-e32931084e23?w=1920&h=1080&fit=crop')"></div>
-        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1920&h=1080&fit=crop')"></div>
-    </div>
-    
-    <button class="hero-carousel-nav prev" id="prevSlide">
-        <i class="fas fa-chevron-left"></i>
-    </button>
-    <button class="hero-carousel-nav next" id="nextSlide">
-        <i class="fas fa-chevron-right"></i>
-    </button>
-    
-    <div class="hero-carousel-indicators" id="heroIndicators">
-        <div class="hero-indicator active" data-slide="0"></div>
-        <div class="hero-indicator" data-slide="1"></div>
-        <div class="hero-indicator" data-slide="2"></div>
-        <div class="hero-indicator" data-slide="3"></div>
-        <div class="hero-indicator" data-slide="4"></div>
-    </div>
-    
-    <div class="floating-elements">
-        <i class="fas fa-anchor floating-icon"></i>
-        <i class="fas fa-shield-alt floating-icon"></i>
-        <i class="fas fa-medal floating-icon"></i>
-        <i class="fas fa-graduation-cap floating-icon"></i>
-    </div>
-    <div class="hero-content">
-        <h1 class="hero-title" id="heroTitle">Excellence in Maritime Leadership</h1>
-        <p class="hero-subtitle" id="heroSubtitle">Forge your path as a naval officer through comprehensive training, leadership development, and academic excellence at Universiti Malaysia Sabah</p>
-        <div class="hero-cta">
-            <a href="#application" class="btn-primary">
-                <i class="fas fa-user-plus"></i> Apply Now
-            </a>
-            <a href="#introduction" class="btn-secondary">
-                <i class="fas fa-info-circle"></i> Learn More
-            </a>
+    <section id="home" class="hero-section">
+        <div class="hero-carousel" id="heroCarousel">
+            <div class="hero-slide active" style="background-image: url('{{ asset('storage/landing/3.png') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/11.png') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/27.png') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/36.png') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/5.png') }}')"></div>
         </div>
-    </div>
-</section>
+        
+        <button class="hero-carousel-nav prev" id="prevSlide">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="hero-carousel-nav next" id="nextSlide">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        
+        <div class="hero-carousel-indicators" id="heroIndicators">
+            <div class="hero-indicator active" data-slide="0"></div>
+            <div class="hero-indicator" data-slide="1"></div>
+            <div class="hero-indicator" data-slide="2"></div>
+            <div class="hero-indicator" data-slide="3"></div>
+            <div class="hero-indicator" data-slide="4"></div>
+        </div>
+        
+        <div class="floating-elements">
+            <i class="fas fa-anchor floating-icon"></i>
+            <i class="fas fa-shield-alt floating-icon"></i>
+            <i class="fas fa-medal floating-icon"></i>
+            <i class="fas fa-graduation-cap floating-icon"></i>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">{{ \App\Models\ContentSetting::get('hero_title', 'Excellence in Maritime Leadership') }}</h1>
+            <p class="hero-subtitle" id="heroSubtitle">{{ \App\Models\ContentSetting::get('hero_subtitle', 'Forge your path as a naval officer through comprehensive training, leadership development, and academic excellence at Universiti Malaysia Sabah') }}</p>
+            <div class="hero-cta">
+                <a href="#application" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Apply Now
+                </a>
+                <a href="#introduction" class="btn-secondary">
+                    <i class="fas fa-info-circle"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </section>
 
 <!-- Statistics Section -->
 <section class="stats-section">
@@ -1377,7 +1380,7 @@
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
             <div class="enhanced-card animate-on-scroll">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&h=300&fit=crop" alt="PALAPES Training" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
+                <img src="storage/landing/5.jpeg" alt="PALAPES Training" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
                 <h3 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 1.5rem;">Our Mission</h3>
                 <p style="color: var(--text-secondary); line-height: 1.6;">
                     To develop exceptional maritime leaders through comprehensive training that combines academic excellence, military discipline, and character development, preparing graduates to serve with honor in Malaysia's naval forces and civilian sectors.
@@ -1437,7 +1440,7 @@
         
         <div class="timeline">
             <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&h=300&fit=crop'); background-size: cover; background-position: center;">
+                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.png'); background-size: cover; background-position: center;">
                     <div class="timeline-content-inner">
                         <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Foundation Training</h3>
                         <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Comprehensive introduction to naval traditions, basic seamanship, military fundamentals, discipline, and core competencies in leadership and maritime knowledge. Duration: 6 months intensive training.</p>
@@ -1448,7 +1451,7 @@
                 </div>
             </div>
             <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=300&fit=crop'); background-size: cover; background-position: center;">
+                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/5.png'); background-size: cover; background-position: center;">
                     <div class="timeline-content-inner">
                         <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Advanced Maritime Skills</h3>
                         <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Specialized training in navigation systems, vessel operations, maritime law, advanced seamanship, and practical experience through simulations and real-world exercises. Duration: 12 months advanced training.</p>
@@ -1459,7 +1462,7 @@
                 </div>
             </div>
             <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop'); background-size: cover; background-position: center;">
+                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/11.png'); background-size: cover; background-position: center;">
                     <div class="timeline-content-inner">
                         <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Leadership Development</h3>
                         <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Intensive leadership training, command responsibilities, strategic thinking, team management, and preparation for officer-level decision making and personnel management. Take on leadership roles and mentor junior cadets.</p>
@@ -1470,7 +1473,7 @@
                 </div>
             </div>
             <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('https://images.unsplash.com/photo-1562408590-e32931084e23?w=500&h=300&fit=crop'); background-size: cover; background-position: center;">
+                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/9.jpeg'); background-size: cover; background-position: center;">
                     <div class="timeline-content-inner">
                         <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Commission Readiness</h3>
                         <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Final preparation for commissioning as Second Lieutenant Officers Naval Volunteer Reserve (NVR), comprehensive evaluation, and graduation ceremony. Ready to serve Malaysia's naval defense with distinction.</p>
@@ -1496,7 +1499,7 @@
         </div>
 
         <div class="enhanced-card animate-on-scroll" style="text-align: center; margin-top: 4rem;">
-            <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=500&fit=crop" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+            <img src="storage/landing/palapes.jpg" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
             <h3 style="color: var(--primary-blue); font-size: 2rem; margin-bottom: 1.5rem;">Building Tomorrow's Leaders</h3>
             <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; max-width: 800px; margin: 0 auto;">
                 Our comprehensive program goes beyond traditional military training, fostering critical thinking, ethical leadership, and the adaptability required to excel in an ever-changing global environment. Graduates emerge as confident, capable leaders ready to make meaningful contributions to society.
@@ -1685,65 +1688,72 @@
 </section>
 
 <!-- Application Section -->
-<section id="application" class="section">
-    <div class="section-container">
-        <div class="section-header animate-on-scroll">
-            <div class="section-badge">Join PALAPES</div>
-            <h2 class="section-title">Begin Your Leadership Journey</h2>
-            <p class="section-description">
-                Take the first decisive step toward becoming a commissioned naval officer. Our comprehensive application process ensures we select the most qualified and dedicated candidates for this prestigious program.
-            </p>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
-            <div class="enhanced-card animate-on-scroll">
-                <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Application Process</h3>
-                
-                <div style="margin-bottom: 2rem;">
-                    <h4 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fas fa-file-alt" style="color: var(--primary-blue);"></i>
-                        Required Steps
-                    </h4>
-                    <ol style="color: var(--text-secondary); font-size: 1rem; line-height: 1.8; padding-left: 1.5rem;">
-                        <li style="margin-bottom: 0.75rem;">Verify you meet all program requirements</li>
-                        <li style="margin-bottom: 0.75rem;">Complete online application form</li>
-                        <li style="margin-bottom: 0.75rem;">Submit all required documents</li>
-                        <li style="margin-bottom: 0.75rem;">Attend selection assessments</li>
-                        <li style="margin-bottom: 0.75rem;">Begin your PALAPES journey!</li>
-                    </ol>
-                </div>
-
-                <div style="margin-bottom: 2rem;">
-                    <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Ready to serve Malaysia?</p>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Apply today to join PALAPES Laut UMS and develop the leadership skills, discipline, and character that will distinguish you for life.</p>
-                </div>
-
-                <div style="text-align: center;">
-                    <a href="#" id="applicationPortalLink" class="btn-primary" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
-                        <i class="fas fa-external-link-alt"></i>
-                        Access Application Portal
-                    </a>
-                </div>
+    <section id="application" class="section">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Join PALAPES</div>
+                <h2 class="section-title">Begin Your Leadership Journey</h2>
+                <p class="section-description">
+                    Take the first decisive step toward becoming a commissioned naval officer. Our comprehensive application process ensures we select the most qualified and dedicated candidates for this prestigious program.
+                </p>
             </div>
 
-            <div class="enhanced-card animate-on-scroll" style="text-align: center;">
-                <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Quick Access QR Code</h3>
-                
-                <div style="width: 280px; height: 280px; background: white; margin: 0 auto 2rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
-                    <img id="qrCodeImage" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDI0MCAyNDAiIHN0eWxlPSJib3JkZXItcmFkaXVzOiA4cHg7Ij4KPHJlY3Qgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjIwIiB5PSIyMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPgo8cmVjdCB4PSIzMCIgeT0iMzAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iNDAiIHk9IjQwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjE2MCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTcwIiB5PSIzMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxODAiIHk9IjQwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjIwIiB5PSIxNjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMzAiIHk9IjE3MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI0MCIgeT0iMTgwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjkwIiB5PSIyMCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTA2IiB5PSIyMCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTIyIiB5PSIyMCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTAwIiB5PSIxMDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMTE1IiB5PSIxMTUiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgZmlsbD0iYmxhY2siLz4KPC9zdmc+" alt="QR Code" style="width: 240px; height: 240px; border-radius: 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
+                <div class="enhanced-card animate-on-scroll">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Application Process</h3>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-file-alt" style="color: var(--primary-blue);"></i>
+                            Required Steps
+                        </h4>
+                        <ol style="color: var(--text-secondary); font-size: 1rem; line-height: 1.8; padding-left: 1.5rem;">
+                            <li style="margin-bottom: 0.75rem;">Verify you meet all program requirements</li>
+                            <li style="margin-bottom: 0.75rem;">Complete online application form</li>
+                            <li style="margin-bottom: 0.75rem;">Submit all required documents</li>
+                            <li style="margin-bottom: 0.75rem;">Attend selection assessments</li>
+                            <li style="margin-bottom: 0.75rem;">Begin your PALAPES journey!</li>
+                        </ol>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Ready to serve Malaysia?</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Apply today to join PALAPES Laut UMS and develop the leadership skills, discipline, and character that will distinguish you for life.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="{{ \App\Models\ContentSetting::get('application_portal_url', '#') }}" id="applicationPortalLink" class="btn-primary" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
+                            <i class="fas fa-external-link-alt"></i>
+                            Access Application Portal
+                        </a>
+                    </div>
                 </div>
-                
-                <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">Scan for Instant Access</p>
-                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">Use your mobile device to scan this QR code and access the PALAPES application portal directly</p>
-                
-                <div style="background: rgba(60, 146, 217, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(60, 146, 217, 0.2);">
-                    <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Need Assistance?</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Contact our admissions team for application support and program inquiries</p>
+
+                <div class="enhanced-card animate-on-scroll" style="text-align: center;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Quick Access QR Code</h3>
+                    
+                    <div style="width: 280px; height: 280px; background: white; margin: 0 auto 2rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+                        @if(\App\Models\ContentSetting::get('qr_code_image'))
+                            <img id="qrCodeImage" src="{{ asset(\App\Models\ContentSetting::get('qr_code_image')) }}" alt="QR Code" style="width: 240px; height: 240px; border-radius: 8px; object-fit: contain;">
+                        @else
+                            <div style="color: #666; text-align: center; padding: 2rem;">
+                                <i class="fas fa-qrcode" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                <p style="margin: 0; font-size: 0.9rem;">QR Code will appear here when uploaded by instructor</p>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">Scan for Instant Access</p>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">Use your mobile device to scan this QR code and access the PALAPES application portal directly</p>
+                    
+                    <div style="background: rgba(60, 146, 217, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(60, 146, 217, 0.2);">
+                        <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Need Assistance?</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Contact our admissions team for application support and program inquiries</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
 <!-- Enhanced Footer -->
 <footer class="footer">
@@ -1814,602 +1824,755 @@
     </div>
 </footer>
 
-<!-- Instructor Edit Modal -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2><i class="fas fa-edit"></i> Edit Landing Page Content</h2>
-            <button class="close-btn" id="closeModal">&times;</button>
+<!-- Edit Modal for Instructors -->
+    @auth
+        @if(in_array(auth()->user()->role, ['instructor', 'admin']))
+        <div id="editModal" class="modal">
+            <div class="modal-content" style="max-width: 700px;">
+                <div class="modal-header">
+                    <h2>Edit Page Content</h2>
+                    <button class="close-btn" id="closeModal">&times;</button>
+                </div>
+                
+                <form id="editForm" enctype="multipart/form-data">
+                    @csrf
+                    
+                    <div class="form-group">
+                        <label for="applicationDeadline">Application Deadline Date:</label>
+                        <input type="date" id="applicationDeadline" name="application_deadline" min="{{ date('Y-m-d') }}">
+                        <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                            <i class="fas fa-info-circle"></i> 
+                            Banner shows 1 month before deadline and disappears day after
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="applicationPortalUrl">Application Portal URL:</label>
+                        <input type="url" id="applicationPortalUrl" name="application_portal_url" placeholder="https://application.ums.edu.my/palapes">
+                        <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                            <i class="fas fa-link"></i> 
+                            URL for the "Access Application Portal" button
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="qrCodeImageUpload">QR Code Image:</label>
+                        <input type="file" id="qrCodeImageUpload" name="qr_code_image" accept="image/*">
+                        <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                            <i class="fas fa-qrcode"></i> 
+                            Upload a QR code image (JPG, PNG, SVG - max 2MB)
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="heroTitle">Hero Section Title:</label>
+                        <input type="text" id="heroTitle" name="hero_title" maxlength="255" placeholder="Excellence in Maritime Leadership">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="heroSubtitle">Hero Section Subtitle:</label>
+                        <textarea id="heroSubtitle" name="hero_subtitle" rows="3" maxlength="1000" placeholder="Forge your path as a naval officer..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="introDescription">Introduction Description:</label>
+                        <textarea id="introDescription" name="intro_description" rows="4" maxlength="2000" placeholder="The Reserve Officer Training Unit (PALAPES)..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="aboutDescription">About Section Description:</label>
+                        <textarea id="aboutDescription" name="about_description" rows="4" maxlength="2000" placeholder="With decades of proven success..."></textarea>
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button type="button" class="btn-secondary-modal" id="cancelEdit">Cancel</button>
+                        <button type="button" class="btn-secondary-modal" id="resetToDefaults">
+                            <i class="fas fa-undo"></i> Reset to Defaults
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <form id="editForm">
-            <div class="form-group">
-                <label for="heroTitle">Hero Section Title:</label>
-                <input type="text" id="heroTitle" name="heroTitle" value="Excellence in Maritime Leadership">
-            </div>
-            
-            <div class="form-group">
-                <label for="heroSubtitle">Hero Section Subtitle:</label>
-                <textarea id="heroSubtitle" name="heroSubtitle" rows="2">Forge your path as a naval officer through comprehensive training, leadership development, and academic excellence at Universiti Malaysia Sabah</textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="introDescription">Introduction Description:</label>
-                <textarea id="introDescription" name="introDescription" rows="3">The Reserve Officer Training Unit (PALAPES) represents Malaysia's premier naval leadership development program, combining rigorous academic excellence with comprehensive military training to forge the next generation of maritime leaders.</textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="aboutDescription">About Section Description:</label>
-                <textarea id="aboutDescription" name="aboutDescription" rows="3">With decades of proven success, PALAPES has established itself as the premier institution for developing maritime leaders who serve with distinction in both military and civilian capacities, upholding the highest standards of honor, courage, and commitment.</textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="applicationDeadline">Application Deadline Date:</label>
-                <input type="date" id="applicationDeadline" name="applicationDeadline" min="2024-01-01">
-                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                    <i class="fas fa-info-circle"></i> 
-                    Banner will show 1 month before deadline and disappear the day after
-                </small>
-            </div>
-            
-            <div class="form-group">
-                <label for="applicationPortalUrl">Application Portal URL:</label>
-                <input type="url" id="applicationPortalUrl" name="applicationPortalUrl" placeholder="https://example.com/application">
-                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                    <i class="fas fa-link"></i> 
-                    URL that the "Access Application Portal" button will redirect to
-                </small>
-            </div>
-
-            <div class="form-group">
-                <label for="qrCodeImage">QR Code / Quick Access Image:</label>
-                <input type="file" id="qrCodeImageUpload" name="qrCodeImage" accept="image/*">
-                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                    <i class="fas fa-qrcode"></i> 
-                    Upload a custom QR code or any image to replace the default QR code
-                </small>
-            </div>
-
-            <div class="form-group">
-                <label for="heroImage1">Hero Carousel Image 1:</label>
-                <input type="file" id="heroImage1" name="heroImage1" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label for="heroImage2">Hero Carousel Image 2:</label>
-                <input type="file" id="heroImage2" name="heroImage2" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label for="heroImage3">Hero Carousel Image 3:</label>
-                <input type="file" id="heroImage3" name="heroImage3" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label for="heroImage4">Hero Carousel Image 4:</label>
-                <input type="file" id="heroImage4" name="heroImage4" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label for="heroImage5">Hero Carousel Image 5:</label>
-                <input type="file" id="heroImage5" name="heroImage5" accept="image/*">
-            </div>
-            
-            <div class="form-group">
-                <label for="introImage">Introduction Section Image:</label>
-                <input type="file" id="introImage" name="introImage" accept="image/*">
-            </div>
-            
-            <div class="form-group">
-                <label for="aboutImage">About Section Image:</label>
-                <input type="file" id="aboutImage" name="aboutImage" accept="image/*">
-            </div>
-            
-            <div class="modal-buttons">
-                <button type="button" class="btn-secondary-modal" id="cancelEdit">Cancel</button>
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+        @endif
+    @endauth
 
 <script>
-    // Hero Carousel Functionality
-let currentSlide = 0;
-const slides = document.querySelectorAll('.hero-slide');
-const indicators = document.querySelectorAll('.hero-indicator');
-const totalSlides = slides.length;
-
-function showSlide(index) {
-    slides.forEach(slide => slide.classList.remove('active'));
-    indicators.forEach(indicator => indicator.classList.remove('active'));
-    
-    slides[index].classList.add('active');
-    indicators[index].classList.add('active');
-}
-
-function nextSlide() {
-    currentSlide = (currentSlide + 1) % totalSlides;
-    showSlide(currentSlide);
-}
-
-function prevSlide() {
-    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-    showSlide(currentSlide);
-}
-
-// Auto-advance carousel
-setInterval(nextSlide, 6000);
-
-// Navigation controls
-document.getElementById('nextSlide').addEventListener('click', nextSlide);
-document.getElementById('prevSlide').addEventListener('click', prevSlide);
-
-// Indicator controls
-indicators.forEach((indicator, index) => {
-    indicator.addEventListener('click', () => {
-        currentSlide = index;
-        showSlide(currentSlide);
-    });
-});
-
-// Notification banner smart display logic
-function checkNotificationDisplay() {
-    const storedDeadline = localStorage.getItem('applicationDeadline');
-    const banner = document.getElementById('notificationBanner');
-    
-    if (storedDeadline) {
-        const deadline = new Date(storedDeadline);
-        const today = new Date();
-        const oneMonthBefore = new Date(deadline);
-        oneMonthBefore.setMonth(oneMonthBefore.getMonth() - 1);
-        const oneDayAfter = new Date(deadline);
-        oneDayAfter.setDate(oneDayAfter.getDate() + 1);
+        // Enhanced JavaScript with Backend Integration
         
-        if (today >= oneMonthBefore && today <= oneDayAfter) {
-            banner.classList.remove('hidden');
-            updateNotificationText(deadline);
-        } else {
-            banner.classList.add('hidden');
+        // Hero Carousel Functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const indicators = document.querySelectorAll('.hero-indicator');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            slides[index].classList.add('active');
+            indicators[index].classList.add('active');
         }
-    } else {
-        // Default deadline for demonstration
-        const defaultDeadline = new Date('2025-03-31');
-        updateNotificationText(defaultDeadline);
-    }
-}
 
-function updateNotificationText(deadline) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = deadline.toLocaleDateString('en-US', options);
-    document.getElementById('notificationText').textContent = 
-        `Applications for the upcoming semester are now open. Deadline: ${formattedDate}`;
-}
-
-function hideNotification() {
-    document.getElementById('notificationBanner').classList.add('hidden');
-}
-
-// Advanced page loading with smooth transitions
-window.addEventListener('load', function() {
-    const loader = document.getElementById('pageLoader');
-    setTimeout(() => {
-        loader.classList.add('loaded');
-        checkNotificationDisplay();
-    }, 1000);
-});
-
-// Enhanced navbar scroll effects
-let lastScrollY = window.scrollY;
-const navbar = document.getElementById('navbar');
-
-window.addEventListener('scroll', () => {
-    const currentScrollY = window.scrollY;
-    
-    if (currentScrollY > 100) {
-        navbar.classList.add('scrolled');
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
-            navbar.style.transform = 'translateY(-100%)';
-        } else {
-            navbar.style.transform = 'translateY(0)';
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
         }
-    } else {
-        navbar.classList.remove('scrolled');
-        navbar.style.transform = 'translateY(0)';
-    }
-    
-    lastScrollY = currentScrollY;
-});
 
-// Mobile menu toggle with animations
-const mobileToggle = document.getElementById('mobileToggle');
-const navLinks = document.getElementById('navLinks');
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlide);
+        }
 
-mobileToggle.addEventListener('click', function() {
-    this.classList.toggle('active');
-    navLinks.classList.toggle('active');
-    document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
-});
+        // Auto-advance carousel every 6 seconds
+        setInterval(nextSlide, 6000);
 
-// Smooth scrolling with offset for fixed navbar
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const offsetTop = target.offsetTop - 100;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
+        // Navigation controls
+        document.getElementById('nextSlide').addEventListener('click', nextSlide);
+        document.getElementById('prevSlide').addEventListener('click', prevSlide);
+
+        // Indicator controls
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
             });
-            // Close mobile menu
-            navLinks.classList.remove('active');
-            mobileToggle.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
-});
+        });
 
-// Advanced intersection observer for animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, observerOptions);
-
-// Observe all animated elements
-document.querySelectorAll('.animate-on-scroll, .timeline-item').forEach(el => {
-    observer.observe(el);
-});
-
-// Animated counter for statistics
-function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number');
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-count'));
-        const duration = 2000;
-        const increment = target / (duration / 16);
-        let current = 0;
-        
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                counter.textContent = target;
-                clearInterval(timer);
-            } else {
-                counter.textContent = Math.floor(current);
-            }
-        }, 16);
-    });
-}
-
-// Trigger counter animation when stats section is visible
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            animateCounters();
-            statsObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 });
-
-const statsSection = document.querySelector('.stats-section');
-if (statsSection) {
-    statsObserver.observe(statsSection);
-}
-
-// Simple card hover effects
-document.querySelectorAll('.enhanced-card, .feature-card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-        card.style.transform = 'translateY(-5px)';
-    });
-    
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateY(0)';
-    });
-});
-
-// Parallax effect for hero background
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const parallax = document.querySelector('.hero-bg');
-    if (parallax) {
-        const speed = scrolled * 0.5;
-        parallax.style.transform = `translateY(${speed}px)`;
-    }
-});
-
-// Dynamic navigation highlighting
-function updateActiveNavLink() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-    
-    let current = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop - 150;
-        if (window.scrollY >= sectionTop) {
-            current = section.getAttribute('id');
-        }
-    });
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
-    });
-}
-
-window.addEventListener('scroll', updateActiveNavLink);
-
-// Interactive timeline animations
-const timelineItems = document.querySelectorAll('.timeline-item');
-const timelineObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
+        // Page loading animation
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('pageLoader');
             setTimeout(() => {
-                entry.target.classList.add('visible');
-            }, index * 200);
-        }
-    });
-}, { threshold: 0.3 });
+                loader.classList.add('loaded');
+            }, 1000);
+        });
 
-timelineItems.forEach(item => {
-    timelineObserver.observe(item);
-});
+        // Enhanced navbar scroll effects with hide/show functionality
+        let lastScrollY = window.scrollY;
+        const navbar = document.getElementById('navbar');
 
-// Modal functionality
-const modal = document.getElementById('editModal');
-const editBtn = document.getElementById('editBtn');
-const closeModal = document.getElementById('closeModal');
-const cancelEdit = document.getElementById('cancelEdit');
-const editForm = document.getElementById('editForm');
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY > 100) {
+                navbar.classList.add('scrolled');
+                if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
+            } else {
+                navbar.classList.remove('scrolled');
+                navbar.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollY = currentScrollY;
+        });
 
-// Open modal
-editBtn?.addEventListener('click', function() {
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    // Load current values from storage
-    const storedDeadline = localStorage.getItem('applicationDeadline');
-    const storedPortalUrl = localStorage.getItem('applicationPortalUrl');
-    
-    if (storedDeadline) {
-        document.getElementById('applicationDeadline').value = storedDeadline;
-    }
-    if (storedPortalUrl) {
-        document.getElementById('applicationPortalUrl').value = storedPortalUrl;
-    }
-});
+        // Mobile menu toggle with animation
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
 
-// Close modal
-function closeEditModal() {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
+        mobileToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+        });
 
-closeModal?.addEventListener('click', closeEditModal);
-cancelEdit?.addEventListener('click', closeEditModal);
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 100;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu if open
+                    navLinks.classList.remove('active');
+                    mobileToggle.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
 
-// Close modal when clicking outside
-window.addEventListener('click', function(event) {
-    if (event.target === modal) {
-        closeEditModal();
-    }
-});
-
-// Handle form submission
-editForm?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(editForm);
-    
-    // Update content on the page
-    const heroTitle = formData.get('heroTitle');
-    const heroSubtitle = formData.get('heroSubtitle');
-    const introDescription = formData.get('introDescription');
-    const aboutDescription = formData.get('aboutDescription');
-    const applicationDeadline = formData.get('applicationDeadline');
-    const applicationPortalUrl = formData.get('applicationPortalUrl');
-    
-    // Update text content
-    if (heroTitle) {
-        document.getElementById('heroTitle').textContent = heroTitle;
-    }
-    
-    if (heroSubtitle) {
-        document.getElementById('heroSubtitle').textContent = heroSubtitle;
-    }
-    
-    if (introDescription) {
-        document.getElementById('introDescription').textContent = introDescription;
-    }
-    
-    if (aboutDescription) {
-        document.getElementById('aboutDescription').textContent = aboutDescription;
-    }
-    
-    // Store deadline and update notification
-    if (applicationDeadline) {
-        localStorage.setItem('applicationDeadline', applicationDeadline);
-        checkNotificationDisplay();
-    }
-    
-    // Update application portal URL
-    if (applicationPortalUrl) {
-        localStorage.setItem('applicationPortalUrl', applicationPortalUrl);
-        document.getElementById('applicationPortalLink').href = applicationPortalUrl;
-    }
-    
-    // Handle QR code image upload
-    const qrCodeFile = formData.get('qrCodeImage');
-    if (qrCodeFile && qrCodeFile.size > 0) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('qrCodeImage').src = e.target.result;
-            localStorage.setItem('qrCodeImageData', e.target.result);
+        // Intersection observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         };
-        reader.readAsDataURL(qrCodeFile);
-    }
-    
-    // Handle hero carousel image uploads (5 images)
-    const heroImageInputs = ['heroImage1', 'heroImage2', 'heroImage3', 'heroImage4', 'heroImage5'];
-    heroImageInputs.forEach((inputName, index) => {
-        const file = formData.get(inputName);
-        if (file && file.size > 0) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const slides = document.querySelectorAll('.hero-slide');
-                if (slides[index]) {
-                    slides[index].style.backgroundImage = `url(${e.target.result})`;
-                    localStorage.setItem(`heroImage${index + 1}Data`, e.target.result);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
                 }
-            };
-            reader.readAsDataURL(file);
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.animate-on-scroll, .timeline-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Animated counter for statistics
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 16);
+            });
         }
-    });
-    
-    // Handle other image uploads
-    const otherImageInputs = ['introImage', 'aboutImage'];
-    otherImageInputs.forEach(inputName => {
-        const file = formData.get(inputName);
-        if (file && file.size > 0) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (inputName === 'introImage') {
-                    const introImg = document.querySelector('#introduction img');
-                    if (introImg) {
-                        introImg.src = e.target.result;
-                        localStorage.setItem('introImageData', e.target.result);
-                    }
-                } else if (inputName === 'aboutImage') {
-                    const aboutImg = document.querySelector('#about img');
-                    if (aboutImg) {
-                        aboutImg.src = e.target.result;
-                        localStorage.setItem('aboutImageData', e.target.result);
-                    }
+
+        // Trigger counter animation when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
                 }
-            };
-            reader.readAsDataURL(file);
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
         }
-    });
-    
-    // Show success message
-    const successMsg = document.createElement('div');
-    successMsg.innerHTML = `
-        <div style="position: fixed; top: 100px; right: 20px; background: var(--gradient-primary); color: white; padding: 1rem 2rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 3001; animation: slideInRight 0.3s ease;">
-            <i class="fas fa-check-circle"></i> Content updated successfully!
-        </div>
-    `;
-    document.body.appendChild(successMsg);
-    setTimeout(() => successMsg.remove(), 3000);
-    
-    closeEditModal();
-});
 
-// Add CSS for active nav link
-const style = document.createElement('style');
-style.textContent = `
-    .nav-links a.active {
-        color: var(--primary-blue) !important;
-    }
-    .nav-links a.active::after {
-        width: 100% !important;
-    }
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(100px);
+        // Timeline animation with staggered effect
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 200);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        timelineItems.forEach(item => {
+            timelineObserver.observe(item);
+        });
+
+        // Content Management Modal functionality (for instructors/admins)
+        const modal = document.getElementById('editModal');
+        const editBtn = document.getElementById('editBtn');
+        const closeModal = document.getElementById('closeModal');
+        const cancelEdit = document.getElementById('cancelEdit');
+        const editForm = document.getElementById('editForm');
+        const resetBtn = document.getElementById('resetToDefaults');
+
+        // Load current content settings from backend
+        function loadCurrentSettings() {
+            fetch('/api/content-settings')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const settings = data.data;
+                        
+                        // Populate form fields with current values
+                        if (settings.application_deadline) {
+                            document.getElementById('applicationDeadline').value = settings.application_deadline;
+                        }
+                        if (settings.application_portal_url) {
+                            document.getElementById('applicationPortalUrl').value = settings.application_portal_url;
+                        }
+                        if (settings.hero_title) {
+                            document.getElementById('heroTitle').value = settings.hero_title;
+                        }
+                        if (settings.hero_subtitle) {
+                            document.getElementById('heroSubtitle').value = settings.hero_subtitle;
+                        }
+                        if (settings.intro_description) {
+                            document.getElementById('introDescription').value = settings.intro_description;
+                        }
+                        if (settings.about_description) {
+                            document.getElementById('aboutDescription').value = settings.about_description;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading settings:', error);
+                    showMessage('Error loading current settings', 'error');
+                });
         }
-        to {
-            opacity: 1;
-            transform: translateX(0);
+
+        // Open modal with current settings
+        editBtn?.addEventListener('click', function() {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            loadCurrentSettings();
+        });
+
+        // Close modal function
+        function closeEditModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
-    }
-`;
-document.head.appendChild(style);
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    // Add smooth reveal for page elements
-    const elements = document.querySelectorAll('.enhanced-card, .feature-card, .section-header');
-    elements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        setTimeout(() => {
-            el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
+        // Modal close event listeners
+        closeModal?.addEventListener('click', closeEditModal);
+        cancelEdit?.addEventListener('click', closeEditModal);
 
-    // Initialize timeline items
-    timelineItems.forEach(item => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(30px)';
-        item.style.transition = 'all 0.6s ease';
-    });
-});
-
-// Performance optimization - lazy loading for heavy elements
-if ('IntersectionObserver' in window) {
-    const lazyElements = document.querySelectorAll('[data-lazy]');
-    const lazyObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const element = entry.target;
-                element.src = element.dataset.lazy;
-                element.classList.remove('lazy');
-                lazyObserver.unobserve(element);
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeEditModal();
             }
         });
-    });
-    
-    lazyElements.forEach(el => lazyObserver.observe(el));
-}
 
-function loadStoredContent() {
-    // Load stored portal URL
-    const storedPortalUrl = localStorage.getItem('applicationPortalUrl');
-    if (storedPortalUrl) {
-        document.getElementById('applicationPortalLink').href = storedPortalUrl;
-    }
-    
-    // Load stored QR code image
-    const storedQRCode = localStorage.getItem('qrCodeImageData');
-    if (storedQRCode) {
-        document.getElementById('qrCodeImage').src = storedQRCode;
-    }
-    
-    // Load stored hero carousel images
-    for (let i = 1; i <= 5; i++) {
-        const storedHeroImage = localStorage.getItem(`heroImage${i}Data`);
-        if (storedHeroImage) {
-            const slides = document.querySelectorAll('.hero-slide');
-            if (slides[i - 1]) {
-                slides[i - 1].style.backgroundImage = `url(${storedHeroImage})`;
+        // Form submission with AJAX
+        editForm?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(editForm);
+            
+            // Show loading state
+            const submitBtn = editForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
+            
+            // Submit to backend
+            fetch('/content-management/update', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update page content immediately without reload
+                    updatePageContent(data.data);
+                    showMessage('Content updated successfully!', 'success');
+                    closeEditModal();
+                } else {
+                    // Handle validation errors
+                    if (data.errors) {
+                        let errorMessage = 'Please fix the following errors:\n';
+                        Object.values(data.errors).forEach(errors => {
+                            errors.forEach(error => {
+                                errorMessage += '• ' + error + '\n';
+                            });
+                        });
+                        showMessage(errorMessage, 'error');
+                    } else {
+                        showMessage(data.message || 'An error occurred', 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('An error occurred while saving changes', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Reset to defaults functionality
+        resetBtn?.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset all content to defaults? This action cannot be undone.')) {
+                const resetButton = this;
+                const originalText = resetButton.innerHTML;
+                resetButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+                resetButton.disabled = true;
+                
+                fetch('/content-management/reset', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage('Content reset to defaults successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        showMessage(data.message || 'Error resetting content', 'error');
+                        resetButton.innerHTML = originalText;
+                        resetButton.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resetting content:', error);
+                    showMessage('Error resetting content', 'error');
+                    resetButton.innerHTML = originalText;
+                    resetButton.disabled = false;
+                });
+            }
+        });
+
+        // Update page content dynamically after successful save
+        function updatePageContent(data) {
+            // Update notification banner visibility and text
+            const notificationBanner = document.getElementById('notificationBanner');
+            if (data.show_banner && data.formatted_deadline) {
+                if (notificationBanner) {
+                    notificationBanner.style.display = 'block';
+                    const notificationText = document.getElementById('notificationText');
+                    if (notificationText) {
+                        notificationText.textContent = 
+                            `Applications for the upcoming semester are now open. Deadline: ${data.formatted_deadline}`;
+                    }
+                }
+            } else if (notificationBanner) {
+                notificationBanner.style.display = 'none';
+            }
+            
+            // Update application portal link
+            if (data.portal_url) {
+                const portalLink = document.getElementById('applicationPortalLink');
+                if (portalLink) {
+                    portalLink.href = data.portal_url;
+                }
+            }
+            
+            // Update QR code image
+            if (data.qr_code_url) {
+                const qrImage = document.getElementById('qrCodeImage');
+                if (qrImage) {
+                    qrImage.src = data.qr_code_url;
+                }
+            }
+            
+            // Update dynamic text content on the page
+            const heroTitle = document.getElementById('heroTitle');
+            const heroSubtitle = document.getElementById('heroSubtitle');
+            const introDesc = document.getElementById('introDescription');
+            const aboutDesc = document.getElementById('aboutDescription');
+            
+            if (data.hero_title && heroTitle) {
+                heroTitle.textContent = data.hero_title;
+            }
+            if (data.hero_subtitle && heroSubtitle) {
+                heroSubtitle.textContent = data.hero_subtitle;
+            }
+            if (data.intro_description && introDesc) {
+                introDesc.textContent = data.intro_description;
+            }
+            if (data.about_description && aboutDesc) {
+                aboutDesc.textContent = data.about_description;
             }
         }
-    }
-}
 
-// Call this on page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadStoredContent();
-});
+        // Enhanced message display system
+        function showMessage(message, type = 'success') {
+            const messageDiv = document.createElement('div');
+            const bgColor = type === 'success' ? 'var(--gradient-primary)' : 'linear-gradient(135deg, #e74c3c, #c0392b)';
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+            
+            messageDiv.innerHTML = `
+                <div style="position: fixed; top: 100px; right: 20px; background: ${bgColor}; color: white; padding: 1rem 2rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 3001; animation: slideInRight 0.3s ease; max-width: 400px; word-wrap: break-word;">
+                    <i class="fas ${icon}" style="margin-right: 0.5rem;"></i>${message.replace(/\n/g, '<br>')}
+                </div>
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            // Auto-remove message
+            const duration = type === 'error' ? 5000 : 3000;
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, duration);
+        }
 
-// Check notification display on page load
-window.addEventListener('load', () => {
-    setTimeout(checkNotificationDisplay, 1100);
-});
-</script>
+        // Hide notification banner function
+        function hideNotification() {
+            const banner = document.getElementById('notificationBanner');
+            if (banner) {
+                banner.style.display = 'none';
+            }
+        }
+
+        // Dynamic navigation highlighting
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Update active navigation on scroll
+        window.addEventListener('scroll', updateActiveNavLink);
+
+        // Initialize page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth reveal for page elements
+            const elements = document.querySelectorAll('.enhanced-card, .feature-card, .section-header');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Initialize timeline items
+            timelineItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(30px)';
+                item.style.transition = 'all 0.6s ease';
+            });
+        });
+
+        // Add required CSS for modal and animations
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Modal Styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 3000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.8);
+                backdrop-filter: blur(5px);
+            }
+            
+            .modal-content {
+                background-color: var(--dark-navy);
+                margin: 2% auto;
+                padding: 2rem;
+                border-radius: 16px;
+                width: 90%;
+                max-width: 600px;
+                max-height: 90vh;
+                overflow-y: auto;
+                border: 2px solid rgba(60, 146, 217, 0.3);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+            
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                border-bottom: 2px solid rgba(60, 146, 217, 0.3);
+                padding-bottom: 1rem;
+            }
+            
+            .modal-header h2 {
+                color: var(--primary-blue);
+                margin: 0;
+            }
+            
+            .close-btn {
+                background: none;
+                border: none;
+                color: var(--accent-pink);
+                font-size: 2rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                padding: 0;
+                line-height: 1;
+            }
+            
+            .close-btn:hover {
+                color: #ff4444;
+                transform: scale(1.1);
+            }
+            
+            /* Form Styles */
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: var(--primary-blue);
+                font-weight: bold;
+                font-size: 1rem;
+            }
+            
+            .form-group input, 
+            .form-group textarea {
+                width: 100%;
+                padding: 0.8rem;
+                border-radius: 8px;
+                border: 2px solid rgba(60, 146, 217, 0.3);
+                background: rgba(60, 146, 217, 0.1);
+                color: white;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                font-family: inherit;
+            }
+            
+            .form-group input:focus, 
+            .form-group textarea:focus {
+                outline: none;
+                border-color: var(--primary-blue);
+                box-shadow: 0 0 10px rgba(60, 146, 217, 0.3);
+            }
+            
+            .form-group textarea {
+                min-height: 100px;
+                resize: vertical;
+            }
+            
+            .form-group small {
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                display: block;
+                margin-top: 0.5rem;
+            }
+            
+            /* Modal Buttons */
+            .modal-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+                margin-top: 2rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .btn-secondary-modal {
+                background: rgba(108, 117, 125, 0.8);
+                padding: 12px 24px;
+                border: none;
+                border-radius: 8px;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 1rem;
+                font-weight: 500;
+            }
+            
+            .btn-secondary-modal:hover {
+                background: rgba(108, 117, 125, 1);
+                transform: translateY(-2px);
+            }
+            
+            /* Navigation Active States */
+            .nav-links a.active {
+                color: var(--primary-blue) !important;
+            }
+            
+            .nav-links a.active::after {
+                width: 100% !important;
+            }
+            
+            /* Animation Keyframes */
+            @keyframes slideInRight {
+                from { 
+                    opacity: 0; 
+                    transform: translateX(100px); 
+                }
+                to { 
+                    opacity: 1; 
+                    transform: translateX(0); 
+                }
+            }
+            
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            /* Page Loader Styles */
+            .page-loader {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--dark-navy);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                transition: opacity 0.5s ease, visibility 0.5s ease;
+            }
+            
+            .page-loader.loaded {
+                opacity: 0;
+                visibility: hidden;
+            }
+            
+            .loader {
+                width: 60px;
+                height: 60px;
+                border: 3px solid rgba(60, 146, 217, 0.1);
+                border-top: 3px solid var(--primary-blue);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .modal-content {
+                    width: 95%;
+                    margin: 5% auto;
+                    padding: 1.5rem;
+                }
+                
+                .modal-buttons {
+                    flex-direction: column;
+                }
+                
+                .modal-buttons button {
+                    width: 100%;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
