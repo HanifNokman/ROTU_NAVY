@@ -2,6 +2,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContentManagementController;
 use App\Http\Controllers\Instructor\PendingVerificationController;
 use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\Instructor\InstructorDashboardController;
@@ -23,6 +24,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('landing');
 });
+
+// Content Management Routes (Protected by middleware)
+Route::middleware(['auth'])->group(function () {
+    
+    // Update content settings (only instructors and admins)
+    Route::post('/content-management/update', [ContentManagementController::class, 'update'])
+        ->name('content.update');
+    
+    // Reset content to defaults (only instructors and admins)
+    Route::post('/content-management/reset', [ContentManagementController::class, 'resetToDefaults'])
+        ->name('content.reset');
+});
+
+// Public API routes for getting current settings
+Route::get('/api/content-settings', [ContentManagementController::class, 'getCurrentSettings'])
+    ->name('api.content.settings');
 
 Route::get('/logout-and-landing', function () {
     \Auth::logout();
