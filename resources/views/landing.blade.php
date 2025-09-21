@@ -1219,6 +1219,26 @@
     .footer-section .social-icons {
         justify-content: center;
     }
+
+    .intro-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+
+    .intro-grid .enhanced-card img {
+        height: 200px !important;
+    }
+
+    .intro-grid .enhanced-card h3 {
+        font-size: 1.25rem !important;
+    }
+
+    .intro-grid .enhanced-card {
+        padding: 1.5rem !important;
+    }
+}
+
+@media (max-width: 480px) {
 }
 
 @media (max-width: 480px) {
@@ -1391,7 +1411,7 @@
             </p>
         </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
+        <div class="intro-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
             <div class="enhanced-card animate-on-scroll">
                 <img src="storage/landing/5.jpeg" alt="PALAPES Training" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
                 <h3 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 1.5rem;">Our Mission</h3>
