@@ -1268,7 +1268,7 @@
 <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#home" class="nav-logo" id="logoLink">
-                <img src="storage/landing/PSS-LOGO.png" alt="ROTU Logo">
+                <img src="storage/assets/logo/PSS-LOGO.png" alt="ROTU Logo">
                 <div class="nav-logo-text">
                     <span class="main-title">PALAPES</span>
                     <span class="sub-title">LAUT UMS</span>
@@ -1336,11 +1336,11 @@
 <!-- Hero Section -->
     <section id="home" class="hero-section">
         <div class="hero-carousel" id="heroCarousel">
-            <div class="hero-slide active" style="background-image: url('{{ asset('storage/landing/3.png') }}')"></div>
-            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/11.png') }}')"></div>
-            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/27.png') }}')"></div>
-            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/36.png') }}')"></div>
-            <div class="hero-slide" style="background-image: url('{{ asset('storage/landing/5.png') }}')"></div>
+            <div class="hero-slide active" style="background-image: url('{{ asset('storage/assets/carousel/berenang.jpeg') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/assets/carousel/menembak.jpeg') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/assets/carousel/bot.jpeg') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/assets/carousel/kawad.jpeg') }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ asset('storage/assets/carousel/kapal.jpeg') }}')"></div>
         </div>
         
         <button class="hero-carousel-nav prev" id="prevSlide">
@@ -1413,7 +1413,7 @@
         
         <div class="intro-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
             <div class="enhanced-card animate-on-scroll">
-                <img src="storage/landing/5.jpeg" alt="PALAPES Training" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
+                <img src="storage/assets/images/intake11.jpeg" alt="PALAPES Training" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
                 <h3 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 1.5rem;">Our Mission</h3>
                 <p style="color: var(--text-secondary); line-height: 1.6;">
                     To develop exceptional maritime leaders through comprehensive training that combines academic excellence, military discipline, and character development, preparing graduates to serve with honor in Malaysia's naval forces and civilian sectors.
