@@ -1605,7 +1605,7 @@
         <div class="timeline-item timeline-right">
             <div class="timeline-video-content">
                 <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/videos/foundation-training.mp4" type="video/mp4">
+                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
                     <div class="video-fallback">
                         <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
                         <p>Foundation Training Video</p>
@@ -1625,7 +1625,7 @@
         <div class="timeline-item timeline-left">
             <div class="timeline-video-content">
                 <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/assets/videos/GnV Group 7 (3D).mp4" type="video/mp4">
+                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
                     <div class="video-fallback">
                         <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
                         <p>Maritime Skills Video</p>
@@ -1663,7 +1663,7 @@
         <div class="timeline-item timeline-right">
             <div class="timeline-video-content">
                 <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/videos/leadership-training.mp4" type="video/mp4">
+                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
                     <div class="video-fallback">
                         <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
                         <p>Leadership Training Video</p>
@@ -1683,7 +1683,7 @@
         <div class="timeline-item timeline-left">
             <div class="timeline-video-content">
                 <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/videos/commission-ceremony.mp4" type="video/mp4">
+                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
                     <div class="video-fallback">
                         <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
                         <p>Commission Ceremony Video</p>
