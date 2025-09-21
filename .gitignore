@@ -1,3 +1,4 @@
+# Ignore everything else first
 *.log
 .DS_Store
 .env
@@ -22,3 +23,15 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Track .gitignore itself
+!.gitignore
+
+# Track public/assets folder and all its contents
+!public/
+!public/assets/
+!public/assets/**
+
+# Track private folder and all its contents
+!private/
+!private/**
