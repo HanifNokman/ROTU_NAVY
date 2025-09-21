@@ -1,4 +1,14 @@
+# Ignore everything
 *
-!private/
-!public/
+
+# Track .gitignore itself
 !.gitignore
+
+# Track public/assets folder and its contents
+!public/
+!public/assets/
+!public/assets/**
+
+# Track private folder and its contents
+!private/
+!private/**
