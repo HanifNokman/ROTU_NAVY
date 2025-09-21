@@ -1453,7 +1453,7 @@
         
         <div class="timeline">
             <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.png'); background-size: cover; background-position: center;">
+                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.jpeg'); background-size: cover; background-position: center;">
                     <div class="timeline-content-inner">
                         <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Foundation Training</h3>
                         <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Comprehensive introduction to naval traditions, basic seamanship, military fundamentals, discipline, and core competencies in leadership and maritime knowledge. Duration: 6 months intensive training.</p>
