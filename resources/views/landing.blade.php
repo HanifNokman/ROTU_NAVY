@@ -1192,6 +1192,33 @@
     .enhanced-card {
         padding: 2rem;
     }
+
+    .application-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+
+    .footer-section {
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+
+    .footer-section h3 {
+        text-align: center;
+    }
+
+    .footer-section iframe {
+        height: 150px !important;
+    }
+
+    .footer-section .social-icons {
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1205,20 +1232,6 @@
 
     .feature-card {
         padding: 2rem;
-    }
-
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-
-    .footer-section {
-        padding: 0;
-        margin-bottom: 1rem;
-    }
-
-    .footer-section h3 {
-        text-align: center;
     }
 }
 
@@ -1698,7 +1711,7 @@
                 </p>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
+            <div class="application-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
                 <div class="enhanced-card animate-on-scroll">
                     <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Application Process</h3>
                     
@@ -1817,7 +1830,7 @@
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2024 PALAPES Laut UMS - Reserve Officer Training Unit, Universiti Malaysia Sabah. All rights reserved.</p>
+        <p>&copy; 2025 PALAPES Laut UMS - Reserve Officer Training Unit, Universiti Malaysia Sabah. All rights reserved.</p>
         <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
             Developing Maritime Leaders | Building Character | Serving Malaysia
         </p>
