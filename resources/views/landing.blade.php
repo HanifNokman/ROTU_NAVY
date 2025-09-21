@@ -616,19 +616,13 @@
     border-color: rgba(60, 146, 217, 0.3);
 }
 
-/* Interactive Timeline */
+/* Interactive Timeline with Zig-Zag Layout - Forced Visibility */
 .timeline {
     position: relative;
     margin: 4rem 0;
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
-}
-
-/* Force timeline visibility for debugging */
-.timeline-item {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
 }
 
 .timeline::before {
@@ -641,31 +635,40 @@
     background: var(--gradient-primary);
     transform: translateX(-50%);
     border-radius: 2px;
+    z-index: 1;
+}
+
+.timeline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 6rem 0;
+    position: relative;
 }
 
 .timeline-item {
     position: relative;
-    margin: 6rem 0;
-    opacity: 0;
-    transform: translateY(30px);
+    width: 45%;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
     transition: all 0.6s ease;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block !important;
+    visibility: visible !important;
 }
 
-.timeline-item.visible {
-    opacity: 1;
-    transform: translateY(0);
+.timeline-left {
+    text-align: right;
 }
 
-.timeline-content {
+.timeline-right {
+    text-align: left;
+}
+
+.timeline-content, 
+.timeline-video-content {
     background: rgba(60, 146, 217, 0.1);
     border-radius: 16px;
     padding: 2.5rem;
-    width: 45%;
-    max-width: 500px;
     position: relative;
     border: 2px solid var(--border-color);
     overflow: hidden;
@@ -673,28 +676,25 @@
     cursor: pointer;
     transition: all 0.4s ease;
     z-index: 5;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
-.timeline-content:hover {
+.timeline-video-content {
+    padding: 0;
+}
+
+.timeline-content:hover,
+.timeline-video-content:hover {
     transform: translateY(-8px);
     border-color: var(--primary-blue);
     box-shadow: 0 20px 50px rgba(60, 146, 217, 0.3);
-}
-
-.timeline-item:nth-child(odd) .timeline-content {
-    margin-right: auto;
-    margin-left: 0;
-}
-
-.timeline-item:nth-child(even) .timeline-content {
-    margin-left: auto;
-    margin-right: 0;
 }
 
 .timeline-content-inner {
@@ -702,6 +702,8 @@
     text-align: center;
     z-index: 2;
     position: relative;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .timeline-icon {
@@ -709,6 +711,65 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    border: 6px solid var(--dark-navy);
+    z-index: 10;
+    box-shadow: 0 8px 25px rgba(60, 146, 217, 0.4);
+    transition: all 0.3s ease;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.timeline-item:hover .timeline-icon {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 12px 35px rgba(60, 146, 217, 0.6);
+}
+
+.timeline-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    min-height: 350px;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.video-fallback {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 2rem;
+    height: 100%;
+    min-height: 350px;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.video-fallback p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Center Timeline Icons */
+.timeline-center-icon {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     width: 70px;
     height: 70px;
     background: var(--gradient-primary);
@@ -724,9 +785,76 @@
     transition: all 0.3s ease;
 }
 
-.timeline-item:hover .timeline-icon {
-    transform: translate(-50%, -50%) scale(1.1);
+.timeline-center-icon:hover {
+    transform: translateX(-50%) scale(1.1);
     box-shadow: 0 12px 35px rgba(60, 146, 217, 0.6);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .timeline::before {
+        left: 30px;
+    }
+    
+    .timeline-row {
+        flex-direction: column;
+        gap: 3rem;
+    }
+    
+    .timeline-item {
+        width: calc(100% - 80px) !important;
+        margin-left: 80px;
+        text-align: left;
+    }
+    
+    /* Fix center icons to align with mobile vertical line */
+    .timeline-center-icon {
+        left: 30px !important;
+        transform: translateX(-50%) !important;
+    }
+    
+    .timeline-center-icon:hover {
+        transform: translateX(-50%) scale(1.1) !important;
+    }
+    
+    /* Adjust icon positions for mobile stacked layout */
+    .timeline-center-icon:nth-child(1) { top: 10% !important; }
+    .timeline-center-icon:nth-child(3) { top: 35% !important; }
+    .timeline-center-icon:nth-child(5) { top: 60% !important; }
+    .timeline-center-icon:nth-child(7) { top: 85% !important; }
+}
+
+/* Force visibility for all timeline elements */
+.timeline * {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .timeline::before {
+        left: 30px;
+    }
+    
+    .timeline-row {
+        flex-direction: column;
+        gap: 3rem;
+    }
+    
+    .timeline-item {
+        width: calc(100% - 80px) !important;
+        margin-left: 80px;
+        text-align: left;
+    }
+    
+    .timeline-icon {
+        left: -35px;
+        transform: translateY(-50%);
+    }
+    
+    .timeline-item:hover .timeline-icon {
+        transform: translateY(-50%) scale(1.1);
+    }
 }
 
 /* Interactive Features Grid */
@@ -1163,20 +1291,6 @@
         gap: 1.5rem;
     }
 
-    .timeline::before {
-        left: 30px;
-    }
-
-    .timeline-content {
-        width: calc(100% - 80px);
-        margin-left: 80px !important;
-        min-height: 250px;
-    }
-
-    .timeline-icon {
-        left: 30px;
-    }
-
     .features-grid {
         grid-template-columns: 1fr;
     }
@@ -1472,51 +1586,122 @@
         </div>
         
         <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.jpeg'); background-size: cover; background-position: center;">
-                    <div class="timeline-content-inner">
-                        <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Foundation Training</h3>
-                        <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Comprehensive introduction to naval traditions, basic seamanship, military fundamentals, discipline, and core competencies in leadership and maritime knowledge. Duration: 6 months intensive training.</p>
-                    </div>
-                </div>
-                <div class="timeline-icon">
-                    <i class="fas fa-anchor"></i>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/5.png'); background-size: cover; background-position: center;">
-                    <div class="timeline-content-inner">
-                        <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Advanced Maritime Skills</h3>
-                        <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Specialized training in navigation systems, vessel operations, maritime law, advanced seamanship, and practical experience through simulations and real-world exercises. Duration: 12 months advanced training.</p>
-                    </div>
-                </div>
-                <div class="timeline-icon">
-                    <i class="fas fa-compass"></i>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/11.png'); background-size: cover; background-position: center;">
-                    <div class="timeline-content-inner">
-                        <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Leadership Development</h3>
-                        <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Intensive leadership training, command responsibilities, strategic thinking, team management, and preparation for officer-level decision making and personnel management. Take on leadership roles and mentor junior cadets.</p>
-                    </div>
-                </div>
-                <div class="timeline-icon">
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/9.jpeg'); background-size: cover; background-position: center;">
-                    <div class="timeline-content-inner">
-                        <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Commission Readiness</h3>
-                        <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Final preparation for commissioning as Second Lieutenant Officers Naval Volunteer Reserve (NVR), comprehensive evaluation, and graduation ceremony. Ready to serve Malaysia's naval defense with distinction.</p>
-                    </div>
-                </div>
-                <div class="timeline-icon">
-                    <i class="fas fa-graduation-cap"></i>
+    <!-- Timeline Icon 1 - Foundation Training -->
+    <div class="timeline-center-icon" style="top: 15%;">
+        <i class="fas fa-anchor"></i>
+    </div>
+    
+    <!-- Row 1: Foundation Training (left) + Video (right) -->
+    <div class="timeline-row">
+        <div class="timeline-item timeline-left">
+            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.jpeg'); background-size: cover; background-position: center;">
+                <div class="timeline-content-inner">
+                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Foundation Training</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Comprehensive introduction to naval traditions, basic seamanship, military fundamentals, discipline, and core competencies in leadership and maritime knowledge. Duration: 6 months intensive training.</p>
                 </div>
             </div>
         </div>
+        
+        <div class="timeline-item timeline-right">
+            <div class="timeline-video-content">
+                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                    <source src="storage/videos/foundation-training.mp4" type="video/mp4">
+                    <div class="video-fallback">
+                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                        <p>Foundation Training Video</p>
+                    </div>
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Icon 2 - Maritime Skills -->
+    <div class="timeline-center-icon" style="top: 35%;">
+        <i class="fas fa-compass"></i>
+    </div>
+
+    <!-- Row 2: Video (left) + Maritime Skills (right) -->
+    <div class="timeline-row">
+        <div class="timeline-item timeline-left">
+            <div class="timeline-video-content">
+                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                    <source src="storage/assets/videos/GnV Group 7 (3D).mp4" type="video/mp4">
+                    <div class="video-fallback">
+                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                        <p>Maritime Skills Video</p>
+                    </div>
+                </video>
+            </div>
+        </div>
+        
+        <div class="timeline-item timeline-right">
+            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/5.png'); background-size: cover; background-position: center;">
+                <div class="timeline-content-inner">
+                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Advanced Maritime Skills</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Specialized training in navigation systems, vessel operations, maritime law, advanced seamanship, and practical experience through simulations and real-world exercises. Duration: 12 months advanced training.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Icon 3 - Leadership -->
+    <div class="timeline-center-icon" style="top: 55%;">
+        <i class="fas fa-star"></i>
+    </div>
+
+    <!-- Row 3: Leadership (left) + Video (right) -->
+    <div class="timeline-row">
+        <div class="timeline-item timeline-left">
+            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/11.png'); background-size: cover; background-position: center;">
+                <div class="timeline-content-inner">
+                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Leadership Development</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Intensive leadership training, command responsibilities, strategic thinking, team management, and preparation for officer-level decision making and personnel management. Take on leadership roles and mentor junior cadets.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="timeline-item timeline-right">
+            <div class="timeline-video-content">
+                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                    <source src="storage/videos/leadership-training.mp4" type="video/mp4">
+                    <div class="video-fallback">
+                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                        <p>Leadership Training Video</p>
+                    </div>
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Icon 4 - Commission -->
+    <div class="timeline-center-icon" style="top: 75%;">
+        <i class="fas fa-graduation-cap"></i>
+    </div>
+
+    <!-- Row 4: Video (left) + Commission (right) -->
+    <div class="timeline-row">
+        <div class="timeline-item timeline-left">
+            <div class="timeline-video-content">
+                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                    <source src="storage/videos/commission-ceremony.mp4" type="video/mp4">
+                    <div class="video-fallback">
+                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                        <p>Commission Ceremony Video</p>
+                    </div>
+                </video>
+            </div>
+        </div>
+        
+        <div class="timeline-item timeline-right">
+            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/9.jpeg'); background-size: cover; background-position: center;">
+                <div class="timeline-content-inner">
+                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Commission Readiness</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Final preparation for commissioning as Second Lieutenant Officers Naval Volunteer Reserve (NVR), comprehensive evaluation, and graduation ceremony. Ready to serve Malaysia's naval defense with distinction.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
 </section>
 
@@ -1532,7 +1717,7 @@
         </div>
 
         <div class="enhanced-card animate-on-scroll" style="text-align: center; margin-top: 4rem;">
-            <img src="storage/landing/palapes.jpg" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+            <img src="storage/assets/images/tauliah.jpg" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
             <h3 style="color: var(--primary-blue); font-size: 2rem; margin-bottom: 1.5rem;">Building Tomorrow's Leaders</h3>
             <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; max-width: 800px; margin: 0 auto;">
                 Our comprehensive program goes beyond traditional military training, fostering critical thinking, ethical leadership, and the adaptability required to excel in an ever-changing global environment. Graduates emerge as confident, capable leaders ready to make meaningful contributions to society.
@@ -2606,6 +2791,35 @@
             }
         `;
         document.head.appendChild(style);
+
+        // Force timeline visibility - add this to your existing script section
+document.addEventListener('DOMContentLoaded', function() {
+    // Force all timeline items to be visible immediately
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach(item => {
+        item.style.opacity = '1';
+        item.style.transform = 'translateY(0)';
+        item.style.visibility = 'visible';
+        item.style.display = 'block';
+        item.classList.add('visible');
+    });
+    
+    // Force all timeline content to be visible
+    const timelineContent = document.querySelectorAll('.timeline-content, .timeline-video-content');
+    timelineContent.forEach(content => {
+        content.style.opacity = '1';
+        content.style.visibility = 'visible';
+        content.style.display = 'flex';
+    });
+    
+    // Force all videos to be visible
+    const videos = document.querySelectorAll('.timeline-video');
+    videos.forEach(video => {
+        video.style.opacity = '1';
+        video.style.visibility = 'visible';
+        video.style.display = 'block';
+    });
+});
     </script>
 </body>
 </html>
