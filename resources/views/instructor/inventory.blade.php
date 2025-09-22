@@ -35,8 +35,8 @@
                 
                 <!-- Top Section: Filters and Controls -->
                 <div class="p-6 border-b border-gray-200">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <!-- Left Side Filters -->
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                        <!-- Filters Section -->
                         <div class="flex flex-wrap items-center gap-4">
                             <div class="flex flex-col">
                                 <label for="uniform_intake_year" class="text-sm font-medium text-gray-700 mb-1">Intake</label>
@@ -77,18 +77,29 @@
                             </div>
                         </div>
                         
-                        <!-- Right Side Buttons -->
-                        <div class="flex gap-3">
-                            <button onclick="openUniformTypeModal()" 
-                                    class="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
-                                <i class="fas fa-plus mr-2"></i>
-                                Add Type
+                        <!-- Actions Section - Right Aligned with Vertical Stack -->
+                        <div class="flex flex-col gap-3 lg:items-end">
+                            <!-- Download Report Button (Top) -->
+                            <button onclick="downloadUniformReport()" 
+                                    class="w-full lg:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center">
+                                <i class="fas fa-download mr-2"></i>
+                                Download Report
                             </button>
-                            <button onclick="openUniformComponentModal()" 
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
-                                <i class="fas fa-plus mr-2"></i>
-                                Add Component
-                            </button>
+                            
+                            <!-- Add Buttons Row (Bottom) -->
+                            <div class="flex gap-3 justify-center lg:justify-start">
+                                <button onclick="openUniformTypeModal()" 
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add Type
+                                </button>
+                                
+                                <button onclick="openUniformComponentModal()" 
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add Component
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1115,7 +1126,31 @@
             });
         });
 
-        // Utility Functions
+        // Function to download uniform report
+        function downloadUniformReport() {
+            const params = new URLSearchParams();
+            
+            // Add current filter values
+            if (currentFilters.uniformType) {
+                params.append('uniform_type', currentFilters.uniformType);
+            }
+            if (currentFilters.uniformComponent) {
+                params.append('uniform_component', currentFilters.uniformComponent);
+            }
+            
+            // Create download URL
+            const downloadUrl = '/instructor/inventory/export/uniform-summary?' + params.toString();
+            
+            // Create temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('Uniform size summary report is being downloaded...', 'success');
+        }
         function showAlert(message, type) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${

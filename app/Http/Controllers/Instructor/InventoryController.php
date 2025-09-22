@@ -633,6 +633,255 @@ class InventoryController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function exportUniformSizeSummary(Request $request)
+    {
+        $uniformType = $request->get('uniform_type');
+        $uniformComponent = $request->get('uniform_component');
+        
+        // Get all intake years
+        $currentYear = date('Y');
+        $intakeYears = [];
+        for ($i = 0; $i < 4; $i++) {
+            $year = $currentYear - $i;
+            $intakeNumber = 14 - $i;
+            $intakeYears[] = [
+                'year' => $year,
+                'label' => "Intake {$intakeNumber}"
+            ];
+        }
+
+        // Build query for summary data
+        $query = DB::table('cadet_sizes')
+            ->join('cadets', 'cadet_sizes.cadet_id', '=', 'cadets.id')
+            ->join('uniform_components', 'cadet_sizes.component_id', '=', 'uniform_components.id')
+            ->leftJoin('uniform_types', 'uniform_components.uniform_type_id', '=', 'uniform_types.id')
+            ->select(
+                'cadets.intake_year',
+                'uniform_types.type_name',
+                'uniform_components.component_name',
+                'cadet_sizes.size',
+                DB::raw('COUNT(*) as cadet_count')
+            )
+            ->whereNotNull('cadet_sizes.size');
+
+        if ($uniformType) {
+            $query->where('uniform_components.uniform_type_id', $uniformType);
+        }
+
+        if ($uniformComponent) {
+            $query->where('uniform_components.id', $uniformComponent);
+        }
+
+        $results = $query->groupBy('cadets.intake_year', 'uniform_types.type_name', 'uniform_components.component_name', 'cadet_sizes.size')
+            ->orderBy('cadets.intake_year', 'desc')
+            ->orderBy('uniform_types.type_name')
+            ->orderBy('uniform_components.component_name')
+            ->orderBy('cadet_sizes.size')
+            ->get();
+
+        // Create filename based on filters
+        $filename = 'uniform_size_summary';
+        if ($uniformType) {
+            $typeName = UniformType::find($uniformType)?->type_name;
+            $filename .= '_' . str_replace(' ', '_', strtolower($typeName));
+        }
+        if ($uniformComponent) {
+            $componentName = UniformComponent::find($uniformComponent)?->component_name;
+            $filename .= '_' . str_replace(' ', '_', strtolower($componentName));
+        }
+        $filename .= '_' . date('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function() use ($results, $intakeYears, $uniformType, $uniformComponent) {
+            $file = fopen('php://output', 'w');
+            
+            // Report Header
+            fputcsv($file, ['UNIFORM SIZE SUMMARY REPORT']);
+            fputcsv($file, ['Generated on: ' . now()->format('F j, Y \a\t g:i A')]);
+            fputcsv($file, ['']);
+
+            // Filter information
+            if ($uniformType || $uniformComponent) {
+                fputcsv($file, ['APPLIED FILTERS:']);
+                if ($uniformType) {
+                    $typeName = UniformType::find($uniformType)?->type_name;
+                    fputcsv($file, ['Uniform Type: ' . $typeName]);
+                }
+                if ($uniformComponent) {
+                    $componentName = UniformComponent::find($uniformComponent)?->component_name;
+                    fputcsv($file, ['Component: ' . $componentName]);
+                }
+                fputcsv($file, ['']);
+            }
+
+            // Group data by intake year for better organization
+            $dataByIntake = [];
+            foreach ($results as $row) {
+                $intakeLabel = collect($intakeYears)->firstWhere('year', $row->intake_year)['label'] ?? "Intake {$row->intake_year}";
+                $dataByIntake[$intakeLabel][] = $row;
+            }
+
+            // Output data by intake year
+            foreach ($dataByIntake as $intakeLabel => $intakeData) {
+                fputcsv($file, ["=== {$intakeLabel} ({$intakeData[0]->intake_year}) ==="]);
+                fputcsv($file, ['']);
+                
+                // Group by uniform type and component for this intake
+                $typeGroups = [];
+                foreach ($intakeData as $row) {
+                    $typeName = $row->type_name ?? 'Unspecified Type';
+                    $typeGroups[$typeName][$row->component_name][] = $row;
+                }
+                
+                foreach ($typeGroups as $typeName => $components) {
+                    fputcsv($file, ["UNIFORM TYPE: {$typeName}"]);
+                    fputcsv($file, ['']);
+                    
+                    // Create separate table for each component
+                    foreach ($components as $componentName => $sizes) {
+                        fputcsv($file, ["Component: {$componentName}"]);
+                        
+                        // Get all unique sizes for this component
+                        $uniqueSizes = [];
+                        foreach ($sizes as $sizeData) {
+                            $uniqueSizes[$sizeData->size] = $sizeData->cadet_count;
+                        }
+                        
+                        // Sort sizes logically (numbers first, then letters)
+                        uksort($uniqueSizes, function($a, $b) {
+                            // Check if both are numeric
+                            if (is_numeric($a) && is_numeric($b)) {
+                                return $a <=> $b;
+                            }
+                            // Check if both are letters
+                            if (!is_numeric($a) && !is_numeric($b)) {
+                                $order = ['XXS' => 1, 'XS' => 2, 'S' => 3, 'M' => 4, 'L' => 5, 'XL' => 6, 'XXL' => 7, 'XXXL' => 8];
+                                $aVal = $order[strtoupper($a)] ?? 999;
+                                $bVal = $order[strtoupper($b)] ?? 999;
+                                if ($aVal === 999 && $bVal === 999) {
+                                    return strcasecmp($a, $b);
+                                }
+                                return $aVal <=> $bVal;
+                            }
+                            // Numbers come before letters
+                            return is_numeric($a) ? -1 : 1;
+                        });
+                        
+                        // Create header row with actual sizes
+                        $headers = ['Size'];
+                        $counts = ['Count'];
+                        $total = 0;
+                        
+                        foreach ($uniqueSizes as $size => $count) {
+                            $headers[] = $size;
+                            $counts[] = $count;
+                            $total += $count;
+                        }
+                        $headers[] = 'Total';
+                        $counts[] = $total;
+                        
+                        fputcsv($file, $headers);
+                        fputcsv($file, $counts);
+                        fputcsv($file, ['']);
+                    }
+                }
+                fputcsv($file, ['']);
+            }
+
+            // Overall Summary Section
+            fputcsv($file, ['=== OVERALL SUMMARY (All Intakes Combined) ===']);
+            fputcsv($file, ['']);
+            
+            // Calculate overall totals by component
+            $overallSummary = [];
+            foreach ($results as $row) {
+                $typeName = $row->type_name ?? 'Unspecified Type';
+                $key = $typeName . '|' . $row->component_name . '|' . $row->size;
+                
+                if (!isset($overallSummary[$key])) {
+                    $overallSummary[$key] = [
+                        'type' => $typeName,
+                        'component' => $row->component_name,
+                        'size' => $row->size,
+                        'total' => 0
+                    ];
+                }
+                $overallSummary[$key]['total'] += $row->cadet_count;
+            }
+            
+            // Group overall summary by type and component
+            $overallByType = [];
+            foreach ($overallSummary as $item) {
+                $overallByType[$item['type']][$item['component']][$item['size']] = $item['total'];
+            }
+            
+            foreach ($overallByType as $typeName => $components) {
+                fputcsv($file, ["UNIFORM TYPE: {$typeName}"]);
+                fputcsv($file, ['']);
+                
+                // Create separate table for each component in overall summary
+                foreach ($components as $componentName => $sizes) {
+                    fputcsv($file, ["Component: {$componentName}"]);
+                    
+                    // Sort sizes logically
+                    uksort($sizes, function($a, $b) {
+                        if (is_numeric($a) && is_numeric($b)) {
+                            return $a <=> $b;
+                        }
+                        if (!is_numeric($a) && !is_numeric($b)) {
+                            $order = ['XXS' => 1, 'XS' => 2, 'S' => 3, 'M' => 4, 'L' => 5, 'XL' => 6, 'XXL' => 7, 'XXXL' => 8];
+                            $aVal = $order[strtoupper($a)] ?? 999;
+                            $bVal = $order[strtoupper($b)] ?? 999;
+                            if ($aVal === 999 && $bVal === 999) {
+                                return strcasecmp($a, $b);
+                            }
+                            return $aVal <=> $bVal;
+                        }
+                        return is_numeric($a) ? -1 : 1;
+                    });
+                    
+                    $headers = ['Size'];
+                    $counts = ['Count'];
+                    $total = 0;
+                    
+                    foreach ($sizes as $size => $count) {
+                        $headers[] = $size;
+                        $counts[] = $count;
+                        $total += $count;
+                    }
+                    $headers[] = 'Total';
+                    $counts[] = $total;
+                    
+                    fputcsv($file, $headers);
+                    fputcsv($file, $counts);
+                    fputcsv($file, ['']);
+                }
+            }
+
+            // Quick Statistics
+            fputcsv($file, ['=== QUICK STATISTICS ===']);
+            fputcsv($file, ['']);
+            
+            $totalCadets = $results->sum('cadet_count');
+            $totalIntakes = count($dataByIntake);
+            $totalTypes = count($overallByType);
+            $totalComponents = collect($overallSummary)->groupBy('component')->count();
+            
+            fputcsv($file, ['Total Cadets with Size Data:', $totalCadets]);
+            fputcsv($file, ['Number of Intakes:', $totalIntakes]);
+            fputcsv($file, ['Number of Uniform Types:', $totalTypes]);
+            fputcsv($file, ['Number of Components:', $totalComponents]);
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function exportEquipmentLoans(Request $request)
     {
         $intakeYear = $request->get('intake_year');
