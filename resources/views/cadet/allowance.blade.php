@@ -66,7 +66,6 @@
                                     <th class="px-2 py-2 text-left text-xs font-semibold text-gray-700 uppercase">Location</th>
                                     <th class="px-2 py-2 text-left text-xs font-semibold text-gray-700 uppercase">Duration</th>
                                     <th class="px-2 py-2 text-left text-xs font-semibold text-gray-700 uppercase">Type</th>
-                                    <th class="px-2 py-2 text-left text-xs font-semibold text-gray-700 uppercase">Hours/Days</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -76,13 +75,6 @@
                                         <td class="px-2 py-2 text-xs font-medium">{{ $training['title'] }}</td>
                                         <td class="px-2 py-2 text-xs">{{ $training['date'] }}</td>
                                         <td class="px-2 py-2 text-xs">{{ $training['location'] }}</td>
-                                        <td class="px-2 py-2 text-xs">{{ $training['duration'] }}</td>
-                                        <td class="px-2 py-2 text-xs">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                                                @if($training['type'] === 'hourly') bg-green-100 text-green-800 @else bg-blue-100 text-blue-800 @endif">
-                                                {{ ucfirst($training['type']) }}
-                                            </span>
-                                        </td>
                                         <td class="px-2 py-2 text-xs font-medium">
                                             @if($training['type'] === 'hourly')
                                                 <span class="text-green-700">{{ $training['hours'] }} hours</span>
@@ -90,10 +82,16 @@
                                                 <span class="text-blue-700">{{ $training['days'] }} days</span>
                                             @endif
                                         </td>
+                                        <td class="px-2 py-2 text-xs">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                                @if($training['type'] === 'hourly') bg-green-100 text-green-800 @else bg-blue-100 text-blue-800 @endif">
+                                                {{ ucfirst($training['type']) }}
+                                            </span>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center py-8">
+                                        <td colspan="6" class="text-center py-8">
                                             <div class="flex flex-col items-center justify-center">
                                                 <svg class="w-12 h-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>

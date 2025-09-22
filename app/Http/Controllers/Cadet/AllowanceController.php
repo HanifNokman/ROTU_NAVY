@@ -120,16 +120,28 @@ class AllowanceController extends Controller
                     $duration = 'N/A';
                 }
 
+                // Format date to show range for multi-day training
+                $startDate = Carbon::parse($training->start_datetime);
+                $endDate = $training->end_datetime ? Carbon::parse($training->end_datetime) : null;
+
+                if ($endDate && $startDate->format('Y-m-d') !== $endDate->format('Y-m-d')) {
+                    // Multi-day training: show date range
+                    $date = $startDate->format('d/m/Y') . ' - ' . $endDate->format('d/m/Y');
+                } else {
+                    // Single day training: show start date only
+                    $date = $startDate->format('d/m/Y');
+                }
+
                 return [
                     'id' => $training->id,
                     'title' => $training->title,
-                    'date' => $training->start_datetime->format('d/m/Y'),
+                    'date' => $date,
                     'location' => $training->location,
                     'duration' => $duration,
                     'type' => $training->allowance_type,
-                    'hours' => $training->allowance_type === 'hourly' ? 
-                        ($training->end_datetime ? Carbon::parse($training->start_datetime)->diffInHours(Carbon::parse($training->end_datetime)) : 0) : 0,
-                    'days' => $training->allowance_type === 'daily' ? 
+                    'hours' => $training->allowance_type === 'hourly' ?
+                        ($training->end_datetime ? intval(Carbon::parse($training->start_datetime)->diffInHours(Carbon::parse($training->end_datetime))) : 0) : 0,
+                    'days' => $training->allowance_type === 'daily' ?
                         ($training->end_datetime ? Carbon::parse($training->start_datetime)->diffInDays(Carbon::parse($training->end_datetime)) + 1 : 1) : 0,
                 ];
             });
