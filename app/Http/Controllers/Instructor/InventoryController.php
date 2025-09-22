@@ -29,11 +29,14 @@ class InventoryController extends Controller
             ];
         }
 
+        // Default to the lowest intake (last in the array)
+        $defaultIntakeYear = end($intakeYears)['year'];
+
         // Get selected intake years for each section
-        // For uniform section, default to latest if not provided
-        $selectedUniformIntakeYear = $request->get('intake_year', $intakeYears[0]['year']);
-        // For loan section, default to latest if not provided
-        $selectedLoanIntakeYear = $request->get('loan_intake_year', $intakeYears[0]['year']);
+        // For uniform section, default to lowest intake if not provided
+        $selectedUniformIntakeYear = $request->get('intake_year', $defaultIntakeYear);
+        // For loan section, default to lowest intake if not provided
+        $selectedLoanIntakeYear = $request->get('loan_intake_year', $defaultIntakeYear);
         
         $selectedUniformType = $request->get('uniform_type');
         $selectedUniformComponent = $request->get('uniform_component');
@@ -45,6 +48,27 @@ class InventoryController extends Controller
         $uniformComponents = UniformComponent::when($selectedUniformType, function($query) use ($selectedUniformType) {
             return $query->where('uniform_type_id', $selectedUniformType);
         })->get();
+
+        // Handle AJAX requests for instant filtering
+        if ($request->ajax()) {
+            $response = [];
+            
+            if ($request->has('action')) {
+                switch ($request->get('action')) {
+                    case 'uniform_summary':
+                        $response['uniformSizeSummary'] = $this->getUniformSizeSummaryForAjax($selectedUniformIntakeYear, $selectedUniformType, $selectedUniformComponent);
+                        break;
+                    case 'equipment_loans':
+                        $response['equipmentLoans'] = $this->getEquipmentLoansForAjax($selectedLoanIntakeYear, $selectedCategory, $selectedStatus);
+                        break;
+                    case 'components_by_type':
+                        $response['components'] = $this->getComponentsByTypeForAjax($selectedUniformType);
+                        break;
+                }
+            }
+            
+            return response()->json($response);
+        }
 
         // Get uniform size summary for selected intake year
         $uniformSizeSummary = $this->getUniformSizeSummary($selectedUniformIntakeYear, $selectedUniformType, $selectedUniformComponent);
@@ -103,6 +127,43 @@ class InventoryController extends Controller
         return $results->isNotEmpty() ? $results->groupBy('component_name') : collect();
     }
 
+    private function getUniformSizeSummaryForAjax($intakeYear, $uniformType = null, $uniformComponent = null)
+    {
+        $uniformSizeSummary = $this->getUniformSizeSummary($intakeYear, $uniformType, $uniformComponent);
+        
+        $html = '';
+        if ($uniformSizeSummary->isEmpty()) {
+            $html = '<div class="text-center py-8"><div class="text-gray-400 text-5xl mb-4"><i class="fas fa-tshirt"></i></div><p class="text-gray-500 text-lg">No uniform size data available for this intake year.</p></div>';
+        } else {
+            foreach ($uniformSizeSummary as $componentName => $sizes) {
+                $html .= '<div class="mb-8">';
+                $html .= '<div class="flex items-center mb-4">';
+                $html .= '<div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold mr-3">';
+                $html .= '<i class="fas fa-tag mr-1"></i>' . htmlspecialchars($componentName);
+                $html .= '</div>';
+                $html .= '<div class="h-px bg-gray-200 flex-1"></div>';
+                $html .= '</div>';
+                $html .= '<div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-sm">';
+                $html .= '<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">';
+                
+                foreach ($sizes as $sizeData) {
+                    $html .= '<div class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100">';
+                    $html .= '<div class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Size</div>';
+                    $html .= '<div class="text-2xl font-bold text-blue-600 mb-1">' . htmlspecialchars($sizeData->size) . '</div>';
+                    $html .= '<div class="text-lg font-semibold text-gray-800">' . $sizeData->cadet_count . '</div>';
+                    $html .= '<div class="text-xs text-gray-500">cadets</div>';
+                    $html .= '</div>';
+                }
+                
+                $html .= '</div>';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+        }
+        
+        return $html;
+    }
+
     private function getEquipmentLoans($intakeYear = null, $category = null, $status = null)
     {
         $query = EquipmentLoan::with(['cadet.user', 'inventoryItem'])
@@ -129,6 +190,152 @@ class InventoryController extends Controller
 
         return $query->orderBy('equipment_loans.borrow_date', 'desc')
             ->paginate(20);
+    }
+
+    private function getEquipmentLoansForAjax($intakeYear = null, $category = null, $status = null)
+    {
+        $query = EquipmentLoan::with(['cadet.user', 'inventoryItem'])
+            ->join('cadets', 'equipment_loans.cadet_id', '=', 'cadets.id')
+            ->join('inventory_items', 'equipment_loans.item_id', '=', 'inventory_items.id')
+            ->select('equipment_loans.*');
+
+        if ($intakeYear) {
+            $query->where('cadets.intake_year', $intakeYear);
+        }
+
+        if ($category) {
+            $query->where('inventory_items.category', $category);
+        }
+
+        if ($status) {
+            if ($status === 'active') {
+                $query->where('equipment_loans.status', 'Borrowed');
+            } elseif ($status === 'returned') {
+                $query->where('equipment_loans.status', 'Returned');
+            }
+        }
+
+        $equipmentLoans = $query->orderBy('equipment_loans.borrow_date', 'desc')->get();
+        
+        $html = '';
+        if ($equipmentLoans->isEmpty()) {
+            $html = '<div class="text-center py-12"><div class="text-gray-400 text-6xl mb-4"><i class="fas fa-tools"></i></div><p class="text-gray-500 text-lg">No equipment loan records found.</p></div>';
+        } else {
+            $html .= '<div class="overflow-x-auto">';
+            $html .= '<table class="min-w-full divide-y divide-gray-200">';
+            $html .= '<thead class="bg-gradient-to-r from-gray-50 to-gray-100">';
+            $html .= '<tr>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cadet</th>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Item</th>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Category</th>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Qty</th>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Borrow Date</th>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Return Date</th>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>';
+            $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Actions</th>';
+            $html .= '</tr>';
+            $html .= '</thead>';
+            $html .= '<tbody class="bg-white divide-y divide-gray-200">';
+            
+            foreach ($equipmentLoans as $loan) {
+                $rowClass = $loan->isOverdue() ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-gray-50';
+                $html .= '<tr class="' . $rowClass . ' transition-colors duration-150">';
+                
+                // Cadet name with enhanced styling
+                $html .= '<td class="px-6 py-4 whitespace-nowrap">';
+                $html .= '<div class="flex items-center">';
+                $html .= '<div class="bg-blue-100 rounded-full p-2 mr-3">';
+                $html .= '<i class="fas fa-user text-blue-600 text-sm"></i>';
+                $html .= '</div>';
+                $html .= '<div class="text-sm font-semibold text-gray-900">' . htmlspecialchars($loan->cadet->user->name) . '</div>';
+                $html .= '</div>';
+                $html .= '</td>';
+                
+                // Item name with icon
+                $html .= '<td class="px-6 py-4 whitespace-nowrap">';
+                $html .= '<div class="text-sm font-medium text-gray-900">' . htmlspecialchars($loan->inventoryItem->name) . '</div>';
+                $html .= '</td>';
+                
+                // Category with enhanced badge
+                $categoryColor = $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
+                $categoryIcon = $loan->inventoryItem->category === 'equipment' ? 'fas fa-tools' : 'fas fa-tshirt';
+                $html .= '<td class="px-6 py-4 whitespace-nowrap">';
+                $html .= '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ' . $categoryColor . '">';
+                $html .= '<i class="' . $categoryIcon . ' mr-1"></i>';
+                $html .= ucfirst($loan->inventoryItem->category);
+                $html .= '</span>';
+                $html .= '</td>';
+                
+                // Quantity with emphasis
+                $html .= '<td class="px-6 py-4 whitespace-nowrap">';
+                $html .= '<span class="text-sm font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded">' . $loan->quantity . '</span>';
+                $html .= '</td>';
+                
+                // Borrow date with calendar icon
+                $html .= '<td class="px-6 py-4 whitespace-nowrap">';
+                $html .= '<div class="flex items-center text-sm text-gray-900">';
+                $html .= '<i class="fas fa-calendar-alt text-gray-400 mr-2"></i>';
+                $html .= $loan->borrow_date->format('M d, Y');
+                $html .= '</div>';
+                $html .= '</td>';
+                
+                // Return date
+                $html .= '<td class="px-6 py-4 whitespace-nowrap">';
+                if ($loan->return_date) {
+                    $html .= '<div class="flex items-center text-sm text-gray-900">';
+                    $html .= '<i class="fas fa-calendar-check text-green-500 mr-2"></i>';
+                    $html .= $loan->return_date->format('M d, Y');
+                    $html .= '</div>';
+                } else {
+                    $html .= '<span class="text-gray-400">-</span>';
+                }
+                $html .= '</td>';
+                
+                // Status with enhanced badges
+                $html .= '<td class="px-6 py-4 whitespace-nowrap">';
+                if ($loan->status === 'Borrowed') {
+                    if ($loan->isOverdue()) {
+                        $html .= '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">';
+                        $html .= '<i class="fas fa-exclamation-triangle mr-1"></i>';
+                        $html .= 'Overdue (' . $loan->days_overdue . ' days)';
+                        $html .= '</span>';
+                    } else {
+                        $html .= '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">';
+                        $html .= '<i class="fas fa-clock mr-1"></i>';
+                        $html .= 'Borrowed';
+                        $html .= '</span>';
+                    }
+                } else {
+                    $html .= '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">';
+                    $html .= '<i class="fas fa-check-circle mr-1"></i>';
+                    $html .= 'Returned';
+                    $html .= '</span>';
+                }
+                $html .= '</td>';
+                
+                // Actions
+                $html .= '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">';
+                if ($loan->status === 'Borrowed') {
+                    $html .= '<form method="POST" action="' . route('instructor.inventory.update-loan', $loan) . '" class="inline">';
+                    $html .= csrf_field();
+                    $html .= method_field('PATCH');
+                    $html .= '<input type="hidden" name="status" value="Returned">';
+                    $html .= '<button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200">';
+                    $html .= '<i class="fas fa-check mr-1"></i>Mark Returned';
+                    $html .= '</button>';
+                    $html .= '</form>';
+                }
+                $html .= '</td>';
+                
+                $html .= '</tr>';
+            }
+            
+            $html .= '</tbody>';
+            $html .= '</table>';
+            $html .= '</div>';
+        }
+        
+        return $html;
     }
 
     private function getInventorySummary()
@@ -346,6 +553,17 @@ class InventoryController extends Controller
             'success' => true,
             'data' => $components
         ]);
+    }
+
+    private function getComponentsByTypeForAjax($uniformTypeId)
+    {
+        if (!$uniformTypeId) {
+            return [];
+        }
+        
+        return UniformComponent::where('uniform_type_id', $uniformTypeId)
+            ->orderBy('component_name')
+            ->get();
     }
 
     public function updateLoanStatus(Request $request, EquipmentLoan $loan)
