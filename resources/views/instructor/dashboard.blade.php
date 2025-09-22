@@ -148,11 +148,9 @@
 
                     <div class="p-6">
                         <!-- Filter Form for Duty Ranking -->
-                        <form method="GET" id="duty-filter-form" class="mb-4 flex justify-center">
-                            <input type="hidden" name="cgpa_intake_year" value="{{ $selectedCgpaIntakeYear }}">
-
+                        <div class="mb-4 flex justify-center">
                             <div class="flex gap-2">
-                                <select name="duty_intake_year" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm">
+                                <select id="duty-intake-year" class="rounded-md border-gray-300 shadow-sm">
                                     @foreach ($intakeOptions as $option)
                                         <option value="{{ $option['year'] }}" {{ $selectedDutyIntakeYear == $option['year'] ? 'selected' : '' }}>
                                             {{ $option['label'] }}
@@ -160,15 +158,26 @@
                                     @endforeach
                                 </select>
 
-                                <select name="sort_order" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm">
+                                <select id="duty-sort-order" class="rounded-md border-gray-300 shadow-sm">
                                     <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Highest First</option>
                                     <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Lowest First</option>
                                 </select>
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- Loading indicator -->
+                        <div id="duty-loading" class="hidden text-center py-4">
+                            <div class="inline-flex items-center">
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Loading...
+                            </div>
+                        </div>
 
                         <!-- Leaderboard Bars -->
-                        <div class="space-y-4 max-h-[600px] overflow-y-auto">
+                        <div id="duty-ranking-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                             @php
                                 $maxCount = $cadets->max('daily_duty_count') ?: 1;
                             @endphp
@@ -225,8 +234,32 @@
                             document.addEventListener('alpine:init', () => {
                                 Alpine.store('modal', {
                                     open: false,
-                                    selected: []
+                                    selected: [],
+                                    cadets: @json($cadetList->map(function($cadet) {
+                                        return [
+                                            'id' => $cadet->id,
+                                            'name' => $cadet->user->name,
+                                            'service_number' => $cadet->service_number
+                                        ];
+                                    }))
                                 });
+                            });
+
+                            // Update modal cadets when AJAX response includes cadet_list
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const originalFetch = window.fetch;
+                                window.fetch = function(...args) {
+                                    return originalFetch.apply(this, args).then(response => {
+                                        if (response.url.includes('instructor/dashboard') && args[1] && args[1].body) {
+                                            response.clone().json().then(data => {
+                                                if (data.cadet_list) {
+                                                    Alpine.store('modal').cadets = data.cadet_list;
+                                                }
+                                            });
+                                        }
+                                        return response;
+                                    });
+                                };
                             });
                         </script>
 
@@ -239,7 +272,7 @@
 
                             <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto relative">
                                 <!-- X Close Button -->
-                                <button 
+                                <button
                                     @click="$store.modal.open = false; $store.modal.selected = []"
                                     class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">
                                     ×
@@ -247,14 +280,14 @@
 
                                 <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
 
-                                <ul class="space-y-2">
-                                    @foreach ($cadetList as $cadet)
-                                        <li class="flex items-center justify-between border p-2 rounded">
-                                            <span>{{ $cadet->user->name }} ({{ $cadet->service_number }})</span>
-                                            <input type="checkbox" x-model="$store.modal.selected" value="{{ $cadet->id }}">
-                                        </li>
-                                    @endforeach
-                                </ul>
+                                <div id="modal-cadet-list" class="space-y-2">
+                                    <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
+                                        <div class="flex items-center justify-between border p-2 rounded">
+                                            <span x-text="cadet.name + ' (' + cadet.service_number + ')'"></span>
+                                            <input type="checkbox" x-model="$store.modal.selected" :value="cadet.id">
+                                        </div>
+                                    </template>
+                                </div>
 
                                 <div class="mt-6 text-center">
                                     <button
@@ -270,7 +303,7 @@
                                                 if (response.ok) {
                                                     $store.modal.open = false;
                                                     $store.modal.selected = [];
-                                                    location.reload();
+                                                    loadDutyRanking();
                                                 }
                                             }).catch(error => {
                                                 console.error('Error:', error);
@@ -286,8 +319,7 @@
                 </div>
 
                 <!-- Cadet CGPA Card -->
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
-                    x-data="{ showDistribution: false }">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
                         <div class="flex justify-between items-center">
                             <div>
@@ -299,53 +331,39 @@
                                 </h2>
                                 <p class="text-gray-600">Academic performance tracking and comparison</p>
                             </div>
-                            <button
-                                @click="showDistribution = !showDistribution"
-                                class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors shadow-md">
-                                <span x-text="showDistribution ? '📊 Individual View' : '📈 Distribution View'"></span>
-                            </button>
                         </div>
                     </div>
 
                     <div class="p-6">
                         <!-- Filter Form for CGPA Comparison -->
-                        <div x-show="!showDistribution" x-transition>
-                            <form method="GET" id="cgpa-filter-form" class="mb-4 flex justify-center gap-2">
-                                <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
-                                <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
-                                <select name="cgpa_intake_year" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm">
-                                    @foreach ($intakeOptions as $option)
-                                        <option value="{{ $option['year'] }}" {{ $selectedCgpaIntakeYear == $option['year'] ? 'selected' : '' }}>
-                                            {{ $option['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                    
-                                <select name="cgpa_sort_order" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm">
-                                    <option value="desc" {{ $cgpaSortOrder == 'desc' ? 'selected' : '' }}>Highest CGPA First</option>
-                                    <option value="asc" {{ $cgpaSortOrder == 'asc' ? 'selected' : '' }}>Lowest CGPA First</option>
-                                </select>
-                            </form>
+                        <div class="mb-4 flex justify-center gap-2">
+                            <select id="cgpa-intake-year" class="rounded-md border-gray-300 shadow-sm">
+                                @foreach ($intakeOptions as $option)
+                                    <option value="{{ $option['year'] }}" {{ $selectedCgpaIntakeYear == $option['year'] ? 'selected' : '' }}>
+                                        {{ $option['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                                
+                            <select id="cgpa-sort-order" class="rounded-md border-gray-300 shadow-sm">
+                                <option value="desc" {{ $cgpaSortOrder == 'desc' ? 'selected' : '' }}>Most Improvement</option>
+                                <option value="asc" {{ $cgpaSortOrder == 'asc' ? 'selected' : '' }}>Most Decline</option>
+                            </select>
                         </div>
 
-                        <!-- Distribution Filter (only intake year) -->
-                        <div x-show="showDistribution" x-transition>
-                            <form method="GET" id="cgpa-distribution-filter-form" class="mb-4 flex justify-center">
-                                <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
-                                <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
-                                <input type="hidden" name="cgpa_sort_order" value="{{ $cgpaSortOrder }}">
-                                <select name="cgpa_intake_year" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm">
-                                    @foreach ($intakeOptions as $option)
-                                        <option value="{{ $option['year'] }}" {{ $selectedCgpaIntakeYear == $option['year'] ? 'selected' : '' }}>
-                                            {{ $option['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </form>
+                        <!-- Loading indicator -->
+                        <div id="cgpa-loading" class="hidden text-center py-4">
+                            <div class="inline-flex items-center">
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Loading...
+                            </div>
                         </div>
 
-                        <!-- CGPA Comparison Bars (Individual View) -->
-                        <div x-show="!showDistribution" x-cloak x-transition class="space-y-4 max-h-[600px] overflow-y-auto">
+                        <!-- CGPA Comparison Bars -->
+                        <div id="cgpa-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                             @php
                                 $maxCgpa = max($cgpaCadets->max('current_cgpa'), $cgpaCadets->max('past_cgpa')) ?: 4.0;
                             @endphp
@@ -407,77 +425,6 @@
                             @endforelse
                         </div>
 
-                        <!-- CGPA Distribution Chart (Distribution View) -->
-                        <div x-show="showDistribution" x-cloak x-transition class="max-h-[600px] overflow-y-auto">
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 h-full">
-                                @foreach ($cgpaDistribution as $range)
-                                    @php
-                                        $MAX_BAR_HEIGHT = 160;
-                                        $pastHeight = $maxCount > 0 ? ($range['past_count'] / $maxCount) * $MAX_BAR_HEIGHT : 0;
-                                        $currentHeight = $maxCount > 0 ? ($range['current_count'] / $maxCount) * $MAX_BAR_HEIGHT : 0;
-                                        $barColor = $range['current_count'] >= $range['past_count'] ? '#10b981' : '#ef4444';
-                                    @endphp
-
-                                    <div class="flex flex-col items-center">
-                                        <div class="flex-1 flex items-end justify-center gap-1 w-full max-h-80">
-                                            
-                                            <!-- Past CGPA Bar -->
-                                            <div class="flex flex-col items-center">
-                                                @if ($range['past_count'] > 0)
-                                                    <div class="w-6 bg-blue-500 rounded-t flex items-end justify-center transition-all duration-300"
-                                                        style="height: {{ $pastHeight }}px; min-height: 20px;">
-                                                        <span class="text-white text-xs font-bold mb-0.5">{{ $range['past_count'] }}</span>
-                                                    </div>
-                                                @else
-                                                    <!-- Empty bar placeholder to keep layout consistent -->
-                                                    <div class="w-6" style="height: 20px;"></div>
-                                                @endif
-                                                <div class="text-xs text-blue-600 font-medium mt-0.5">Past</div>
-                                            </div>
-
-                                            <!-- Current CGPA Bar -->
-                                            <div class="flex flex-col items-center">
-                                                @if ($range['current_count'] > 0)
-                                                    <div class="w-6 rounded-t flex items-end justify-center transition-all duration-300"
-                                                        style="height: {{ $currentHeight }}px; min-height: 20px; background-color: {{ $barColor }};">
-                                                        <span class="text-white text-xs font-bold mb-0.5">{{ $range['current_count'] }}</span>
-                                                    </div>
-                                                @else
-                                                    <!-- Empty bar placeholder to keep layout consistent -->
-                                                    <div class="w-6" style="height: 20px;"></div>
-                                                @endif
-                                                <div class="text-xs font-medium mt-0.5" style="color: {{ $barColor }};">Current</div>
-                                            </div>
-
-                                        </div>
-
-                                        <!-- Range label -->
-                                        <div class="text-xs font-medium text-center mt-2">
-                                            {{ $range['label'] }}
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-
-                            <!-- Distribution Summary -->
-                            <div class="mt-4 text-center">
-                                <h4 class="font-semibold text-lg mb-2">CGPA Distribution Summary</h4>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                    @foreach ($cgpaDistribution as $range)
-                                        <div class="flex justify-between items-center bg-gray-50 px-3 py-2 rounded-lg">
-                                            <span class="font-medium">{{ $range['label'] }}:</span>
-                                            <div class="flex gap-2">
-                                                <span class="text-blue-600">Past: {{ $range['past_count'] }}</span>
-                                                <span class="{{ $range['current_count'] >= $range['past_count'] ? 'text-green-600' : 'text-red-600' }}">
-                                                    Current: {{ $range['current_count'] }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Legend -->
                         <div class="flex justify-center gap-4 text-sm mt-4">
                             <div class="flex items-center gap-2">
@@ -500,22 +447,103 @@
     </div>
 
     <script>
-        // Store scroll position when submitting the filter form
         document.addEventListener('DOMContentLoaded', function () {
-            const filterForm = document.getElementById('duty-filter-form');
+            // AJAX function for duty ranking
+            function loadDutyRanking() {
+                const intakeYear = document.getElementById('duty-intake-year').value;
+                const sortOrder = document.getElementById('duty-sort-order').value;
 
-            if (filterForm) {
-                filterForm.addEventListener('submit', function () {
-                    sessionStorage.setItem('scrollAfterReload', window.scrollY);
+                // Show loading indicator
+                document.getElementById('duty-loading').classList.remove('hidden');
+                document.getElementById('duty-ranking-content').classList.add('opacity-50');
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('duty_intake_year', intakeYear);
+                formData.append('sort_order', sortOrder);
+                formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
+                formData.append('cgpa_sort_order', document.getElementById('cgpa-sort-order').value);
+
+                fetch('{{ route("instructor.dashboard") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Duty ranking AJAX response:', data);
+                    if (data.duty_html) {
+                        document.getElementById('duty-ranking-content').innerHTML = data.duty_html;
+                    }
+                    if (data.cadet_list) {
+                        // Update the modal cadet list
+                        Alpine.store('modal').cadets = data.cadet_list;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading duty ranking:', error);
+                })
+                .finally(() => {
+                    // Hide loading indicator
+                    document.getElementById('duty-loading').classList.add('hidden');
+                    document.getElementById('duty-ranking-content').classList.remove('opacity-50');
                 });
             }
 
-            // Restore scroll position after reload (only once)
-            const savedScroll = sessionStorage.getItem('scrollAfterReload');
-            if (savedScroll !== null) {
-                window.scrollTo({ top: parseInt(savedScroll), behavior: 'instant' });
-                sessionStorage.removeItem('scrollAfterReload');
+            // AJAX function for CGPA analytics
+            function loadCgpaAnalytics() {
+                const intakeYear = document.getElementById('cgpa-intake-year').value;
+                const sortOrder = document.getElementById('cgpa-sort-order').value;
+
+                // Show loading indicator
+                document.getElementById('cgpa-loading').classList.remove('hidden');
+                document.getElementById('cgpa-content').classList.add('opacity-50');
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
+                formData.append('sort_order', document.getElementById('duty-sort-order').value);
+                formData.append('cgpa_intake_year', intakeYear);
+                formData.append('cgpa_sort_order', sortOrder);
+
+                fetch('{{ route("instructor.dashboard") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('CGPA analytics AJAX response:', data);
+                    if (data.cgpa_html) {
+                        document.getElementById('cgpa-content').innerHTML = data.cgpa_html;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading CGPA analytics:', error);
+                })
+                .finally(() => {
+                    // Hide loading indicator
+                    document.getElementById('cgpa-loading').classList.add('hidden');
+                    document.getElementById('cgpa-content').classList.remove('opacity-50');
+                });
             }
+
+            // Event listeners for duty ranking filters
+            document.getElementById('duty-intake-year').addEventListener('change', loadDutyRanking);
+            document.getElementById('duty-sort-order').addEventListener('change', loadDutyRanking);
+
+            // Event listeners for CGPA analytics filters
+            document.getElementById('cgpa-intake-year').addEventListener('change', loadCgpaAnalytics);
+            document.getElementById('cgpa-sort-order').addEventListener('change', loadCgpaAnalytics);
+
+            // Make loadDutyRanking globally accessible for the modal
+            window.loadDutyRanking = loadDutyRanking;
         });
     </script>
 </x-app-layout>
