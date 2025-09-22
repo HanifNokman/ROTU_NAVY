@@ -67,14 +67,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Instructor Dashboard
-    Route::get('/instructor/dashboard', function () {
-        $user = auth()->user();
-        if (!$user || $user->status !== 'accepted') {
-            abort(403, 'Your account is not accepted.');
-        }
-        return view('instructor.dashboard');
-    })->name('instructor.dashboard');
+    // Replace this section in your routes/web.php file:
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
+    });
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/cadet/dashboard', [CadetDashboardController::class, 'index'])->name('cadet.dashboard');
+    });
+
+    Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
 
     // Updated Instructor Cadet Management Routes
     Route::middleware(['auth'])->group(function () {
@@ -266,7 +268,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
+    Route::match(['get', 'post'], '/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
 });
 
 Route::middleware(['auth'])->group(function () {
