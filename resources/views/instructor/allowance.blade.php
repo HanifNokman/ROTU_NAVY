@@ -29,8 +29,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                                 <span>Training Sessions for</span>
-                                <span id="selected-month" class="text-green-600 ml-2">{{ $months[$selectedMonth] }}</span> 
-                                <span id="selected-year" class="text-green-600 ml-1">{{ $selectedYear }}</span>
+                                <span id="selected-month" class="text-green-600 ml-2">{{ $months[$selectedMonth] ?? 'Unknown' }}</span>
+                                <span id="selected-year" class="text-green-600 ml-1">{{ $selectedYear ?? date('Y') }}</span>
                             </h2>
                             <p class="text-gray-600">View and manage cadet allowances for training sessions</p>
                         </div>
@@ -43,7 +43,7 @@
                                     <label for="year" class="text-xs font-medium text-gray-700 mb-1">Year</label>
                                     <select name="year" id="year" class="rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all duration-200 hover:border-green-300 text-sm">
                                         @foreach($years as $year)
-                                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                                            <option value="{{ $year }}" {{ ($selectedYear ?? date('Y')) == $year ? 'selected' : '' }}>
                                                 {{ $year }}
                                             </option>
                                         @endforeach
@@ -55,8 +55,8 @@
                                     <label for="month" class="text-xs font-medium text-gray-700 mb-1">Month</label>
                                     <select name="month" id="month" class="rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all duration-200 hover:border-green-300 text-sm">
                                         @foreach($months as $value => $name)
-                                            <option value="{{ $value }}" {{ $selectedMonth == $value ? 'selected' : '' }}>
-                                                {{ $name }}
+                                            <option value="{{ $value }}" {{ ($selectedMonth ?? date('n')) == $value ? 'selected' : '' }}>
+                                                {{ $name ?? 'Unknown' }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -229,7 +229,7 @@
                                 </svg>
                                 <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-2">No trainings found</h3>
                                 <p class="text-sm text-gray-500">
-                                    No trainings found for <span id="selected-month-empty" class="font-medium text-blue-600">{{ $months[$selectedMonth] ?? 'Unknown' }}</span> <span id="selected-year-empty" class="font-medium text-blue-600">{{ $selectedYear }}</span>.
+                                No trainings found for <span id="selected-month-empty" class="font-medium text-blue-600">{{ $months[$selectedMonth] ?? 'Unknown' }}</span> <span id="selected-year-empty" class="font-medium text-blue-600">{{ $selectedYear ?? date('Y') }}</span>.
                                 </p>
                             </div>
                         </div>
