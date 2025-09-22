@@ -146,6 +146,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Export routes
         Route::get('/inventory/export/uniforms', [InstructorInventoryController::class, 'exportUniformSizes'])->name('inventory.export.uniforms');
         Route::get('/inventory/export/loans', [InstructorInventoryController::class, 'exportEquipmentLoans'])->name('inventory.export.loans');
+        Route::get('/inventory/export/uniform-summary', [InstructorInventoryController::class, 'exportUniformSizeSummary'])->name('inventory.export.uniform-summary');
     });
 
     // Learning Hub routes
