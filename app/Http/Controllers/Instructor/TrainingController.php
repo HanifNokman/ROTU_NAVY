@@ -422,32 +422,34 @@ class TrainingController extends Controller
         }
 
         // Calculate duration and allowance if end_datetime is provided
-        if (isset($validated['end_datetime'])) {
-            $start = Carbon::parse($validated['start_datetime']);
-            $end = Carbon::parse($validated['end_datetime']);
-            
-            // Check if it's single-day or multi-day training
-            $isSingleDay = $start->toDateString() === $end->toDateString();
-            
-            if ($isSingleDay) {
-                // Single-day training: calculate hours and hourly allowance
-                $hours = max(2, min(10, $start->diffInHours($end)));
-                $validated['duration_hours'] = $hours;
-                $validated['allowance_amount'] = $hours * 8;
-                $validated['allowance_type'] = 'hourly';
-            } else {
-                // Multi-day training: calculate days and daily allowance
-                $days = $start->diffInDays($end) + 1;
-                $validated['duration_hours'] = null; // No duration for multi-day
-                $validated['allowance_amount'] = $days * 50;
-                $validated['allowance_type'] = 'daily';
-            }
-        } else {
-            // No end date specified
-            $validated['duration_hours'] = null;
-            $validated['allowance_amount'] = null;
-            $validated['allowance_type'] = null;
-        }
+if (isset($validated['end_datetime'])) {
+    $start = Carbon::parse($validated['start_datetime']);
+    $end = Carbon::parse($validated['end_datetime']);
+    
+    // Check if it's single-day or multi-day training
+    $isSingleDay = $start->toDateString() === $end->toDateString();
+    
+    if ($isSingleDay) {
+        // Single-day training: calculate hours with min 2, max 10 (rounded to nearest integer)
+        $calculatedHours = (int) round($start->diffInHours($end, false));
+        $hours = max(2, min(10, $calculatedHours));
+        
+        $validated['duration_hours'] = $hours;
+        $validated['allowance_amount'] = $hours * 8;
+        $validated['allowance_type'] = 'hourly';
+    } else {
+        // Multi-day training: calculate days and daily allowance
+        $days = $start->diffInDays($end) + 1;
+        $validated['duration_hours'] = null; // No duration for multi-day
+        $validated['allowance_amount'] = $days * 50;
+        $validated['allowance_type'] = 'daily';
+    }
+} else {
+    // No end date specified
+    $validated['duration_hours'] = null;
+    $validated['allowance_amount'] = null;
+    $validated['allowance_type'] = null;
+}
 
         $training = Training::create($validated);
 
@@ -485,33 +487,35 @@ class TrainingController extends Controller
             $validated['status'] = $this->determineAutoStatus($validated['start_datetime'], $validated['end_datetime'] ?? null);
         }
 
-        // Recalculate duration and allowance if end_datetime is provided
-        if (isset($validated['end_datetime'])) {
-            $start = Carbon::parse($validated['start_datetime']);
-            $end = Carbon::parse($validated['end_datetime']);
-            
-            // Check if it's single-day or multi-day training
-            $isSingleDay = $start->toDateString() === $end->toDateString();
-            
-            if ($isSingleDay) {
-                // Single-day training: calculate hours and hourly allowance
-                $hours = max(2, min(10, $start->diffInHours($end)));
-                $validated['duration_hours'] = $hours;
-                $validated['allowance_amount'] = $hours * 8;
-                $validated['allowance_type'] = 'hourly';
-            } else {
-                // Multi-day training: calculate days and daily allowance
-                $days = $start->diffInDays($end) + 1;
-                $validated['duration_hours'] = null; // No duration for multi-day
-                $validated['allowance_amount'] = $days * 50;
-                $validated['allowance_type'] = 'daily';
-            }
-        } else {
-            // No end date specified
-            $validated['duration_hours'] = null;
-            $validated['allowance_amount'] = null;
-            $validated['allowance_type'] = null;
-        }
+// Calculate duration and allowance if end_datetime is provided
+if (isset($validated['end_datetime'])) {
+    $start = Carbon::parse($validated['start_datetime']);
+    $end = Carbon::parse($validated['end_datetime']);
+    
+    // Check if it's single-day or multi-day training
+    $isSingleDay = $start->toDateString() === $end->toDateString();
+    
+    if ($isSingleDay) {
+        // Single-day training: calculate hours with min 2, max 10 (rounded to nearest integer)
+        $calculatedHours = (int) round($start->diffInHours($end, false));
+        $hours = max(2, min(10, $calculatedHours));
+        
+        $validated['duration_hours'] = $hours;
+        $validated['allowance_amount'] = $hours * 8;
+        $validated['allowance_type'] = 'hourly';
+    } else {
+        // Multi-day training: calculate days and daily allowance
+        $days = $start->diffInDays($end) + 1;
+        $validated['duration_hours'] = null; // No duration for multi-day
+        $validated['allowance_amount'] = $days * 50;
+        $validated['allowance_type'] = 'daily';
+    }
+} else {
+    // No end date specified
+    $validated['duration_hours'] = null;
+    $validated['allowance_amount'] = null;
+    $validated['allowance_type'] = null;
+}
 
         $training->update($validated);
 
@@ -576,55 +580,53 @@ class TrainingController extends Controller
     }
 
     /**
-     * End a training session
-     */
-    public function endTraining(Training $training): JsonResponse
-    {
-        if ($training->end_datetime) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Training session has already ended.'
-            ]);
-        }
-
-        // Use Training model's roundToNearestHour method
-        $now = Carbon::now();
-        $roundedEnd = $now->copy()->minute(0)->second(0);
-        if ($now->minute >= 30) {
-            $roundedEnd->addHour();
-        }
-        
-        // Ensure end time is after start time
-        if ($roundedEnd->lte($training->start_datetime)) {
-            $roundedEnd = $training->start_datetime->copy()->addHour();
-        }
-
-        $training->end_datetime = $roundedEnd;
-        $training->status = 'Completed';
-        
-        // Calculate duration and allowance
-        $start = $training->start_datetime;
-        $end = $training->end_datetime;
-        $isSingleDay = $start->toDateString() === $end->toDateString();
-        if ($isSingleDay) {
-            $hours = max(2, min(10, $start->diffInHours($end)));
-            $training->duration_hours = $hours;
-            $training->allowance_amount = round($hours * 8, 2);
-            $training->allowance_type = 'hourly';
-        } else {
-            $days = $start->diffInDays($end) + 1;
-            $training->duration_hours = null;
-            $training->allowance_amount = round($days * 50, 2);
-            $training->allowance_type = 'daily';
-        }
-        $training->save();
-
+ * End a training session
+ */
+public function endTraining(Training $training): JsonResponse
+{
+    if ($training->end_datetime) {
         return response()->json([
-            'success' => true,
-            'message' => 'Training session ended successfully!',
-            'training' => $training->fresh()
+            'success' => false,
+            'message' => 'Training session has already ended.'
         ]);
     }
+
+    // Set end time to current date and time (no rounding)
+    $training->end_datetime = Carbon::now();
+    $training->status = 'Completed';
+    
+    // Calculate duration and allowance
+    $start = $training->start_datetime;
+    $end = $training->end_datetime;
+    
+    // Check if training spans multiple days
+    $isSingleDay = $start->toDateString() === $end->toDateString();
+    
+    if ($isSingleDay) {
+        // Single-day training: calculate hours with min 2, max 10 (rounded to nearest integer)
+        $calculatedHours = (int) round($start->diffInHours($end, false));
+        $hours = max(2, min(10, $calculatedHours));
+        
+        $training->duration_hours = $hours;
+        $training->allowance_amount = $hours * 8;
+        $training->allowance_type = 'hourly';
+    } else {
+        // Multi-day training: calculate days
+        $days = $start->diffInDays($end) + 1; // +1 to include both start and end days
+        
+        $training->duration_hours = null;
+        $training->allowance_amount = $days * 50;
+        $training->allowance_type = 'daily';
+    }
+    
+    $training->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Training session ended successfully!',
+        'training' => $training->fresh()
+    ]);
+}
 
     /**
      * Generate QR code for attendance

@@ -92,19 +92,29 @@ class Training extends Model
         }
     }
 
-    /**
-     * Calculate duration in hours between start and end, using rounded times
-     */
-    public function calculateRoundedDuration(): ?int
-    {
-        if (!$this->end_datetime) {
-            return null;
-        }
-        $start = self::roundToNearestHour($this->start_datetime);
-        $end = self::roundToNearestHour($this->end_datetime);
-        $hours = $start->diffInHours($end);
-        return max(2, min(10, $hours));
+/**
+ * Calculate duration in hours between start and end, with min 2, max 10 for single-day
+ */
+public function calculateRoundedDuration(): ?int
+{
+    if (!$this->end_datetime) {
+        return null;
     }
+    
+    $start = $this->start_datetime;
+    $end = $this->end_datetime;
+    
+    // Check if training spans multiple days
+    $isSingleDay = $start->toDateString() === $end->toDateString();
+    
+    if (!$isSingleDay) {
+        return null; // Multi-day trainings don't have duration_hours
+    }
+    
+    // Single-day training: calculate with min 2, max 10 (rounded to nearest integer)
+    $calculatedHours = (int) round($start->diffInHours($end, false));
+    return max(2, min(10, $calculatedHours));
+}
 
     protected $casts = [
         'start_datetime' => 'datetime',
