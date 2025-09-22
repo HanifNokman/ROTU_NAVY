@@ -10,8 +10,15 @@ class PendingVerificationController extends Controller
 {
     public function index()
     {
-        $users = User::where('status', 'pending')->get();
-        return view('instructor.pending-verification', compact('users'));
+        $pendingCadets = User::where('status', 'pending')
+            ->where('role', 'cadet')
+            ->get();
+
+        $pendingInstructors = User::where('status', 'pending')
+            ->where('role', 'instructor')
+            ->get();
+
+        return view('instructor.pending-verification', compact('pendingCadets', 'pendingInstructors'));
     }
 
     public function accept(User $user)
