@@ -343,64 +343,6 @@ class TrainingController extends Controller
     }
 
     /**
-     * Record QR code attendance
-     */
-    public function recordQrAttendance(Request $request, Training $training): JsonResponse
-    {
-        $validated = $request->validate([
-            'token' => 'required|string',
-            'timestamp' => 'required|integer',
-            'cadet_id' => 'required|integer|exists:cadets,id'
-        ]);
-
-        // Verify QR code token
-        $expectedToken = hash('sha256', $training->id . $validated['timestamp'] . config('app.key'));
-        
-        if ($validated['token'] !== $expectedToken) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid QR code'
-            ], 400);
-        }
-
-        // Check if token is still valid (within 60 seconds)
-        $currentTimestamp = floor(time() / 30);
-        if (abs($currentTimestamp - $validated['timestamp']) > 2) {
-            return response()->json([
-                'success' => false,
-                'message' => 'QR code has expired'
-            ], 400);
-        }
-
-        try {
-            TrainingAttendance::updateOrCreate([
-                'training_id' => $training->id,
-                'cadet_id' => $validated['cadet_id']
-            ], [
-                'present' => true,
-                'method' => 'qr_code',
-                'marked_at' => Carbon::now()
-            ]);
-
-            $cadet = \App\Models\Cadet::with('user')->find($validated['cadet_id']);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Attendance recorded successfully',
-                'cadet' => [
-                    'name' => $cadet->user->name ?? 'Unknown',
-                    'matric_no' => $cadet->matric_no
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to record attendance: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
      * Store a new training session
      */
     public function store(Request $request): JsonResponse
@@ -627,29 +569,6 @@ public function endTraining(Training $training): JsonResponse
         'training' => $training->fresh()
     ]);
 }
-
-    /**
-     * Generate QR code for attendance
-     */
-    public function generateQrCode(Training $training): JsonResponse
-    {
-        // Generate a unique token that changes every 30 seconds
-        $timestamp = floor(time() / 30);
-        $token = hash('sha256', $training->id . $timestamp . config('app.key'));
-        
-        // Create QR data
-        $qrData = [
-            'training_id' => $training->id,
-            'token' => $token,
-            'timestamp' => $timestamp
-        ];
-
-        return response()->json([
-            'success' => true,
-            'qr_data' => base64_encode(json_encode($qrData)),
-            'expires_in' => 30 - (time() % 30) // Seconds until next refresh
-        ]);
-    }
 
     /**
      * Delete a training session
