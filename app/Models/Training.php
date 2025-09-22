@@ -142,6 +142,59 @@ public function calculateRoundedDuration(): ?int
         return $this->start_datetime->format('h:i A');
     }
 
+/**
+ * Get formatted date range for display
+ */
+public function getFormattedDateRangeAttribute(): string
+{
+    if (!$this->end_datetime) {
+        return $this->formatted_start_date;
+    }
+    
+    $startDate = $this->start_datetime->format('M d, Y');
+    $endDate = $this->end_datetime->format('M d, Y');
+    
+    // If same day, show only start date
+    if ($this->start_datetime->toDateString() === $this->end_datetime->toDateString()) {
+        return $startDate;
+    }
+    
+    // If different days, show range
+    return $startDate . ' - ' . $endDate;
+}
+
+/**
+ * Get formatted time range for display
+ */
+public function getFormattedTimeRangeAttribute(): string
+{
+    $startTime = $this->start_datetime->format('h:i A');
+    
+    if (!$this->end_datetime) {
+        return $startTime;
+    }
+    
+    // If same day, show time range
+    if ($this->start_datetime->toDateString() === $this->end_datetime->toDateString()) {
+        return $startTime . ' - ' . $this->end_datetime->format('h:i A');
+    }
+    
+    // If multi-day, show start time only (since it spans days)
+    return $startTime;
+}
+
+/**
+ * Check if training is multi-day
+ */
+public function getIsMultiDayAttribute(): bool
+{
+    if (!$this->end_datetime) {
+        return false;
+    }
+    
+    return $this->start_datetime->toDateString() !== $this->end_datetime->toDateString();
+}
+
     /**
      * Get status badge color
      */
