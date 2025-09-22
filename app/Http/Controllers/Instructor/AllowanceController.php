@@ -76,6 +76,9 @@ class AllowanceController extends Controller
         ));
     }
     /**
+         * Render only the training list content for AJAX requests
+         */
+        /**
      * Render only the training list content for AJAX requests
      */
     private function renderTrainingListContent($trainings, $months, $selectedYear, $selectedMonth)
@@ -101,16 +104,19 @@ class AllowanceController extends Controller
                 if($training->end_datetime) {
                     $start = \Carbon\Carbon::parse($training->start_datetime);
                     $end = \Carbon\Carbon::parse($training->end_datetime);
-                    $diffInMinutes = $start->diffInMinutes($end);
-                    $hours = floor($diffInMinutes / 60);
-                    $minutes = $diffInMinutes % 60;
                     
-                    if ($hours > 0 && $minutes > 0) {
-                        $duration = $hours . 'h ' . $minutes . 'm';
-                    } elseif ($hours > 0) {
-                        $duration = $hours . 'h';
+                    // Check if multi-day
+                    $isMultiDay = $start->toDateString() !== $end->toDateString();
+                    
+                    if ($isMultiDay) {
+                        $days = $start->diffInDays($end) + 1;
+                        $duration = $days . ' days';
                     } else {
-                        $duration = $minutes . 'm';
+                        // Single day - calculate hours
+                        $diffInMinutes = $start->diffInMinutes($end);
+                        $calculatedHours = (int) round($diffInMinutes / 60);
+                        $hours = max(2, min(10, $calculatedHours));
+                        $duration = $hours . 'h';
                     }
                 } else {
                     $duration = 'N/A';
@@ -242,72 +248,31 @@ class AllowanceController extends Controller
     {
         $training = Training::with(['attendances.cadet.user'])->findOrFail($trainingId);
         $selectedIntake = $request->get('intake');
-        
-        // Get present attendances
-        $query = $training->attendances()->where('present', true)->with(['cadet.user']);
-        
+
+        // Get all present attendances for this training
+        $allPresentAttendances = $training->attendances()
+            ->where('present', true)
+            ->with(['cadet.user'])
+            ->get();
+
         // Filter by intake if selected
-        if ($selectedIntake) {
-            $query->whereHas('cadet', function($q) use ($selectedIntake) {
-                $intakeYear = $this->parseIntakeToYear($selectedIntake);
-                if ($intakeYear) {
-                    $q->where('intake_year', $intakeYear);
-                }
-            });
-        }
-        
-        $presentAttendances = $query->get();
-        
-        // Get available intakes from present cadets
-        // Get present attendances
-        $presentAttendances = $training->attendances()->where('present', true)->with(['cadet.user'])->get();
+        $filteredAttendances = $this->filterAttendancesByIntake($allPresentAttendances, $selectedIntake);
 
-        // Get available intakes and their years
-        $intakeData = $presentAttendances->map(function($attendance) {
-            if ($attendance->cadet && $attendance->cadet->intake_year) {
-                $intakeNum = $attendance->cadet->intake_year - 2011;
-                $label = 'Intake - ' . $intakeNum;
-                return [
-                    'label' => $label,
-                    'year' => $attendance->cadet->intake_year
-                ];
-            }
-            return null;
-        })->filter();
+        // Get available intakes
+        $availableIntakes = $this->getAvailableIntakes($allPresentAttendances);
+        $defaultIntake = $this->getDefaultIntake($allPresentAttendances);
 
-        // Unique intakes by label
-        $availableIntakes = $intakeData->unique('label')->sortBy('year')->values()->pluck('label');
+        // Calculate allowance
+        $allowanceData = $this->calculateAllowance($training, $filteredAttendances->count());
 
-        // Default intake: lowest intake_year
-        $defaultIntake = $intakeData->sortBy('year')->first();
-        $defaultIntakeLabel = $defaultIntake ? $defaultIntake['label'] : null;
-        
-        // Calculate allowance based on training type
-        $allowanceRate = ($training->allowance_type === 'daily') ? 50 : 8; // RM 50 for daily, RM 8 for hourly
-        $totalCadets = $presentAttendances->count();
-        $totalAllowance = $totalCadets * $allowanceRate;
-        
+        // Format cadet data
+        $cadetsData = $this->formatCadetsData($filteredAttendances);
+
         return response()->json([
-            'cadets' => $presentAttendances->sortBy(function($attendance) {
-                return $attendance->cadet->service_number ?? '';
-            })->values()->map(function($attendance) {
-                $intakeNum = $attendance->cadet && $attendance->cadet->intake_year ? $attendance->cadet->intake_year - 2011 : null;
-                $intakeLabel = $attendance->cadet && $attendance->cadet->intake_year ? 'Intake - ' . $intakeNum : 'N/A';
-                return [
-                    'service_number' => $attendance->cadet->service_number ?? 'N/A',
-                    'rank' => $attendance->cadet->rank ?? 'N/A',
-                    'name' => $attendance->cadet->user->name ?? 'N/A',
-                    'bank_account' => $attendance->cadet->bank_account_number ?? 'N/A',
-                    'intake' => $intakeLabel
-                ];
-            }),
-            'summary' => [
-                'total_cadets' => $totalCadets,
-                'allowance_rate' => $allowanceRate,
-                'total_allowance' => $totalAllowance
-            ],
+            'cadets' => $cadetsData,
+            'summary' => $allowanceData,
             'available_intakes' => $availableIntakes,
-            'default_intake' => $defaultIntakeLabel,
+            'default_intake' => $defaultIntake,
             'training' => [
                 'title' => $training->title,
                 'date' => $training->start_datetime->format('M d, Y'),
@@ -315,7 +280,165 @@ class AllowanceController extends Controller
             ]
         ]);
     }
-    
+
+    /**
+     * Filter attendances by intake
+     */
+    private function filterAttendancesByIntake($attendances, $selectedIntake)
+    {
+        if (!$selectedIntake) {
+            return $attendances;
+        }
+        
+        $intakeYear = $this->parseIntakeToYear($selectedIntake);
+        if (!$intakeYear) {
+            return $attendances;
+        }
+        
+        return $attendances->filter(function($attendance) use ($intakeYear) {
+            return $attendance->cadet && $attendance->cadet->intake_year === $intakeYear;
+        });
+    }
+
+    /**
+     * Get available intakes from attendances
+     */
+    private function getAvailableIntakes($attendances)
+    {
+        $intakeData = $attendances->map(function($attendance) {
+            if (!$attendance->cadet || !$attendance->cadet->intake_year) {
+                return null;
+            }
+            
+            $intakeNum = $attendance->cadet->intake_year - 2011;
+            return [
+                'label' => 'Intake - ' . $intakeNum,
+                'year' => $attendance->cadet->intake_year
+            ];
+        })->filter();
+
+        return $intakeData->unique('label')
+            ->sortBy('year')
+            ->values()
+            ->pluck('label')
+            ->toArray();
+    }
+
+    /**
+     * Get default intake (lowest year)
+     */
+    private function getDefaultIntake($attendances)
+    {
+        $intakeData = $attendances->map(function($attendance) {
+            if (!$attendance->cadet || !$attendance->cadet->intake_year) {
+                return null;
+            }
+            
+            $intakeNum = $attendance->cadet->intake_year - 2011;
+            return [
+                'label' => 'Intake - ' . $intakeNum,
+                'year' => $attendance->cadet->intake_year
+            ];
+        })->filter();
+
+        $defaultIntake = $intakeData->sortBy('year')->first();
+        return $defaultIntake ? $defaultIntake['label'] : null;
+    }
+
+/**
+ * Calculate allowance with base rates and duration breakdown
+ */
+private function calculateAllowance($training, $totalCadets)
+{
+    // PRIORITIZE: Use allowance_type from database first
+    $allowanceType = $training->allowance_type;
+
+    // If no allowance_type is set, determine from dates
+    if (!$allowanceType) {
+        if ($training->start_datetime && $training->end_datetime) {
+            $startDate = $training->start_datetime->toDateString();
+            $endDate = $training->end_datetime->toDateString();
+            $allowanceType = ($startDate !== $endDate) ? 'daily' : 'hourly';
+        } else {
+            $allowanceType = 'hourly'; // Default to hourly if no end_datetime
+        }
+    }
+
+    // Calculate duration based on allowance type
+    if ($allowanceType === 'daily') {
+        // Multi-day training: RM50 per day
+        $days = 1;
+        if ($training->start_datetime && $training->end_datetime) {
+            $days = $training->start_datetime->diffInDays($training->end_datetime) + 1;
+        }
+
+        $baseRate = 50;
+        $totalAllowance = $totalCadets * $baseRate * $days;
+
+        return [
+            'total_cadets' => $totalCadets,
+            'base_rate' => $baseRate,
+            'duration_value' => $days,
+            'duration_unit' => 'days',
+            'total_allowance' => $totalAllowance,
+            'allowance_type' => 'daily',
+            'is_multi_day' => true
+        ];
+    } else {
+        // Single-day training: RM8 per hour
+        $hours = 2; // default minimum
+
+        if ($training->start_datetime && $training->end_datetime) {
+            $diffInMinutes = $training->start_datetime->diffInMinutes($training->end_datetime);
+            $calculatedHours = round($diffInMinutes / 60);
+            $hours = max(2, min(10, $calculatedHours)); // Min 2, Max 10
+        }
+
+        // Use duration_hours from database if available
+        if ($training->duration_hours) {
+            $hours = $training->duration_hours;
+        }
+
+        $baseRate = 8;
+        $totalAllowance = $totalCadets * $baseRate * $hours;
+
+        return [
+            'total_cadets' => $totalCadets,
+            'base_rate' => $baseRate,
+            'duration_value' => $hours,
+            'duration_unit' => 'hours',
+            'total_allowance' => $totalAllowance,
+            'allowance_type' => 'hourly',
+            'is_multi_day' => false
+        ];
+    }
+}
+
+    /**
+     * Format cadets data for response
+     */
+    private function formatCadetsData($attendances)
+    {
+        return $attendances->sortBy(function($attendance) {
+            return $attendance->cadet->service_number ?? '';
+        })->values()->map(function($attendance) {
+            $intakeNum = $attendance->cadet && $attendance->cadet->intake_year ? 
+                $attendance->cadet->intake_year - 2011 : null;
+            $intakeLabel = $intakeNum ? 'Intake - ' . $intakeNum : 'N/A';
+            
+            return [
+                'service_number' => $attendance->cadet->service_number ?? 'N/A',
+                'rank' => $attendance->cadet->rank ?? 'N/A',
+                'name' => $attendance->cadet->user->name ?? 'N/A',
+                'bank_account' => $attendance->cadet->bank_account_number ?? 'N/A',
+                'intake' => $intakeLabel
+            ];
+        })->toArray();
+    }
+
+    /**
+     * Parse intake label to year
+     */
     private function parseIntakeToYear($intakeLabel)
     {
         // Extract number from "Intake - 14" format and convert to year

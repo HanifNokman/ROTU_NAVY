@@ -92,10 +92,22 @@
                                                     <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                     </svg>
-                                                    {{ $training->start_datetime->format('d/m/Y') }}
+                                                    @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
+                                                        <!-- Multi-day training -->
+                                                        <span>{{ $training->start_datetime->format('d/m/Y') }} - {{ $training->end_datetime->format('d/m/Y') }}</span>
+                                                    @else
+                                                        <!-- Single day training -->
+                                                        <span>{{ $training->start_datetime->format('d/m/Y') }}</span>
+                                                    @endif
                                                 </div>
                                                 <div class="text-xs text-gray-500">
-                                                    {{ $training->start_datetime->format('h:i A') }}
+                                                    @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
+                                                        <!-- Multi-day training -->
+                                                        <span>{{ $training->start_datetime->format('h:i A') }} - {{ $training->end_datetime->format('h:i A') }}</span>
+                                                    @else
+                                                        <!-- Single day training -->
+                                                        <span>{{ $training->start_datetime->format('h:i A') }}</span>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <!-- Third column: Duration -->
@@ -105,16 +117,19 @@
                                                     if($training->end_datetime) {
                                                         $start = \Carbon\Carbon::parse($training->start_datetime);
                                                         $end = \Carbon\Carbon::parse($training->end_datetime);
-                                                        $diffInMinutes = $start->diffInMinutes($end);
-                                                        $hours = floor($diffInMinutes / 60);
-                                                        $minutes = $diffInMinutes % 60;
                                                         
-                                                        if ($hours > 0 && $minutes > 0) {
-                                                            $duration = $hours . 'h ' . $minutes . 'm';
-                                                        } elseif ($hours > 0) {
-                                                            $duration = $hours . 'h';
+                                                        // Check if multi-day
+                                                        $isMultiDay = $start->toDateString() !== $end->toDateString();
+                                                        
+                                                        if ($isMultiDay) {
+                                                            $days = $start->diffInDays($end) + 1;
+                                                            $duration = $days . ' days';
                                                         } else {
-                                                            $duration = $minutes . 'm';
+                                                            // Single day - calculate hours
+                                                            $diffInMinutes = $start->diffInMinutes($end);
+                                                            $calculatedHours = (int) round($diffInMinutes / 60);
+                                                            $hours = max(2, min(10, $calculatedHours));
+                                                            $duration = $hours . 'h';
                                                         }
                                                     } else {
                                                         $duration = 'N/A';
@@ -137,23 +152,35 @@
                                 
                                     <!-- Training Details (Hidden by default) -->
                                     <div class="hidden training-details" id="details-{{ $training->id }}">
-                                        <!-- Intake Filter Row -->
-                                        <div class="px-3 sm:px-4 py-2 sm:py-3 bg-white border-b border-gray-100">
-                                            <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                                                <label for="intake-{{ $training->id }}" class="text-xs font-medium text-gray-700 flex items-center flex-shrink-0">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-                                                    </svg>
-                                                    Filter by Intake:
-                                                </label>
-                                                <select id="intake-{{ $training->id }}" 
-                                                        class="text-xs sm:text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-2 py-1 w-full sm:w-auto"
-                                                        onchange="filterByIntake({{ $training->id }})">
-                                                    <option value="">All Intakes</option>
-                                                </select>
+                                        <!-- Intake Filter Row - Enhanced Version -->
+                                        <div class="px-4 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <label for="intake-{{ $training->id }}" class="text-sm font-semibold text-gray-800 block">Filter Cadets</label>
+                                                        <p class="text-xs text-gray-600">Select intake to view specific cadets</p>
+                                                    </div>
+                                                </div>
+                                                <div class="relative">
+                                                    <select id="intake-{{ $training->id }}" 
+                                                            class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 shadow-sm hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 min-w-[180px]"
+                                                            onchange="filterByIntake({{ $training->id }})">
+                                                        <option value="">All Intakes</option>
+                                                    </select>
+                                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    
+                                                                            
                                         <!-- Cadet List -->
                                         <div class="p-3 sm:p-4 bg-white">
                                             <div class="overflow-x-auto -mx-3 sm:mx-0">
@@ -346,9 +373,9 @@
             const tableBody = document.querySelector(`#cadets-table-${trainingId} tbody`);
             const intakeSelect = document.getElementById(`intake-${trainingId}`);
             const summary = document.getElementById(`summary-${trainingId}`);
-            
+
             if (!tableBody) return;
-            
+
             // Show loading state with modern styling
             tableBody.innerHTML = `
                 <tr>
@@ -363,13 +390,13 @@
                     </td>
                 </tr>
             `;
-            
+
             fetch(`/instructor/allowance/training/${trainingId}/details`)
                 .then(response => response.json())
                 .then(data => {
                     // Store original data for filtering
                     trainingData[trainingId] = data;
-                    
+
                     // Populate intake filter
                     if (intakeSelect) {
                         intakeSelect.innerHTML = '<option value="">All Intakes</option>';
@@ -390,11 +417,9 @@
                         cadetsToShow = data.cadets.filter(cadet => cadet.intake === data.default_intake);
                     }
                     displayCadets(trainingId, cadetsToShow);
-                    displaySummary(trainingId, {
-                        total_cadets: cadetsToShow.length,
-                        allowance_rate: data.summary.allowance_rate,
-                        total_allowance: cadetsToShow.length * data.summary.allowance_rate
-                    });
+
+                    // Use the summary data from the server instead of calculating locally
+                    displaySummary(trainingId, data.summary);
 
                     loadedTrainings.add(trainingId);
                 })
@@ -465,74 +490,122 @@
             tableBody.innerHTML = rows;
         }
 
-        function displaySummary(trainingId, summary) {
-            const summaryDiv = document.getElementById(`summary-${trainingId}`);
-            
-            if (!summaryDiv) return;
-            
-            summaryDiv.innerHTML = `
-                <div class="flex items-center mb-4">
-                    <svg class="w-5 h-5 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
-                    <h4 class="text-sm font-semibold text-gray-800">Allowance Summary</h4>
-                </div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="text-center bg-white rounded-lg p-3 shadow-sm border border-blue-200">
-                        <div class="text-lg font-bold text-blue-600">${summary.total_cadets}</div>
-                        <div class="text-xs text-gray-600 flex items-center justify-center">
-                            <i class="fas fa-users mr-1"></i>Total Cadets
-                        </div>
-                    </div>
-                    <div class="text-center bg-white rounded-lg p-3 shadow-sm border border-green-200">
-                        <div class="text-lg font-bold text-green-600">RM ${summary.allowance_rate}</div>
-                        <div class="text-xs text-gray-600 flex items-center justify-center">
-                            <i class="fas fa-money-bill mr-1"></i>Rate per Cadet
-                        </div>
-                    </div>
-                    <div class="text-center bg-white rounded-lg p-3 shadow-sm border border-purple-200">
-                        <div class="text-lg font-bold text-purple-600">RM ${summary.total_allowance}</div>
-                        <div class="text-xs text-gray-600 flex items-center justify-center">
-                            <i class="fas fa-calculator mr-1"></i>Total Allowance
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-4 p-3 bg-white rounded-lg border border-purple-200 shadow-sm">
-                    <p class="text-sm text-gray-700 text-center flex items-center justify-center">
-                        <i class="fas fa-equals mr-2 text-purple-500"></i>
-                        <span class="font-semibold">${summary.total_cadets}</span> cadets × 
-                        <span class="font-semibold">RM ${summary.allowance_rate}</span> = 
-                        <span class="font-semibold text-purple-600">RM ${summary.total_allowance}</span>
-                    </p>
-                </div>
-            `;
-        }
+function displaySummary(trainingId, summary) {
+    const summaryDiv = document.getElementById(`summary-${trainingId}`);
 
-        function filterByIntake(trainingId) {
-            const intakeSelect = document.getElementById(`intake-${trainingId}`);
-            const selectedIntake = intakeSelect ? intakeSelect.value : '';
-            const originalData = trainingData[trainingId];
-            
-            if (!originalData) return;
-            
-            let filteredCadets = originalData.cadets;
-            
-            // Filter cadets by intake if selected
-            if (selectedIntake) {
-                filteredCadets = originalData.cadets.filter(cadet => cadet.intake === selectedIntake);
-            }
-            
-            // Update display
-            displayCadets(trainingId, filteredCadets);
-            
-            // Update summary with filtered data
-            const filteredSummary = {
-                total_cadets: filteredCadets.length,
-                allowance_rate: originalData.summary.allowance_rate,
-                total_allowance: filteredCadets.length * originalData.summary.allowance_rate
-            };
-            
-            displaySummary(trainingId, filteredSummary);
-        }
+    if (!summaryDiv) return;
+
+    // Get values from summary with better defaults
+    const totalCadets = summary.total_cadets || 0;
+    const baseRate = summary.base_rate || 0;
+    const durationValue = summary.duration_value || 0;
+    const durationUnit = summary.duration_unit || 'hours';
+    const totalAllowance = summary.total_allowance || 0;
+    const allowanceType = summary.allowance_type || 'hourly';
+    const isMultiDay = summary.is_multi_day || false;
+
+    // Create the calculation formula based on allowance type
+    let calculationFormula = '';
+    let rateLabel = '';
+    let typeIcon = '';
+
+    if (allowanceType === 'daily' || isMultiDay) {
+        // Daily: total_cadets × RM50 × days = total_allowance
+        calculationFormula = `<span class="font-semibold">${totalCadets}</span> <span class="ml-1">cadets</span> × <span class="font-semibold">RM ${baseRate}</span> × <span class="font-semibold">${durationValue} ${durationUnit}</span> = <span class="font-semibold text-purple-600">RM ${totalAllowance}</span>`;
+        rateLabel = `RM ${baseRate}/day`;
+        typeIcon = '(daily)'; // Calendar icon for daily
+    } else {
+        // Hourly: total_cadets × RM8 × hours = total_allowance
+        calculationFormula = `<span class="font-semibold">${totalCadets}</span> <span class="ml-1">cadets</span> × <span class="font-semibold">RM ${baseRate}</span> × <span class="font-semibold">${durationValue} ${durationUnit}</span> = <span class="font-semibold text-purple-600">RM ${totalAllowance}</span>`;
+        rateLabel = `RM ${baseRate}/hour`;
+        typeIcon = '(hourly)'; // Clock icon for hourly
+    }
+
+    // Format numbers for better display
+    const formattedTotal = new Intl.NumberFormat().format(totalAllowance);
+
+    summaryDiv.innerHTML = `
+        <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <h4 class="text-sm font-semibold text-gray-800">Allowance Summary ${typeIcon}</h4>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="text-center bg-white rounded-lg p-3 shadow-sm border border-blue-200">
+                <div class="text-lg font-bold text-blue-600">${totalCadets}</div>
+                <div class="text-xs text-gray-600 flex items-center justify-center">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    </svg>
+                    Total Cadets
+                </div>
+            </div>
+            <div class="text-center bg-white rounded-lg p-3 shadow-sm border border-green-200">
+                <div class="text-lg font-bold text-green-600">${rateLabel}</div>
+                <div class="text-xs text-gray-600 flex items-center justify-center">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                    </svg>
+                    Base Rate
+                </div>
+            </div>
+            <div class="text-center bg-white rounded-lg p-3 shadow-sm border border-purple-200">
+                <div class="text-lg font-bold text-purple-600">RM ${formattedTotal}</div>
+                <div class="text-xs text-gray-600 flex items-center justify-center">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Total Allowance
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 p-3 bg-white rounded-lg border border-purple-200 shadow-sm">
+            <div class="text-sm text-gray-700 text-center">
+                <div class="flex items-center justify-center mb-2">
+                    <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span class="font-medium">Calculation</span>
+                </div>
+                <div class="text-xs sm:text-sm">
+                    ${calculationFormula}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function filterByIntake(trainingId) {
+    const intakeSelect = document.getElementById(`intake-${trainingId}`);
+    const selectedIntake = intakeSelect ? intakeSelect.value : '';
+    const originalData = trainingData[trainingId];
+    
+    if (!originalData) return;
+    
+    let filteredCadets = originalData.cadets;
+    
+    // Filter cadets by intake if selected
+    if (selectedIntake) {
+        filteredCadets = originalData.cadets.filter(cadet => cadet.intake === selectedIntake);
+    }
+    
+    // Update display
+    displayCadets(trainingId, filteredCadets);
+    
+    // Recalculate allowance with new cadet count
+    const baseRate = originalData.summary.base_rate || 0;
+    const durationValue = originalData.summary.duration_value || 0;
+    const newTotalAllowance = filteredCadets.length * baseRate * durationValue;
+    
+    // Update summary with filtered data - keep all original data, just update counts and total
+    const filteredSummary = {
+        ...originalData.summary, // Keep all original training data
+        total_cadets: filteredCadets.length, // Update cadet count
+        total_allowance: newTotalAllowance // Update total allowance
+    };
+    
+    displaySummary(trainingId, filteredSummary);
+}
     </script>
 </x-app-layout>
