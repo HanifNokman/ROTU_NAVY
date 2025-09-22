@@ -10,11 +10,6 @@
     <!-- Add CSRF token for AJAX requests -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <script>
-        // Reset submitting flag on page load
-        window.submitting = false;
-    </script>
-
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
@@ -98,21 +93,32 @@
                     </div>
                 </div>
 
-                <!-- Uniform Size Summary Table -->
-                <div class="p-6">
+                <!-- Uniform Size Summary Content -->
+                <div class="p-6" id="uniformSummaryContent">
                     @if($uniformSizeSummary->isEmpty())
-                        <p class="text-gray-500">No uniform size data available for this intake year.</p>
+                        <div class="text-center py-8">
+                            <div class="text-gray-400 text-5xl mb-4">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <p class="text-gray-500 text-lg">No uniform size data available for this intake year.</p>
+                        </div>
                     @else
-                        <div class="space-y-6">
+                        <div class="space-y-8">
                             @foreach($uniformSizeSummary as $componentName => $sizes)
-                                <div>
-                                    <h4 class="font-medium text-gray-800 mb-2">{{ $componentName }}</h4>
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                <div class="mb-8">
+                                    <div class="flex items-center mb-4">
+                                        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold mr-3">
+                                            <i class="fas fa-tag mr-1"></i>{{ $componentName }}
+                                        </div>
+                                        <div class="h-px bg-gray-200 flex-1"></div>
+                                    </div>
+                                    <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
                                             @foreach($sizes as $sizeData)
-                                                <div class="bg-white rounded-md p-3 text-center shadow-sm">
-                                                    <div class="text-sm text-gray-600">Size {{ $sizeData->size }}</div>
-                                                    <div class="text-lg font-semibold text-blue-600">{{ $sizeData->cadet_count }}</div>
+                                                <div class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100">
+                                                    <div class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Size</div>
+                                                    <div class="text-2xl font-bold text-blue-600 mb-1">{{ $sizeData->size }}</div>
+                                                    <div class="text-lg font-semibold text-gray-800">{{ $sizeData->cadet_count }}</div>
                                                     <div class="text-xs text-gray-500">cadets</div>
                                                 </div>
                                             @endforeach
@@ -192,62 +198,88 @@
                     </div>
                 </div>
 
-                <!-- Equipment Loan Records Table -->
-                <div class="p-6">
+                <!-- Equipment Loan Records Content -->
+                <div class="p-6" id="equipmentLoansContent">
                     @if($equipmentLoans->isEmpty())
-                        <p class="text-gray-500">No equipment loan records found.</p>
+                        <div class="text-center py-12">
+                            <div class="text-gray-400 text-6xl mb-4">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <p class="text-gray-500 text-lg">No equipment loan records found.</p>
+                        </div>
                     @else
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cadet</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrow Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cadet</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Item</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Category</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Qty</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Borrow Date</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Return Date</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($equipmentLoans as $loan)
-                                        <tr class="{{ $loan->isOverdue() ? 'bg-red-50' : '' }}">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->cadet->user->name }}
+                                        <tr class="{{ $loan->isOverdue() ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-gray-50' }} transition-colors duration-150">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                                        <i class="fas fa-user text-blue-600 text-sm"></i>
+                                                    </div>
+                                                    <div class="text-sm font-semibold text-gray-900">
+                                                        {{ $loan->cadet->user->name }}
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->inventoryItem->name }}
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900">{{ $loan->inventoryItem->name }}</div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold 
                                                     {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                    <i class="{{ $loan->inventoryItem->category === 'equipment' ? 'fas fa-tools' : 'fas fa-tshirt' }} mr-1"></i>
                                                     {{ ucfirst($loan->inventoryItem->category) }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->quantity }}
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded">{{ $loan->quantity }}</span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->borrow_date->format('M d, Y') }}
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center text-sm text-gray-900">
+                                                    <i class="fas fa-calendar-alt text-gray-400 mr-2"></i>
+                                                    {{ $loan->borrow_date->format('M d, Y') }}
+                                                </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->return_date ? $loan->return_date->format('M d, Y') : '-' }}
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @if($loan->return_date)
+                                                    <div class="flex items-center text-sm text-gray-900">
+                                                        <i class="fas fa-calendar-check text-green-500 mr-2"></i>
+                                                        {{ $loan->return_date->format('M d, Y') }}
+                                                    </div>
+                                                @else
+                                                    <span class="text-gray-400">-</span>
+                                                @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if($loan->status === 'Borrowed')
                                                     @if($loan->isOverdue())
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                                                            <i class="fas fa-exclamation-triangle mr-1"></i>
                                                             Overdue ({{ $loan->days_overdue }} days)
                                                         </span>
                                                     @else
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                                            <i class="fas fa-clock mr-1"></i>
                                                             Borrowed
                                                         </span>
                                                     @endif
                                                 @else
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                        <i class="fas fa-check-circle mr-1"></i>
                                                         Returned
                                                     </span>
                                                 @endif
@@ -258,8 +290,8 @@
                                                         @csrf
                                                         @method('PATCH')
                                                         <input type="hidden" name="status" value="Returned">
-                                                        <button type="submit" class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                                            Mark Returned
+                                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200">
+                                                            <i class="fas fa-check mr-1"></i>Mark Returned
                                                         </button>
                                                     </form>
                                                 @endif
@@ -278,7 +310,7 @@
                 </div>
             </div>
 
-            <!-- Inventory Summary (Optional - can be moved to separate page) -->
+            <!-- Inventory Summary -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-blue-50 p-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 flex items-center">
@@ -532,12 +564,176 @@
         </script>
     @endif
 
-    <!-- JavaScript for Modal and Tab Functionality -->
+    <!-- JavaScript for Enhanced Functionality -->
     <script>
         // CSRF Token for AJAX requests
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        // Uniform Type Modal Functions
+        // Current filter states
+        let currentFilters = {
+            uniformIntakeYear: '{{ $selectedUniformIntakeYear }}',
+            uniformType: '{{ $selectedUniformType }}',
+            uniformComponent: '{{ $selectedUniformComponent }}',
+            loanIntakeYear: '{{ $selectedLoanIntakeYear }}',
+            equipmentCategory: '{{ $selectedCategory }}',
+            loanStatus: '{{ $selectedStatus }}'
+        };
+
+        // Instant filtering functions
+        function updateUniformSummary() {
+            const data = new URLSearchParams({
+                action: 'uniform_summary',
+                intake_year: currentFilters.uniformIntakeYear,
+                uniform_type: currentFilters.uniformType || '',
+                uniform_component: currentFilters.uniformComponent || ''
+            });
+
+            fetch(`{{ route('instructor.inventory') }}?${data}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.uniformSizeSummary) {
+                    document.getElementById('uniformSummaryContent').innerHTML = data.uniformSizeSummary;
+                }
+            })
+            .catch(error => {
+                console.error('Error updating uniform summary:', error);
+                showAlert('Error updating uniform summary', 'error');
+            });
+        }
+
+        function updateEquipmentLoans() {
+            const data = new URLSearchParams({
+                action: 'equipment_loans',
+                loan_intake_year: currentFilters.loanIntakeYear,
+                equipment_category: currentFilters.equipmentCategory || '',
+                loan_status: currentFilters.loanStatus
+            });
+
+            fetch(`{{ route('instructor.inventory') }}?${data}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.equipmentLoans) {
+                    document.getElementById('equipmentLoansContent').innerHTML = data.equipmentLoans;
+                }
+            })
+            .catch(error => {
+                console.error('Error updating equipment loans:', error);
+                showAlert('Error updating equipment loans', 'error');
+            });
+        }
+
+        function updateComponentDropdown() {
+            const data = new URLSearchParams({
+                action: 'components_by_type',
+                uniform_type: currentFilters.uniformType || ''
+            });
+
+            fetch(`{{ route('instructor.inventory') }}?${data}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.components) {
+                    const componentSelect = document.getElementById('uniform_component');
+                    componentSelect.innerHTML = '<option value="">All Component</option>';
+                    
+                    data.components.forEach(component => {
+                        const option = document.createElement('option');
+                        option.value = component.id;
+                        option.textContent = component.component_name;
+                        if (component.id == currentFilters.uniformComponent) {
+                            option.selected = true;
+                        }
+                        componentSelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error updating components:', error);
+            });
+        }
+
+        // Event listeners for instant filtering
+        document.addEventListener('DOMContentLoaded', function() {
+            // Uniform section filters
+            const uniformIntakeSelect = document.getElementById('uniform_intake_year');
+            const uniformTypeSelect = document.getElementById('uniform_type');
+            const uniformComponentSelect = document.getElementById('uniform_component');
+
+            // Equipment section filters
+            const loanIntakeSelect = document.getElementById('loan_intake_year');
+            const equipmentCategorySelect = document.getElementById('equipment_category');
+
+            if (uniformIntakeSelect) {
+                uniformIntakeSelect.addEventListener('change', function() {
+                    currentFilters.uniformIntakeYear = this.value;
+                    updateUniformSummary();
+                });
+            }
+
+            if (uniformTypeSelect) {
+                uniformTypeSelect.addEventListener('change', function() {
+                    currentFilters.uniformType = this.value;
+                    currentFilters.uniformComponent = ''; // Reset component when type changes
+                    updateComponentDropdown();
+                    updateUniformSummary();
+                });
+            }
+
+            if (uniformComponentSelect) {
+                uniformComponentSelect.addEventListener('change', function() {
+                    currentFilters.uniformComponent = this.value;
+                    updateUniformSummary();
+                });
+            }
+
+            if (loanIntakeSelect) {
+                loanIntakeSelect.addEventListener('change', function() {
+                    currentFilters.loanIntakeYear = this.value;
+                    updateEquipmentLoans();
+                });
+            }
+
+            if (equipmentCategorySelect) {
+                equipmentCategorySelect.addEventListener('change', function() {
+                    currentFilters.equipmentCategory = this.value;
+                    updateEquipmentLoans();
+                });
+            }
+        });
+
+        // Function to switch loan status with instant update
+        function switchLoanStatus(status) {
+            // Update button styles
+            document.getElementById('activeLoansBtn').className = 
+                status === 'active' 
+                ? 'px-4 py-2 text-sm font-medium rounded-l-md bg-green-600 text-white'
+                : 'px-4 py-2 text-sm font-medium rounded-l-md bg-gray-200 text-gray-700 hover:bg-gray-300';
+                
+            document.getElementById('returnedLoansBtn').className = 
+                status === 'returned' 
+                ? 'px-4 py-2 text-sm font-medium rounded-r-md bg-green-600 text-white'
+                : 'px-4 py-2 text-sm font-medium rounded-r-md bg-gray-200 text-gray-700 hover:bg-gray-300';
+            
+            // Update filter and refresh content
+            currentFilters.loanStatus = status;
+            updateEquipmentLoans();
+        }
+
+        // Modal Functions
         function openUniformTypeModal() {
             document.getElementById('uniformTypeModal').classList.remove('hidden');
         }
@@ -570,7 +766,6 @@
             }
         }
 
-        // Uniform Component Modal Functions
         function openUniformComponentModal() {
             document.getElementById('uniformComponentModal').classList.remove('hidden');
         }
@@ -603,7 +798,6 @@
             }
         }
 
-        // Equipment Modal Functions
         function openEquipmentModal() {
             document.getElementById('equipmentModal').classList.remove('hidden');
         }
@@ -951,240 +1145,6 @@
             if (event.target === equipmentModal) {
                 closeEquipmentModal();
             }
-        }
-
-        // Filter functionality - keeping it simple and similar to working uniform filters
-        document.addEventListener('DOMContentLoaded', function() {
-            // Uniform filters
-            const uniformIntakeSelect = document.getElementById('uniform_intake_year');
-            const uniformTypeSelect = document.getElementById('uniform_type');
-            const uniformComponentSelect = document.getElementById('uniform_component');
-
-            // Equipment filters
-            const loanIntakeSelect = document.getElementById('loan_intake_year');
-            const equipmentCategorySelect = document.getElementById('equipment_category');
-
-            // Handle uniform intake filter change (this works)
-            if (uniformIntakeSelect) {
-                uniformIntakeSelect.addEventListener('change', function() {
-                    submitFormWithAllFilters();
-                });
-            }
-
-            // Handle uniform type filter change (this works)
-            if (uniformTypeSelect) {
-                uniformTypeSelect.addEventListener('change', function() {
-                    // Dynamic component loading based on uniform type
-                    const uniformTypeId = this.value;
-                    const componentSelect = document.getElementById('uniform_component');
-                    
-                    // Clear component options
-                    componentSelect.innerHTML = '<option value="">All Component</option>';
-                    
-                    if (uniformTypeId) {
-                        fetch(`/instructor/inventory/uniform-types/${uniformTypeId}/components`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    data.data.forEach(component => {
-                                        const option = document.createElement('option');
-                                        option.value = component.id;
-                                        option.textContent = component.component_name;
-                                        componentSelect.appendChild(option);
-                                    });
-                                }
-                            })
-                            .catch(error => console.error('Error loading components:', error));
-                    }
-                    
-                    submitFormWithAllFilters();
-                });
-            }
-
-            // Handle uniform component filter change (this works)
-            if (uniformComponentSelect) {
-                uniformComponentSelect.addEventListener('change', function() {
-                    submitFormWithAllFilters();
-                });
-            }
-
-            // Handle equipment intake filter change (making this work like uniform filters)
-            if (loanIntakeSelect) {
-                loanIntakeSelect.addEventListener('change', function() {
-                    submitFormWithAllFilters();
-                });
-            }
-
-            // Handle equipment category filter change (making this work like uniform filters)
-            if (equipmentCategorySelect) {
-                equipmentCategorySelect.addEventListener('change', function() {
-                    submitFormWithAllFilters();
-                });
-            }
-
-            // Function to submit form with all current filter values
-            function submitFormWithAllFilters() {
-                // Prevent multiple submissions
-                if (window.submitting) return;
-                window.submitting = true;
-                
-                const form = document.createElement('form');
-                form.method = 'GET';
-                form.style.display = 'none';
-                
-                // Add all filter values to the form
-                // Uniform section filters
-                if (uniformIntakeSelect && uniformIntakeSelect.value) {
-                    const intakeInput = document.createElement('input');
-                    intakeInput.type = 'hidden';
-                    intakeInput.name = 'intake_year';
-                    intakeInput.value = uniformIntakeSelect.value;
-                    form.appendChild(intakeInput);
-                }
-                
-                if (uniformTypeSelect && uniformTypeSelect.value) {
-                    const typeInput = document.createElement('input');
-                    typeInput.type = 'hidden';
-                    typeInput.name = 'uniform_type';
-                    typeInput.value = uniformTypeSelect.value;
-                    form.appendChild(typeInput);
-                }
-                
-                if (uniformComponentSelect && uniformComponentSelect.value) {
-                    const componentInput = document.createElement('input');
-                    componentInput.type = 'hidden';
-                    componentInput.name = 'uniform_component';
-                    componentInput.value = uniformComponentSelect.value;
-                    form.appendChild(componentInput);
-                }
-                
-                // Equipment section filters
-                if (loanIntakeSelect && loanIntakeSelect.value) {
-                    const loanIntakeInput = document.createElement('input');
-                    loanIntakeInput.type = 'hidden';
-                    loanIntakeInput.name = 'loan_intake_year';
-                    loanIntakeInput.value = loanIntakeSelect.value;
-                    form.appendChild(loanIntakeInput);
-                }
-                
-                if (equipmentCategorySelect && equipmentCategorySelect.value) {
-                    const categoryInput = document.createElement('input');
-                    categoryInput.type = 'hidden';
-                    categoryInput.name = 'equipment_category';
-                    categoryInput.value = equipmentCategorySelect.value;
-                    form.appendChild(categoryInput);
-                }
-                
-                // Loan status
-                const activeBtn = document.getElementById('activeLoansBtn');
-                const returnedBtn = document.getElementById('returnedLoansBtn');
-                if (activeBtn && activeBtn.classList.contains('bg-green-600')) {
-                    const statusInput = document.createElement('input');
-                    statusInput.type = 'hidden';
-                    statusInput.name = 'loan_status';
-                    statusInput.value = 'active';
-                    form.appendChild(statusInput);
-                } else if (returnedBtn && returnedBtn.classList.contains('bg-green-600')) {
-                    const statusInput = document.createElement('input');
-                    statusInput.type = 'hidden';
-                    statusInput.name = 'loan_status';
-                    statusInput.value = 'returned';
-                    form.appendChild(statusInput);
-                } else {
-                    // Default to active if no status is selected
-                    const statusInput = document.createElement('input');
-                    statusInput.type = 'hidden';
-                    statusInput.name = 'loan_status';
-                    statusInput.value = 'active';
-                    form.appendChild(statusInput);
-                }
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-        });
-        
-        // Function to switch loan status filter
-        function switchLoanStatus(status) {
-            // Update button styles
-            document.getElementById('activeLoansBtn').className = 
-                status === 'active' 
-                ? 'px-4 py-2 text-sm font-medium rounded-l-md bg-green-600 text-white'
-                : 'px-4 py-2 text-sm font-medium rounded-l-md bg-gray-200 text-gray-700 hover:bg-gray-300';
-                
-            document.getElementById('returnedLoansBtn').className = 
-                status === 'returned' 
-                ? 'px-4 py-2 text-sm font-medium rounded-r-md bg-green-600 text-white'
-                : 'px-4 py-2 text-sm font-medium rounded-r-md bg-gray-200 text-gray-700 hover:bg-gray-300';
-            
-            // Submit form with all filters including the new status
-            // Prevent multiple submissions
-            if (window.submitting) return;
-            window.submitting = true;
-            
-            const form = document.createElement('form');
-            form.method = 'GET';
-            form.style.display = 'none';
-            
-            // Get current filter values
-            const uniformIntakeSelect = document.getElementById('uniform_intake_year');
-            const uniformTypeSelect = document.getElementById('uniform_type');
-            const uniformComponentSelect = document.getElementById('uniform_component');
-            const loanIntakeSelect = document.getElementById('loan_intake_year');
-            const equipmentCategorySelect = document.getElementById('equipment_category');
-            
-            // Add all filter values to the form
-            // Uniform section filters
-            if (uniformIntakeSelect && uniformIntakeSelect.value) {
-                const intakeInput = document.createElement('input');
-                intakeInput.type = 'hidden';
-                intakeInput.name = 'intake_year';
-                intakeInput.value = uniformIntakeSelect.value;
-                form.appendChild(intakeInput);
-            }
-            
-            if (uniformTypeSelect && uniformTypeSelect.value) {
-                const typeInput = document.createElement('input');
-                typeInput.type = 'hidden';
-                typeInput.name = 'uniform_type';
-                typeInput.value = uniformTypeSelect.value;
-                form.appendChild(typeInput);
-            }
-            
-            if (uniformComponentSelect && uniformComponentSelect.value) {
-                const componentInput = document.createElement('input');
-                componentInput.type = 'hidden';
-                componentInput.name = 'uniform_component';
-                componentInput.value = uniformComponentSelect.value;
-                form.appendChild(componentInput);
-            }
-            
-            // Equipment section filters
-            if (loanIntakeSelect && loanIntakeSelect.value) {
-                const loanIntakeInput = document.createElement('input');
-                loanIntakeInput.type = 'hidden';
-                loanIntakeInput.name = 'loan_intake_year';
-                loanIntakeInput.value = loanIntakeSelect.value;
-                form.appendChild(loanIntakeInput);
-            }
-            
-            if (equipmentCategorySelect && equipmentCategorySelect.value) {
-                const categoryInput = document.createElement('input');
-                categoryInput.type = 'hidden';
-                categoryInput.name = 'equipment_category';
-                categoryInput.value = equipmentCategorySelect.value;
-                form.appendChild(categoryInput);
-            }
-            
-            // Add loan status
-            const statusInput = document.createElement('input');
-            statusInput.type = 'hidden';
-            statusInput.name = 'loan_status';
-            statusInput.value = status;
-            form.appendChild(statusInput);
-            
-            document.body.appendChild(form);
-            form.submit();
         }
     </script>
 
