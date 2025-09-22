@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Instructor;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserAcceptedMail;
 
 class PendingVerificationController extends Controller
 {
@@ -37,7 +39,15 @@ class PendingVerificationController extends Controller
             \App\Models\Instructor::firstOrCreate(['user_id' => $user->id]);
         }
 
-        return back()->with('success', 'User accepted.');
+        // Send acceptance email to the user
+        try {
+            Mail::to($user->email)->send(new UserAcceptedMail($user));
+        } catch (\Exception $e) {
+            // Log the error but don't fail the acceptance process
+            \Log::error('Failed to send acceptance email to user ' . $user->id . ': ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'User accepted and notification email sent.');
     }
 
     public function reject(User $user)
