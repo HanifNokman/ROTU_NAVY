@@ -318,5 +318,4 @@
         });
     });
     </script>
-
 </x-app-layout>
