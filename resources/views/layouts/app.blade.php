@@ -23,18 +23,70 @@
             $profilePicture = null;
 
             if ($user->role === 'instructor') {
-                $profilePicture = optional(App\Models\Instructor::where('user_id', $user->id)->first())->profile_picture;
+                $instructor = App\Models\Instructor::where('user_id', $user->id)->first();
+                $profilePicture = $instructor?->profile_pic;
             } elseif ($user->role === 'cadet') {
-                $profilePicture = optional(App\Models\Cadet::where('user_id', $user->id)->first())->profile_picture;
+                $cadet = App\Models\Cadet::where('user_id', $user->id)->first();
+                $profilePicture = $cadet?->profile_pic;
             }
 
-            $fallbackAvatar = 'https://ui-avatars.com/api/?name=' . urlencode($user->name);
             $avatarSrc = $profilePicture 
                 ? asset('storage/' . $profilePicture) 
-                : $fallbackAvatar;
+                : asset('images/default.png');
         @endphp
         
         <div x-data="{ sidebarOpen: false, showLogoutModal: false, currentLogoutForm: null }">
+            <!-- Logout Confirmation Modal -->
+            <div x-show="showLogoutModal" 
+                 x-cloak
+                 class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                
+                <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 scale-90"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-90"
+                     @click.stop>
+                    
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="flex-shrink-0">
+                                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">
+                                    Confirm Logout
+                                </h3>
+                                <p class="text-sm text-gray-500">
+                                    Are you sure you want to log out? You will need to sign in again to access your account.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 mt-6">
+                            <button @click="showLogoutModal = false" 
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                Cancel
+                            </button>
+                            <button @click="if(currentLogoutForm) { currentLogoutForm.submit(); }" 
+                                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                Yes, Log Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Mobile Sidebar (Toggle Sidebar) -->
             <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-gray-100">
                 <!-- Mobile menu button (top right, always fixed) -->
@@ -76,7 +128,7 @@
                                     <img src="{{ $avatarSrc }}"
                                             alt="Profile"
                                             class="w-10 h-10 rounded-full object-cover"
-                                            onerror="this.onerror=null; this.src='{{ $fallbackAvatar }}';">
+                                            onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
                                         <div class="flex flex-col flex-1 min-w-0">
                                             <div class="font-semibold text-sm leading-tight truncate text-white">{{ Auth::user()->name }}</div>
                                             <div class="text-xs text-gray-400 leading-tight truncate">{{ Auth::user()->email }}</div>
@@ -109,7 +161,11 @@
                             
                             <div class="mt-6">
                                 <h3 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                                    Management
+                                    @if(Auth::user()->role === 'instructor')
+                                        Management
+                                    @else
+                                        Features
+                                    @endif
                                 </h3>
                                 <div class="space-y-1">
                                     @if(Auth::user()->role === 'instructor')
@@ -233,9 +289,11 @@
                                 </a>
 
                                 <!-- Log Out Link -->
-                                <form method="POST" action="{{ route('logout') }}">
+                                <form method="POST" action="{{ route('logout') }}" x-ref="logoutFormMobile">
                                     @csrf
-                                    <button type="submit" class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white">
+                                    <button type="button" 
+                                            @click="currentLogoutForm = $refs.logoutFormMobile; showLogoutModal = true" 
+                                            class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
                                         </svg>
@@ -269,7 +327,7 @@
                                         <img src="{{ $avatarSrc }}"
                                                 alt="Profile"
                                                 class="w-10 h-10 rounded-full object-cover"
-                                                onerror="this.onerror=null; this.src='{{ $fallbackAvatar }}';">
+                                                onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
                                             <div class="flex flex-col flex-1 min-w-0">
                                                 <div class="font-semibold text-sm leading-tight truncate text-white">{{ Auth::user()->name }}</div>
                                                 <div class="text-xs text-gray-400 leading-tight truncate">{{ Auth::user()->email }}</div>
@@ -305,7 +363,11 @@
                                 <!-- Management Section -->
                                 <div class="mt-6">
                                     <h3 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                                        Management
+                                        @if(Auth::user()->role === 'instructor')
+                                            Management
+                                        @else
+                                            Features
+                                        @endif
                                     </h3>
                                     <!-- Dynamic Navigation based on User Role -->
                                     <div class="space-y-1">
@@ -445,9 +507,11 @@
                                 </a>
 
                                 <!-- Log Out Link -->
-                                <form method="POST" action="{{ route('logout') }}" class="mt-auto">
+                                <form method="POST" action="{{ route('logout') }}" class="mt-auto" x-ref="logoutFormDesktop">
                                     @csrf
-<button type="submit" class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white transition-colors border border-transparent">
+<button type="button" 
+                                            @click="currentLogoutForm = $refs.logoutFormDesktop; showLogoutModal = true" 
+                                            class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white transition-colors border border-transparent">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
                                         </svg>
