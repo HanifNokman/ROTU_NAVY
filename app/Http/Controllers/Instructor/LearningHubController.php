@@ -14,12 +14,15 @@ class LearningHubController extends Controller
     {
         $query = LearningMaterial::with('category');
 
-        // Apply category filter if present
+        // Only show materials if a category filter is applied
+        // Default behavior: show nothing until user selects a category
         if ($request->filled('category')) {
             $query->where('learning_material_category_id', $request->category);
+            $materials = $query->latest()->get();
+        } else {
+            // Return empty collection when no category is selected
+            $materials = collect();
         }
-
-        $materials = $query->latest()->get();
 
         // Get all categories with material counts for the management section
         $categories = LearningMaterialCategory::withCount('learningMaterials')
