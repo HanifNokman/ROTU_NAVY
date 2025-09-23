@@ -140,8 +140,11 @@
                             </div>
                             <button
                                 @click="$store.modal.open = true"
-                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors shadow-md">
-                                <i class="fas fa-plus mr-2"></i>Add Duty
+                                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                <span class="flex-shrink-0">Add Duty</span>
                             </button>
                         </div>
                     </div>
@@ -309,9 +312,10 @@
                                                 console.error('Error:', error);
                                             });
                                         "
-                                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                                        <i class="fas fa-plus mr-2"></i>Add Duty Count
-                                     </button>
+                                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Add Duty Count</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
