@@ -26,11 +26,14 @@
 
             <!-- Section 1: Cadet Uniform Size Summary -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-blue-50 to-blue-50 p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                        <i class="fas fa-tshirt mr-2"></i>
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/>
+                        </svg>
                         Cadet Uniform Size Summary
                     </h3>
+                    <p class="text-gray-600">Track and analyze uniform size distributions across different intakes and components</p>
                 </div>
                 
                 <!-- Top Section: Filters and Controls -->
@@ -144,11 +147,14 @@
 
             <!-- Section 2: Equipment Loan Section -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-blue-50 to-blue-50 p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                        <i class="fas fa-tools mr-2"></i>
-                        Equipment Loan Section
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                        </svg>
+                        Equipment Loan Management
                     </h3>
+                    <p class="text-gray-600">Monitor equipment borrowing, returns, and track loan status across all cadets</p>
                 </div>
                 
                 <!-- Top Section: Filters and Controls -->
@@ -323,11 +329,14 @@
 
             <!-- Inventory Summary -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-blue-50 to-blue-50 p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                        <i class="fas fa-chart-bar mr-2"></i>
-                        Inventory Summary
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Inventory Overview
                     </h3>
+                    <p class="text-gray-600">Real-time inventory status and availability tracking for all equipment and uniforms</p>
                 </div>
                 <div class="p-6">
                     
