@@ -153,18 +153,17 @@
                         <h3 class="text-xl font-bold text-center mb-4">Performance Leaderboard</h3>
 
                         <!-- Sort Form -->
-                        <form method="GET" id="filter-form" class="mb-1 flex justify-center">
+                        <div class="mb-1 flex justify-center">
                             <div>
-                                <select name="sort_order" id="sort_order" class="rounded border-gray-300"
-                                        onchange="document.getElementById('filter-form').submit();">
+                                <select id="sort_order" class="rounded border-gray-300">
                                     <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Highest First</option>
                                     <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Lowest First</option>
                                 </select>
                             </div>
-                        </form>
+                        </div>
 
                         <!-- Leaderboard Bars -->
-                        <div class="space-y-4 max-h-[600px] overflow-y-auto">
+                        <div id="duty-ranking-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                             @php
                                 $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
                             @endphp
@@ -288,5 +287,36 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('sort_order');
+        const contentContainer = document.getElementById('duty-ranking-content');
+
+        sortSelect.addEventListener('change', function() {
+            const sortOrder = this.value;
+            
+            // Show loading state
+            contentContainer.innerHTML = '<div class="text-center text-gray-500 py-4">Loading...</div>';
+
+            // Make AJAX request
+            fetch(window.location.pathname + '?sort_order=' + sortOrder, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                contentContainer.innerHTML = data.html;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                contentContainer.innerHTML = '<div class="text-center text-red-500 py-4">Error loading data. Please try again.</div>';
+            });
+        });
+    });
+    </script>
 
 </x-app-layout>
