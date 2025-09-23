@@ -2,67 +2,26 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
-        /* Page Transition Animations */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Base Container */
         .auth-container {
+            display: flex;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
             opacity: 0;
             animation: pageEnter 0.6s ease-out forwards;
         }
         
         @keyframes pageEnter {
-            to {
-                opacity: 1;
-            }
+            to { opacity: 1; }
         }
         
-        .form-panel {
-            transform: translateX(30px);
-            animation: slideInRight 0.6s ease-out 0.1s forwards;
-        }
-        
-        .illustration-panel {
-            transform: translateX(-30px);
-            animation: slideInLeft 0.6s ease-out 0.2s forwards;
-        }
-        
-        @keyframes slideInLeft {
-            to {
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes slideInRight {
-            to {
-                transform: translateX(0);
-            }
-        }
-        
-        /* Link Transition Effects */
-        .auth-link a, .btn-secondary {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .auth-link a::before, .btn-secondary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(13, 27, 42, 0.1), transparent);
-            transition: left 0.6s ease;
-        }
-        
-        .auth-link a:hover::before, .btn-secondary:hover::before {
-            left: 100%;
-        }
-        
-        .auth-container {
-            display: flex;
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-        }
-        
+        /* Desktop Layout */
         .form-panel {
             flex: 1;
             background: white;
@@ -71,6 +30,25 @@
             justify-content: center;
             position: relative;
             padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        /* Background Logo for Form Panel */
+        .form-panel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background-image: url('storage/assets/logo/PSS-LOGO.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.08;
+            z-index: 1;
+            pointer-events: none;
         }
         
         .illustration-panel {
@@ -81,47 +59,14 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-        }
-        
-        .logo {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            z-index: 20;
-        }
-        
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, #FFD700, #FFA500);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        }
-        
-        .logo-icon::before {
-            content: '⚓';
-            font-size: 24px;
-            color: #0D1B2A;
-            font-weight: bold;
-        }
-        
-        .logo-text {
-            color: #0D1B2A;
-            font-weight: 700;
-            font-size: 1.5rem;
-            line-height: 1.2;
+            min-height: 100vh;
         }
         
         .form-content {
             width: 100%;
             max-width: 550px;
+            position: relative;
+            z-index: 10;
         }
         
         .form-grid {
@@ -135,12 +80,15 @@
             font-weight: 700;
             color: #1B1B1B;
             margin-bottom: 0.5rem;
+            text-align: right;
         }
         
         .form-subtitle {
             color: #5A5A5A;
             font-weight: 400;
             margin-bottom: 2rem;
+            text-align: right;
+            line-height: 1;
         }
         
         .form-group {
@@ -157,67 +105,20 @@
         
         .form-input {
             width: 100%;
-            padding: 0.875rem 1rem;
+            padding: 1rem;
             border: 2px solid #E5E5E5;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: border-color 0.2s ease;
-            background: #FAFAFA;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: rgba(250, 250, 250, 0.9);
+            backdrop-filter: blur(10px);
         }
         
         .form-input:focus {
             outline: none;
             border-color: #0D1B2A;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(13, 27, 42, 0.1);
-        }
-        
-        .form-select {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid #E5E5E5;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            background: #FAFAFA;
-            cursor: pointer;
-            transition: border-color 0.2s ease;
-        }
-        
-        .form-select:focus {
-            outline: none;
-            border-color: #0D1B2A;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(13, 27, 42, 0.1);
-        }
-        
-        .account-type-toggle {
-            display: flex;
-            gap: 0.25rem;
-            margin-bottom: 1rem;
-        }
-        
-        .toggle-option {
-            flex: 1;
-            padding: 0.5rem 0.75rem;
-            border: 2px solid #E5E5E5;
-            border-radius: 8px;
-            background: #FAFAFA;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-        
-        .toggle-option.active {
-            background: #0D1B2A;
-            color: white;
-            border-color: #0D1B2A;
-        }
-        
-        .toggle-option:hover:not(.active) {
-            background: #f8f9fa;
-            border-color: #0D1B2A;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 4px rgba(13, 27, 42, 0.1);
         }
         
         .password-field {
@@ -235,29 +136,63 @@
             cursor: pointer;
             font-size: 1.2rem;
             transition: color 0.2s ease;
+            z-index: 10;
+            padding: 0.5rem;
         }
         
         .password-toggle:hover {
             color: #0D1B2A;
         }
         
+        .account-type-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .toggle-option {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 12px;
+            background: rgba(250, 250, 250, 0.9);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .toggle-option.active {
+            background: #0D1B2A;
+            color: white;
+            border-color: #0D1B2A;
+        }
+        
+        .toggle-option:hover:not(.active) {
+            background: rgba(248, 249, 250, 0.95);
+            border-color: #0D1B2A;
+        }
+        
         .btn-primary {
             width: 100%;
             background: #0D1B2A;
             color: white;
-            padding: 0.875rem 2rem;
+            padding: 1rem 2rem;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+            margin-bottom: 2rem;
         }
         
         .btn-primary:hover {
             background: #152C46;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 27, 42, 0.3);
         }
         
         .btn-primary:active {
@@ -267,7 +202,7 @@
         .auth-link {
             text-align: center;
             color: #5A5A5A;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
         
         .auth-link a {
@@ -281,87 +216,76 @@
             color: #152C46;
         }
         
-        .illustration-content {
+        /* Illustration Panel */
+        .illustration-image {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(135deg, rgba(13, 27, 42, 0.8), rgba(21, 44, 70, 0.9));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .illustration-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+        }
+        
+        .illustration-overlay {
             position: absolute;
-            top: 2rem;
-            left: 2rem;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(13, 27, 42, 0.8), rgba(21, 44, 70, 0.7));
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            z-index: 10;
+        }
+        
+        .illustration-content {
             text-align: left;
             color: white;
-            z-index: 10;
         }
         
         .illustration-title {
             font-size: 3rem;
             font-weight: 700;
-            margin-bottom: 0;
+            margin-bottom: 1rem;
             line-height: 1.1;
         }
         
-        .ship-silhouette {
-            width: 300px;
-            height: 200px;
-            margin: 2rem auto;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
+        .illustration-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            line-height: 1.4;
         }
         
-        .ship-silhouette::before {
-            content: '🚢';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 4rem;
-            opacity: 0.7;
-        }
-        
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent);
-            border-radius: 50%;
-            opacity: 0.3;
-        }
-        
-        .watermark::before {
-            content: '⚓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 8rem;
-            color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .signin-prompt {
-            position: absolute;
-            bottom: 2rem;
-            left: 2rem;
+        .auth-prompt {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
         
-        .signin-text {
+        .auth-text {
             display: flex;
             flex-direction: column;
             color: white;
             margin: 0;
         }
         
-        .signin-main {
+        .auth-main {
             font-size: 1.1rem;
             font-weight: 600;
             margin: 0;
         }
         
-        .signin-sub {
+        .auth-sub {
             font-size: 0.875rem;
             margin: 0;
             opacity: 0.8;
@@ -390,99 +314,188 @@
             margin-top: 0.5rem;
         }
         
-        @media (max-width: 768px) {
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #0D1B2A 0%, #152C46 100%);
+            padding: 1.5rem;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-bottom-nav .auth-text {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .mobile-bottom-nav .auth-main {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mobile-bottom-nav .auth-sub {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        .mobile-bottom-nav .btn-secondary {
+            background: white;
+            color: #0D1B2A;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+        
+        .mobile-bottom-nav .btn-secondary:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        
+        /* Mobile Responsive Design */
+        @media (max-width: 1024px) {
             .auth-container {
                 flex-direction: column;
+                min-height: 100vh;
             }
             
             .illustration-panel {
-                min-height: 300px;
-                order: -1;
+                display: none;
             }
             
-            .logo {
-                top: 1rem;
-                right: 1rem;
-            }
-            
-            .logo-text {
-                font-size: 1.2rem;
-            }
-            
-            .illustration-title {
-                font-size: 1.2rem;
-            }
-            
-            .ship-silhouette {
-                width: 200px;
-                height: 120px;
-            }
-            
-            .signin-prompt {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                margin-top: 2rem;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
+            .mobile-bottom-nav {
+                display: block;
             }
             
             .form-panel {
-                padding: 1rem;
+                flex: 1;
+                min-height: calc(100vh - 120px);
+                padding: 1.5rem;
+                padding-bottom: 140px;
+                background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            }
+            
+            /* Mobile Background Logo */
+            .form-panel::before {
+                width: 280px;
+                height: 280px;
+                opacity: 0.06;
+            }
+            
+            .form-content {
+                max-width: 500px;
+                background: rgba(255, 255, 255, 0.95);
+                padding: 2rem;
+                border-radius: 20px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                backdrop-filter: blur(20px);
+                margin: 0 auto;
+            }
+            
+            .form-title {
+                font-size: 2rem;
+            }
+            
+            .form-subtitle {
+                font-size: 1rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
             }
             
             .account-type-toggle {
                 flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-panel {
+                padding: 1rem;
+                padding-bottom: 140px;
             }
             
-            .form-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
+            .form-panel::before {
+                width: 220px;
+                height: 220px;
+                opacity: 0.05;
+            }
+            
+            .form-content {
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+            
+            .form-title {
+                font-size: 1.75rem;
+            }
+            
+            .form-input {
+                padding: 0.875rem;
+                font-size: 0.95rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem;
+                font-size: 1rem;
+            }
+            
+            .account-type-toggle {
+                gap: 0.5rem;
+            }
+            
+            .toggle-option {
+                padding: 0.625rem;
+                font-size: 0.8rem;
             }
         }
     </style>
 
     <div class="auth-container">
-        <!-- Left Panel - Illustration -->
+        <!-- Illustration Panel - Desktop Only -->
         <div class="illustration-panel">
-            <div class="watermark"></div>
-            
-            <div class="illustration-content">
-                <h2 class="illustration-title">Cadet Management &<br>Learning Hub</h2>
-            </div>
-            <div class="ship-silhouette"></div>
+            <div class="illustration-image">
+                <img src="storage/assets/images/tldm3.jpg" alt="Naval Training Academy" />
+                <div class="illustration-overlay">
+                    <div class="illustration-content">
+                        <h2 class="illustration-title">Cadet Management &<br>Learning Hub</h2>
+                        <p class="illustration-subtitle">Excellence in Naval Officer Training</p>
+                    </div>
 
-            <div class="signin-prompt">
-                <div class="signin-text">
-                    <p class="signin-main">Already have an account?</p>
-                    <p class="signin-sub">Log into your account</p>
+                    <div class="auth-prompt">
+                        <div class="auth-text">
+                            <p class="auth-main">Already have an account?</p>
+                            <p class="auth-sub">Log into your account</p>
+                        </div>
+                        <a href="{{ route('login') }}" class="btn-secondary">Sign In</a>
+                    </div>
                 </div>
-                <a href="{{ route('login') }}" class="btn-secondary" onclick="handlePageTransition(event, this.href)">Sign In</a>
             </div>
         </div>
 
-        <!-- Right Panel - Form -->
+        <!-- Form Panel -->
         <div class="form-panel">
-            <div class="logo">
-                <div class="logo-icon"></div>
-                <div class="logo-text">
-                    PALAPES<br>
-                    LAUT UMS
-                </div>
-            </div>
-
             <div class="form-content">
-                <h1 class="form-title">Sign Up</h1>
-                <p class="form-subtitle">Create an account to get started</p>
+                <h1 class="form-title">Join the Academy</h1>
+                <p class="form-subtitle">Create your account now</p>
 
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
 
                     <!-- Account Type -->
                     <div class="form-group">
-                        <label class="form-label">Account type</label>
+                        <label class="form-label">Account Type</label>
                         <div class="account-type-toggle">
                             <div class="toggle-option" onclick="selectRole('instructor')" id="instructor-btn">
                                 Instructor
@@ -494,19 +507,19 @@
                         <input type="hidden" name="role" id="role-input" value="cadet">
                     </div>
 
-                    <!-- Form Grid 2x2 -->
+                    <!-- Form Grid -->
                     <div class="form-grid">
                         <!-- Full Name -->
                         <div class="form-group">
                             <label for="name" class="form-label">{{ __('Full Name') }}</label>
-                            <input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Your Full Name" />
+                            <input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Enter your full name" />
                             <x-input-error :messages="$errors->get('name')" class="error-message" />
                         </div>
 
                         <!-- Email Address -->
                         <div class="form-group">
-                            <label for="email" class="form-label">{{ __('E-mail') }}</label>
-                            <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="Your Email" />
+                            <label for="email" class="form-label">{{ __('Email Address') }}</label>
+                            <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="Enter your email" />
                             <x-input-error :messages="$errors->get('email')" class="error-message" />
                         </div>
 
@@ -514,7 +527,7 @@
                         <div class="form-group">
                             <label for="password" class="form-label">{{ __('Password') }}</label>
                             <div class="password-field">
-                                <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" placeholder="Your Password" />
+                                <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" placeholder="Create a password" />
                                 <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                     <i class="fas fa-eye" id="password-eye"></i>
                                 </button>
@@ -526,7 +539,7 @@
                         <div class="form-group">
                             <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}</label>
                             <div class="password-field">
-                                <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Your Password" />
+                                <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm your password" />
                                 <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation')">
                                     <i class="fas fa-eye" id="password_confirmation-eye"></i>
                                 </button>
@@ -536,82 +549,30 @@
                     </div>
 
                     <button type="submit" class="btn-primary">
-                        {{ __('Sign Up') }}
+                        {{ __('Create Account') }}
                     </button>
 
                     <div class="auth-link">
-                        Already have an account? <a href="{{ route('login') }}" onclick="handlePageTransition(event, this.href)">Sign In</a>
+                        Already have an account? <a href="{{ route('login') }}">Sign in</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <script>
-        function handlePageTransition(event, targetUrl) {
-            event.preventDefault();
-            
-            // Create transition overlay
-            const overlay = document.createElement('div');
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(135deg, #0D1B2A 0%, #152C46 100%);
-                z-index: 9999;
-                opacity: 0;
-                transition: opacity 0.4s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-family: 'Inter', sans-serif;
-            `;
-            
-            overlay.innerHTML = `
-                <div style="text-align: center; animation: fadeInUp 0.5s ease;">
-                    <div style="width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1.5rem;"></div>
-                    <div style="font-size: 1.1rem; font-weight: 500;">Switching to ${targetUrl.includes('login') ? 'Sign In' : 'Sign Up'}...</div>
-                </div>
-            `;
-            
-            document.body.appendChild(overlay);
-            
-            // Add animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-                @keyframes fadeInUp {
-                    0% { opacity: 0; transform: translateY(20px); }
-                    100% { opacity: 1; transform: translateY(0); }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Fade current page
-            document.querySelector('.auth-container').style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-            document.querySelector('.auth-container').style.transform = 'scale(0.95)';
-            document.querySelector('.auth-container').style.opacity = '0.7';
-            
-            // Show overlay
-            setTimeout(() => overlay.style.opacity = '1', 50);
-            
-            // Navigate after transition
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 600);
-        }
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <div class="auth-text">
+            <p class="auth-main">Already have an account?</p>
+            <p class="auth-sub">Sign in to continue</p>
+        </div>
+        <a href="{{ route('login') }}" class="btn-secondary">Sign In</a>
+    </div>
 
+    <script>
         function selectRole(role) {
-            // Update hidden input
             document.getElementById('role-input').value = role;
             
-            // Update button styles
             document.querySelectorAll('.toggle-option').forEach(btn => {
                 btn.classList.remove('active');
             });
@@ -638,4 +599,7 @@
             }
         }
     </script>
+
+    <!-- Font Awesome for password toggle icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </x-guest-layout>
