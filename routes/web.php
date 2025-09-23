@@ -230,8 +230,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/inventory/loan/{loan}/return', [CadetInventoryController::class, 'returnLoan'])->name('inventory.loan.return');
     });
 
-    // Cadet Gallery
-    Route::get('/cadet/gallery', [CadetGalleryController::class, 'index'])->name('cadet.gallery');
+    // Cadet Gallery Routes
+    Route::middleware(['auth'])->prefix('cadet')->name('cadet.')->group(function () {
+        // Main gallery page
+        Route::get('/gallery', [CadetGalleryController::class, 'index'])->name('gallery');
+        
+        // AJAX endpoints for dynamic filtering (optional - for future enhancements)
+        Route::get('/gallery/category/{categoryId}', [CadetGalleryController::class, 'getByCategory'])->name('gallery.category');
+        Route::get('/gallery/categories', [CadetGalleryController::class, 'getCategories'])->name('gallery.categories');
+    });
 
     // Cadet Attendance
     Route::get('/cadet/attendance', [AttendanceController::class, 'index'])->name('cadet.attendance');
