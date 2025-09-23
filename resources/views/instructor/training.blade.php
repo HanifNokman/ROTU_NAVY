@@ -506,9 +506,9 @@
 
                 <!-- Main Content -->
                 <div id="attendanceListContent" class="hidden">
-                    <!-- Filters -->
+                    <!-- Filters - Removed Status Filter -->
                     <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
                                 <select id="attendanceListYearFilter" class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></select>
@@ -520,14 +520,6 @@
                             <div id="attendanceListIntakeSection" class="hidden">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Intake</label>
                                 <select id="attendanceListIntakeFilter" class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                <div class="flex gap-1">
-                                    <button id="attendanceListAll" class="flex-1 px-3 py-2 text-sm rounded bg-blue-600 text-white font-medium" onclick="setAttendanceListFilter('all')">All</button>
-                                    <button id="attendanceListPresent" class="flex-1 px-3 py-2 text-sm rounded bg-gray-200 text-gray-700" onclick="setAttendanceListFilter('present')">Present</button>
-                                    <button id="attendanceListAbsent" class="flex-1 px-3 py-2 text-sm rounded bg-gray-200 text-gray-700" onclick="setAttendanceListFilter('absent')">Absent</button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -659,7 +651,7 @@ input[type="checkbox"]:checked {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 <!-- Updated JavaScript section for the view file -->
-    <script>
+<script>
     let calendar;
     let currentTrainingId = null;
     let cadetsData = [];
@@ -1478,15 +1470,15 @@ input[type="checkbox"]:checked {
 </script>
 
 <script>
-// Enhanced Attendance List Modal Logic
+    // Enhanced Attendance List Modal Logic with individual training filters
 let attendanceListData = [];
 let attendanceListMonths = [];
 let currentAttendanceListYear = '';
 let currentAttendanceListMonth = '';
 let currentAttendanceListIntake = '';
-let currentAttendanceListFilter = 'all';
 let openAccordionId = null;
 let allAvailableIntakes = [];
+let trainingFilters = {}; // Store individual training filters
 
 function openAttendanceListModal() {
     document.getElementById('attendanceListModal').classList.remove('hidden');
@@ -1503,6 +1495,7 @@ function resetAttendanceListModal() {
     attendanceListData = [];
     attendanceListMonths = [];
     allAvailableIntakes = [];
+    trainingFilters = {}; // Reset training-specific filters
     // Set default year, month, and intake
     const now = new Date();
     currentAttendanceListYear = now.getFullYear();
@@ -1517,8 +1510,6 @@ function resetAttendanceListModal() {
     document.getElementById('attendanceListMonthFilter').innerHTML = '';
     document.getElementById('attendanceListIntakeSection').classList.add('hidden');
     document.getElementById('attendanceListTrainings').innerHTML = '';
-    // Reset filter buttons
-    setAttendanceListFilter('all');
 }
 
 function fetchAttendanceListYears() {
@@ -1560,6 +1551,7 @@ function fetchAttendanceListYears() {
         currentAttendanceListYear = this.value;
         currentAttendanceListMonth = '';
         currentAttendanceListIntake = '';
+        trainingFilters = {}; // Reset all training filters
         document.getElementById('attendanceListMonthFilter').innerHTML = '';
         document.getElementById('attendanceListTrainings').innerHTML = '';
         document.getElementById('attendanceListIntakeSection').classList.add('hidden');
@@ -1609,40 +1601,13 @@ function fetchAttendanceListMonths() {
     document.getElementById('attendanceListMonthFilter').onchange = function() {
         currentAttendanceListMonth = this.value;
         currentAttendanceListIntake = '';
+        trainingFilters = {}; // Reset all training filters
         document.getElementById('attendanceListTrainings').innerHTML = '';
         
         if (currentAttendanceListMonth) {
             fetchAttendanceListData();
         }
     };
-}
-
-function setAttendanceListFilter(filter) {
-    currentAttendanceListFilter = filter;
-    
-    // Reset all button styles
-    const buttons = {
-        'all': document.getElementById('attendanceListAll'),
-        'present': document.getElementById('attendanceListPresent'),
-        'absent': document.getElementById('attendanceListAbsent')
-    };
-    Object.values(buttons).forEach(btn => {
-        if (btn) {
-            btn.className = 'flex-1 px-3 py-2 text-sm rounded bg-gray-200 text-gray-700';
-        }
-    });
-    // Set active button style
-    if (filter === 'all') {
-        buttons.all.className = 'flex-1 px-3 py-2 text-sm rounded bg-blue-600 text-white font-medium';
-    } else if (filter === 'present') {
-        buttons.present.className = 'flex-1 px-3 py-2 text-sm rounded bg-blue-600 text-white font-medium';
-    } else if (filter === 'absent') {
-        buttons.absent.className = 'flex-1 px-3 py-2 text-sm rounded bg-blue-600 text-white font-medium';
-    }
-    
-    if (currentAttendanceListYear && currentAttendanceListMonth) {
-        fetchAttendanceListData();
-    }
 }
 
 function fetchAttendanceListData() {
@@ -1652,16 +1617,17 @@ function fetchAttendanceListData() {
     if (currentAttendanceListIntake) {
         query += `&intake=${encodeURIComponent(currentAttendanceListIntake)}`;
     }
-    if (currentAttendanceListFilter !== 'all') {
-        query += `&status=${currentAttendanceListFilter}`;
-    }
 
     fetch(`/instructor/getCadetAttendanceList${query}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 attendanceListData = data.trainings || [];
-                setupIntakeFilter();
+                // Only setup intake filter if it hasn't been set up yet or if we're changing months/years
+                const shouldSetupIntakeFilter = allAvailableIntakes.length === 0;
+                if (shouldSetupIntakeFilter) {
+                    setupIntakeFilter();
+                }
                 renderTrainingAccordions();
             } else {
                 showAttendanceListError(data.message || 'Failed to load attendance data');
@@ -1675,7 +1641,7 @@ function fetchAttendanceListData() {
 
 function setupIntakeFilter() {
     // Collect all available intakes from the data
-    allAvailableIntakes = [];
+    const currentAvailableIntakes = [];
     const intakeSet = new Set();
     
     attendanceListData.forEach(training => {
@@ -1686,42 +1652,65 @@ function setupIntakeFilter() {
         }
     });
     
-    allAvailableIntakes = Array.from(intakeSet).sort((a, b) => {
+    const newIntakes = Array.from(intakeSet).sort((a, b) => {
         // Extract number from "Intake - X" format and sort numerically
         const aNum = parseInt(a.match(/Intake - (\d+)/)?.[1] || '0');
         const bNum = parseInt(b.match(/Intake - (\d+)/)?.[1] || '0');
         return aNum - bNum;
     });
     
-    // Show/hide intake filter based on whether multiple intakes are available
     const intakeSection = document.getElementById('attendanceListIntakeSection');
     const intakeSelect = document.getElementById('attendanceListIntakeFilter');
     
-    if (allAvailableIntakes.length > 1) {
+    if (newIntakes.length > 1) {
+        // Store the current selection before rebuilding
+        const currentSelection = intakeSelect.value || currentAttendanceListIntake;
+        
         intakeSection.classList.remove('hidden');
-        // Populate intake filter options
-        intakeSelect.innerHTML = '';
-        allAvailableIntakes.forEach(intake => {
-            const option = document.createElement('option');
-            option.value = intake;
-            option.textContent = intake;
-            intakeSelect.appendChild(option);
-        });
-        // Preserve user's selection if possible, otherwise set default
-        if (currentAttendanceListIntake && allAvailableIntakes.includes(currentAttendanceListIntake)) {
-            intakeSelect.value = currentAttendanceListIntake;
+        
+        // Only rebuild the dropdown if the available intakes have changed
+        const intakesChanged = JSON.stringify(allAvailableIntakes) !== JSON.stringify(newIntakes);
+        
+        if (intakesChanged) {
+            allAvailableIntakes = newIntakes;
+            
+            // Rebuild dropdown options
+            intakeSelect.innerHTML = '';
+            allAvailableIntakes.forEach(intake => {
+                const option = document.createElement('option');
+                option.value = intake;
+                option.textContent = intake;
+                intakeSelect.appendChild(option);
+            });
+        }
+        
+        // Set the selection - preserve user's choice if it's still valid
+        if (currentSelection && allAvailableIntakes.includes(currentSelection)) {
+            intakeSelect.value = currentSelection;
+            currentAttendanceListIntake = currentSelection;
         } else {
+            // Default to first intake if current selection is not available
             intakeSelect.value = allAvailableIntakes[0];
             currentAttendanceListIntake = allAvailableIntakes[0];
         }
-        // Set up event listener
-        intakeSelect.onchange = function() {
-            currentAttendanceListIntake = this.value;
-            fetchAttendanceListData();
-        };
+        
+        // Set up event listener only once
+        if (!intakeSelect.onchange) {
+            intakeSelect.onchange = function() {
+                const previousIntake = currentAttendanceListIntake;
+                currentAttendanceListIntake = this.value;
+                
+                // Only fetch new data if the intake actually changed
+                if (previousIntake !== currentAttendanceListIntake) {
+                    trainingFilters = {}; // Reset all training filters when intake changes
+                    fetchAttendanceListData();
+                }
+            };
+        }
     } else {
         intakeSection.classList.add('hidden');
         currentAttendanceListIntake = '';
+        allAvailableIntakes = [];
     }
 }
 
@@ -1744,6 +1733,11 @@ function renderTrainingAccordions() {
     );
 
     sortedTrainings.forEach((training, index) => {
+        // Initialize filter for this training if not exists
+        if (!trainingFilters[training.id]) {
+            trainingFilters[training.id] = 'all';
+        }
+        
         const accordion = createTrainingAccordion(training, index);
         container.appendChild(accordion);
     });
@@ -1758,7 +1752,7 @@ function createTrainingAccordion(training, index) {
     const presentCount = cadets.filter(c => c.present).length;
     const attendancePercentage = totalCadets > 0 ? Math.round((presentCount / totalCadets) * 100) : 0;
     
-    // Simplified header
+    // Header styling based on attendance percentage
     let headerClass = 'bg-gray-50 hover:bg-gray-100';
     if (attendancePercentage >= 90) {
         headerClass = 'bg-green-50 hover:bg-green-100';
@@ -1791,7 +1785,7 @@ function createTrainingAccordion(training, index) {
         
         <div class="accordion-content hidden" id="accordion-content-${index}">
             <div class="border-t border-gray-200">
-                ${createCadetTable(cadets, training.id)}
+                ${createTrainingContent(cadets, training.id)}
             </div>
         </div>
     `;
@@ -1799,39 +1793,7 @@ function createTrainingAccordion(training, index) {
     return accordionDiv;
 }
 
-function toggleAccordion(accordionId) {
-    const contentId = accordionId.replace('accordion-', 'accordion-content-');
-    const iconId = accordionId.replace('accordion-', 'accordion-icon-');
-    
-    const content = document.getElementById(contentId);
-    const icon = document.getElementById(iconId);
-    
-    // Close previously opened accordion
-    if (openAccordionId && openAccordionId !== accordionId) {
-        const prevContent = document.getElementById(openAccordionId.replace('accordion-', 'accordion-content-'));
-        const prevIcon = document.getElementById(openAccordionId.replace('accordion-', 'accordion-icon-'));
-        
-        if (prevContent) {
-            prevContent.classList.add('hidden');
-        }
-        if (prevIcon) {
-            prevIcon.style.transform = 'rotate(0deg)';
-        }
-    }
-    
-    // Toggle current accordion
-    if (content.classList.contains('hidden')) {
-        content.classList.remove('hidden');
-        icon.style.transform = 'rotate(180deg)';
-        openAccordionId = accordionId;
-    } else {
-        content.classList.add('hidden');
-        icon.style.transform = 'rotate(0deg)';
-        openAccordionId = null;
-    }
-}
-
-function createCadetTable(cadets, trainingId) {
+function createTrainingContent(cadets, trainingId) {
     if (!cadets || cadets.length === 0) {
         return `
             <div class="px-6 py-8 text-center text-gray-500">
@@ -1840,9 +1802,87 @@ function createCadetTable(cadets, trainingId) {
             </div>
         `;
     }
+
+    const currentFilter = trainingFilters[trainingId] || 'all';
+    
+    // Filter buttons for this specific training
+    const filterButtons = `
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h5 class="text-sm font-medium text-gray-700">Filter Cadets:</h5>
+                <div class="flex gap-1">
+                    <button id="filter-all-${trainingId}" 
+                        class="px-3 py-1 text-xs rounded ${currentFilter === 'all' ? 'bg-blue-600 text-white font-medium' : 'bg-gray-200 text-gray-700'}" 
+                        onclick="setTrainingFilter(${trainingId}, 'all')">
+                        All (${cadets.length})
+                    </button>
+                    <button id="filter-present-${trainingId}" 
+                        class="px-3 py-1 text-xs rounded ${currentFilter === 'present' ? 'bg-blue-600 text-white font-medium' : 'bg-gray-200 text-gray-700'}" 
+                        onclick="setTrainingFilter(${trainingId}, 'present')">
+                        Present (${cadets.filter(c => c.present).length})
+                    </button>
+                    <button id="filter-absent-${trainingId}" 
+                        class="px-3 py-1 text-xs rounded ${currentFilter === 'absent' ? 'bg-blue-600 text-white font-medium' : 'bg-gray-200 text-gray-700'}" 
+                        onclick="setTrainingFilter(${trainingId}, 'absent')">
+                        Absent (${cadets.filter(c => !c.present).length})
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    return filterButtons + createCadetTable(cadets, trainingId, currentFilter);
+}
+
+function setTrainingFilter(trainingId, filter) {
+    trainingFilters[trainingId] = filter;
+    
+    // Update button states for this specific training
+    const buttons = ['all', 'present', 'absent'];
+    buttons.forEach(btnType => {
+        const btn = document.getElementById(`filter-${btnType}-${trainingId}`);
+        if (btn) {
+            if (btnType === filter) {
+                btn.className = 'px-3 py-1 text-xs rounded bg-blue-600 text-white font-medium';
+            } else {
+                btn.className = 'px-3 py-1 text-xs rounded bg-gray-200 text-gray-700';
+            }
+        }
+    });
+    
+    // Find and update the table content for this training
+    const accordionContent = document.querySelector(`[id^="accordion-content-"] [onclick*="${trainingId}"]`).closest('.accordion-content');
+    if (accordionContent) {
+        // Find the training data
+        const training = attendanceListData.find(t => t.id === trainingId);
+        if (training) {
+            const filterButtons = accordionContent.querySelector('.bg-gray-50');
+            const newContent = createTrainingContent(training.cadets, trainingId);
+            accordionContent.innerHTML = `<div class="border-t border-gray-200">${newContent}</div>`;
+        }
+    }
+}
+
+function createCadetTable(cadets, trainingId, filter = 'all') {
+    // Apply filter
+    let filteredCadets = cadets;
+    if (filter === 'present') {
+        filteredCadets = cadets.filter(c => c.present);
+    } else if (filter === 'absent') {
+        filteredCadets = cadets.filter(c => !c.present);
+    }
+    
+    if (filteredCadets.length === 0) {
+        return `
+            <div class="px-6 py-8 text-center text-gray-500">
+                <i class="fas fa-filter text-3xl mb-2"></i>
+                <p>No cadets match the current filter.</p>
+            </div>
+        `;
+    }
     
     // Sort cadets by service number (ascending)
-    const sortedCadets = [...cadets].sort((a, b) => {
+    const sortedCadets = [...filteredCadets].sort((a, b) => {
         const numA = parseInt(a.service_number, 10) || 0;
         const numB = parseInt(b.service_number, 10) || 0;
         return numA - numB;
@@ -1907,6 +1947,38 @@ function createCadetTable(cadets, trainingId) {
     `;
     
     return tableHTML;
+}
+
+function toggleAccordion(accordionId) {
+    const contentId = accordionId.replace('accordion-', 'accordion-content-');
+    const iconId = accordionId.replace('accordion-', 'accordion-icon-');
+    
+    const content = document.getElementById(contentId);
+    const icon = document.getElementById(iconId);
+    
+    // Close previously opened accordion
+    if (openAccordionId && openAccordionId !== accordionId) {
+        const prevContent = document.getElementById(openAccordionId.replace('accordion-', 'accordion-content-'));
+        const prevIcon = document.getElementById(openAccordionId.replace('accordion-', 'accordion-icon-'));
+        
+        if (prevContent) {
+            prevContent.classList.add('hidden');
+        }
+        if (prevIcon) {
+            prevIcon.style.transform = 'rotate(0deg)';
+        }
+    }
+    
+    // Toggle current accordion
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+        openAccordionId = accordionId;
+    } else {
+        content.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+        openAccordionId = null;
+    }
 }
 
 function showAttendanceListError(message) {
