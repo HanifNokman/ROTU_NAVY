@@ -9,6 +9,7 @@ use App\Models\TrainingAttendance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class AttendanceController extends Controller
 {
@@ -16,6 +17,10 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $cadet = Cadet::where('user_id', $user->id)->first();
+
+        if (!$cadet) {
+            return redirect()->route('dashboard')->with('error', 'Cadet profile not found.');
+        }
 
         // Calculate intake label using the same logic as Cadet model
         $intakeNumber = $cadet->intake_year - 2011;
@@ -95,26 +100,55 @@ class AttendanceController extends Controller
             'todaysTraining' => $todaysTraining,
             'attendance' => $attendance,
             'absentAttendances' => $absentAttendances,
-            'todaysTrainings' => $todaysTrainings, // Add this line if it's missing
+            'todaysTrainings' => $todaysTrainings,
         ]);
     }
 
-    // Mark present manually or via QR
+    /**
+     * Mark attendance as present manually
+     */
     public function markPresent(Request $request)
     {
         try {
             $user = Auth::user();
             $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
+            
+            $request->validate([
+                'training_id' => 'required|exists:trainings,id',
+                'method' => 'in:manual'
+            ]);
+            
             $trainingId = $request->input('training_id');
             $method = $request->input('method', 'manual');
 
             // Validate training exists and is accessible to cadet
             $training = Training::findOrFail($trainingId);
             
+            // Check if cadet is eligible for this training
+            $intakeNumber = $cadet->intake_year - 2011;
+            $intakeStr = "Intake - " . $intakeNumber;
+            
+            if ($training->involvement && !str_contains($training->involvement, $intakeStr)) {
+                return redirect()->back()->with('error', 'You are not eligible for this training session.');
+            }
+            
+            // Check if training is still active or recent
+            $now = Carbon::now();
+            $trainingDate = $training->start_datetime;
+            $daysDiff = $now->diffInDays($trainingDate, false);
+            
+            if ($daysDiff > 1) {
+                return redirect()->back()->with('error', 'This training session is too old to mark attendance.');
+            }
+            
             $attendance = TrainingAttendance::firstOrNew([
                 'training_id' => $trainingId,
                 'cadet_id' => $cadet->id,
             ]);
+            
+            if ($attendance->exists && $attendance->present) {
+                return redirect()->back()->with('error', 'You have already marked attendance for this training.');
+            }
             
             $attendance->present = true;
             $attendance->method = $method;
@@ -125,30 +159,17 @@ class AttendanceController extends Controller
             $attendance->file_url = null;
             $attendance->save();
 
-            $message = $method === 'qr' ? 'Attendance marked as present via QR scan!' : 'Attendance marked as present!';
-            
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => $message
-                ]);
-            }
-
-            return redirect()->back()->with('success', $message);
+            return redirect()->back()->with('success', 'Attendance marked as present successfully!');
             
         } catch (\Exception $e) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to mark attendance. Please try again.'
-                ], 400);
-            }
-            
+            \Log::error('Error marking attendance: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to mark attendance. Please try again.');
         }
     }
 
-    // Submit absence reason and file
+    /**
+     * Submit absence reason and supporting file
+     */
     public function submitAbsence(Request $request, $attendanceId)
     {
         try {
@@ -157,6 +178,7 @@ class AttendanceController extends Controller
             
             $attendance = TrainingAttendance::where('id', $attendanceId)
                 ->where('cadet_id', $cadet->id)
+                ->where('present', false)
                 ->firstOrFail();
 
             $request->validate([
@@ -171,10 +193,21 @@ class AttendanceController extends Controller
                 'supporting_file.max' => 'File size cannot exceed 5MB.',
             ]);
 
-            // Handle file upload with better naming
+            // Handle file upload with better naming and validation
             $file = $request->file('supporting_file');
-            $fileName = time() . '_' . $cadet->id . '_' . $file->getClientOriginalName();
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
+            
+            // Clean filename and add timestamp
+            $cleanName = preg_replace('/[^A-Za-z0-9\-_]/', '_', $originalName);
+            $fileName = time() . '_cadet_' . $cadet->id . '_' . $cleanName . '.' . $extension;
+            
+            // Store file in the absences directory
             $path = $file->storeAs('absences', $fileName, 'public');
+            
+            if (!$path) {
+                throw new \Exception('Failed to upload file.');
+            }
             
             // Update attendance record
             $attendance->absence_reason = $request->input('absence_reason');
@@ -182,7 +215,7 @@ class AttendanceController extends Controller
             $attendance->updated_at = Carbon::now();
             $attendance->save();
 
-            return redirect()->back()->with('success', 'Absence reason and supporting file submitted successfully!');
+            return redirect()->back()->with('success', 'Absence reason and supporting documentation submitted successfully!');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
@@ -190,75 +223,41 @@ class AttendanceController extends Controller
                 ->withInput();
                 
         } catch (\Exception $e) {
+            \Log::error('Error submitting absence: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Failed to submit absence information. Please try again.')
                 ->withInput();
         }
     }
 
-    // QR Code verification endpoint
-    public function verifyQR(Request $request)
+    /**
+     * Get training details for cadet verification
+     */
+    private function isTrainingAccessible(Training $training, Cadet $cadet): bool
     {
-        try {
-            $qrData = $request->input('qr_data');
-            $user = Auth::user();
-            $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
-
-            // Parse QR data (expecting format: training_id:timestamp:hash)
-            $qrParts = explode(':', $qrData);
-            
-            if (count($qrParts) !== 3) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid QR code format.'
-                ], 400);
-            }
-
-            $trainingId = $qrParts[0];
-            $timestamp = $qrParts[1];
-            $hash = $qrParts[2];
-
-            // Verify QR code is not expired (valid for 30 minutes)
-            $qrTime = Carbon::createFromTimestamp($timestamp);
-            if ($qrTime->diffInMinutes(Carbon::now()) > 30) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'QR code has expired. Please request a new one from your instructor.'
-                ], 400);
-            }
-
-            // Verify hash (simple verification - you might want to enhance this)
-            $expectedHash = hash('sha256', $trainingId . $timestamp . config('app.key'));
-            if ($hash !== $expectedHash) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid QR code.'
-                ], 400);
-            }
-
-            // Mark attendance
-            $attendance = TrainingAttendance::firstOrNew([
-                'training_id' => $trainingId,
-                'cadet_id' => $cadet->id,
-            ]);
-            
-            $attendance->present = true;
-            $attendance->method = 'qr';
-            $attendance->marked_at = Carbon::now();
-            $attendance->absence_reason = null;
-            $attendance->file_url = null;
-            $attendance->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Attendance marked successfully via QR scan!'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to verify QR code. Please try again.'
-            ], 500);
+        // If no involvement specified, training is open to all
+        if (!$training->involvement) {
+            return true;
         }
+
+        // Check if cadet's intake is in the involvement list
+        $intakeNumber = $cadet->intake_year - 2011;
+        $intakeStr = "Intake - " . $intakeNumber;
+        
+        return str_contains($training->involvement, $intakeStr);
+    }
+
+    /**
+     * Check if training is within acceptable time range for attendance
+     */
+    private function isTrainingTimeValid(Training $training): bool
+    {
+        $now = Carbon::now();
+        $trainingStart = $training->start_datetime;
+        
+        // Allow attendance from training start time up to 24 hours after
+        $allowedUntil = $trainingStart->copy()->addHours(24);
+        
+        return $now->between($trainingStart, $allowedUntil);
     }
 }
