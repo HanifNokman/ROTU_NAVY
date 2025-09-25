@@ -107,18 +107,28 @@
                                         </button>
                                         <div x-show="open" x-transition class="p-4 bg-white rounded-b-lg border-t">
                                             <div class="flex flex-col md:flex-row gap-4">
-                                                @if($material->file_url && Str::endsWith($material->file_url, ['jpg','jpeg','png','gif','mp4','webm','avi']))
-                                                    <div class="md:w-1/2">
+                                                @if($material->file_url && $material->description && Str::endsWith($material->file_url, ['jpg','jpeg','png','gif','mp4','webm','avi']))
+                                                    <div class="md:w-[60%]">
                                                         @if(preg_match('/\.(mp4|webm|avi)$/i', $material->file_url))
-                                                            <video controls class="max-w-xs w-full rounded">
+                                                            <video controls class="w-full rounded">
                                                                 <source src="{{ asset($material->file_url) }}" type="video/mp4">
                                                             </video>
                                                         @else
-                                                            <img src="{{ asset($material->file_url) }}" alt="Material Image" class="max-w-xs w-full h-auto rounded">
+                                                            <img src="{{ asset($material->file_url) }}" alt="Material Image" class="w-full h-auto rounded">
                                                         @endif
                                                     </div>
-                                                    <div class="md:w-1/2 text-gray-700">
+                                                    <div class="md:w-[40%] text-gray-700">
                                                         <p>{{ $material->description }}</p>
+                                                    </div>
+                                                @elseif($material->file_url && Str::endsWith($material->file_url, ['jpg','jpeg','png','gif','mp4','webm','avi']))
+                                                    <div class="w-full flex justify-center">
+                                                        @if(preg_match('/\.(mp4|webm|avi)$/i', $material->file_url))
+                                                            <video controls class="max-w-lg w-full rounded">
+                                                                <source src="{{ asset($material->file_url) }}" type="video/mp4">
+                                                            </video>
+                                                        @else
+                                                            <img src="{{ asset($material->file_url) }}" alt="Material Image" class="max-w-lg w-full h-auto rounded">
+                                                        @endif
                                                     </div>
                                                 @else
                                                     <div class="w-full text-gray-700">
@@ -313,6 +323,43 @@
                 let materialsHTML = '';
                 for (const [categoryId, materials] of Object.entries(groupedMaterials)) {
                     materials.forEach(material => {
+                        const isMedia = material.file_url && ['jpg','jpeg','png','gif','mp4','webm','avi'].some(ext => material.file_url.toLowerCase().includes(ext));
+                        const hasDescription = material.description && material.description.trim() !== '';
+                        let contentHTML = '';
+
+                        if (isMedia && hasDescription) {
+                            contentHTML = `
+                                <div class="md:w-[60%]">
+                                    ${material.file_url.toLowerCase().includes('.mp4') || material.file_url.toLowerCase().includes('.webm') || material.file_url.toLowerCase().includes('.avi') ?
+                                        `<video controls class="w-full rounded">
+                                            <source src="/${material.file_url}" type="video/mp4">
+                                        </video>` :
+                                        `<img src="/${material.file_url}" alt="Material Image" class="w-full h-auto rounded">`
+                                    }
+                                </div>
+                                <div class="md:w-[40%] text-gray-700">
+                                    <p>${material.description}</p>
+                                </div>
+                            `;
+                        } else if (isMedia) {
+                            contentHTML = `
+                                <div class="w-full flex justify-center">
+                                    ${material.file_url.toLowerCase().includes('.mp4') || material.file_url.toLowerCase().includes('.webm') || material.file_url.toLowerCase().includes('.avi') ?
+                                        `<video controls class="max-w-lg w-full rounded">
+                                            <source src="/${material.file_url}" type="video/mp4">
+                                        </video>` :
+                                        `<img src="/${material.file_url}" alt="Material Image" class="max-w-lg w-full h-auto rounded">`
+                                    }
+                                </div>
+                            `;
+                        } else {
+                            contentHTML = `
+                                <div class="w-full text-gray-700">
+                                    <p>${material.description || 'No description available'}</p>
+                                </div>
+                            `;
+                        }
+
                         materialsHTML += `
                             <div id="material-${material.id}" x-data="{ open: false }" class="border border-gray-200 rounded-lg mb-4">
                                 <button @click="open = !open"
@@ -324,22 +371,7 @@
                                 </button>
                                 <div x-show="open" x-transition class="p-4 bg-white rounded-b-lg border-t">
                                     <div class="flex flex-col md:flex-row gap-4">
-                                        ${material.file_url && ['jpg','jpeg','png','gif','mp4','webm','avi'].some(ext => material.file_url.toLowerCase().includes(ext)) ?
-                                            `<div class="md:w-1/2">
-                                                ${material.file_url.toLowerCase().includes('.mp4') || material.file_url.toLowerCase().includes('.webm') || material.file_url.toLowerCase().includes('.avi') ?
-                                                    `<video controls class="max-w-xs w-full rounded">
-                                                        <source src="/${material.file_url}" type="video/mp4">
-                                                    </video>` :
-                                                    `<img src="/${material.file_url}" alt="Material Image" class="max-w-xs w-full h-auto rounded">`
-                                                }
-                                            </div>
-                                            <div class="md:w-1/2 text-gray-700">
-                                                <p>${material.description}</p>
-                                            </div>` :
-                                            `<div class="w-full text-gray-700">
-                                                <p>${material.description}</p>
-                                            </div>`
-                                        }
+                                        ${contentHTML}
                                     </div>
                                 </div>
                             </div>
