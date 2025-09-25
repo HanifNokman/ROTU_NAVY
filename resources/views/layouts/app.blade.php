@@ -405,11 +405,11 @@
                     <aside class="w-80 bg-[#2e313c] shadow-lg flex flex-col justify-between border-r border-[#373a46] transform transition-transform duration-300 ease-in-out hidden sm:flex text-white h-screen overflow-hidden"
                         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'">
 
-                        <div class="flex flex-col h-full space-y-6 px-4 pt-4 overflow-hidden">
+                        <div class="flex flex-col h-full space-y-4 px-4 pt-4 overflow-hidden">
                             <!-- Profile Section -->
                             <x-dropdown align="right" width="full" contentClasses="py-1 bg-white text-black border border-gray-300">
                                 <x-slot name="trigger">
-                                    <div class="flex items-center gap-3 border-b border-[#373a46] pb-4 cursor-pointer hover:bg-[#373a46] transition-colors rounded-md px-2 py-1 w-full">
+                                    <div class="flex items-center gap-3 border-b border-[#373a46] pb-2 cursor-pointer hover:bg-[#373a46] transition-colors rounded-md px-2 py-1 w-full">
                                         @if($avatarSrc)
                                             <img src="{{ $avatarSrc }}"
                                                  alt="Profile"
@@ -445,7 +445,7 @@
                             </x-dropdown>
 
                             <!-- Navigation Links -->
-                            <nav class="flex flex-col space-y-2 overflow-hidden">
+                            <nav class="flex flex-col space-y-2 overflow-y-auto">
                                 <!-- Dashboard -->
                                 <a href="{{ route('dashboard') }}"
                                 class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
@@ -578,7 +578,7 @@
 
                         <!-- Bottom Section -->
                         <div class="border-t border-[#373a46] overflow-hidden mt-1">
-                            <div class="p-6 flex flex-col justify-between h-full">
+                            <div class="p-4 flex flex-col justify-between h-full">
                                 @if(Auth::user()->role === 'instructor')
                                     <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full relative">
                                         @if($hasNotifications)
