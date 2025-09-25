@@ -728,16 +728,21 @@
         }
 
         .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--primary-blue);
-            color: var(--primary-blue);
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
             padding: 12px 28px;
             border-radius: 8px;
+            transition: all 0.3s ease;
+            color: white;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .btn-secondary::before {
@@ -759,6 +764,7 @@
         .btn-secondary:hover {
             color: white;
             transform: translateY(-2px);
+            border-color: var(--primary-blue);
         }
 
         /* Floating Elements */
