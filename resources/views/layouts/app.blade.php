@@ -30,9 +30,20 @@
                 $profilePicture = $cadet?->profile_pic;
             }
 
+            // Generate initials from user's name
+            $nameParts = explode(' ', trim($user->name));
+            $initials = '';
+            foreach ($nameParts as $part) {
+                if (!empty($part)) {
+                    $initials .= strtoupper(substr($part, 0, 1));
+                }
+            }
+            // Limit to 2 characters for better display
+            $initials = substr($initials, 0, 2);
+
             $avatarSrc = $profilePicture 
                 ? asset('storage/' . $profilePicture) 
-                : asset('images/default.png');
+                : null; // Set to null so we can check if we need to show initials
         @endphp
         
         <div x-data="{ sidebarOpen: false, showLogoutModal: false, currentLogoutForm: null }">
@@ -125,17 +136,28 @@
                         <x-dropdown align="right" width="full" contentClasses="py-1 bg-white text-black border border-gray-300">
                             <x-slot name="trigger">
                                 <div class="flex items-center gap-3 border-b border-[#373a46] pb-4 cursor-pointer hover:bg-[#373a46] transition-colors rounded-md px-2 py-1 w-full">
-                                    <img src="{{ $avatarSrc }}"
-                                            alt="Profile"
-                                            class="w-10 h-10 rounded-full object-cover"
-                                            onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
-                                        <div class="flex flex-col flex-1 min-w-0">
-                                            <div class="font-semibold text-sm leading-tight truncate text-white">{{ Auth::user()->name }}</div>
-                                            <div class="text-xs text-gray-400 leading-tight truncate">{{ Auth::user()->email }}</div>
+                                    @if($avatarSrc)
+                                        <img src="{{ $avatarSrc }}"
+                                             alt="Profile"
+                                             class="w-10 h-10 rounded-full object-cover"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <!-- Fallback initials div (hidden by default) -->
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm" style="display: none;">
+                                            {{ $initials }}
                                         </div>
-                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
+                                    @else
+                                        <!-- Show initials when no profile picture -->
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                                            {{ $initials }}
+                                        </div>
+                                    @endif
+                                    <div class="flex flex-col flex-1 min-w-0">
+                                        <div class="font-semibold text-sm leading-tight truncate text-white">{{ Auth::user()->name }}</div>
+                                        <div class="text-xs text-gray-400 leading-tight truncate">{{ Auth::user()->email }}</div>
+                                    </div>
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
                                 </div>
                             </x-slot>
                                 <x-slot name="content">
@@ -212,7 +234,7 @@
                                         <a href="{{ route('instructor.gallery') }}"
                                         class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('instructor.gallery*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                             </svg>
                                             Gallery
                                         </a>
@@ -253,7 +275,7 @@
                                         <a href="{{ route('cadet.gallery') }}"
                                         class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('cadet.gallery*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                             </svg>
                                             Gallery
                                         </a>
@@ -324,17 +346,28 @@
                             <x-dropdown align="right" width="full" contentClasses="py-1 bg-white text-black border border-gray-300">
                                 <x-slot name="trigger">
                                     <div class="flex items-center gap-3 border-b border-[#373a46] pb-4 cursor-pointer hover:bg-[#373a46] transition-colors rounded-md px-2 py-1 w-full">
-                                        <img src="{{ $avatarSrc }}"
-                                                alt="Profile"
-                                                class="w-10 h-10 rounded-full object-cover"
-                                                onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
-                                            <div class="flex flex-col flex-1 min-w-0">
-                                                <div class="font-semibold text-sm leading-tight truncate text-white">{{ Auth::user()->name }}</div>
-                                                <div class="text-xs text-gray-400 leading-tight truncate">{{ Auth::user()->email }}</div>
+                                        @if($avatarSrc)
+                                            <img src="{{ $avatarSrc }}"
+                                                 alt="Profile"
+                                                 class="w-10 h-10 rounded-full object-cover"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            <!-- Fallback initials div (hidden by default) -->
+                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm" style="display: none;">
+                                                {{ $initials }}
                                             </div>
-                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                            </svg>
+                                        @else
+                                            <!-- Show initials when no profile picture -->
+                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                                                {{ $initials }}
+                                            </div>
+                                        @endif
+                                        <div class="flex flex-col flex-1 min-w-0">
+                                            <div class="font-semibold text-sm leading-tight truncate text-white">{{ Auth::user()->name }}</div>
+                                            <div class="text-xs text-gray-400 leading-tight truncate">{{ Auth::user()->email }}</div>
+                                        </div>
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
                                     </div>
                                 </x-slot>
                                 <x-slot name="content">
@@ -350,7 +383,7 @@
                             <!-- Navigation Links -->
                             <nav class="flex flex-col space-y-2 overflow-hidden">
                                 <!-- Dashboard -->
-<a href="{{ route('dashboard') }}"
+                                <a href="{{ route('dashboard') }}"
                                 class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                 {{ (Auth::user()->role === 'instructor' && request()->routeIs('instructor.dashboard')) || (Auth::user()->role === 'cadet' && request()->routeIs('cadet.dashboard')) ? 'text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -373,7 +406,7 @@
                                     <div class="space-y-1">
                                         @if(Auth::user()->role === 'instructor')
                                             <!-- Instructor Navigation -->
-<a href="{{ route('instructor.cadet_management') }}"
+                                            <a href="{{ route('instructor.cadet_management') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('instructor/cadet*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <!-- Icon -->
@@ -383,7 +416,7 @@
                                                 Cadet Management
                                             </a>
 
-<a href="{{ route('instructor.training') }}"
+                                            <a href="{{ route('instructor.training') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('instructor/training*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -392,7 +425,7 @@
                                                 Training
                                             </a>
 
-<a href="{{ route('instructor.allowance') }}"
+                                            <a href="{{ route('instructor.allowance') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('instructor/allowance*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -401,7 +434,7 @@
                                                 Allowance
                                             </a>
 
-<a href="{{ route('instructor.inventory') }}"
+                                            <a href="{{ route('instructor.inventory') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('instructor/inventory*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -410,7 +443,7 @@
                                                 Inventory
                                             </a>
 
-<a href="{{ route('instructor.learning_hub') }}"
+                                            <a href="{{ route('instructor.learning_hub') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('instructor/learning*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -419,7 +452,7 @@
                                                 Learning Hub
                                             </a>
 
-<a href="{{ route('instructor.gallery') }}"
+                                            <a href="{{ route('instructor.gallery') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('instructor/gallery*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,7 +462,7 @@
                                             </a>
                                         @elseif(Auth::user()->role === 'cadet')
                                             <!-- Cadet Navigation -->
-<a href="{{ route('cadet.training') }}"
+                                            <a href="{{ route('cadet.training') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('cadet/training*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -439,7 +472,7 @@
                                                 Training
                                             </a>
 
-<a href="{{ route('cadet.allowance') }}"
+                                            <a href="{{ route('cadet.allowance') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('cadet/allowance*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -448,7 +481,7 @@
                                                 Allowance Estimation
                                             </a>
 
-<a href="{{ route('cadet.learning_hub') }}"
+                                            <a href="{{ route('cadet.learning_hub') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('cadet/learning*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -457,7 +490,7 @@
                                                 Learning Hub
                                             </a>
 
-<a href="{{ route('cadet.inventory') }}"
+                                            <a href="{{ route('cadet.inventory') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('cadet/inventory*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -466,7 +499,7 @@
                                                 Inventory
                                             </a>
 
-<a href="{{ route('cadet.gallery') }}"
+                                            <a href="{{ route('cadet.gallery') }}"
                                             class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                                             {{ request()->is('cadet/gallery*') ? 'border-l-4 border-[#3c92d9] text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
                                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -509,7 +542,7 @@
                                 <!-- Log Out Link -->
                                 <form method="POST" action="{{ route('logout') }}" class="mt-auto" x-ref="logoutFormDesktop">
                                     @csrf
-<button type="button" 
+                                    <button type="button" 
                                             @click="currentLogoutForm = $refs.logoutFormDesktop; showLogoutModal = true" 
                                             class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white transition-colors border border-transparent">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
