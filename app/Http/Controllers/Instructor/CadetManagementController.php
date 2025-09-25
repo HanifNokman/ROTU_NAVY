@@ -21,7 +21,7 @@ class CadetManagementController extends Controller
 
         // Initialize ALL variables with safe defaults - be very explicit
         $infoType = $request->get('info_type', 'seniority');
-        $intakeYear = $request->get('intake_year', Cadet::max('intake_year') ?? now()->year);
+        $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
         
         if ($infoType === 'seniority') {
             $sortBy = 'asc';

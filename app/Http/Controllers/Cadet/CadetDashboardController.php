@@ -22,6 +22,7 @@ class CadetDashboardController extends Controller
         // Auto-update rank if date has passed and not yet updated
         if (now()->greaterThanOrEqualTo($tauliahDate) && $cadet->rank !== 'Lt.M') {
             $cadet->rank = 'Lt.M';
+            $cadet->cadet_status = 'Completed';
             $cadet->save();
         }
 
