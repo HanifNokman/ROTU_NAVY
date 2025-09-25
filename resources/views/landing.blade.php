@@ -2049,7 +2049,9 @@
         <div class="timeline">
             <!-- Timeline Icon 1 - Foundation Training -->
             <div class="timeline-center-icon" style="top: 15%;">
-                <i class="fas fa-anchor"></i>
+                <button onclick="window.location.href='{{ route('about-me') }}'" style="background: none; border: none; cursor: pointer; font-size: 1.8rem; color: white;" title="About the Developer">
+                    <i class="fas fa-anchor"></i>
+                </button>
             </div>
             
             <!-- Row 1: Junior Phase (left) + Video (right) -->

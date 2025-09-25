@@ -22,7 +22,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('landing');
-});
+})->name('landing');
+
+Route::get('/about-me', function () {
+    return view('about-me');
+})->name('about-me');
 
 // Content Management Routes (Protected by middleware)
 Route::middleware(['auth'])->group(function () {
