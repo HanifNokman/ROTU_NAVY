@@ -181,6 +181,7 @@
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                                         <textarea name="description" x-model="material.description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                        <p class="text-xs text-gray-500 mt-1">Note: Leave description empty if you only want to upload an image for full-width display on the cadet learning hub.</p>
                                     </div>
 
                                     <div class="mb-4">
@@ -261,6 +262,7 @@
                             <label for="material_description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                             <textarea id="material_description" name="description" rows="3"
                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Note: Leave description empty if you only want to upload an image for full-width display on the cadet learning hub.</p>
                         </div>
                         
                         <div class="mb-4">
