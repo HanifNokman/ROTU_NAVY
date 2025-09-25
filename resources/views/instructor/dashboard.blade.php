@@ -448,7 +448,7 @@
                 </div>
             </div>
 
-            <!-- Pending Absence Reasons Section -->
+            <!-- Pending Absence Reasons Section with Toggle -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
                     <div class="flex justify-between items-center">
@@ -457,26 +457,49 @@
                                 <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                 </svg>
-                                Pending Absence Reasons
+                                <span id="absence-section-title">Pending Absence Reasons</span>
                                 @if(isset($absentCadets) && !empty($absentCadets))
-                                    <span class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
+                                    <span id="absence-count-badge" class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
                                         {{ collect($absentCadets)->flatten(1)->count() }}
                                     </span>
                                 @endif
                             </h2>
-                            <p class="text-gray-600">Cadets with training absences requiring documentation</p>
+                            <p id="absence-section-description" class="text-gray-600">Cadets with training absences requiring documentation</p>
                         </div>
-                        <!-- Moved Filter to Header -->
-                        <div class="flex items-center gap-3">
-                            <label for="absence-intake-filter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
-                            <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm">
-                                <option value="">All Intakes</option>
-                                @foreach ($intakeOptions as $option)
-                                    <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
-                                        {{ $option['label'] }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <!-- Controls Container -->
+                        <div class="flex items-center gap-4">
+                            <!-- View Toggle -->
+                            <div class="flex bg-gray-100 rounded-lg p-1">
+                                <button 
+                                    id="pending-view-btn"
+                                    onclick="toggleAbsenceView('pending')"
+                                    class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm"
+                                >
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                    Pending
+                                </button>
+                                <button 
+                                    id="leaderboard-view-btn"
+                                    onclick="toggleAbsenceView('leaderboard')"
+                                    class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900"
+                                >
+                                    <i class="fas fa-chart-bar mr-1"></i>
+                                    Absence List
+                                </button>
+                            </div>
+                            
+                            <!-- Filter -->
+                            <div id="absence-filter-container" class="flex items-center gap-3">
+                                <label for="absence-intake-filter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
+                                <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm">
+                                    <option value="">All Intakes</option>
+                                    @foreach ($intakeOptions as $option)
+                                        <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
+                                            {{ $option['label'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -493,7 +516,7 @@
                         </div>
                     </div>
 
-                    <!-- Absence Data -->
+                    <!-- Pending Absence Data -->
                     <div id="absence-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absentCadets) && !empty($absentCadets))
                             @foreach ($absentCadets as $intakeLabel => $cadets)
@@ -588,8 +611,8 @@
                                 @else
                                     <!-- Show individual cadets when specific intake is selected -->
                                     @foreach($cadets as $cadet)
-                                        <!-- Cadet Absence Dropdown -->
-                                        <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
+                                        <!-- Same cadet dropdown structure as above -->
+                                        <div class="border border-orange-200 rounded-lg overflow-hidden bg-white mb-4">
                                             <button 
                                                 onclick="toggleAbsenceDropdown({{ $cadet->id }})"
                                                 class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200"
@@ -674,162 +697,399 @@
                             </div>
                         @endif
                     </div>
+
+                    <!-- Absence Leaderboard (Hidden by default) -->
+                    <div id="absence-leaderboard-content" class="hidden space-y-4 max-h-[600px] overflow-y-auto">
+                        @if(isset($absenceLeaderboard) && !empty($absenceLeaderboard))
+                            @if(($selectedAbsenceIntake ?? '') === '' || ($selectedAbsenceIntake ?? '') === 'all')
+                                @foreach ($absenceLeaderboard as $intakeLabel => $cadets)
+                                    @if(!empty($cadets))
+                                        @php $maxCount = collect($cadets)->max('absence_count') ?: 1; @endphp
+                                        <div class="border border-yellow-200 rounded-lg overflow-hidden">
+                                            <div class="bg-yellow-50 px-4 py-3 border-b border-yellow-200">
+                                                <h4 class="font-semibold text-yellow-800 flex items-center">
+                                                    <i class="fas fa-users mr-2"></i>
+                                                    {{ $intakeLabel }}
+                                                    <span class="ml-2 bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs">
+                                                        {{ count($cadets) }} {{ Str::plural('cadet', count($cadets)) }}
+                                                    </span>
+                                                </h4>
+                                            </div>
+                                            <div class="p-4 space-y-3">
+                                                @foreach($cadets as $index => $cadet)
+                                                    @php
+                                                        $percentage = ($cadet->absence_count / $maxCount) * 100;
+                                                        if ($percentage < 33) {
+                                                            $bgColor = '#10b981'; // green-500
+                                                        } elseif ($percentage < 66) {
+                                                            $bgColor = '#f59e0b'; // amber-500  
+                                                        } else {
+                                                            $bgColor = '#ef4444'; // red-500
+                                                        }
+                                                    @endphp
+                                                    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
+                                                        <div class="flex-shrink-0">
+                                                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-1 w-full">
+                                                            <div class="text-sm font-medium mb-1 text-center sm:text-left">
+                                                                #{{ $index + 1 }} - {{ $cadet->cadet_name }}
+                                                            </div>
+                                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
+                                                                <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
+                                                                    style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
+                                                                    <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
+                                                                        {{ $cadet->absence_count }} {{ Str::plural('absence', $cadet->absence_count) }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @else
+                                @php $maxCount = $absenceLeaderboard->max('absence_count') ?: 1; @endphp
+                                @foreach($absenceLeaderboard as $index => $cadet)
+                                    @php
+                                        $percentage = ($cadet->absence_count / $maxCount) * 100;
+                                        if ($percentage < 33) {
+                                            $bgColor = '#10b981'; // green-500
+                                        } elseif ($percentage < 66) {
+                                            $bgColor = '#f59e0b'; // amber-500  
+                                        } else {
+                                            $bgColor = '#ef4444'; // red-500
+                                        }
+                                    @endphp
+                                    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group mb-3">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 w-full">
+                                            <div class="text-sm font-medium mb-1 text-center sm:text-left">
+                                                #{{ $index + 1 }} - {{ $cadet->cadet_name }}
+                                            </div>
+                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
+                                                <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
+                                                    style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
+                                                    <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
+                                                        {{ $cadet->absence_count }} {{ Str::plural('absence', $cadet->absence_count) }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        @else
+                            <div class="text-center py-8">
+                                <div class="mb-4">
+                                    <svg class="w-16 h-16 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-600 mb-2">Perfect Attendance!</h3>
+                                <p class="text-gray-500">No training absences recorded.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // AJAX function for duty ranking
-            function loadDutyRanking() {
-                const intakeYear = document.getElementById('duty-intake-year').value;
-                const sortOrder = document.getElementById('duty-sort-order').value;
+    document.addEventListener('DOMContentLoaded', function () {
+        // Global variables to track current view
+        let currentAbsenceView = 'pending';
+        
+        // Toggle function for absence view
+        // Replace the toggleAbsenceView function with this corrected version:
 
-                // Show loading indicator
-                document.getElementById('duty-loading').classList.remove('hidden');
-                document.getElementById('duty-ranking-content').classList.add('opacity-50');
+function toggleAbsenceView(view) {
+    const pendingBtn = document.getElementById('pending-view-btn');
+    const leaderboardBtn = document.getElementById('leaderboard-view-btn');
+    const pendingContent = document.getElementById('absence-content');
+    const leaderboardContent = document.getElementById('absence-leaderboard-content');
+    const sectionTitle = document.getElementById('absence-section-title');
+    const sectionDescription = document.getElementById('absence-section-description');
+    const countBadge = document.getElementById('absence-count-badge');
+    const filterContainer = document.getElementById('absence-filter-container'); // Use the correct ID
+    
+    if (view === 'pending') {
+        // Switch to pending view
+        currentAbsenceView = 'pending';
+        
+        // Update buttons
+        pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
+        pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+        leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
+        leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+        
+        // Update content visibility
+        pendingContent.classList.remove('hidden');
+        leaderboardContent.classList.add('hidden');
+        
+        // Show filter for pending view
+        if (filterContainer) {
+            filterContainer.classList.remove('hidden');
+        }
+        
+        // Update header
+        sectionTitle.textContent = 'Pending Absence Reasons';
+        sectionDescription.textContent = 'Cadets with training absences requiring documentation';
+        if (countBadge) countBadge.classList.remove('hidden');
+        
+    } else if (view === 'leaderboard') {
+        // Switch to leaderboard view
+        currentAbsenceView = 'leaderboard';
+        
+        // Update buttons
+        leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
+        leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+        pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
+        pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+        
+        // Update content visibility
+        leaderboardContent.classList.remove('hidden');
+        pendingContent.classList.add('hidden');
+        
+        // Hide filter for leaderboard view (shows all intakes)
+        if (filterContainer) {
+            filterContainer.classList.add('hidden');
+        }
+        
+        // Update header
+        sectionTitle.textContent = 'Absence Summary - All Intakes';
+        sectionDescription.textContent = 'Overview of cadets requiring attendance improvement';
+        if (countBadge) countBadge.classList.add('hidden');
+    }
+}
 
-                // Create form data
-                const formData = new FormData();
-                formData.append('duty_intake_year', intakeYear);
-                formData.append('sort_order', sortOrder);
-                formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
-                formData.append('cgpa_sort_order', document.getElementById('cgpa-sort-order').value);
+        // Make toggleAbsenceView globally accessible
+        window.toggleAbsenceView = toggleAbsenceView;
 
-                fetch('{{ route("instructor.dashboard") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Duty ranking AJAX response:', data);
-                    if (data.duty_html) {
-                        document.getElementById('duty-ranking-content').innerHTML = data.duty_html;
-                    }
-                    if (data.cadet_list) {
-                        // Update the modal cadet list
-                        Alpine.store('modal').cadets = data.cadet_list;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading duty ranking:', error);
-                })
-                .finally(() => {
-                    // Hide loading indicator
-                    document.getElementById('duty-loading').classList.add('hidden');
-                    document.getElementById('duty-ranking-content').classList.remove('opacity-50');
-                });
-            }
+        // AJAX function for duty ranking
+        function loadDutyRanking() {
+            const intakeYear = document.getElementById('duty-intake-year').value;
+            const sortOrder = document.getElementById('duty-sort-order').value;
 
-            // AJAX function for CGPA analytics
-            function loadCgpaAnalytics() {
-                const intakeYear = document.getElementById('cgpa-intake-year').value;
-                const sortOrder = document.getElementById('cgpa-sort-order').value;
+            // Show loading indicator
+            document.getElementById('duty-loading').classList.remove('hidden');
+            document.getElementById('duty-ranking-content').classList.add('opacity-50');
 
-                // Show loading indicator
-                document.getElementById('cgpa-loading').classList.remove('hidden');
-                document.getElementById('cgpa-content').classList.add('opacity-50');
+            // Create form data
+            const formData = new FormData();
+            formData.append('duty_intake_year', intakeYear);
+            formData.append('sort_order', sortOrder);
+            formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
+            formData.append('cgpa_sort_order', document.getElementById('cgpa-sort-order').value);
 
-                // Create form data
-                const formData = new FormData();
-                formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
-                formData.append('sort_order', document.getElementById('duty-sort-order').value);
-                formData.append('cgpa_intake_year', intakeYear);
-                formData.append('cgpa_sort_order', sortOrder);
-
-                fetch('{{ route("instructor.dashboard") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('CGPA analytics AJAX response:', data);
-                    if (data.cgpa_html) {
-                        document.getElementById('cgpa-content').innerHTML = data.cgpa_html;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading CGPA analytics:', error);
-                })
-                .finally(() => {
-                    // Hide loading indicator
-                    document.getElementById('cgpa-loading').classList.add('hidden');
-                    document.getElementById('cgpa-content').classList.remove('opacity-50');
-                });
-            }
-
-            // AJAX function for absence tracking
-            function loadAbsenceData() {
-                const intakeFilter = document.getElementById('absence-intake-filter').value;
-
-                // Show loading indicator
-                document.getElementById('absence-loading').classList.remove('hidden');
-                document.getElementById('absence-content').classList.add('opacity-50');
-
-                // Create form data
-                const formData = new FormData();
-                formData.append('absence_intake_filter', intakeFilter);
-
-                fetch('{{ route("instructor.dashboard") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.absence_html) {
-                        document.getElementById('absence-content').innerHTML = data.absence_html;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading absence data:', error);
-                })
-                .finally(() => {
-                    // Hide loading indicator
-                    document.getElementById('absence-loading').classList.add('hidden');
-                    document.getElementById('absence-content').classList.remove('opacity-50');
-                });
-            }
-
-            // Event listeners for duty ranking filters
-            document.getElementById('duty-intake-year').addEventListener('change', loadDutyRanking);
-            document.getElementById('duty-sort-order').addEventListener('change', loadDutyRanking);
-
-            // Event listeners for CGPA analytics filters
-            document.getElementById('cgpa-intake-year').addEventListener('change', loadCgpaAnalytics);
-            document.getElementById('cgpa-sort-order').addEventListener('change', loadCgpaAnalytics);
-
-            // Event listener for absence filter
-            document.getElementById('absence-intake-filter').addEventListener('change', loadAbsenceData);
-
-            // Make loadDutyRanking globally accessible for the modal
-            window.loadDutyRanking = loadDutyRanking;
-
-            // Dropdown toggle function
-            window.toggleAbsenceDropdown = function(cadetId) {
-                const dropdown = document.getElementById('absence-dropdown-' + cadetId);
-                const icon = document.getElementById('absence-icon-' + cadetId);
-                
-                if (dropdown.classList.contains('hidden')) {
-                    dropdown.classList.remove('hidden');
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    dropdown.classList.add('hidden');
-                    icon.style.transform = 'rotate(0deg)';
+            fetch('{{ route("instructor.dashboard") }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Duty ranking AJAX response:', data);
+                if (data.duty_html) {
+                    document.getElementById('duty-ranking-content').innerHTML = data.duty_html;
                 }
-            };
+                if (data.cadet_list) {
+                    // Update the modal cadet list
+                    Alpine.store('modal').cadets = data.cadet_list;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading duty ranking:', error);
+            })
+            .finally(() => {
+                // Hide loading indicator
+                document.getElementById('duty-loading').classList.add('hidden');
+                document.getElementById('duty-ranking-content').classList.remove('opacity-50');
+            });
+        }
+
+        // AJAX function for CGPA analytics
+        function loadCgpaAnalytics() {
+            const intakeYear = document.getElementById('cgpa-intake-year').value;
+            const sortOrder = document.getElementById('cgpa-sort-order').value;
+
+            // Show loading indicator
+            document.getElementById('cgpa-loading').classList.remove('hidden');
+            document.getElementById('cgpa-content').classList.add('opacity-50');
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
+            formData.append('sort_order', document.getElementById('duty-sort-order').value);
+            formData.append('cgpa_intake_year', intakeYear);
+            formData.append('cgpa_sort_order', sortOrder);
+
+            fetch('{{ route("instructor.dashboard") }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('CGPA analytics AJAX response:', data);
+                if (data.cgpa_html) {
+                    document.getElementById('cgpa-content').innerHTML = data.cgpa_html;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading CGPA analytics:', error);
+            })
+            .finally(() => {
+                // Hide loading indicator
+                document.getElementById('cgpa-loading').classList.add('hidden');
+                document.getElementById('cgpa-content').classList.remove('opacity-50');
+            });
+        }
+
+        // Replace the existing loadAbsenceData function with this updated version:
+
+function loadAbsenceData() {
+    const intakeFilter = document.getElementById('absence-intake-filter').value;
+
+    // Show loading indicator
+    document.getElementById('absence-loading').classList.remove('hidden');
+    
+    // Add opacity to both content areas
+    const pendingContent = document.getElementById('absence-content');
+    const leaderboardContent = document.getElementById('absence-leaderboard-content');
+    
+    if (pendingContent) pendingContent.classList.add('opacity-50');
+    if (leaderboardContent) leaderboardContent.classList.add('opacity-50');
+
+    // Create form data - IMPORTANT: Include all current filter states
+    const formData = new FormData();
+    formData.append('absence_intake_filter', intakeFilter);
+    
+    // Also include other filters to maintain state
+    formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
+    formData.append('sort_order', document.getElementById('duty-sort-order').value);
+    formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
+    formData.append('cgpa_sort_order', document.getElementById('cgpa-sort-order').value);
+
+    fetch('{{ route("instructor.dashboard") }}', {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Absence data AJAX response:', data); // Debug log
+        
+        if (data.absence_html && pendingContent) {
+            pendingContent.innerHTML = data.absence_html;
+        }
+        if (data.absence_leaderboard_html && leaderboardContent) {
+            leaderboardContent.innerHTML = data.absence_leaderboard_html;
+        }
+        
+        // Update the count badge if present
+        const countBadge = document.getElementById('absence-count-badge');
+        if (countBadge && data.absence_count !== undefined) {
+            if (data.absence_count > 0) {
+                countBadge.textContent = data.absence_count;
+                countBadge.classList.remove('hidden');
+            } else {
+                countBadge.classList.add('hidden');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error loading absence data:', error);
+    })
+    .finally(() => {
+        // Hide loading indicator and remove opacity
+        document.getElementById('absence-loading').classList.add('hidden');
+        if (pendingContent) pendingContent.classList.remove('opacity-50');
+        if (leaderboardContent) leaderboardContent.classList.remove('opacity-50');
+    });
+}
+
+        // Event listeners for duty ranking filters
+        document.getElementById('duty-intake-year').addEventListener('change', loadDutyRanking);
+        document.getElementById('duty-sort-order').addEventListener('change', loadDutyRanking);
+
+        // Event listeners for CGPA analytics filters
+        document.getElementById('cgpa-intake-year').addEventListener('change', loadCgpaAnalytics);
+        document.getElementById('cgpa-sort-order').addEventListener('change', loadCgpaAnalytics);
+
+        // Event listener for absence filter
+        document.getElementById('absence-intake-filter').addEventListener('change', loadAbsenceData);
+
+        // Make loadDutyRanking globally accessible for the modal
+        window.loadDutyRanking = loadDutyRanking;
+
+        // Dropdown toggle function
+        window.toggleAbsenceDropdown = function(cadetId) {
+            const dropdown = document.getElementById('absence-dropdown-' + cadetId);
+            const icon = document.getElementById('absence-icon-' + cadetId);
+            
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        };
+    });
+
+    // Alpine.js initialization for modal functionality
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('modal', {
+            open: false,
+            selected: [],
+            cadets: @json($cadetList->map(function($cadet) {
+                return [
+                    'id' => $cadet->id,
+                    'name' => $cadet->user->name,
+                    'service_number' => $cadet->service_number
+                ];
+            }))
         });
-    </script>
+    });
+
+    // Update modal cadets when AJAX response includes cadet_list
+    document.addEventListener('DOMContentLoaded', function() {
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            return originalFetch.apply(this, args).then(response => {
+                if (response.url.includes('instructor/dashboard') && args[1] && args[1].body) {
+                    response.clone().json().then(data => {
+                        if (data.cadet_list) {
+                            Alpine.store('modal').cadets = data.cadet_list;
+                        }
+                    });
+                }
+                return response;
+            });
+        };
+    });
+</script>
 </x-app-layout>
