@@ -79,11 +79,7 @@ class TrainingController extends Controller
         $query = Training::whereYear('start_datetime', $year)
             ->whereMonth('start_datetime', $month);
 
-        // Filter by intake if specified
-        if ($intake) {
-            $query->where('involvement', 'LIKE', "%$intake%");
-        }
-
+        // Don't filter trainings by intake here - we'll filter attendance records instead
         $trainings = $query->orderBy('start_datetime', 'desc')->get();
 
         $result = $trainings->map(function($training) use ($status, $intake) {
@@ -93,16 +89,16 @@ class TrainingController extends Controller
                 ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
                 ->join('users', 'cadets.user_id', '=', 'users.id');
 
-            // Apply status filter if specified
-            if ($status && in_array($status, ['present', 'absent'])) {
-                $attendanceQuery->where('training_attendances.present', $status === 'present');
-            }
-
-            // Apply intake filter if specified
+            // Apply intake filter if specified - Fixed logic here
             if ($intake && preg_match('/Intake - (\d+)/', $intake, $matches)) {
                 $intakeNumber = (int) $matches[1];
                 $intakeYear = 2011 + $intakeNumber;
                 $attendanceQuery->where('cadets.intake_year', $intakeYear);
+            }
+
+            // Apply status filter if specified
+            if ($status && in_array($status, ['present', 'absent'])) {
+                $attendanceQuery->where('training_attendances.present', $status === 'present');
             }
 
             $attendances = $attendanceQuery
@@ -114,21 +110,40 @@ class TrainingController extends Controller
                 $cadet = $attendance->cadet;
                 $user = $cadet->user;
                 
+                // Calculate intake label from cadet's intake_year
+                $intakeNumber = $cadet->intake_year - 2011;
+                $intakeLabel = "Intake - " . $intakeNumber;
+                
+                // Fix file URL to include proper storage path
+                $fileUrl = null;
+                if ($attendance->file_url) {
+                    // If it's already a full URL, use as is. Otherwise, prepend storage path
+                    if (str_starts_with($attendance->file_url, 'http')) {
+                        $fileUrl = $attendance->file_url;
+                    } else {
+                        // Remove 'public/' prefix if it exists and add proper storage URL
+                        $cleanPath = str_replace('public/', '', $attendance->file_url);
+                        $fileUrl = asset('storage/' . $cleanPath);
+                    }
+                }
+                
                 return [
                     'id' => $cadet->id,
                     'service_number' => $cadet->service_number ?? '',
                     'rank' => $cadet->rank ?? '',
                     'name' => $user->name ?? 'Unknown',
                     'matric_no' => $cadet->matric_no ?? '',
+                    'intake_label' => $intakeLabel, // Add intake label to cadet data
+                    'intake_year' => $cadet->intake_year, // Add intake year for sorting
                     'present' => $attendance->present,
                     'absence_reason' => $attendance->absence_reason,
-                    'file_url' => $attendance->file_url,
+                    'file_url' => $fileUrl,
                     'marked_at' => $attendance->marked_at ? $attendance->marked_at->format('H:i') : null,
                     'method' => $attendance->method
                 ];
             });
 
-            // Get available intakes for this training
+            // Get available intakes for this training - also check if training has cadets for the selected intake
             $availableIntakes = [];
             if ($training->involvement) {
                 $involvements = explode(', ', $training->involvement);
@@ -155,10 +170,20 @@ class TrainingController extends Controller
             ];
         });
 
-        // Filter out trainings with no cadets (if status filter applied)
-        $result = $result->filter(function($training) {
-            return $training['cadets']->count() > 0;
-        });
+        // Filter out trainings with no cadets ONLY if an intake filter is applied
+        // This ensures we only show trainings that have cadets from the selected intake
+        if ($intake) {
+            $result = $result->filter(function($training) {
+                return $training['cadets']->count() > 0;
+            });
+        } else {
+            // If no intake filter, only filter out trainings with no cadets if status filter is applied
+            if ($status) {
+                $result = $result->filter(function($training) {
+                    return $training['cadets']->count() > 0;
+                });
+            }
+        }
 
         return response()->json([
             'success' => true,
