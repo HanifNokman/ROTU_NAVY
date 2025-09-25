@@ -330,9 +330,11 @@ class InstructorDashboardController extends Controller
             // Show individual cadets
             $cadets = is_array($absenceLeaderboard) ? collect($absenceLeaderboard)->flatten() : $absenceLeaderboard;
 
+            $html .= '<div class="p-4 space-y-3">';
             foreach ($cadets as $index => $cadet) {
-                $html .= '<div class="mb-3">' . $this->generateAbsenceLeaderboardItem($cadet, $index) . '</div>';
+                $html .= $this->generateAbsenceLeaderboardItem($cadet, $index);
             }
+            $html .= '</div>';
         }
 
         return $html;
@@ -354,12 +356,12 @@ class InstructorDashboardController extends Controller
                 <div class="text-sm font-medium mb-1 text-center sm:text-left">
                     #' . ($index + 1) . ' - ' . htmlspecialchars($cadet->cadet_name) . '
                 </div>
-                <div class="text-center sm:text-left space-y-1">
-                    <span class="text-sm font-semibold text-red-600 block">
-                        Total Absence: ' . $cadet->absence_count . '
-                    </span>
-                    <span class="text-lg font-semibold text-gray-800">
+                <div class="text-center sm:text-left flex flex-col sm:flex-row gap-1 sm:gap-0">
+                    <span class="text-sm font-semibold text-gray-800">
                         Training Attended: ' . $attended . ' / ' . $cadet->total_trainings . '
+                    </span>
+                    <span class="text-sm font-semibold text-red-600 sm:ml-4">
+                        Total Absence: ' . $cadet->absence_count . '
                     </span>
                 </div>
             </div>
@@ -519,9 +521,11 @@ class InstructorDashboardController extends Controller
                 $html .= '</div></div>';
             } else {
                 // Show individual cadets when specific intake is selected (no grouping headers)
+                $html .= '<div class="p-4 space-y-3">';
                 foreach ($cadets as $cadet) {
-                    $html .= $this->generateCadetDropdownHtml($cadet, 'mb-4');
+                    $html .= $this->generateCadetDropdownHtml($cadet);
                 }
+                $html .= '</div>';
             }
         }
         
