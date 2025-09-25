@@ -19,7 +19,6 @@
                 </h1>
                 <p class="text-gray-600">Your command center for cadet management and analytics</p>
             </div>
-
             <!-- Profile Section -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
@@ -120,7 +119,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Performance Metrics Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -233,39 +231,6 @@
                             @endforelse
                         </div>
 
-                        <script>
-                            document.addEventListener('alpine:init', () => {
-                                Alpine.store('modal', {
-                                    open: false,
-                                    selected: [],
-                                    cadets: @json($cadetList->map(function($cadet) {
-                                        return [
-                                            'id' => $cadet->id,
-                                            'name' => $cadet->user->name,
-                                            'service_number' => $cadet->service_number
-                                        ];
-                                    }))
-                                });
-                            });
-
-                            // Update modal cadets when AJAX response includes cadet_list
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const originalFetch = window.fetch;
-                                window.fetch = function(...args) {
-                                    return originalFetch.apply(this, args).then(response => {
-                                        if (response.url.includes('instructor/dashboard') && args[1] && args[1].body) {
-                                            response.clone().json().then(data => {
-                                                if (data.cadet_list) {
-                                                    Alpine.store('modal').cadets = data.cadet_list;
-                                                }
-                                            });
-                                        }
-                                        return response;
-                                    });
-                                };
-                            });
-                        </script>
-
                         <!-- Duty Increment Modal -->
                         <div x-show="$store.modal.open"
                             x-cloak
@@ -321,7 +286,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Cadet CGPA Card -->
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
@@ -447,7 +411,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Pending Absence Reasons Section with Toggle -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
@@ -467,31 +430,33 @@
                             <p id="absence-section-description" class="text-gray-600">Cadets with training absences requiring documentation</p>
                         </div>
                         <!-- Controls Container -->
-                        <div class="flex items-center gap-4">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                             <!-- View Toggle -->
-                            <div class="flex bg-gray-100 rounded-lg p-1">
-                                <button 
+                            <div class="flex bg-gray-100 rounded-lg p-1 self-stretch sm:self-auto">
+                                <button
                                     id="pending-view-btn"
                                     onclick="toggleAbsenceView('pending')"
-                                    class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm"
+                                    class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm flex-1 sm:flex-none"
                                 >
                                     <i class="fas fa-exclamation-triangle mr-1"></i>
-                                    Pending
+                                    <span class="hidden sm:inline">Pending</span>
+                                    <span class="sm:hidden">Pending</span>
                                 </button>
-                                <button 
+                                <button
                                     id="leaderboard-view-btn"
                                     onclick="toggleAbsenceView('leaderboard')"
-                                    class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900"
+                                    class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 flex-1 sm:flex-none"
                                 >
                                     <i class="fas fa-chart-bar mr-1"></i>
-                                    Absence List
+                                    <span class="hidden sm:inline">Absence List</span>
+                                    <span class="sm:hidden">List</span>
                                 </button>
                             </div>
-                            
+
                             <!-- Filter -->
-                            <div id="absence-filter-container" class="flex items-center gap-3">
+                            <div id="absence-filter-container" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
                                 <label for="absence-intake-filter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
-                                <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm">
+                                <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm w-full sm:w-auto">
                                     <option value="">All Intakes</option>
                                     @foreach ($intakeOptions as $option)
                                         <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
@@ -510,12 +475,11 @@
                         <div class="inline-flex items-center">
                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 818-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             Loading absence data...
                         </div>
                     </div>
-
                     <!-- Pending Absence Data -->
                     <div id="absence-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absentCadets) && !empty($absentCadets))
@@ -576,7 +540,7 @@
                                                             
                                                             @foreach($cadet->pending_absences as $absence)
                                                                 <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-                                                                    <div class="flex justify-between items-start">
+                                                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                                                                         <div class="flex-1">
                                                                             <h6 class="font-semibold text-red-900">{{ $absence->training_title }}</h6>
                                                                             <div class="text-sm text-red-700 space-y-1 mt-2">
@@ -596,7 +560,7 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium ml-3">
+                                                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium self-start sm:self-auto">
                                                                             Pending
                                                                         </span>
                                                                     </div>
@@ -653,7 +617,7 @@
                                                     
                                                     @foreach($cadet->pending_absences as $absence)
                                                         <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-                                                            <div class="flex justify-between items-start">
+                                                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                                                                 <div class="flex-1">
                                                                     <h6 class="font-semibold text-red-900">{{ $absence->training_title }}</h6>
                                                                     <div class="text-sm text-red-700 space-y-1 mt-2">
@@ -673,7 +637,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium ml-3">
+                                                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium self-start sm:self-auto">
                                                                     Pending
                                                                 </span>
                                                             </div>
@@ -697,14 +661,12 @@
                             </div>
                         @endif
                     </div>
-
                     <!-- Absence Leaderboard (Hidden by default) -->
                     <div id="absence-leaderboard-content" class="hidden space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absenceLeaderboard) && !empty($absenceLeaderboard))
                             @if(($selectedAbsenceIntake ?? '') === '' || ($selectedAbsenceIntake ?? '') === 'all')
                                 @foreach ($absenceLeaderboard as $intakeLabel => $cadets)
                                     @if(!empty($cadets))
-                                        @php $maxCount = collect($cadets)->max('absence_count') ?: 1; @endphp
                                         <div class="border border-yellow-200 rounded-lg overflow-hidden">
                                             <div class="bg-yellow-50 px-4 py-3 border-b border-yellow-200">
                                                 <h4 class="font-semibold text-yellow-800 flex items-center">
@@ -718,14 +680,7 @@
                                             <div class="p-4 space-y-3">
                                                 @foreach($cadets as $index => $cadet)
                                                     @php
-                                                        $percentage = ($cadet->absence_count / $maxCount) * 100;
-                                                        if ($percentage < 33) {
-                                                            $bgColor = '#10b981'; // green-500
-                                                        } elseif ($percentage < 66) {
-                                                            $bgColor = '#f59e0b'; // amber-500  
-                                                        } else {
-                                                            $bgColor = '#ef4444'; // red-500
-                                                        }
+                                                        $attended = $cadet->total_trainings - $cadet->absence_count;
                                                     @endphp
                                                     <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
                                                         <div class="flex-shrink-0">
@@ -739,13 +694,13 @@
                                                             <div class="text-sm font-medium mb-1 text-center sm:text-left">
                                                                 #{{ $index + 1 }} - {{ $cadet->cadet_name }}
                                                             </div>
-                                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                                                <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
-                                                                    style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
-                                                                    <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
-                                                                        {{ $cadet->absence_count }} {{ Str::plural('absence', $cadet->absence_count) }}
-                                                                    </span>
-                                                                </div>
+                                                            <div class="text-center sm:text-left flex flex-col sm:flex-row gap-1 sm:gap-0">
+                                                                <span class="text-sm font-semibold text-gray-800">
+                                                                    Training Attended: {{ $attended }} / {{ $cadet->total_trainings }}
+                                                                </span>
+                                                                <span class="text-sm font-semibold text-red-600 sm:ml-4">
+                                                                    Total Absence: {{ $cadet->absence_count }}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -755,17 +710,9 @@
                                     @endif
                                 @endforeach
                             @else
-                                @php $maxCount = $absenceLeaderboard->max('absence_count') ?: 1; @endphp
                                 @foreach($absenceLeaderboard as $index => $cadet)
                                     @php
-                                        $percentage = ($cadet->absence_count / $maxCount) * 100;
-                                        if ($percentage < 33) {
-                                            $bgColor = '#10b981'; // green-500
-                                        } elseif ($percentage < 66) {
-                                            $bgColor = '#f59e0b'; // amber-500  
-                                        } else {
-                                            $bgColor = '#ef4444'; // red-500
-                                        }
+                                        $attended = $cadet->total_trainings - $cadet->absence_count;
                                     @endphp
                                     <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group mb-3">
                                         <div class="flex-shrink-0">
@@ -779,13 +726,13 @@
                                             <div class="text-sm font-medium mb-1 text-center sm:text-left">
                                                 #{{ $index + 1 }} - {{ $cadet->cadet_name }}
                                             </div>
-                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                                <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
-                                                    style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
-                                                    <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
-                                                        {{ $cadet->absence_count }} {{ Str::plural('absence', $cadet->absence_count) }}
-                                                    </span>
-                                                </div>
+                                            <div class="text-center sm:text-left">
+                                                <span class="text-sm font-semibold text-gray-800">
+                                                    Training Attended: {{ $attended }} / {{ $cadet->total_trainings }}
+                                                </span>
+                                                <span class="text-sm font-semibold text-red-600 ml-4">
+                                                    Total Absence: {{ $cadet->absence_count }}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -807,74 +754,71 @@
             </div>
         </div>
     </div>
-
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Global variables to track current view
         let currentAbsenceView = 'pending';
         
         // Toggle function for absence view
-        // Replace the toggleAbsenceView function with this corrected version:
-
-function toggleAbsenceView(view) {
-    const pendingBtn = document.getElementById('pending-view-btn');
-    const leaderboardBtn = document.getElementById('leaderboard-view-btn');
-    const pendingContent = document.getElementById('absence-content');
-    const leaderboardContent = document.getElementById('absence-leaderboard-content');
-    const sectionTitle = document.getElementById('absence-section-title');
-    const sectionDescription = document.getElementById('absence-section-description');
-    const countBadge = document.getElementById('absence-count-badge');
-    const filterContainer = document.getElementById('absence-filter-container'); // Use the correct ID
-    
-    if (view === 'pending') {
-        // Switch to pending view
-        currentAbsenceView = 'pending';
-        
-        // Update buttons
-        pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
-        pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
-        leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
-        leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
-        
-        // Update content visibility
-        pendingContent.classList.remove('hidden');
-        leaderboardContent.classList.add('hidden');
-        
-        // Show filter for pending view
-        if (filterContainer) {
-            filterContainer.classList.remove('hidden');
+        function toggleAbsenceView(view) {
+            const pendingBtn = document.getElementById('pending-view-btn');
+            const leaderboardBtn = document.getElementById('leaderboard-view-btn');
+            const pendingContent = document.getElementById('absence-content');
+            const leaderboardContent = document.getElementById('absence-leaderboard-content');
+            const sectionTitle = document.getElementById('absence-section-title');
+            const sectionDescription = document.getElementById('absence-section-description');
+            const countBadge = document.getElementById('absence-count-badge');
+            const filterContainer = document.getElementById('absence-filter-container');
+            
+            if (view === 'pending') {
+                // Switch to pending view
+                currentAbsenceView = 'pending';
+                
+                // Update buttons
+                pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
+                pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+                leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
+                leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                
+                // Update content visibility
+                pendingContent.classList.remove('hidden');
+                leaderboardContent.classList.add('hidden');
+                
+                // Show filter for pending view
+                if (filterContainer) {
+                    filterContainer.classList.remove('hidden');
+                }
+                
+                // Update header
+                sectionTitle.textContent = 'Pending Absence Reasons';
+                sectionDescription.textContent = 'Cadets with training absences requiring documentation';
+                if (countBadge) countBadge.classList.remove('hidden');
+                
+            } else if (view === 'leaderboard') {
+                // Switch to leaderboard view
+                currentAbsenceView = 'leaderboard';
+                
+                // Update buttons
+                leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
+                leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+                pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
+                pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                
+                // Update content visibility
+                leaderboardContent.classList.remove('hidden');
+                pendingContent.classList.add('hidden');
+                
+                // Hide filter for leaderboard view (shows all intakes)
+                if (filterContainer) {
+                    filterContainer.classList.add('hidden');
+                }
+                
+                // Update header
+                sectionTitle.textContent = 'Absence Summary - All Intakes';
+                sectionDescription.textContent = 'Overview of cadets requiring attendance improvement';
+                if (countBadge) countBadge.classList.add('hidden');
+            }
         }
-        
-        // Update header
-        sectionTitle.textContent = 'Pending Absence Reasons';
-        sectionDescription.textContent = 'Cadets with training absences requiring documentation';
-        if (countBadge) countBadge.classList.remove('hidden');
-        
-    } else if (view === 'leaderboard') {
-        // Switch to leaderboard view
-        currentAbsenceView = 'leaderboard';
-        
-        // Update buttons
-        leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
-        leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
-        pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
-        pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
-        
-        // Update content visibility
-        leaderboardContent.classList.remove('hidden');
-        pendingContent.classList.add('hidden');
-        
-        // Hide filter for leaderboard view (shows all intakes)
-        if (filterContainer) {
-            filterContainer.classList.add('hidden');
-        }
-        
-        // Update header
-        sectionTitle.textContent = 'Absence Summary - All Intakes';
-        sectionDescription.textContent = 'Overview of cadets requiring attendance improvement';
-        if (countBadge) countBadge.classList.add('hidden');
-    }
-}
 
         // Make toggleAbsenceView globally accessible
         window.toggleAbsenceView = toggleAbsenceView;
@@ -965,71 +909,70 @@ function toggleAbsenceView(view) {
             });
         }
 
-        // Replace the existing loadAbsenceData function with this updated version:
+        // AJAX function for absence data
+        function loadAbsenceData() {
+            const intakeFilter = document.getElementById('absence-intake-filter').value;
 
-function loadAbsenceData() {
-    const intakeFilter = document.getElementById('absence-intake-filter').value;
+            // Show loading indicator
+            document.getElementById('absence-loading').classList.remove('hidden');
+            
+            // Add opacity to both content areas
+            const pendingContent = document.getElementById('absence-content');
+            const leaderboardContent = document.getElementById('absence-leaderboard-content');
+            
+            if (pendingContent) pendingContent.classList.add('opacity-50');
+            if (leaderboardContent) leaderboardContent.classList.add('opacity-50');
 
-    // Show loading indicator
-    document.getElementById('absence-loading').classList.remove('hidden');
-    
-    // Add opacity to both content areas
-    const pendingContent = document.getElementById('absence-content');
-    const leaderboardContent = document.getElementById('absence-leaderboard-content');
-    
-    if (pendingContent) pendingContent.classList.add('opacity-50');
-    if (leaderboardContent) leaderboardContent.classList.add('opacity-50');
+            // Create form data - IMPORTANT: Include all current filter states
+            const formData = new FormData();
+            formData.append('absence_intake_filter', intakeFilter);
+            
+            // Also include other filters to maintain state
+            formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
+            formData.append('sort_order', document.getElementById('duty-sort-order').value);
+            formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
+            formData.append('cgpa_sort_order', document.getElementById('cgpa-sort-order').value);
 
-    // Create form data - IMPORTANT: Include all current filter states
-    const formData = new FormData();
-    formData.append('absence_intake_filter', intakeFilter);
-    
-    // Also include other filters to maintain state
-    formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
-    formData.append('sort_order', document.getElementById('duty-sort-order').value);
-    formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
-    formData.append('cgpa_sort_order', document.getElementById('cgpa-sort-order').value);
-
-    fetch('{{ route("instructor.dashboard") }}', {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Absence data AJAX response:', data); // Debug log
-        
-        if (data.absence_html && pendingContent) {
-            pendingContent.innerHTML = data.absence_html;
+            fetch('{{ route("instructor.dashboard") }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Absence data AJAX response:', data);
+                
+                if (data.absence_html && pendingContent) {
+                    pendingContent.innerHTML = data.absence_html;
+                }
+                if (data.absence_leaderboard_html && leaderboardContent) {
+                    leaderboardContent.innerHTML = data.absence_leaderboard_html;
+                }
+                
+                // Update the count badge if present
+                const countBadge = document.getElementById('absence-count-badge');
+                if (countBadge && data.absence_count !== undefined) {
+                    if (data.absence_count > 0) {
+                        countBadge.textContent = data.absence_count;
+                        countBadge.classList.remove('hidden');
+                    } else {
+                        countBadge.classList.add('hidden');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading absence data:', error);
+            })
+            .finally(() => {
+                // Hide loading indicator and remove opacity
+                document.getElementById('absence-loading').classList.add('hidden');
+                if (pendingContent) pendingContent.classList.remove('opacity-50');
+                if (leaderboardContent) leaderboardContent.classList.remove('opacity-50');
+            });
         }
-        if (data.absence_leaderboard_html && leaderboardContent) {
-            leaderboardContent.innerHTML = data.absence_leaderboard_html;
-        }
-        
-        // Update the count badge if present
-        const countBadge = document.getElementById('absence-count-badge');
-        if (countBadge && data.absence_count !== undefined) {
-            if (data.absence_count > 0) {
-                countBadge.textContent = data.absence_count;
-                countBadge.classList.remove('hidden');
-            } else {
-                countBadge.classList.add('hidden');
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error loading absence data:', error);
-    })
-    .finally(() => {
-        // Hide loading indicator and remove opacity
-        document.getElementById('absence-loading').classList.add('hidden');
-        if (pendingContent) pendingContent.classList.remove('opacity-50');
-        if (leaderboardContent) leaderboardContent.classList.remove('opacity-50');
-    });
-}
 
         // Event listeners for duty ranking filters
         document.getElementById('duty-intake-year').addEventListener('change', loadDutyRanking);

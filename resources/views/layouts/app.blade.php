@@ -33,7 +33,7 @@
                 font-size: 0.95rem;
                 box-shadow: var(--shadow-primary);
                 position: relative;
-                overflow: hidden;
+                overflow: visible; /* Changed from hidden to visible */
                 cursor: pointer;
             }
             .btn-primary:hover {
@@ -42,6 +42,33 @@
             }
             .btn-primary::after {
                 display: none !important;
+            }
+            
+            /* Enhanced notification styles */
+            .notification-badge {
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                width: 14px;
+                height: 14px;
+                background-color: #ef4444;
+                border: 2px #ef4444;
+                border-radius: 50%;
+                z-index: 999;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            
+            .mobile-menu-notification {
+                position: absolute;
+                top: -2px;
+                right: -2px;
+                width: 12px;
+                height: 12px;
+                background-color: #ef4444;
+                border: 1px solid white;
+                border-radius: 50%;
+                z-index: 999;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             }
         </style>
     </head>
@@ -159,7 +186,7 @@
                 <div class="sm:hidden fixed top-4 right-4 z-50">
                     <button @click="sidebarOpen = !sidebarOpen" class="bg-white p-2 rounded-md shadow-md relative">
                         @if($hasNotifications)
-                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div class="mobile-menu-notification"></div>
                         @endif
                         <svg x-show="!sidebarOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -345,25 +372,29 @@
                         <div class="border-t border-[#373a46] mt-1">
                             <div class="p-2 flex flex-col space-y-0">
                                 @if(Auth::user()->role === 'instructor')
-                                        <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full relative">
-                                        @if($hasNotifications)
-                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                                        @endif
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                        </svg>
-                                        Pending Verification
-                                    </a>
+                                    <div class="relative">
+                                        <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
+                                            @if($hasNotifications)
+                                                <div class="notification-badge"></div>
+                                            @endif
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                            </svg>
+                                            Pending Verification
+                                        </a>
+                                    </div>
                                 @elseif(Auth::user()->role === 'cadet')
-                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full relative">
-                                        @if($hasNotifications)
-                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                                        @endif
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Attendance
-                                    </a>
+                                    <div class="relative">
+                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full">
+                                            @if($hasNotifications)
+                                                <div class="notification-badge"></div>
+                                            @endif
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Attendance
+                                        </a>
+                                    </div>
                                 @endif
 
                                 <a href="{{ url('/') }}" class="flex items-center justify-center mt-4 hover:transform hover:scale-105 transition-transform">
@@ -576,69 +607,73 @@
                                 </div>
                             </nav>
 
-                        <!-- Bottom Section -->
-                        <div class="border-t border-[#373a46] overflow-hidden mt-1">
-                            <div class="p-4 flex flex-col justify-between h-full">
-                                @if(Auth::user()->role === 'instructor')
-                                    <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full relative">
-                                        @if($hasNotifications)
-                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                                        @endif
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                        </svg>
-                                        Pending Verification
-                                    </a>
-                                @elseif(Auth::user()->role === 'cadet')
-                                    <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full relative">
-                                        @if($hasNotifications)
-                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                                        @endif
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Attendance
-                                    </a>
-                                @endif
-
-                                <a href="{{ url('/') }}" class="flex items-center justify-center mt-0 hover:transform hover:scale-105 transition-transform">
-                                    @if(View::exists('components.application-logo'))
-                                        <x-application-logo class="h-8 w-auto fill-current text-white" />
-                                    @else
-                                        <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
+                            <!-- Bottom Section -->
+                            <div class="border-t border-[#373a46] overflow-hidden mt-1">
+                                <div class="p-4 flex flex-col justify-between h-full">
+                                    @if(Auth::user()->role === 'instructor')
+                                        <div class="relative">
+                                            <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
+                                                @if($hasNotifications)
+                                                    <div class="notification-badge"></div>
+                                                @endif
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                                </svg>
+                                                Pending Verification
+                                            </a>
+                                        </div>
+                                    @elseif(Auth::user()->role === 'cadet')
+                                        <div class="relative">
+                                            <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full">
+                                                @if($hasNotifications)
+                                                    <div class="notification-badge"></div>
+                                                @endif
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Attendance
+                                            </a>
+                                        </div>
                                     @endif
-                                </a>
 
-                                <!-- Log Out Link -->
-                                <form method="POST" action="{{ route('logout') }}" class="mt-auto" x-ref="logoutFormDesktop">
-                                    @csrf
-                                    <button type="button" 
-                                            @click="currentLogoutForm = $refs.logoutFormDesktop; showLogoutModal = true" 
-                                            class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white transition-colors border border-transparent">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
-                                        </svg>
-                                        Log Out
-                                    </button>
-                                </form>
+                                    <a href="{{ url('/') }}" class="flex items-center justify-center mt-0 hover:transform hover:scale-105 transition-transform">
+                                        @if(View::exists('components.application-logo'))
+                                            <x-application-logo class="h-8 w-auto fill-current text-white" />
+                                        @else
+                                            <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
+                                        @endif
+                                    </a>
+
+                                    <!-- Log Out Link -->
+                                    <form method="POST" action="{{ route('logout') }}" class="mt-auto" x-ref="logoutFormDesktop">
+                                        @csrf
+                                        <button type="button" 
+                                                @click="currentLogoutForm = $refs.logoutFormDesktop; showLogoutModal = true" 
+                                                class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white transition-colors border border-transparent">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
+                                            </svg>
+                                            Log Out
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </aside>
 
                     <!-- Column 2: Main Content -->
                     <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
-                    <!-- Page Heading (optional) -->
-                    @isset($header)
-                        <header class="bg-white shadow flex-shrink-0 w-full flex justify-end">
-                            <div class="w-full max-w-7xl py-6 px-4 sm:px-6 lg:px-8 flex justify-end">
-                                <div class="text-left w-full">
-                                    {{ $header }}
+                        <!-- Page Heading (optional) -->
+                        @isset($header)
+                            <header class="bg-white shadow flex-shrink-0 w-full flex justify-end">
+                                <div class="w-full max-w-7xl py-6 px-4 sm:px-6 lg:px-8 flex justify-end">
+                                    <div class="text-left w-full">
+                                        {{ $header }}
+                                    </div>
                                 </div>
-                            </div>
-                        </header>
-                    @endisset
-                
+                            </header>
+                        @endisset
+                    
                         <!-- Page Content -->
                         <main class="flex-1 p-6 overflow-y-auto">
                             {{ $slot }}
