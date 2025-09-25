@@ -1858,9 +1858,9 @@
                         <!-- Action Buttons -->
                         <div class="mobile-action-buttons">
                             @if($dashboardRoute)
-                                <a href="{{ route($dashboardRoute) }}" class="mobile-action-btn mobile-dashboard-btn">
+                                <button type="button" class="mobile-action-btn mobile-dashboard-btn" onclick="window.location.href='{{ route($dashboardRoute) }}'">
                                     <i class="fas fa-tachometer-alt"></i>
-                                </a>
+                                </button>
                             @endif
                             
                             @if(auth()->user()->role === 'instructor')
