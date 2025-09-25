@@ -39,12 +39,86 @@ class CadetDashboardController extends Controller
             ->orderBy('daily_duty_count', $sortOrder)
             ->get();
 
+        // Get absence data only for authorized positions
+        $absentCadets = [];
+        if (in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn'])) {
+            $absentCadets = $this->getAbsenceDataForIntake($cadet->intake_year);
+        }
+
         // Handle AJAX request for duty ranking filter
         if ($request->ajax()) {
             return $this->getDutyRankingData($dutyCadets);
         }
 
-        return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets'));
+        return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets', 'absentCadets'));
+    }
+
+    private function getAbsenceDataForIntake($intakeYear)
+    {
+        // Get cadets from the same intake with pending absence reasons
+        $absences = \DB::table('training_attendances')
+            ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
+            ->join('users', 'cadets.user_id', '=', 'users.id')
+            ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
+            ->where('training_attendances.present', false)
+            ->where('trainings.status', 'Completed')
+            ->where('cadets.intake_year', $intakeYear)
+            ->where(function($q) {
+                // Missing either absence reason OR supporting file (or both)
+                $q->whereNull('training_attendances.absence_reason')
+                  ->orWhereNull('training_attendances.file_url')
+                  ->orWhere('training_attendances.absence_reason', '')
+                  ->orWhere('training_attendances.file_url', '');
+            })
+            ->select([
+                'cadets.id as cadet_id',
+                'users.name as cadet_name',
+                'cadets.service_number',
+                'trainings.title as training_title',
+                'trainings.location as training_location',
+                'trainings.start_datetime',
+                'training_attendances.absence_reason',
+                'training_attendances.file_url'
+            ])
+            ->orderBy('cadets.service_number', 'asc')
+            ->get();
+
+        // Group by cadet
+        $groupedData = [];
+        
+        foreach ($absences as $absence) {
+            $cadetId = $absence->cadet_id;
+            
+            // Initialize cadet if not exists
+            if (!isset($groupedData[$cadetId])) {
+                $groupedData[$cadetId] = (object)[
+                    'id' => $cadetId,
+                    'name' => $absence->cadet_name,
+                    'service_number' => $absence->service_number,
+                    'pending_absences' => []
+                ];
+            }
+            
+            // Determine what's missing
+            $missingItems = [];
+            if (!$absence->absence_reason || trim($absence->absence_reason) === '') {
+                $missingItems[] = 'Reason';
+            }
+            if (!$absence->file_url || trim($absence->file_url) === '') {
+                $missingItems[] = 'Supporting File';
+            }
+            
+            // Add absence to cadet
+            $groupedData[$cadetId]->pending_absences[] = (object)[
+                'training_title' => $absence->training_title,
+                'training_location' => $absence->training_location,
+                'training_date' => \Carbon\Carbon::parse($absence->start_datetime)->format('M d, Y'),
+                'missing_items' => implode(', ', $missingItems)
+            ];
+        }
+        
+        // Return as indexed array
+        return array_values($groupedData);
     }
 
     private function getDutyRankingData($dutyCadets)
