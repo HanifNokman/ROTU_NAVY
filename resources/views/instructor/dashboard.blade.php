@@ -447,6 +447,235 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Pending Absence Reasons Section -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                                <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                                Pending Absence Reasons
+                                @if(isset($absentCadets) && !empty($absentCadets))
+                                    <span class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
+                                        {{ collect($absentCadets)->flatten(1)->count() }}
+                                    </span>
+                                @endif
+                            </h2>
+                            <p class="text-gray-600">Cadets with training absences requiring documentation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- Filter Form for Absence Tracking -->
+                    <div class="mb-4 flex justify-end">
+                        <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm">
+                            <option value="">All Intakes</option>
+                            @foreach ($intakeOptions as $option)
+                                <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
+                                    {{ $option['label'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Loading indicator -->
+                    <div id="absence-loading" class="hidden text-center py-4">
+                        <div class="inline-flex items-center">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Loading absence data...
+                        </div>
+                    </div>
+
+                    <!-- Absence Data -->
+                    <div id="absence-content" class="space-y-4 max-h-[600px] overflow-y-auto">
+                        @if(isset($absentCadets) && !empty($absentCadets))
+                            @foreach ($absentCadets as $intakeLabel => $cadets)
+                                @if(($selectedAbsenceIntake ?? '') === '' || ($selectedAbsenceIntake ?? '') === 'all')
+                                    <!-- Show intake grouping when All Intakes is selected -->
+                                    <div class="border border-red-200 rounded-lg overflow-hidden">
+                                        <div class="bg-red-50 px-4 py-3 border-b border-red-200">
+                                            <h4 class="font-semibold text-red-800 flex items-center">
+                                                <i class="fas fa-users mr-2"></i>
+                                                {{ $intakeLabel }}
+                                                <span class="ml-2 bg-red-200 text-red-800 px-2 py-1 rounded-full text-xs">
+                                                    {{ count($cadets) }} {{ Str::plural('cadet', count($cadets)) }}
+                                                </span>
+                                            </h4>
+                                        </div>
+                                        <div class="p-4 space-y-3">
+                                            @foreach($cadets as $cadet)
+                                                <!-- Cadet Absence Dropdown -->
+                                                <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
+                                                    <button 
+                                                        onclick="toggleAbsenceDropdown({{ $cadet->id }})"
+                                                        class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200"
+                                                    >
+                                                        <div class="flex items-center space-x-3">
+                                                            <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                                                <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                                </svg>
+                                                            </div>
+                                                            <div class="text-left">
+                                                                <p class="font-semibold text-gray-900">{{ $cadet->name }}</p>
+                                                                <p class="text-sm text-gray-600">Service: {{ $cadet->service_number ?? 'N/A' }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center space-x-3">
+                                                            <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                                                {{ count($cadet->pending_absences) }} {{ Str::plural('absence', count($cadet->pending_absences)) }}
+                                                            </span>
+                                                            <svg 
+                                                                id="absence-icon-{{ $cadet->id }}" 
+                                                                class="w-5 h-5 text-gray-400 transform transition-transform duration-200" 
+                                                                fill="none" 
+                                                                stroke="currentColor" 
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                            </svg>
+                                                        </div>
+                                                    </button>
+                                                    
+                                                    <div id="absence-dropdown-{{ $cadet->id }}" class="hidden border-t border-orange-200">
+                                                        <div class="p-4 space-y-3">
+                                                            <h5 class="font-medium text-gray-800 mb-3 flex items-center">
+                                                                <i class="fas fa-list mr-2 text-red-500"></i>
+                                                                Missing Documentation for:
+                                                            </h5>
+                                                            
+                                                            @foreach($cadet->pending_absences as $absence)
+                                                                <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                                                    <div class="flex justify-between items-start">
+                                                                        <div class="flex-1">
+                                                                            <h6 class="font-semibold text-red-900">{{ $absence->training_title }}</h6>
+                                                                            <div class="text-sm text-red-700 space-y-1 mt-2">
+                                                                                <div class="flex items-center">
+                                                                                    <i class="fas fa-calendar w-4 text-red-500 mr-2"></i>
+                                                                                    <span>{{ $absence->training_date }}</span>
+                                                                                </div>
+                                                                                <div class="flex items-center">
+                                                                                    <i class="fas fa-map-marker-alt w-4 text-red-500 mr-2"></i>
+                                                                                    <span>{{ $absence->training_location }}</span>
+                                                                                </div>
+                                                                                <div class="flex items-center">
+                                                                                    <i class="fas fa-exclamation-triangle w-4 text-orange-500 mr-2"></i>
+                                                                                    <span class="text-xs">
+                                                                                        Missing: {{ $absence->missing_items }}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium ml-3">
+                                                                            Pending
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @else
+                                    <!-- Show individual cadets when specific intake is selected -->
+                                    @foreach($cadets as $cadet)
+                                        <!-- Cadet Absence Dropdown -->
+                                        <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
+                                            <button 
+                                                onclick="toggleAbsenceDropdown({{ $cadet->id }})"
+                                                class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200"
+                                            >
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                                        <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="text-left">
+                                                        <p class="font-semibold text-gray-900">{{ $cadet->name }}</p>
+                                                        <p class="text-sm text-gray-600">Service: {{ $cadet->service_number ?? 'N/A' }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-3">
+                                                    <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                                        {{ count($cadet->pending_absences) }} {{ Str::plural('absence', count($cadet->pending_absences)) }}
+                                                    </span>
+                                                    <svg 
+                                                        id="absence-icon-{{ $cadet->id }}" 
+                                                        class="w-5 h-5 text-gray-400 transform transition-transform duration-200" 
+                                                        fill="none" 
+                                                        stroke="currentColor" 
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                            
+                                            <div id="absence-dropdown-{{ $cadet->id }}" class="hidden border-t border-orange-200">
+                                                <div class="p-4 space-y-3">
+                                                    <h5 class="font-medium text-gray-800 mb-3 flex items-center">
+                                                        <i class="fas fa-list mr-2 text-red-500"></i>
+                                                        Missing Documentation for:
+                                                    </h5>
+                                                    
+                                                    @foreach($cadet->pending_absences as $absence)
+                                                        <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                                            <div class="flex justify-between items-start">
+                                                                <div class="flex-1">
+                                                                    <h6 class="font-semibold text-red-900">{{ $absence->training_title }}</h6>
+                                                                    <div class="text-sm text-red-700 space-y-1 mt-2">
+                                                                        <div class="flex items-center">
+                                                                            <i class="fas fa-calendar w-4 text-red-500 mr-2"></i>
+                                                                            <span>{{ $absence->training_date }}</span>
+                                                                        </div>
+                                                                        <div class="flex items-center">
+                                                                            <i class="fas fa-map-marker-alt w-4 text-red-500 mr-2"></i>
+                                                                            <span>{{ $absence->training_location }}</span>
+                                                                        </div>
+                                                                        <div class="flex items-center">
+                                                                            <i class="fas fa-exclamation-triangle w-4 text-orange-500 mr-2"></i>
+                                                                            <span class="text-xs">
+                                                                                Missing: {{ $absence->missing_items }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium ml-3">
+                                                                    Pending
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="text-center py-16">
+                                <div class="mb-6">
+                                    <svg class="w-20 h-20 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-semibold text-gray-600 mb-3">All Clear!</h3>
+                                <p class="text-gray-500 text-lg">No pending absence reasons found.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -538,6 +767,42 @@
                 });
             }
 
+            // AJAX function for absence tracking
+            function loadAbsenceData() {
+                const intakeFilter = document.getElementById('absence-intake-filter').value;
+
+                // Show loading indicator
+                document.getElementById('absence-loading').classList.remove('hidden');
+                document.getElementById('absence-content').classList.add('opacity-50');
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('absence_intake_filter', intakeFilter);
+
+                fetch('{{ route("instructor.dashboard") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.absence_html) {
+                        document.getElementById('absence-content').innerHTML = data.absence_html;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading absence data:', error);
+                })
+                .finally(() => {
+                    // Hide loading indicator
+                    document.getElementById('absence-loading').classList.add('hidden');
+                    document.getElementById('absence-content').classList.remove('opacity-50');
+                });
+            }
+
             // Event listeners for duty ranking filters
             document.getElementById('duty-intake-year').addEventListener('change', loadDutyRanking);
             document.getElementById('duty-sort-order').addEventListener('change', loadDutyRanking);
@@ -546,8 +811,25 @@
             document.getElementById('cgpa-intake-year').addEventListener('change', loadCgpaAnalytics);
             document.getElementById('cgpa-sort-order').addEventListener('change', loadCgpaAnalytics);
 
+            // Event listener for absence filter
+            document.getElementById('absence-intake-filter').addEventListener('change', loadAbsenceData);
+
             // Make loadDutyRanking globally accessible for the modal
             window.loadDutyRanking = loadDutyRanking;
+
+            // Dropdown toggle function
+            window.toggleAbsenceDropdown = function(cadetId) {
+                const dropdown = document.getElementById('absence-dropdown-' + cadetId);
+                const icon = document.getElementById('absence-icon-' + cadetId);
+                
+                if (dropdown.classList.contains('hidden')) {
+                    dropdown.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    dropdown.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            };
         });
     </script>
 </x-app-layout>
