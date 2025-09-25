@@ -16,6 +16,34 @@
         @stack('scripts')
 
         <style>[x-cloak] { display: none !important; }</style>
+        <style>
+            :root {
+                --gradient-primary: linear-gradient(135deg, #3c92d9, #2980b9);
+                --shadow-primary: 0 10px 30px rgba(60, 146, 217, 0.3);
+            }
+            .btn-primary {
+                background: var(--gradient-primary);
+                padding: 12px 28px;
+                border: none;
+                border-radius: 8px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+                box-shadow: var(--shadow-primary);
+                position: relative;
+                overflow: hidden;
+                cursor: pointer;
+            }
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 20px rgba(60, 146, 217, 0.4);
+            }
+            .btn-primary::after {
+                display: none !important;
+            }
+        </style>
     </head>
     <body class="font-sans antialiased bg-gray-100">
         @php
@@ -317,7 +345,7 @@
                         <div class="border-t border-[#373a46] mt-1">
                             <div class="p-2 flex flex-col space-y-0">
                                 @if(Auth::user()->role === 'instructor')
-                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                        <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full relative">
                                         @if($hasNotifications)
                                             <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                                         @endif
@@ -327,7 +355,7 @@
                                         Pending Verification
                                     </a>
                                 @elseif(Auth::user()->role === 'cadet')
-                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full relative">
                                         @if($hasNotifications)
                                             <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                                         @endif
@@ -552,7 +580,7 @@
                         <div class="border-t border-[#373a46] overflow-hidden mt-1">
                             <div class="p-6 flex flex-col justify-between h-full">
                                 @if(Auth::user()->role === 'instructor')
-                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                    <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full relative">
                                         @if($hasNotifications)
                                             <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                                         @endif
@@ -562,7 +590,7 @@
                                         Pending Verification
                                     </a>
                                 @elseif(Auth::user()->role === 'cadet')
-                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                    <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full relative">
                                         @if($hasNotifications)
                                             <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                                         @endif
