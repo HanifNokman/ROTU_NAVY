@@ -1674,8 +1674,16 @@ function setupIntakeFilter() {
         if (intakesChanged) {
             allAvailableIntakes = newIntakes;
             
-            // Rebuild dropdown options
+            // Rebuild dropdown options - ADD "All Intakes" option first
             intakeSelect.innerHTML = '';
+            
+            // Add "All Intakes" option as the first option
+            const allOption = document.createElement('option');
+            allOption.value = '';
+            allOption.textContent = 'All Intakes';
+            intakeSelect.appendChild(allOption);
+            
+            // Add individual intake options
             allAvailableIntakes.forEach(intake => {
                 const option = document.createElement('option');
                 option.value = intake;
@@ -1684,14 +1692,14 @@ function setupIntakeFilter() {
             });
         }
         
-        // Set the selection - preserve user's choice if it's still valid
-        if (currentSelection && allAvailableIntakes.includes(currentSelection)) {
+        // Set the selection - Default to "All Intakes" (empty value)
+        if (currentSelection && (currentSelection === '' || allAvailableIntakes.includes(currentSelection))) {
             intakeSelect.value = currentSelection;
             currentAttendanceListIntake = currentSelection;
         } else {
-            // Default to first intake if current selection is not available
-            intakeSelect.value = allAvailableIntakes[0];
-            currentAttendanceListIntake = allAvailableIntakes[0];
+            // Default to "All Intakes" (empty value)
+            intakeSelect.value = '';
+            currentAttendanceListIntake = '';
         }
         
         // Set up event listener only once
@@ -1703,6 +1711,41 @@ function setupIntakeFilter() {
                 // Only fetch new data if the intake actually changed
                 if (previousIntake !== currentAttendanceListIntake) {
                     trainingFilters = {}; // Reset all training filters when intake changes
+                    fetchAttendanceListData();
+                }
+            };
+        }
+    } else if (newIntakes.length === 1) {
+        // If only one intake available, still show "All Intakes" option
+        intakeSection.classList.remove('hidden');
+        allAvailableIntakes = newIntakes;
+        
+        intakeSelect.innerHTML = '';
+        
+        // Add "All Intakes" option
+        const allOption = document.createElement('option');
+        allOption.value = '';
+        allOption.textContent = 'All Intakes';
+        intakeSelect.appendChild(allOption);
+        
+        // Add the single intake option
+        const option = document.createElement('option');
+        option.value = newIntakes[0];
+        option.textContent = newIntakes[0];
+        intakeSelect.appendChild(option);
+        
+        // Default to "All Intakes"
+        intakeSelect.value = '';
+        currentAttendanceListIntake = '';
+        
+        // Set up event listener only once
+        if (!intakeSelect.onchange) {
+            intakeSelect.onchange = function() {
+                const previousIntake = currentAttendanceListIntake;
+                currentAttendanceListIntake = this.value;
+                
+                if (previousIntake !== currentAttendanceListIntake) {
+                    trainingFilters = {};
                     fetchAttendanceListData();
                 }
             };
@@ -1881,72 +1924,188 @@ function createCadetTable(cadets, trainingId, filter = 'all') {
         `;
     }
     
-    // Sort cadets by service number (ascending)
-    const sortedCadets = [...filteredCadets].sort((a, b) => {
-        const numA = parseInt(a.service_number, 10) || 0;
-        const numB = parseInt(b.service_number, 10) || 0;
-        return numA - numB;
-    });
+    // Check if we're showing all intakes (no specific intake filter applied)
+    const showingAllIntakes = !currentAttendanceListIntake || currentAttendanceListIntake === '';
     
-    let tableHTML = `
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service No.</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matric No.</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-    `;
-    
-    sortedCadets.forEach(cadet => {
-        const statusBadge = cadet.present 
-            ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Present</span>'
-            : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i>Absent</span>';
+    if (showingAllIntakes) {
+        // Group cadets by intake when showing all intakes
+        const cadetsByIntake = {};
         
-        let detailsCell = '';
-        if (cadet.present) {
-            const method = cadet.method === 'qr_code' ? 'QR Code' : 'Manual';
-            const timeStr = cadet.marked_at ? `at ${cadet.marked_at}` : '';
-            detailsCell = `<span class="text-xs text-green-700">Marked via ${method} ${timeStr}</span>`;
-        } else {
-            // Show absence reason and file for absent cadets
-            let absenceDetails = [];
-            if (cadet.absence_reason) {
-                absenceDetails.push(`<div class="text-xs text-gray-700 mb-1"><i class="fas fa-info-circle mr-1 text-blue-500"></i><strong>Reason:</strong> ${cadet.absence_reason}</div>`);
+        filteredCadets.forEach(cadet => {
+            const intakeLabel = cadet.intake_label || 'Unknown Intake';
+            
+            if (!cadetsByIntake[intakeLabel]) {
+                cadetsByIntake[intakeLabel] = [];
             }
-            if (cadet.file_url) {
-                absenceDetails.push(`<div class="text-xs text-blue-700"><i class="fas fa-file mr-1"></i><a href="${cadet.file_url}" target="_blank" class="underline hover:text-blue-900">View Supporting File</a></div>`);
+            cadetsByIntake[intakeLabel].push(cadet);
+        });
+        
+        // Sort intake groups by intake number
+        const sortedIntakes = Object.keys(cadetsByIntake).sort((a, b) => {
+            const aNum = parseInt(a.match(/Intake - (\d+)/)?.[1] || '0');
+            const bNum = parseInt(b.match(/Intake - (\d+)/)?.[1] || '0');
+            return aNum - bNum;
+        });
+        
+        // Create grouped table HTML
+        let groupedTableHTML = '<div class="space-y-6">';
+        
+        sortedIntakes.forEach(intakeLabel => {
+            const intakeCadets = cadetsByIntake[intakeLabel];
+            
+            // Sort cadets within each intake by service number
+            const sortedIntakeCadets = [...intakeCadets].sort((a, b) => {
+                const numA = parseInt(a.service_number, 10) || 0;
+                const numB = parseInt(b.service_number, 10) || 0;
+                return numA - numB;
+            });
+            
+            const presentCount = intakeCadets.filter(c => c.present).length;
+            const totalCount = intakeCadets.length;
+            const attendancePercentage = totalCount > 0 ? Math.round((presentCount / totalCount) * 100) : 0;
+            
+            groupedTableHTML += `
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h6 class="text-lg font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-users mr-2 text-blue-600"></i>
+                                ${intakeLabel}
+                            </h6>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-600">${presentCount}/${totalCount} present</span>
+                                <span class="px-3 py-1 rounded-full text-sm font-semibold ${attendancePercentage >= 90 ? 'bg-green-100 text-green-800' : attendancePercentage >= 70 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">${attendancePercentage}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service No.</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matric No.</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            
+            sortedIntakeCadets.forEach(cadet => {
+                const statusBadge = cadet.present 
+                    ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Present</span>'
+                    : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i>Absent</span>';
+                
+                let detailsCell = '';
+                if (cadet.present) {
+                    const method = cadet.method === 'qr_code' ? 'QR Code' : 'Manual';
+                    const timeStr = cadet.marked_at ? `at ${cadet.marked_at}` : '';
+                    detailsCell = `<span class="text-xs text-green-700">Marked via ${method} ${timeStr}</span>`;
+                } else {
+                    let absenceDetails = [];
+                    if (cadet.absence_reason) {
+                        absenceDetails.push(`<div class="text-xs text-gray-700 mb-1"><i class="fas fa-info-circle mr-1 text-blue-500"></i><strong>Reason:</strong> ${cadet.absence_reason}</div>`);
+                    }
+                    if (cadet.file_url) {
+                        absenceDetails.push(`<div class="text-xs text-blue-700"><i class="fas fa-file mr-1"></i><a href="${cadet.file_url}" target="_blank" class="underline hover:text-blue-900">View Supporting File</a></div>`);
+                    }
+                    detailsCell = absenceDetails.join('') || '<span class="text-xs text-gray-400">No additional details</span>';
+                }
+                
+                groupedTableHTML += `
+                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cadet.service_number || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.rank || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${cadet.name}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.matric_no || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                        <td class="px-6 py-4 text-sm">${detailsCell}</td>
+                    </tr>
+                `;
+            });
+            
+            groupedTableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        });
+        
+        groupedTableHTML += '</div>';
+        return groupedTableHTML;
+        
+    } else {
+        // Single intake view - use original table format
+        const sortedCadets = [...filteredCadets].sort((a, b) => {
+            const numA = parseInt(a.service_number, 10) || 0;
+            const numB = parseInt(b.service_number, 10) || 0;
+            return numA - numB;
+        });
+        
+        let tableHTML = `
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service No.</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matric No.</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+        `;
+        
+        sortedCadets.forEach(cadet => {
+            const statusBadge = cadet.present 
+                ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Present</span>'
+                : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i>Absent</span>';
+            
+            let detailsCell = '';
+            if (cadet.present) {
+                const method = cadet.method === 'qr_code' ? 'QR Code' : 'Manual';
+                const timeStr = cadet.marked_at ? `at ${cadet.marked_at}` : '';
+                detailsCell = `<span class="text-xs text-green-700">Marked via ${method} ${timeStr}</span>`;
+            } else {
+                let absenceDetails = [];
+                if (cadet.absence_reason) {
+                    absenceDetails.push(`<div class="text-xs text-gray-700 mb-1"><i class="fas fa-info-circle mr-1 text-blue-500"></i><strong>Reason:</strong> ${cadet.absence_reason}</div>`);
+                }
+                if (cadet.file_url) {
+                    absenceDetails.push(`<div class="text-xs text-blue-700"><i class="fas fa-file mr-1"></i><a href="${cadet.file_url}" target="_blank" class="underline hover:text-blue-900">View Supporting File</a></div>`);
+                }
+                detailsCell = absenceDetails.join('') || '<span class="text-xs text-gray-400">No additional details</span>';
             }
-            detailsCell = absenceDetails.join('') || '<span class="text-xs text-gray-400">No additional details</span>';
-        }
+            
+            tableHTML += `
+                <tr class="hover:bg-gray-50 transition-colors duration-200">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cadet.service_number || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.rank || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${cadet.name}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.matric_no || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-6 py-4 text-sm">${detailsCell}</td>
+                </tr>
+            `;
+        });
         
         tableHTML += `
-            <tr class="hover:bg-gray-50 transition-colors duration-200">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cadet.service_number || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.rank || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">${cadet.name}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.matric_no || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
-                <td class="px-6 py-4 text-sm">${detailsCell}</td>
-            </tr>
+                    </tbody>
+                </table>
+            </div>
         `;
-    });
-    
-    tableHTML += `
-                </tbody>
-            </table>
-        </div>
-    `;
-    
-    return tableHTML;
+        
+        return tableHTML;
+    }
 }
 
 function toggleAccordion(accordionId) {
