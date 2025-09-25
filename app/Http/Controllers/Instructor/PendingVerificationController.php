@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserAcceptedMail;
+use Illuminate\Support\Facades\DB;
 
 class PendingVerificationController extends Controller
 {
@@ -52,8 +53,34 @@ class PendingVerificationController extends Controller
 
     public function reject(User $user)
     {
-        $user->status = 'rejected';
-        $user->save();
-        return back()->with('success', 'User rejected.');
+        try {
+            DB::transaction(function () use ($user) {
+                // Store user details for logging before deletion
+                $userEmail = $user->email;
+                $userName = $user->name;
+                $userRole = $user->role;
+                
+                // Delete any related records first (if they exist)
+                if ($user->role === 'cadet') {
+                    // Delete cadet record if it exists
+                    \App\Models\Cadet::where('user_id', $user->id)->delete();
+                } elseif ($user->role === 'instructor') {
+                    // Delete instructor record if it exists
+                    \App\Models\Instructor::where('user_id', $user->id)->delete();
+                }
+                
+                // Delete the user completely from the database
+                $user->delete();
+                
+                // Log the rejection for audit purposes
+                \Log::info("User rejected and deleted: {$userName} ({$userEmail}) - Role: {$userRole}");
+            });
+
+            return back()->with('success', 'User rejected and removed from the system. They can now register again with the same email if needed.');
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to reject and delete user ' . $user->id . ': ' . $e->getMessage());
+            return back()->with('error', 'Failed to reject user. Please try again.');
+        }
     }
 }
