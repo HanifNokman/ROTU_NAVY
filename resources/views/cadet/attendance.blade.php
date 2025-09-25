@@ -158,105 +158,176 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                         </svg>
                         Absence Records
+                        @if($absentAttendances->count() > 0)
+                            <span class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
+                                {{ $absentAttendances->count() }}
+                            </span>
+                        @endif
                     </h2>
                     <p class="text-gray-600">Submit reasons for your absences with supporting documentation</p>
                 </div>
                 
-                <div class="p-8">
+                <div class="p-6">
                     @if($absentAttendances->count() > 0)
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-orange-50 to-red-50 p-6 border-b border-gray-200">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                        <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                        </svg>
-                        Absence Records
-                    </h2>
-                    <p class="text-gray-600">Submit reasons for your absences with supporting documentation</p>
-                </div>
-                
-                <div class="p-8">
-                    <div class="space-y-6">
-                        @foreach($absentAttendances as $attendance)
-                            <div class="bg-orange-50 border border-orange-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200">
-                                <div class="flex items-start justify-between mb-6">
-                                    <div class="flex-1">
-                                        <h4 class="text-xl font-bold text-gray-800 mb-3">{{ $attendance->training->title }}</h4>
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-600">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-map-marker-alt w-4 text-red-500 mr-3"></i>
-                                                <span>{{ $attendance->training->location }}</span>
-                                            </div>
-                                            <div class="flex items-center">
-                                                <i class="fas fa-clock w-4 text-green-500 mr-3"></i>
-                                                <span>{{ $attendance->training->formatted_start_date }} at {{ $attendance->training->formatted_start_time }}</span>
-                                            </div>
-                                        </div>
+                        <!-- Filter Section -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-medium text-gray-800 mb-4">
+                                <span class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
+                                    </svg>
+                                    Quick Navigation
+                                </span>
+                            </h4>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Status Summary -->
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Pending Submissions
+                                    </label>
+                                    <div class="bg-orange-100 border border-orange-200 rounded-lg p-3">
+                                        <p class="text-sm text-orange-800">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            {{ $absentAttendances->count() }} absence record{{ $absentAttendances->count() > 1 ? 's' : '' }} requiring attention
+                                        </p>
                                     </div>
-                                    <span class="bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-bold">
-                                        Absent
-                                    </span>
                                 </div>
 
-                                <form method="POST" action="{{ route('cadet.attendance.absence', $attendance->id) }}" 
-                                      enctype="multipart/form-data" class="space-y-6">
-                                    @csrf
-                                    
-                                    <div>
-                                        <label class="block text-sm font-bold text-gray-700 mb-3">
-                                            <i class="fas fa-comment-alt mr-2 text-blue-500"></i>
-                                            Reason for Absence <span class="text-red-500">*</span>
-                                        </label>
-                                        <textarea 
-                                            name="absence_reason" 
-                                            required 
-                                            placeholder="Please provide a detailed explanation for your absence (minimum 10 characters)"
-                                            class="w-full px-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-sm"
-                                            rows="4"
-                                            maxlength="500"
-                                            onInput="updateCharCount(this, 'char-count-{{ $attendance->id }}')"
-                                        >{{ old('absence_reason') }}</textarea>
-                                        <div class="flex justify-between items-center mt-2">
-                                            <div class="text-xs text-gray-500">
-                                                Character count: <span id="char-count-{{ $attendance->id }}" class="font-semibold">0</span>/500
-                                            </div>
-                                            <div class="text-xs text-gray-500">
-                                                Minimum 10 characters required
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-bold text-gray-700 mb-3">
-                                            <i class="fas fa-paperclip mr-2 text-green-500"></i>
-                                            Supporting Documentation <span class="text-red-500">*</span>
-                                        </label>
-                                        <div class="relative">
-                                            <input 
-                                                type="file" 
-                                                name="supporting_file" 
-                                                required 
-                                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                                                class="w-full px-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 transition-all duration-200"
-                                            >
-                                        </div>
-                                        <div class="text-xs text-gray-500 mt-2 flex items-center">
-                                            <i class="fas fa-info-circle mr-1 text-blue-400"></i>
-                                            Accepted formats: JPG, PNG, PDF, DOC, DOCX • Maximum file size: 5MB
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="pt-4 border-t border-orange-200">
-                                        <button type="submit" 
-                                                class="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center">
-                                            <i class="fas fa-paper-plane text-xl mr-3"></i>
-                                            Submit Absence Information
-                                        </button>
-                                    </div>
-                                </form>
+                                <!-- Absence Selector -->
+                                <div class="space-y-2">
+                                    <label for="absenceDropdown" class="block text-sm font-medium text-gray-700">
+                                        Jump to Specific Absence
+                                    </label>
+                                    <select id="absenceDropdown"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white"
+                                            onchange="openAbsenceRecord(this.value)">
+                                        <option value="">Choose an absence record...</option>
+                                        @foreach($absentAttendances as $attendance)
+                                            <option value="absence-{{ $attendance->id }}">{{ $attendance->training->title }} - {{ $attendance->training->formatted_start_date }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        @endforeach
-                    </div>
+                        </div>
+
+                        <!-- Absence Records Accordion -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <h4 class="font-medium text-gray-800 mb-4">
+                                <span class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Absence Submissions
+                                </span>
+                            </h4>
+
+                            <div id="absenceContainer">
+                                @foreach($absentAttendances as $attendance)
+                                    <div id="absence-{{ $attendance->id }}" x-data="{ open: false }" class="border border-orange-200 rounded-lg mb-4">
+                                        <button @click="open = !open"
+                                                class="w-full flex justify-between items-center px-6 py-4 bg-orange-100 hover:bg-orange-200 text-left text-orange-800 font-medium text-lg rounded-t-lg">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-exclamation-triangle mr-3 text-red-500"></i>
+                                                <div>
+                                                    <div class="font-semibold">{{ $attendance->training->title }}</div>
+                                                    <div class="text-sm text-orange-600 font-normal">{{ $attendance->training->formatted_start_date }} at {{ $attendance->training->formatted_start_time }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold mr-3">
+                                                    Absent
+                                                </span>
+                                                <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+                                        </button>
+                                        <div x-show="open" x-transition class="p-6 bg-white rounded-b-lg border-t">
+                                            <div class="mb-6">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 text-sm">
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-map-marker-alt w-4 text-red-500 mr-3"></i>
+                                                        <span><strong>Location:</strong> {{ $attendance->training->location }}</span>
+                                                    </div>
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-calendar w-4 text-blue-500 mr-3"></i>
+                                                        <span><strong>Date:</strong> {{ $attendance->training->formatted_start_date }}</span>
+                                                    </div>
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-clock w-4 text-green-500 mr-3"></i>
+                                                        <span><strong>Time:</strong> {{ $attendance->training->formatted_start_time }}</span>
+                                                    </div>
+                                                    @if($attendance->training->involvement)
+                                                        <div class="flex items-center">
+                                                            <i class="fas fa-users w-4 text-purple-500 mr-3"></i>
+                                                            <span><strong>Involvement:</strong> {{ $attendance->training->involvement }}</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <form method="POST" action="{{ route('cadet.attendance.absence', $attendance->id) }}" 
+                                                  enctype="multipart/form-data" class="space-y-6">
+                                                @csrf
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-bold text-gray-700 mb-3">
+                                                        <i class="fas fa-comment-alt mr-2 text-blue-500"></i>
+                                                        Reason for Absence <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <textarea 
+                                                        name="absence_reason" 
+                                                        required 
+                                                        placeholder="Please provide a detailed explanation for your absence (minimum 10 characters)"
+                                                        class="w-full px-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-sm"
+                                                        rows="4"
+                                                        maxlength="500"
+                                                        oninput="updateCharCount(this, 'char-count-{{ $attendance->id }}')"
+                                                    >{{ old('absence_reason') }}</textarea>
+                                                    <div class="flex justify-between items-center mt-2">
+                                                        <div class="text-xs text-gray-500">
+                                                            Character count: <span id="char-count-{{ $attendance->id }}" class="font-semibold">0</span>/500
+                                                        </div>
+                                                        <div class="text-xs text-gray-500">
+                                                            Minimum 10 characters required
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-bold text-gray-700 mb-3">
+                                                        <i class="fas fa-paperclip mr-2 text-green-500"></i>
+                                                        Supporting Documentation <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input 
+                                                            type="file" 
+                                                            name="supporting_file" 
+                                                            required 
+                                                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                                                            class="w-full px-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 transition-all duration-200"
+                                                        >
+                                                    </div>
+                                                    <div class="text-xs text-gray-500 mt-2 flex items-center">
+                                                        <i class="fas fa-info-circle mr-1 text-blue-400"></i>
+                                                        Accepted formats: JPG, PNG, PDF, DOC, DOCX • Maximum file size: 5MB
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="pt-4 border-t border-orange-200">
+                                                    <button type="submit" 
+                                                            class="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center">
+                                                        <i class="fas fa-paper-plane text-xl mr-3"></i>
+                                                        Submit Absence Information
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     @else
                         <div class="text-center py-16">
                             <div class="mb-6">
@@ -393,6 +464,36 @@
     </style>
 
     <script>
+        // Open specific absence record (like Learning Hub material selector)
+        function openAbsenceRecord(absenceId) {
+            if (absenceId) {
+                // First, scroll to the absence record
+                const element = document.getElementById(absenceId);
+                if (element) {
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+
+                    // Wait a bit for the scroll to complete, then open the accordion
+                    setTimeout(() => {
+                        const button = element.querySelector('button');
+                        if (button) {
+                            // Check if the accordion is closed and open it
+                            const isOpen = element.querySelector('[x-data]').__x.$data.open;
+
+                            if (!isOpen) {
+                                button.click();
+                            }
+                        }
+                    }, 500);
+                }
+
+                // Reset the dropdown to default
+                document.getElementById('absenceDropdown').value = '';
+            }
+        }
+
         // Character counter function with better visual feedback
         function updateCharCount(textarea, counterId) {
             const counter = document.getElementById(counterId);
@@ -424,6 +525,19 @@
                 const counterId = `char-count-${attendanceId}`;
                 updateCharCount(textarea, counterId);
             });
+
+            // Auto-open accordion if there are validation errors
+            const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
+            if (hasErrors) {
+                // Find the first absence accordion and open it
+                const firstAccordion = document.querySelector('[id^="absence-"]');
+                if (firstAccordion) {
+                    const button = firstAccordion.querySelector('button');
+                    if (button && !firstAccordion.querySelector('[x-data]').__x.$data.open) {
+                        button.click();
+                    }
+                }
+            }
         });
     </script>
 </x-app-layout>
