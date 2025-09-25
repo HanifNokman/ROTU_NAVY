@@ -21,13 +21,40 @@
         @php
             $user = Auth::user();
             $profilePicture = null;
+            $hasNotifications = false;
 
             if ($user->role === 'instructor') {
                 $instructor = App\Models\Instructor::where('user_id', $user->id)->first();
                 $profilePicture = $instructor?->profile_pic;
+                
+                // Check for pending verifications
+                $pendingUsersCount = App\Models\User::where('status', 'pending')->count();
+                $hasNotifications = $pendingUsersCount > 0;
+                
             } elseif ($user->role === 'cadet') {
                 $cadet = App\Models\Cadet::where('user_id', $user->id)->first();
                 $profilePicture = $cadet?->profile_pic;
+                
+                // Check for attendance actions needed
+                $hasNotifications = false;
+                
+                if ($cadet) {
+                    // Check for trainings where cadet was absent but hasn't provided absence reason/file
+                    $pendingAbsences = DB::table('training_attendances')
+                        ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
+                        ->where('training_attendances.cadet_id', $cadet->id)
+                        ->where('training_attendances.present', false)
+                        ->where('trainings.status', 'Completed')
+                        ->where(function($q) {
+                            $q->whereNull('training_attendances.absence_reason')
+                              ->orWhereNull('training_attendances.file_url')
+                              ->orWhere('training_attendances.absence_reason', '')
+                              ->orWhere('training_attendances.file_url', '');
+                        })
+                        ->exists();
+                    
+                    $hasNotifications = $pendingAbsences;
+                }
             }
 
             // Generate initials from user's name
@@ -102,7 +129,10 @@
             <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-gray-100">
                 <!-- Mobile menu button (top right, always fixed) -->
                 <div class="sm:hidden fixed top-4 right-4 z-50">
-                    <button @click="sidebarOpen = !sidebarOpen" class="bg-white p-2 rounded-md shadow-md">
+                    <button @click="sidebarOpen = !sidebarOpen" class="bg-white p-2 rounded-md shadow-md relative">
+                        @if($hasNotifications)
+                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                        @endif
                         <svg x-show="!sidebarOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -287,16 +317,22 @@
                         <div class="border-t border-[#373a46] mt-1">
                             <div class="p-2 flex flex-col space-y-0">
                                 @if(Auth::user()->role === 'instructor')
-                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                        @if($hasNotifications)
+                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                                        @endif
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                         </svg>
                                         Pending Verification
                                     </a>
                                 @elseif(Auth::user()->role === 'cadet')
-                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                        @if($hasNotifications)
+                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                                        @endif
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                         Attendance
                                     </a>
@@ -516,16 +552,22 @@
                         <div class="border-t border-[#373a46] overflow-hidden mt-1">
                             <div class="p-6 flex flex-col justify-between h-full">
                                 @if(Auth::user()->role === 'instructor')
-                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                    <a href="{{ route('pending.verification') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                        @if($hasNotifications)
+                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                                        @endif
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                         </svg>
                                         Pending Verification
                                     </a>
                                 @elseif(Auth::user()->role === 'cadet')
-                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9]">
+                                    <a href="{{ route('cadet.attendance') }}" class="flex items-center justify-center w-full py-2 px-3 bg-[#3c92d9] text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors border border-[#3c92d9] relative">
+                                        @if($hasNotifications)
+                                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                                        @endif
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                         Attendance
                                     </a>
