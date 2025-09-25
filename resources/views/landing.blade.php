@@ -2041,122 +2041,135 @@
         </div>
         
         <div class="timeline">
-    <!-- Timeline Icon 1 - Foundation Training -->
-    <div class="timeline-center-icon" style="top: 15%;">
-        <i class="fas fa-anchor"></i>
-    </div>
-    
-    <!-- Row 1: Foundation Training (left) + Video (right) -->
-    <div class="timeline-row">
-        <div class="timeline-item timeline-left">
-            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.jpeg'); background-size: cover; background-position: center;">
-                <div class="timeline-content-inner">
-                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Foundation Training</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Comprehensive introduction to naval traditions, basic seamanship, military fundamentals, discipline, and core competencies in leadership and maritime knowledge. Duration: 6 months intensive training.</p>
+            <!-- Timeline Icon 1 - Foundation Training -->
+            <div class="timeline-center-icon" style="top: 15%;">
+                <i class="fas fa-anchor"></i>
+            </div>
+            
+            <!-- Row 1: Junior Phase (left) + Video (right) -->
+            <div class="timeline-row">
+                <div class="timeline-item timeline-left">
+                    <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.jpeg'); background-size: cover; background-position: center;">
+                        <div class="timeline-content-inner">
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Junior Phase</h3>
+                            <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
+                                Introduction to military discipline, naval traditions, basic drills, seamanship, and physical conditioning.  
+                                Cadets develop foundational teamwork, resilience, and commitment. Duration: 6 months.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item timeline-right">
+                    <div class="timeline-video-content">
+                        <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                            <source src="storage/assets/videos/video-pengambilan.mp4" type="video/mp4">
+                            <div class="video-fallback">
+                                <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                                <p>Junior Phase Video</p>
+                            </div>
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Icon 2 - Intermediate -->
+            <div class="timeline-center-icon" style="top: 35%;">
+                <i class="fas fa-compass"></i>
+            </div>
+
+            <!-- Row 2: Video (left) + Intermediate Phase (right) -->
+            <div class="timeline-row">
+                <div class="timeline-item timeline-left">
+                    <div class="timeline-video-content">
+                        <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                            <source src="storage/assets/videos/video-fasa.mp4" type="video/mp4">
+                            <div class="video-fallback">
+                                <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                                <p>Intermediate Phase Video</p>
+                            </div>
+                        </video>
+                    </div>
+                </div>
+                
+                <div class="timeline-item timeline-right">
+                    <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/5.png'); background-size: cover; background-position: center;">
+                        <div class="timeline-content-inner">
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Intermediate Phase</h3>
+                            <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
+                                Focused on advanced seamanship, navigation, maritime operations, and applied leadership.  
+                                Cadets gain hands-on training, field exercises, and exposure to naval law and safety protocols. Duration: 12 months.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Icon 3 - Senior -->
+            <div class="timeline-center-icon" style="top: 55%;">
+                <i class="fas fa-star"></i>
+            </div>
+
+            <!-- Row 3: Senior Phase (left) + Video (right) -->
+            <div class="timeline-row">
+                <div class="timeline-item timeline-left">
+                    <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/11.png'); background-size: cover; background-position: center;">
+                        <div class="timeline-content-inner">
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Senior Phase</h3>
+                            <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
+                                Leadership development and preparation for command responsibilities.  
+                                Cadets mentor juniors, manage teams, and practice decision-making in complex naval scenarios.  
+                                Duration: Final year before commissioning.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item timeline-right">
+                    <div class="timeline-video-content">
+                        <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                            <source src="storage/assets/videos/video-fomdex.mp4" type="video/mp4">
+                            <div class="video-fallback">
+                                <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                                <p>Senior Phase Video</p>
+                            </div>
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Icon 4 - Commissioning -->
+            <div class="timeline-center-icon" style="top: 75%;">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+
+            <!-- Row 4: Video (left) + Commissioning (right) -->
+            <div class="timeline-row">
+                <div class="timeline-item timeline-left">
+                    <div class="timeline-video-content">
+                        <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
+                            <source src="storage/assets/videos/video-tauliah.mp4" type="video/mp4">
+                            <div class="video-fallback">
+                                <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                                <p>Commissioning Video</p>
+                            </div>
+                        </video>
+                    </div>
+                </div>
+                
+                <div class="timeline-item timeline-right">
+                    <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/9.jpeg'); background-size: cover; background-position: center;">
+                        <div class="timeline-content-inner">
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Commissioning</h3>
+                            <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
+                                The final stage of cadetship. Cadets undergo comprehensive evaluation and ceremonial commissioning  
+                                as Second Lieutenants in the Naval Volunteer Reserve (NVR). Officially prepared to serve Malaysia’s naval defense.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="timeline-item timeline-right">
-            <div class="timeline-video-content">
-                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
-                    <div class="video-fallback">
-                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                        <p>Foundation Training Video</p>
-                    </div>
-                </video>
-            </div>
-        </div>
-    </div>
-
-    <!-- Timeline Icon 2 - Maritime Skills -->
-    <div class="timeline-center-icon" style="top: 35%;">
-        <i class="fas fa-compass"></i>
-    </div>
-
-    <!-- Row 2: Video (left) + Maritime Skills (right) -->
-    <div class="timeline-row">
-        <div class="timeline-item timeline-left">
-            <div class="timeline-video-content">
-                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
-                    <div class="video-fallback">
-                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                        <p>Maritime Skills Video</p>
-                    </div>
-                </video>
-            </div>
-        </div>
-        
-        <div class="timeline-item timeline-right">
-            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/5.png'); background-size: cover; background-position: center;">
-                <div class="timeline-content-inner">
-                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Advanced Maritime Skills</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Specialized training in navigation systems, vessel operations, maritime law, advanced seamanship, and practical experience through simulations and real-world exercises. Duration: 12 months advanced training.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Timeline Icon 3 - Leadership -->
-    <div class="timeline-center-icon" style="top: 55%;">
-        <i class="fas fa-star"></i>
-    </div>
-
-    <!-- Row 3: Leadership (left) + Video (right) -->
-    <div class="timeline-row">
-        <div class="timeline-item timeline-left">
-            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/11.png'); background-size: cover; background-position: center;">
-                <div class="timeline-content-inner">
-                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Leadership Development</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Intensive leadership training, command responsibilities, strategic thinking, team management, and preparation for officer-level decision making and personnel management. Take on leadership roles and mentor junior cadets.</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="timeline-item timeline-right">
-            <div class="timeline-video-content">
-                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
-                    <div class="video-fallback">
-                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                        <p>Leadership Training Video</p>
-                    </div>
-                </video>
-            </div>
-        </div>
-    </div>
-
-    <!-- Timeline Icon 4 - Commission -->
-    <div class="timeline-center-icon" style="top: 75%;">
-        <i class="fas fa-graduation-cap"></i>
-    </div>
-
-    <!-- Row 4: Video (left) + Commission (right) -->
-    <div class="timeline-row">
-        <div class="timeline-item timeline-left">
-            <div class="timeline-video-content">
-                <video class="timeline-video" autoplay muted loop playsinline disablePictureInPicture>
-                    <source src="storage/assets/videos/example.mp4" type="video/mp4">
-                    <div class="video-fallback">
-                        <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                        <p>Commission Ceremony Video</p>
-                    </div>
-                </video>
-            </div>
-        </div>
-        
-        <div class="timeline-item timeline-right">
-            <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/9.jpeg'); background-size: cover; background-position: center;">
-                <div class="timeline-content-inner">
-                    <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Commission Readiness</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">Final preparation for commissioning as Second Lieutenant Officers Naval Volunteer Reserve (NVR), comprehensive evaluation, and graduation ceremony. Ready to serve Malaysia's naval defense with distinction.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
     </div>
 </section>
 

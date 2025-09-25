@@ -466,22 +466,22 @@
                             </h2>
                             <p class="text-gray-600">Cadets with training absences requiring documentation</p>
                         </div>
+                        <!-- Moved Filter to Header -->
+                        <div class="flex items-center gap-3">
+                            <label for="absence-intake-filter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
+                            <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm">
+                                <option value="">All Intakes</option>
+                                @foreach ($intakeOptions as $option)
+                                    <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
+                                        {{ $option['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div class="p-6">
-                    <!-- Filter Form for Absence Tracking -->
-                    <div class="mb-4 flex justify-end">
-                        <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm">
-                            <option value="">All Intakes</option>
-                            @foreach ($intakeOptions as $option)
-                                <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
-                                    {{ $option['label'] }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
                     <!-- Loading indicator -->
                     <div id="absence-loading" class="hidden text-center py-4">
                         <div class="inline-flex items-center">
