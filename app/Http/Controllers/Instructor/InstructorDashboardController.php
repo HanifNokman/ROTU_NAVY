@@ -75,60 +75,65 @@ class InstructorDashboardController extends Controller
         $sortOrder = $request->get('sort_order', 'desc');
         $cgpaSortOrder = $request->get('cgpa_sort_order', 'desc');
 
-        // Get data
         $cadets = $this->getDutyRankingData($selectedDutyIntakeYear, $sortOrder);
-        $cadetList = \App\Models\Cadet::with('user')
-            ->where('intake_year', $selectedDutyIntakeYear)
-            ->orderBy('service_number', 'asc')
-            ->get();
-        $cgpaCadets = $this->getCgpaAnalyticsData($selectedCgpaIntakeYear, $cgpaSortOrder);
-        $absentCadets = $this->getAbsenceData($selectedAbsenceIntake);
+    $cadetList = \App\Models\Cadet::with('user')
+        ->where('intake_year', $selectedDutyIntakeYear)
+        ->orderBy('service_number', 'asc')
+        ->get();
+    $cgpaCadets = $this->getCgpaAnalyticsData($selectedCgpaIntakeYear, $cgpaSortOrder);
+    $absentCadets = $this->getAbsenceData($selectedAbsenceIntake);
+    
+    // Get absence leaderboard data - ALWAYS from all intakes for leaderboard
+    $absenceLeaderboard = $this->getAllIntakesAbsenceLeaderboard();
 
-        // If this is an AJAX request, return JSON with HTML fragments
-        if ($request->ajax() || $request->wantsJson()) {
-            $response = [];
+    // If this is an AJAX request, return JSON with HTML fragments
+    if ($request->ajax() || $request->wantsJson()) {
+        $response = [];
 
-            // Generate duty ranking HTML if duty filters were changed
-            if ($request->has(['duty_intake_year']) || $request->has(['sort_order'])) {
-                $response['duty_html'] = $this->generateDutyRankingHtml($cadets);
-                $response['cadet_list'] = $cadetList->map(function($cadet) {
-                    return [
-                        'id' => $cadet->id,
-                        'name' => $cadet->user->name,
-                        'service_number' => $cadet->service_number
-                    ];
-                });
-            }
-
-            // Generate CGPA analytics HTML if CGPA filters were changed
-            if ($request->has(['cgpa_intake_year']) || $request->has(['cgpa_sort_order'])) {
-                $response['cgpa_html'] = $this->generateCgpaAnalyticsHtml($cgpaCadets);
-            }
-
-            // Generate absence HTML if absence filters were changed
-            if ($request->has(['absence_intake_filter'])) {
-                $response['absence_html'] = $this->generateAbsenceHtml($absentCadets, $selectedAbsenceIntake);
-            }
-
-            return response()->json($response);
+        // Generate duty ranking HTML if duty filters were changed
+        if ($request->has(['duty_intake_year']) || $request->has(['sort_order'])) {
+            $response['duty_html'] = $this->generateDutyRankingHtml($cadets);
+            $response['cadet_list'] = $cadetList->map(function($cadet) {
+                return [
+                    'id' => $cadet->id,
+                    'name' => $cadet->user->name,
+                    'service_number' => $cadet->service_number
+                ];
+            });
         }
 
-        // Return normal view for non-AJAX requests
-        return view('instructor.dashboard', [
-            'user' => $user,
-            'instructor' => $instructor,
-            'intakeOptions' => $intakeOptions,
-            'selectedDutyIntakeYear' => $selectedDutyIntakeYear,
-            'selectedCgpaIntakeYear' => $selectedCgpaIntakeYear,
-            'selectedAbsenceIntake' => $selectedAbsenceIntake,
-            'sortOrder' => $sortOrder,
-            'cgpaSortOrder' => $cgpaSortOrder,
-            'cadets' => $cadets,
-            'cadetList' => $cadetList,
-            'cgpaCadets' => $cgpaCadets,
-            'absentCadets' => $absentCadets,
-        ]);
+        // Generate CGPA analytics HTML if CGPA filters were changed
+        if ($request->has(['cgpa_intake_year']) || $request->has(['cgpa_sort_order'])) {
+            $response['cgpa_html'] = $this->generateCgpaAnalyticsHtml($cgpaCadets);
+        }
+
+        // Generate absence HTML if absence filters were changed
+        if ($request->has(['absence_intake_filter'])) {
+            $response['absence_html'] = $this->generateAbsenceHtml($absentCadets, $selectedAbsenceIntake);
+            // Leaderboard always shows all intakes, so regenerate it too
+            $response['absence_leaderboard_html'] = $this->generateAbsenceLeaderboardHtml($absenceLeaderboard, '');
+        }
+
+        return response()->json($response);
     }
+
+    // Return normal view for non-AJAX requests
+    return view('instructor.dashboard', [
+        'user' => $user,
+        'instructor' => $instructor,
+        'intakeOptions' => $intakeOptions,
+        'selectedDutyIntakeYear' => $selectedDutyIntakeYear,
+        'selectedCgpaIntakeYear' => $selectedCgpaIntakeYear,
+        'selectedAbsenceIntake' => $selectedAbsenceIntake,
+        'sortOrder' => $sortOrder,
+        'cgpaSortOrder' => $cgpaSortOrder,
+        'cadets' => $cadets,
+        'cadetList' => $cadetList,
+        'cgpaCadets' => $cgpaCadets,
+        'absentCadets' => $absentCadets,
+        'absenceLeaderboard' => $absenceLeaderboard,
+    ]);
+}
 
     private function getDutyRankingData($selectedDutyIntakeYear, $sortOrder)
     {
@@ -157,6 +162,41 @@ class InstructorDashboardController extends Controller
             ->orderBy('cgpa_change', $cgpaSortOrder)
             ->get();
     }
+
+private function getAllIntakesAbsenceLeaderboard()
+{
+    // Get total absence count per cadet from ALL intakes (no filtering)
+    $absenceData = \DB::table('training_attendances')
+        ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
+        ->join('users', 'cadets.user_id', '=', 'users.id')
+        ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
+        ->where('training_attendances.present', false)
+        ->where('trainings.status', 'Completed')
+        ->select([
+            'cadets.id as cadet_id',
+            'users.name as cadet_name',
+            'cadets.service_number',
+            'cadets.intake_year',
+            \DB::raw('COUNT(*) as absence_count')
+        ])
+        ->groupBy('cadets.id', 'users.name', 'cadets.service_number', 'cadets.intake_year')
+        ->orderBy('absence_count', 'desc')
+        ->orderBy('cadets.intake_year', 'asc')
+        ->orderBy('cadets.service_number', 'asc')
+        ->get();
+
+    // Group by intake for display
+    $groupedData = [];
+    foreach ($absenceData as $cadet) {
+        $intakeLabel = 'Intake - ' . ($cadet->intake_year - 2011);
+        if (!isset($groupedData[$intakeLabel])) {
+            $groupedData[$intakeLabel] = [];
+        }
+        $groupedData[$intakeLabel][] = $cadet;
+    }
+
+    return $groupedData;
+}
 
     private function getAbsenceData($selectedAbsenceIntake)
     {
@@ -244,6 +284,143 @@ class InstructorDashboardController extends Controller
         
         return $result;
     }
+
+    private function getAbsenceLeaderboardData($selectedAbsenceIntake)
+    {
+        // Get total absence count per cadet
+        $query = \DB::table('training_attendances')
+            ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
+            ->join('users', 'cadets.user_id', '=', 'users.id')
+            ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
+            ->where('training_attendances.present', false)
+            ->where('trainings.status', 'Completed');
+
+        // Apply intake filter if specified
+        if ($selectedAbsenceIntake && $selectedAbsenceIntake !== '') {
+            $query->where('cadets.intake_year', $selectedAbsenceIntake);
+        }
+
+        $absenceData = $query->select([
+                'cadets.id as cadet_id',
+                'users.name as cadet_name',
+                'cadets.service_number',
+                'cadets.intake_year',
+                \DB::raw('COUNT(*) as absence_count')
+            ])
+            ->groupBy('cadets.id', 'users.name', 'cadets.service_number', 'cadets.intake_year')
+            ->orderBy('absence_count', 'desc')
+            ->orderBy('cadets.intake_year', 'asc')
+            ->get();
+
+        // Group by intake if showing all intakes
+        if (!$selectedAbsenceIntake || $selectedAbsenceIntake === '') {
+            $groupedData = [];
+            foreach ($absenceData as $cadet) {
+                $intakeLabel = 'Intake - ' . ($cadet->intake_year - 2011);
+                if (!isset($groupedData[$intakeLabel])) {
+                    $groupedData[$intakeLabel] = [];
+                }
+                $groupedData[$intakeLabel][] = $cadet;
+            }
+            return $groupedData;
+        }
+
+        return $absenceData;
+    }
+
+    private function generateAbsenceLeaderboardHtml($absenceLeaderboard, $selectedAbsenceIntake)
+    {
+        if (empty($absenceLeaderboard)) {
+            return '<div class="text-center py-8">
+                <div class="mb-4">
+                    <svg class="w-16 h-16 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">Perfect Attendance!</h3>
+                <p class="text-gray-500">No training absences recorded.</p>
+            </div>';
+        }
+
+        $html = '';
+        $showIntakeGrouping = ($selectedAbsenceIntake === '' || $selectedAbsenceIntake === null);
+
+        if ($showIntakeGrouping && is_array($absenceLeaderboard)) {
+            // Show grouped by intake
+            foreach ($absenceLeaderboard as $intakeLabel => $cadets) {
+                if (empty($cadets)) continue;
+                
+                $maxCount = collect($cadets)->max('absence_count') ?: 1;
+                
+                $html .= '<div class="border border-yellow-200 rounded-lg overflow-hidden mb-4">
+                    <div class="bg-yellow-50 px-4 py-3 border-b border-yellow-200">
+                        <h4 class="font-semibold text-yellow-800 flex items-center">
+                            <i class="fas fa-users mr-2"></i>
+                            ' . htmlspecialchars($intakeLabel) . '
+                            <span class="ml-2 bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs">
+                                ' . count($cadets) . ' ' . (count($cadets) == 1 ? 'cadet' : 'cadets') . '
+                            </span>
+                        </h4>
+                    </div>
+                    <div class="p-4 space-y-3">';
+                
+                foreach ($cadets as $index => $cadet) {
+                    $html .= $this->generateAbsenceLeaderboardItem($cadet, $index, $maxCount);
+                }
+                
+                $html .= '</div></div>';
+            }
+        } else {
+            // Show individual cadets
+            $cadets = is_array($absenceLeaderboard) ? collect($absenceLeaderboard)->flatten() : $absenceLeaderboard;
+            $maxCount = $cadets->max('absence_count') ?: 1;
+            
+            foreach ($cadets as $index => $cadet) {
+                $html .= '<div class="mb-3">' . $this->generateAbsenceLeaderboardItem($cadet, $index, $maxCount) . '</div>';
+            }
+        }
+
+        return $html;
+    }
+
+    private function generateAbsenceLeaderboardItem($cadet, $index, $maxCount)
+    {
+        $percentage = ($cadet->absence_count / $maxCount) * 100;
+        
+        // Color gradient from green (low absences) to red (high absences)
+        if ($percentage < 33) {
+            $bgColor = '#10b981'; // green-500
+        } elseif ($percentage < 66) {
+            $bgColor = '#f59e0b'; // amber-500
+        } else {
+            $bgColor = '#ef4444'; // red-500
+        }
+        
+        return '<div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="flex-1 w-full">
+                <div class="text-sm font-medium mb-1 text-center sm:text-left">
+                    #' . ($index + 1) . ' - ' . htmlspecialchars($cadet->cadet_name) . '
+                </div>
+                <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
+                    <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
+                        style="width: ' . $percentage . '%; background-color: ' . $bgColor . ';">
+                        <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
+                            ' . $cadet->absence_count . ' ' . ($cadet->absence_count == 1 ? 'absence' : 'absences') . '
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>';
+    }
+
+    // ... (keep all other existing methods unchanged)
 
     private function generateDutyRankingHtml($cadets)
     {

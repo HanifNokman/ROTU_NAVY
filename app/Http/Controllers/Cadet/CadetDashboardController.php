@@ -42,8 +42,10 @@ class CadetDashboardController extends Controller
 
         // Get absence data only for authorized positions
         $absentCadets = [];
+        $absenceLeaderboard = [];
         if (in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn'])) {
             $absentCadets = $this->getAbsenceDataForIntake($cadet->intake_year);
+            $absenceLeaderboard = $this->getAbsenceLeaderboardForIntake($cadet->intake_year);
         }
 
         // Handle AJAX request for duty ranking filter
@@ -51,7 +53,7 @@ class CadetDashboardController extends Controller
             return $this->getDutyRankingData($dutyCadets);
         }
 
-        return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets', 'absentCadets'));
+        return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets', 'absentCadets', 'absenceLeaderboard'));
     }
 
     private function getAbsenceDataForIntake($intakeYear)
@@ -120,6 +122,30 @@ class CadetDashboardController extends Controller
         
         // Return as indexed array
         return array_values($groupedData);
+    }
+
+    private function getAbsenceLeaderboardForIntake($intakeYear)
+    {
+        // Get total absence count per cadet in the same intake
+        $absenceData = \DB::table('training_attendances')
+            ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
+            ->join('users', 'cadets.user_id', '=', 'users.id')
+            ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
+            ->where('training_attendances.present', false)
+            ->where('trainings.status', 'Completed')
+            ->where('cadets.intake_year', $intakeYear)
+            ->select([
+                'cadets.id as cadet_id',
+                'users.name as cadet_name',
+                'cadets.service_number',
+                \DB::raw('COUNT(*) as absence_count')
+            ])
+            ->groupBy('cadets.id', 'users.name', 'cadets.service_number')
+            ->orderBy('absence_count', 'desc')
+            ->orderBy('cadets.service_number', 'asc')
+            ->get();
+
+        return $absenceData;
     }
 
     private function getDutyRankingData($dutyCadets)

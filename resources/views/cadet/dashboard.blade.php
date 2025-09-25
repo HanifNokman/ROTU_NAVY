@@ -285,7 +285,7 @@
                 </div>
             </div>
 
-            <!-- Pending Absence Reasons Section (Only for CO, Thana, Zayn positions) -->
+            <!-- Intake Absence Tracking Section (Only for CO, Thana, Zayn positions) -->
             @if(in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn']))
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
@@ -295,21 +295,40 @@
                                 <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                 </svg>
-                                Intake Absence Tracking
+                                <span id="cadet-absence-section-title">Intake Absence Tracking</span>
                                 @if(isset($absentCadets) && !empty($absentCadets))
-                                    <span class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
+                                    <span id="cadet-absence-count-badge" class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
                                         {{ count($absentCadets) }}
                                     </span>
                                 @endif
                             </h2>
-                            <p class="text-gray-600">Track your intake mates requiring absence documentation</p>
+                            <p id="cadet-absence-section-description" class="text-gray-600">Track your intake mates requiring absence documentation</p>
+                        </div>
+                        <!-- View Toggle for Cadet -->
+                        <div class="flex bg-gray-100 rounded-lg p-1">
+                            <button 
+                                id="cadet-pending-view-btn"
+                                onclick="toggleCadetAbsenceView('pending')"
+                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm"
+                            >
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Pending
+                            </button>
+                            <button 
+                                id="cadet-leaderboard-view-btn"
+                                onclick="toggleCadetAbsenceView('leaderboard')"
+                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900"
+                            >
+                                <i class="fas fa-chart-bar mr-1"></i>
+                                Absence List
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <div class="p-6">
-                    <!-- Absence Data -->
-                    <div class="space-y-4 max-h-[600px] overflow-y-auto">
+                    <!-- Pending Absence Data -->
+                    <div id="cadet-absence-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absentCadets) && !empty($absentCadets))
                             @foreach($absentCadets as $cadetData)
                                 <!-- Cadet Absence Dropdown -->
@@ -396,55 +415,153 @@
                             </div>
                         @endif
                     </div>
+
+                    <!-- Absence Leaderboard (Hidden by default) -->
+                    <div id="cadet-absence-leaderboard-content" class="hidden space-y-4 max-h-[600px] overflow-y-auto">
+                        @if(isset($absenceLeaderboard) && !empty($absenceLeaderboard))
+                            @php $maxCount = $absenceLeaderboard->max('absence_count') ?: 1; @endphp
+                            @foreach($absenceLeaderboard as $index => $cadetData)
+                                @php
+                                    $percentage = ($cadetData->absence_count / $maxCount) * 100;
+                                    if ($percentage < 33) {
+                                        $bgColor = '#10b981'; // green-500
+                                    } elseif ($percentage < 66) {
+                                        $bgColor = '#f59e0b'; // amber-500  
+                                    } else {
+                                        $bgColor = '#ef4444'; // red-500
+                                    }
+                                @endphp
+                                <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 w-full">
+                                        <div class="text-sm font-medium mb-1 text-center sm:text-left">
+                                            #{{ $index + 1 }} - {{ $cadetData->cadet_name }}
+                                        </div>
+                                        <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
+                                            <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
+                                                style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
+                                                <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
+                                                    {{ $cadetData->absence_count }} {{ Str::plural('absence', $cadetData->absence_count) }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="text-center py-8">
+                                <div class="mb-4">
+                                    <svg class="w-16 h-16 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-600 mb-2">Perfect Attendance!</h3>
+                                <p class="text-gray-500">No training absences recorded in your intake.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
             @endif
-
         </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sortSelect = document.getElementById('sort_order');
-        const contentContainer = document.getElementById('duty-ranking-content');
-
-        sortSelect.addEventListener('change', function() {
-            const sortOrder = this.value;
-            
-            // Show loading state
-            contentContainer.innerHTML = '<div class="text-center text-gray-500 py-4">Loading...</div>';
-
-            // Make AJAX request
-            fetch(window.location.pathname + '?sort_order=' + sortOrder, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                contentContainer.innerHTML = data.html;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                contentContainer.innerHTML = '<div class="text-center text-red-500 py-4">Error loading data. Please try again.</div>';
-            });
-        });
-
-        // Dropdown toggle function for absence section
-        window.toggleAbsenceDropdown = function(cadetId) {
-            const dropdown = document.getElementById('absence-dropdown-' + cadetId);
-            const icon = document.getElementById('absence-icon-' + cadetId);
-            
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden');
-                icon.style.transform = 'rotate(180deg)';
-            } else {
-                dropdown.classList.add('hidden');
-                icon.style.transform = 'rotate(0deg)';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to toggle between cadet absence views
+            function toggleCadetAbsenceView(view) {
+                const pendingBtn = document.getElementById('cadet-pending-view-btn');
+                const leaderboardBtn = document.getElementById('cadet-leaderboard-view-btn');
+                const pendingContent = document.getElementById('cadet-absence-content');
+                const leaderboardContent = document.getElementById('cadet-absence-leaderboard-content');
+                const sectionTitle = document.getElementById('cadet-absence-section-title');
+                const sectionDescription = document.getElementById('cadet-absence-section-description');
+                const countBadge = document.getElementById('cadet-absence-count-badge');
+                
+                if (view === 'pending') {
+                    // Switch to pending view
+                    pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
+                    pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+                    leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
+                    leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                    
+                    pendingContent.classList.remove('hidden');
+                    leaderboardContent.classList.add('hidden');
+                    
+                    sectionTitle.textContent = 'Intake Absence Tracking';
+                    sectionDescription.textContent = 'Track your intake mates requiring absence documentation';
+                    if (countBadge) countBadge.classList.remove('hidden');
+                    
+                } else if (view === 'leaderboard') {
+                    // Switch to leaderboard view
+                    leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
+                    leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+                    pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
+                    pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                    
+                    leaderboardContent.classList.remove('hidden');
+                    pendingContent.classList.add('hidden');
+                    
+                    sectionTitle.textContent = 'Intake Absence Summary';
+                    sectionDescription.textContent = 'Overview of intake mates requiring attendance improvement';
+                    if (countBadge) countBadge.classList.add('hidden');
+                }
             }
-        };
-    });
+
+            // Make function globally accessible
+            window.toggleCadetAbsenceView = toggleCadetAbsenceView;
+
+            // Duty ranking sort functionality
+            const sortSelect = document.getElementById('sort_order');
+            const contentContainer = document.getElementById('duty-ranking-content');
+
+            if (sortSelect && contentContainer) {
+                sortSelect.addEventListener('change', function() {
+                    const sortOrder = this.value;
+                    
+                    // Show loading state
+                    contentContainer.innerHTML = '<div class="text-center text-gray-500 py-4">Loading...</div>';
+
+                    // Make AJAX request
+                    fetch(window.location.pathname + '?sort_order=' + sortOrder, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        contentContainer.innerHTML = data.html;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        contentContainer.innerHTML = '<div class="text-center text-red-500 py-4">Error loading data. Please try again.</div>';
+                    });
+                });
+            }
+
+            // Dropdown toggle function for absence section
+            window.toggleAbsenceDropdown = function(cadetId) {
+                const dropdown = document.getElementById('absence-dropdown-' + cadetId);
+                const icon = document.getElementById('absence-icon-' + cadetId);
+                
+                if (dropdown && icon) {
+                    if (dropdown.classList.contains('hidden')) {
+                        dropdown.classList.remove('hidden');
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        dropdown.classList.add('hidden');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            };
+        });
     </script>
 </x-app-layout>
