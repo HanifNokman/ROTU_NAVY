@@ -55,7 +55,6 @@ class CadetDashboardController extends Controller
 
         return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets', 'absentCadets', 'absenceLeaderboard'));
     }
-
     private function getAbsenceDataForIntake($intakeYear)
     {
         // Get cadets from the same intake with pending absence reasons
@@ -126,28 +125,28 @@ class CadetDashboardController extends Controller
 
     private function getAbsenceLeaderboardForIntake($intakeYear)
     {
-        // Get total absence count per cadet in the same intake
+        // Get total trainings and absence count per cadet in the same intake
         $absenceData = \DB::table('training_attendances')
             ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
             ->join('users', 'cadets.user_id', '=', 'users.id')
             ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
-            ->where('training_attendances.present', false)
             ->where('trainings.status', 'Completed')
             ->where('cadets.intake_year', $intakeYear)
             ->select([
                 'cadets.id as cadet_id',
                 'users.name as cadet_name',
                 'cadets.service_number',
-                \DB::raw('COUNT(*) as absence_count')
+                \DB::raw('COUNT(*) as total_trainings'),
+                \DB::raw('SUM(CASE WHEN training_attendances.present = false THEN 1 ELSE 0 END) as absence_count')
             ])
             ->groupBy('cadets.id', 'users.name', 'cadets.service_number')
+            ->having('absence_count', '>', 0)
             ->orderBy('absence_count', 'desc')
             ->orderBy('cadets.service_number', 'asc')
             ->get();
 
         return $absenceData;
     }
-
     private function getDutyRankingData($dutyCadets)
     {
         $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;

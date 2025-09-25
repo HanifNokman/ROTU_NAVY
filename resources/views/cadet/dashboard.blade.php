@@ -19,7 +19,6 @@
                 </h1>
                 <p class="text-gray-600">Your personal overview and performance metrics</p>
             </div>
-
             <!-- Profile Section -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
@@ -133,7 +132,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Performance Metrics Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -215,7 +213,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Tauliah Countdown Card -->
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
@@ -284,7 +281,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Intake Absence Tracking Section (Only for CO, Thana, Zayn positions) -->
             @if(in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn']))
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
@@ -415,21 +411,12 @@
                             </div>
                         @endif
                     </div>
-
                     <!-- Absence Leaderboard (Hidden by default) -->
                     <div id="cadet-absence-leaderboard-content" class="hidden space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absenceLeaderboard) && !empty($absenceLeaderboard))
-                            @php $maxCount = $absenceLeaderboard->max('absence_count') ?: 1; @endphp
                             @foreach($absenceLeaderboard as $index => $cadetData)
                                 @php
-                                    $percentage = ($cadetData->absence_count / $maxCount) * 100;
-                                    if ($percentage < 33) {
-                                        $bgColor = '#10b981'; // green-500
-                                    } elseif ($percentage < 66) {
-                                        $bgColor = '#f59e0b'; // amber-500  
-                                    } else {
-                                        $bgColor = '#ef4444'; // red-500
-                                    }
+                                    $attended = $cadetData->total_trainings - $cadetData->absence_count;
                                 @endphp
                                 <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
                                     <div class="flex-shrink-0">
@@ -443,14 +430,14 @@
                                         <div class="text-sm font-medium mb-1 text-center sm:text-left">
                                             #{{ $index + 1 }} - {{ $cadetData->cadet_name }}
                                         </div>
-                                        <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                            <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
-                                                style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
-                                                <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
-                                                    {{ $cadetData->absence_count }} {{ Str::plural('absence', $cadetData->absence_count) }}
-                                                </span>
-                                            </div>
-                                        </div>
+                                                            <div class="text-center sm:text-left flex flex-col sm:flex-row gap-1 sm:gap-0">
+                                                                <span class="text-sm font-semibold text-gray-800">
+                                                                    Training Attended: {{ $attended }} / {{ $cadetData->total_trainings }}
+                                                                </span>
+                                                                <span class="text-sm font-semibold text-red-600 sm:ml-4">
+                                                                    Total Absence: {{ $cadetData->absence_count }}
+                                                                </span>
+                                                            </div>
                                     </div>
                                 </div>
                             @endforeach
@@ -471,7 +458,6 @@
             @endif
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Function to toggle between cadet absence views
