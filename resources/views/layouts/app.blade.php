@@ -366,7 +366,7 @@
                                     </a>
                                 @endif
 
-                                <a href="{{ url('/') }}" class="flex items-center justify-center mt-4">
+                                <a href="{{ url('/') }}" class="flex items-center justify-center mt-4 hover:transform hover:scale-105 transition-transform">
                                     @if(View::exists('components.application-logo'))
                                         <x-application-logo class="h-8 w-auto fill-current text-white" />
                                     @else
@@ -601,7 +601,7 @@
                                     </a>
                                 @endif
 
-                                <a href="{{ url('/') }}" class="flex items-center justify-center mt-0">
+                                <a href="{{ url('/') }}" class="flex items-center justify-center mt-0 hover:transform hover:scale-105 transition-transform">
                                     @if(View::exists('components.application-logo'))
                                         <x-application-logo class="h-8 w-auto fill-current text-white" />
                                     @else
