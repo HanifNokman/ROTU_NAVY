@@ -234,11 +234,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth'])->prefix('cadet')->name('cadet.')->group(function () {
         // Main gallery page
         Route::get('/gallery', [CadetGalleryController::class, 'index'])->name('gallery');
-        
+
         // AJAX endpoints for dynamic filtering (optional - for future enhancements)
         Route::get('/gallery/category/{categoryId}', [CadetGalleryController::class, 'getByCategory'])->name('gallery.category');
         Route::get('/gallery/categories', [CadetGalleryController::class, 'getCategories'])->name('gallery.categories');
     });
+
+    // Alumni Route
+    Route::get('/alumni', [App\Http\Controllers\AlumniController::class, 'index'])->name('alumni')->middleware('auth');
 
     // Cadet Attendance
     Route::get('/cadet/attendance', [AttendanceController::class, 'index'])->name('cadet.attendance');

@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Header Section -->
-            <div class="text-center">
+            <div class="relative text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -17,6 +17,11 @@
                     Gallery
                 </h1>
                 <p class="text-gray-600">Browse photos and memories from training sessions</p>
+                <div class="absolute top-0 right-0">
+                    <a href="{{ route('alumni') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700">
+                        View Alumni
+                    </a>
+                </div>
             </div>
 
             <!-- Main Content Card -->
