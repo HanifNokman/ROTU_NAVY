@@ -690,6 +690,15 @@
                 routeTemplate: '{{ route('instructor.learning_materials.update', ['material' => '__id__']) }}',
                 deleteRouteTemplate: '{{ route('instructor.learning_materials.destroy', ['material' => '__id__']) }}',
 
+                init() {
+                    this.$el.addEventListener('open-edit-material', (e) => {
+                        this.openEdit(e.detail);
+                    });
+                    this.$el.addEventListener('open-delete-material', (e) => {
+                        this.openDelete(e.detail);
+                    });
+                },
+
                 get updateUrl() {
                     return this.routeTemplate.replace('__id__', this.material.id);
                 },
