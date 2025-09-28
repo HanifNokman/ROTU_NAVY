@@ -19,6 +19,14 @@
                 <p class="text-gray-600">Manage educational materials and learning resources for cadets</p>
             </div>
 
+            @if(session('success'))
+                <div class="mb-4 text-green-600">{{ session('success') }}</div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 text-red-600">{{ session('error') }}</div>
+            @endif
+
             <!-- Learning Materials Management -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
@@ -32,14 +40,6 @@
                 </div>
                 
                 <div class="p-6 text-gray-900">
-                    @if(session('success'))
-                        <div class="mb-4 text-green-600">{{ session('success') }}</div>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="mb-4 text-red-600">{{ session('error') }}</div>
-                    @endif
-
                     <!-- Top controls: filter + buttons -->
                     <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
                         <!-- Left side: Filter only -->
