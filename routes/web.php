@@ -168,6 +168,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Category routes
         Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
         Route::delete('/categories/{category}', [InstructorLearningHubController::class, 'destroyCategory'])->name('learning_material_categories.destroy');
+
+        // Quiz routes - FIXED SECTION
+        Route::post('/quiz', [InstructorLearningHubController::class, 'storeQuiz'])->name('quiz.store');
+        Route::put('/quiz/{question}', [InstructorLearningHubController::class, 'updateQuiz'])->name('quiz.update');
+        Route::delete('/quiz/{question}', [InstructorLearningHubController::class, 'destroyQuiz'])->name('quiz.destroy');
+        // Added missing route for loading quiz questions
+        Route::get('/quiz-questions', [InstructorLearningHubController::class, 'getQuizQuestions'])->name('quiz.questions');
     });
 
     // Gallery routes
@@ -263,8 +270,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('admin.dashboard');
 });
 
-// AJAX API Routes for Learning Hub
+// AJAX API Routes for Learning Hub - FIXED SECTION
 Route::middleware(['auth'])->group(function () {
+    // Quiz API Routes - MOVED AND FIXED
+    Route::post('/api/quiz/start', [CadetLearningHubController::class, 'startQuiz'])->name('api.quiz.start');
+    Route::post('/api/quiz/submit', [CadetLearningHubController::class, 'submitQuiz'])->name('api.quiz.submit');
+    Route::post('/api/quiz/results', [CadetLearningHubController::class, 'getQuizResults'])->name('api.quiz.results');
+    
     // AJAX endpoints for cadet learning hub
     Route::get('/api/materials', [CadetLearningHubController::class, 'getMaterials'])->name('api.materials');
     Route::get('/api/instructors', [CadetLearningHubController::class, 'getInstructors'])->name('api.instructors');
