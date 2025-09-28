@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\LearningMaterial;
 use App\Models\LearningMaterialCategory;
 use App\Models\QuizQuestion;
-use App\Models\QuizAnswer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 

@@ -39,10 +39,6 @@ class QuizQuestion extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function answer(): HasOne
-    {
-        return $this->hasOne(QuizAnswer::class, 'question_id');
-    }
 
     public function scopeActive($query)
     {

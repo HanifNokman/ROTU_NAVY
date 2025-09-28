@@ -9,7 +9,6 @@ use App\Models\LearningMaterialCategory;
 use App\Models\Instructor;
 use App\Models\User;
 use App\Models\QuizQuestion;
-use App\Models\QuizAnswer;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -111,32 +110,44 @@ class LearningHubController extends Controller
         $difficulty = $request->difficulty;
 
         // Get questions based on difficulty
-        $query = QuizQuestion::with('answer')
+        $query = QuizQuestion::query()
             ->active();
 
         if ($categoryId) {
             $query->byCategory($categoryId);
         }
 
-        // Apply difficulty-based filtering
+
+        // Apply difficulty-based filtering, fallback to all available if not enough
         switch ($difficulty) {
             case 'easy':
-                // Only MCQ, fewer questions
                 $questions = $query->mcq()->inRandomOrder()->limit(5)->get();
                 $timeLimit = 300; // 5 minutes
+                if ($questions->count() < 5) {
+                    // Fallback: get all MCQ questions (even if less than 5)
+                    $questions = $query->mcq()->inRandomOrder()->get();
+                }
                 break;
             case 'medium':
-                // Mix of MCQ and subjective, moderate questions
                 $mcqQuestions = $query->mcq()->inRandomOrder()->limit(3)->get();
                 $subjectiveQuestions = $query->subjective()->inRandomOrder()->limit(2)->get();
-                $questions = $mcqQuestions->merge($subjectiveQuestions)->shuffle();
+                if ($mcqQuestions->count() + $subjectiveQuestions->count() < 5) {
+                    // Fallback: get all available questions (MCQ + Subjective)
+                    $questions = $query->inRandomOrder()->get();
+                } else {
+                    $questions = $mcqQuestions->merge($subjectiveQuestions)->shuffle();
+                }
                 $timeLimit = 600; // 10 minutes
                 break;
             case 'hard':
-                // More subjective, largest number of questions
                 $mcqQuestions = $query->mcq()->inRandomOrder()->limit(2)->get();
                 $subjectiveQuestions = $query->subjective()->inRandomOrder()->limit(5)->get();
-                $questions = $mcqQuestions->merge($subjectiveQuestions)->shuffle();
+                if ($mcqQuestions->count() + $subjectiveQuestions->count() < 7) {
+                    // Fallback: get all available questions (MCQ + Subjective)
+                    $questions = $query->inRandomOrder()->get();
+                } else {
+                    $questions = $mcqQuestions->merge($subjectiveQuestions)->shuffle();
+                }
                 $timeLimit = 900; // 15 minutes
                 break;
         }
@@ -172,7 +183,7 @@ class LearningHubController extends Controller
                     'question_type' => $q->question_type,
                     'file_url' => $q->file_url,
                     'shuffled_options' => $q->shuffled_options ?? null,
-                    'correct_answer' => $q->answer->correct_answer
+                    'correct_answer' => $q->correct_answer
                 ];
             }),
             'category_id' => $categoryId,
