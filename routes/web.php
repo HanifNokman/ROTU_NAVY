@@ -154,28 +154,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/inventory/export/uniform-summary', [InstructorInventoryController::class, 'exportUniformSizeSummary'])->name('inventory.export.uniform-summary');
     });
 
-    // Learning Hub routes
-    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-        // Main learning hub page
-        Route::get('/learning_hub', [InstructorLearningHubController::class, 'index'])->name('learning_hub');
+// Learning Hub routes
+Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
+    // Main learning hub page
+    Route::get('/learning_hub', [InstructorLearningHubController::class, 'index'])->name('learning_hub');
 
-        // Learning Materials routes
-        Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
-        Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
-        Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
-        Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
+    // AJAX endpoints for filtering
+    Route::get('/learning-hub/filter', [InstructorLearningHubController::class, 'getFilteredMaterials'])->name('learning_hub.filter');
 
-        // Category routes
-        Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
-        Route::delete('/categories/{category}', [InstructorLearningHubController::class, 'destroyCategory'])->name('learning_material_categories.destroy');
+    // Learning Materials routes
+    Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
+    Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
+    Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
+    Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
 
-        // Quiz routes - FIXED SECTION
-        Route::post('/quiz', [InstructorLearningHubController::class, 'storeQuiz'])->name('quiz.store');
-        Route::put('/quiz/{question}', [InstructorLearningHubController::class, 'updateQuiz'])->name('quiz.update');
-        Route::delete('/quiz/{question}', [InstructorLearningHubController::class, 'destroyQuiz'])->name('quiz.destroy');
-        // Added missing route for loading quiz questions
-        Route::get('/quiz-questions', [InstructorLearningHubController::class, 'getQuizQuestions'])->name('quiz.questions');
-    });
+    // Category routes
+    Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
+    Route::delete('/categories/{category}', [InstructorLearningHubController::class, 'destroyCategory'])->name('learning_material_categories.destroy');
+
+    // Quiz routes - FIXED SECTION
+    Route::post('/quiz', [InstructorLearningHubController::class, 'storeQuiz'])->name('quiz.store');
+    Route::put('/quiz/{question}', [InstructorLearningHubController::class, 'updateQuiz'])->name('quiz.update');
+    Route::delete('/quiz/{question}', [InstructorLearningHubController::class, 'destroyQuiz'])->name('quiz.destroy');
+    // Added missing route for loading quiz questions
+    Route::get('/quiz-questions', [InstructorLearningHubController::class, 'getQuizQuestions'])->name('quiz.questions');
+});
 
     // Gallery routes
     Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {

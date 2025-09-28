@@ -44,9 +44,9 @@
                     <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
                         <!-- Left side: Filter only -->
                         <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
-                            <form method="GET" action="{{ route('instructor.learning_hub') }}" class="flex items-center gap-2">
+                            <div class="flex items-center gap-2">
                                 <label for="category" class="text-sm font-medium text-gray-700">Filter by Category:</label>
-                                <select name="category" id="category" onchange="this.form.submit()" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <select name="category" id="category" onchange="filterMaterials(this.value)" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Select Category</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
@@ -54,7 +54,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </form>
+                            </div>
                         </div>
 
                         <!-- Right side: Buttons -->
@@ -75,29 +75,7 @@
                     </div>
 
                     <!-- Alpine State for Edit and Delete Modal -->
-                    <div x-data="{
-                        showModal: false,
-                        showDeleteModal: false,
-                        material: {},
-                        deleteMaterial: {},
-                        routeTemplate: '{{ route('instructor.learning_materials.update', ['material' => '__id__']) }}',
-                        deleteRouteTemplate: '{{ route('instructor.learning_materials.destroy', ['material' => '__id__']) }}',
-
-                        get updateUrl() {
-                            return this.routeTemplate.replace('__id__', this.material.id);
-                        },
-                        get deleteUrl() {
-                            return this.deleteRouteTemplate.replace('__id__', this.deleteMaterial.id);
-                        },
-                        openEdit(materialData) {
-                            this.material = JSON.parse(materialData);
-                            this.showModal = true;
-                        },
-                        openDelete(materialData) {
-                            this.deleteMaterial = JSON.parse(materialData);
-                            this.showDeleteModal = true;
-                        }
-                    }">
+                    <div x-data="materialManagement()">
 
                         <!-- Materials Table Container -->
                         <div class="border border-gray-200 rounded-lg">
@@ -114,9 +92,9 @@
                             </div>
                             
                             <!-- Scrollable Table Body -->
-                            <div class="overflow-y-auto bg-white" style="max-height: 600px;">
+                            <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="materialsContainer">
                                 @forelse($materials as $material)
-                                <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4">
+                                <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4" data-material-id="{{ $material->id }}">
                                     <div class="grid grid-cols-4 gap-4 items-center">
                                         <div class="text-sm text-gray-900">
                                             <div class="font-medium">{{ $material->title }}</div>
@@ -142,12 +120,12 @@
                                         <div class="text-sm font-medium">
                                             <div class="flex gap-2">
                                                 <button type="button"
-                                                        @click="openEdit('{{ json_encode([ 'id' => $material->id, 'title' => $material->title, 'description' => $material->description, 'learning_material_category_id' => $material->learning_material_category_id ]) }}')"
+                                                        @click="openEdit({{ json_encode([ 'id' => $material->id, 'title' => $material->title, 'description' => $material->description, 'learning_material_category_id' => $material->learning_material_category_id ]) }})"
                                                         class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
                                                     Edit
                                                 </button>
                                                 <button type="button"
-                                                        @click="openDelete('{{ json_encode(['id' => $material->id, 'title' => $material->title]) }}')"
+                                                        @click="openDelete({{ json_encode(['id' => $material->id, 'title' => $material->title]) }})"
                                                         class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
                                                     Delete
                                                 </button>
@@ -170,7 +148,7 @@
                         </div>
 
                         <!-- Edit Modal -->
-                        <div x-show="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-xl">
                                 <h2 class="text-lg font-semibold mb-4">Edit Learning Material</h2>
                                 <form method="POST" :action="updateUrl" enctype="multipart/form-data">
@@ -237,7 +215,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Quiz Management Section -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
@@ -273,7 +250,7 @@
                     </div>
 
                     <!-- Quiz Questions Table -->
-                    <div class="border border-gray-200 rounded-lg" x-data="quizManagement()">
+                    <div class="border border-gray-200 rounded-lg" x-data="quizManagement()" x-init="init()">
                         <!-- Table Header -->
                         <div class="bg-gray-50 border-b border-gray-200">
                             <div class="px-6 py-3">
@@ -289,7 +266,7 @@
                         
                         <!-- Table Body -->
                         <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="quizQuestionsContainer">
-                            <!-- Questions will be loaded here via AJAX or from backend -->
+                            <!-- Questions will be loaded here via AJAX -->
                             <div class="px-6 py-8 text-center">
                                 <div class="text-sm text-gray-500">
                                     No quiz questions available. Click "Add Quiz Question" to create your first question.
@@ -417,7 +394,6 @@
             </div>
         </div>
     </div>
-
     <!-- Add Material Modal -->
     <div id="materialModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
@@ -703,8 +679,149 @@
             </div>
         </div>
     </div>
+<script>
+        // Material Management Functions
+        function materialManagement() {
+            return {
+                showModal: false,
+                showDeleteModal: false,
+                material: {},
+                deleteMaterial: {},
+                routeTemplate: '{{ route('instructor.learning_materials.update', ['material' => '__id__']) }}',
+                deleteRouteTemplate: '{{ route('instructor.learning_materials.destroy', ['material' => '__id__']) }}',
 
-    <script>
+                get updateUrl() {
+                    return this.routeTemplate.replace('__id__', this.material.id);
+                },
+                get deleteUrl() {
+                    return this.deleteRouteTemplate.replace('__id__', this.deleteMaterial.id);
+                },
+                openEdit(materialData) {
+                    this.material = materialData;
+                    this.showModal = true;
+                },
+                openDelete(materialData) {
+                    this.deleteMaterial = materialData;
+                    this.showDeleteModal = true;
+                }
+            }
+        }
+
+        // AJAX Filter for Materials (no page reload)
+        function filterMaterials(categoryId) {
+            const container = document.getElementById('materialsContainer');
+            
+            // Show loading state
+            container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading materials...</p></div>';
+
+            // Build URL with category parameter
+            const url = new URL('{{ route('instructor.learning_hub.filter') }}', window.location.origin);
+            if (categoryId) {
+                url.searchParams.set('category', categoryId);
+            }
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.materials.length === 0) {
+                    container.innerHTML = `
+                        <div class="px-6 py-8 text-center">
+                            <div class="text-sm text-gray-500">
+                                ${categoryId ? 'No learning materials found in this category.' : 'No learning materials available.'}
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let materialsHTML = '';
+                data.materials.forEach(material => {
+                    const description = material.description 
+                        ? `<p class="text-sm text-gray-500 mt-1">${material.description.length > 100 ? material.description.substring(0, 100) + '...' : material.description}</p>`
+                        : '';
+                    
+                    const fileLink = material.file_url 
+                        ? `<a href="{{ asset('') }}${material.file_url}" target="_blank" class="text-indigo-600 hover:text-indigo-900 font-medium">View File</a>`
+                        : '<span class="text-gray-400">No file</span>';
+
+                    const materialData = JSON.stringify({
+                        id: material.id,
+                        title: material.title,
+                        description: material.description,
+                        learning_material_category_id: material.learning_material_category_id
+                    });
+
+                    const deleteMaterialData = JSON.stringify({
+                        id: material.id,
+                        title: material.title
+                    });
+
+                    materialsHTML += `
+                        <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4" data-material-id="${material.id}">
+                            <div class="grid grid-cols-4 gap-4 items-center">
+                                <div class="text-sm text-gray-900">
+                                    <div class="font-medium">${material.title}</div>
+                                    ${description}
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        ${material.category_name}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    ${fileLink}
+                                </div>
+                                <div class="text-sm font-medium">
+                                    <div class="flex gap-2">
+                                        <button type="button"
+                                                onclick="openEditMaterial(${material.id}, '${material.title.replace(/'/g, "\\'")}', '${(material.description || '').replace(/'/g, "\\'")}', ${material.learning_material_category_id})"
+                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                            Edit
+                                        </button>
+                                        <button type="button"
+                                                onclick="openDeleteMaterial(${material.id}, '${material.title.replace(/'/g, "\\'")}')"
+                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = materialsHTML;
+            })
+            .catch(error => {
+                console.error('Error fetching materials:', error);
+                container.innerHTML = '<div class="px-6 py-8 text-center"><div class="text-sm text-red-500">Error loading materials. Please try again.</div></div>';
+            });
+        }
+
+        // Helper functions for material edit/delete (for dynamically loaded content)
+        function openEditMaterial(id, title, description, categoryId) {
+            const alpineComponent = document.querySelector('[x-data*="materialManagement"]').__x.$data;
+            alpineComponent.openEdit({
+                id: id,
+                title: title,
+                description: description,
+                learning_material_category_id: categoryId
+            });
+        }
+
+        function openDeleteMaterial(id, title) {
+            const alpineComponent = document.querySelector('[x-data*="materialManagement"]').__x.$data;
+            alpineComponent.openDelete({
+                id: id,
+                title: title
+            });
+        }
+
         // Material Modal Functions
         function openMaterialModal() {
             document.getElementById('materialModal').classList.remove('hidden');
@@ -770,33 +887,62 @@
         function closeQuizModal() {
             document.getElementById('quizModal').classList.add('hidden');
             document.querySelector('#quizModal form').reset();
+            // Reset to MCQ by default
+            toggleQuizQuestionType('MCQ');
         }
 
-        // Quiz form type switching
-        document.getElementById('quiz_question_type').addEventListener('change', function() {
-            const questionType = this.value;
+        // Quiz form type switching (Fixed)
+        function toggleQuizQuestionType(questionType = null) {
+            const typeSelect = document.getElementById('quiz_question_type');
+            const actualType = questionType || typeSelect.value;
+            
             const mcqOptions = document.getElementById('mcqOptions');
             const mcqAnswerSelect = document.getElementById('mcqAnswerSelect');
             const subjectiveAnswerInput = document.getElementById('subjectiveAnswerInput');
+            const correctAnswerSelect = document.querySelector('#mcqAnswerSelect select[name="correct_answer"]');
+            const correctAnswerTextarea = document.querySelector('#subjectiveAnswerInput textarea[name="correct_answer"]');
 
-            if (questionType === 'MCQ') {
+            if (actualType === 'MCQ') {
                 mcqOptions.classList.remove('hidden');
                 mcqAnswerSelect.classList.remove('hidden');
                 subjectiveAnswerInput.classList.add('hidden');
 
+                // Set required attributes correctly
                 document.querySelectorAll('#mcqOptions input').forEach(input => input.required = true);
-                document.querySelector('#subjectiveAnswerInput textarea').required = false;
-            } else if (questionType === 'Subjective') {
+                if (correctAnswerSelect) correctAnswerSelect.required = true;
+                if (correctAnswerTextarea) {
+                    correctAnswerTextarea.required = false;
+                    correctAnswerTextarea.value = '';
+                }
+            } else if (actualType === 'Subjective') {
                 mcqOptions.classList.add('hidden');
                 mcqAnswerSelect.classList.add('hidden');
                 subjectiveAnswerInput.classList.remove('hidden');
 
-                document.querySelectorAll('#mcqOptions input').forEach(input => input.required = false);
-                document.querySelector('#subjectiveAnswerInput textarea').required = true;
+                // Set required attributes correctly
+                document.querySelectorAll('#mcqOptions input').forEach(input => {
+                    input.required = false;
+                    input.value = '';
+                });
+                if (correctAnswerSelect) {
+                    correctAnswerSelect.required = false;
+                    correctAnswerSelect.value = '';
+                }
+                if (correctAnswerTextarea) correctAnswerTextarea.required = true;
+            }
+        }
+
+        // Attach event listener for quiz type change
+        document.addEventListener('DOMContentLoaded', function() {
+            const quizTypeSelect = document.getElementById('quiz_question_type');
+            if (quizTypeSelect) {
+                quizTypeSelect.addEventListener('change', function() {
+                    toggleQuizQuestionType(this.value);
+                });
             }
         });
 
-        // Quiz Management Alpine.js component
+        // Quiz Management Alpine.js component (Fixed)
         function quizManagement() {
             return {
                 showEditModal: false,
@@ -806,6 +952,14 @@
                 editRouteTemplate: '{{ route("instructor.quiz.update", ["question" => "__id__"]) }}',
                 deleteRouteTemplate: '{{ route("instructor.quiz.destroy", ["question" => "__id__"]) }}',
 
+                init() {
+                    this.$el.addEventListener('open-edit', (e) => {
+                        this.openEdit(e.detail);
+                    });
+                    this.$el.addEventListener('open-delete', (e) => {
+                        this.openDelete(e.detail);
+                    });
+                },
                 get editUrl() {
                     return this.editRouteTemplate.replace('__id__', this.editingQuestion.id);
                 },
@@ -813,14 +967,15 @@
                     return this.deleteRouteTemplate.replace('__id__', this.deletingQuestion.id);
                 },
                 openEdit(questionData) {
-                    this.editingQuestion = JSON.parse(questionData);
+                    this.editingQuestion = questionData;
                     this.showEditModal = true;
                 },
                 openDelete(questionData) {
-                    this.deletingQuestion = JSON.parse(questionData);
+                    this.deletingQuestion = questionData;
                     this.showDeleteModal = true;
                 },
                 toggleEditQuestionType() {
+                    // Clear the correct answer when switching types
                     this.editingQuestion.correct_answer = '';
                 }
             }
@@ -833,7 +988,8 @@
             container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></div>';
 
             // Fetch quiz questions via AJAX
-            fetch(`/instructor/quiz-questions?category=${categoryId}`, {
+            const url = `/instructor/quiz-questions?category=${categoryId}`;
+            fetch(url, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json'
@@ -871,6 +1027,11 @@
                         status: question.status
                     });
 
+                    const deleteData = JSON.stringify({
+                        id: question.id,
+                        question_text: questionPreview
+                    });
+
                     questionsHTML += `
                         <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4">
                             <div class="grid grid-cols-6 gap-4 items-center">
@@ -896,12 +1057,12 @@
                                 <div class="text-sm font-medium">
                                     <div class="flex gap-2">
                                         <button type="button"
-                                                onclick="document.querySelector('[x-data]').__x.$data.openEdit('${questionData.replace(/'/g, "\\'")})"
+                                                onclick="editQuizQuestion(${question.id}, ${JSON.stringify(question.question_text)}, '${question.question_type}', ${question.category_id}, ${JSON.stringify(question.option_a || '')}, ${JSON.stringify(question.option_b || '')}, ${JSON.stringify(question.option_c || '')}, ${JSON.stringify(question.option_d || '')}, ${JSON.stringify(question.correct_answer)}, '${question.status}')"
                                                 class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
                                             Edit
                                         </button>
                                         <button type="button"
-                                                onclick="document.querySelector('[x-data]').__x.$data.openDelete('${JSON.stringify({id: question.id, question_text: questionPreview}).replace(/'/g, "\\'")}')"
+                                                onclick="deleteQuizQuestion(${question.id}, ${JSON.stringify(questionPreview)})"
                                                 class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
                                             Delete
                                         </button>
@@ -919,6 +1080,39 @@
                 container.innerHTML = '<div class="px-6 py-8 text-center"><div class="text-sm text-red-500">Error loading quiz questions. Please try again.</div></div>';
             });
         }
+
+        // Updated helper functions using window.Alpine for better compatibility
+        window.editQuizQuestion = function(id, questionText, questionType, categoryId, optionA, optionB, optionC, optionD, correctAnswer, status) {
+            const quizContainer = document.querySelector('[x-data*="quizManagement"]');
+            if (quizContainer) {
+                quizContainer.dispatchEvent(new CustomEvent('open-edit', {
+                    detail: {
+                        id: id,
+                        question_text: questionText,
+                        question_type: questionType,
+                        category_id: categoryId,
+                        option_a: optionA || '',
+                        option_b: optionB || '',
+                        option_c: optionC || '',
+                        option_d: optionD || '',
+                        correct_answer: correctAnswer,
+                        status: status
+                    }
+                }));
+            }
+        };
+
+        window.deleteQuizQuestion = function(id, questionText) {
+            const quizContainer = document.querySelector('[x-data*="quizManagement"]');
+            if (quizContainer) {
+                quizContainer.dispatchEvent(new CustomEvent('open-delete', {
+                    detail: {
+                        id: id,
+                        question_text: questionText
+                    }
+                }));
+            }
+        };
 
         function filterQuizQuestions(categoryId) {
             loadQuizQuestions(categoryId);
@@ -955,9 +1149,15 @@
             }
         });
 
-        // Initialize
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadQuizQuestions();
+            
+            // Load materials based on current filter if any
+            const categorySelect = document.getElementById('category');
+            if (categorySelect && categorySelect.value) {
+                filterMaterials(categorySelect.value);
+            }
         });
     </script>
 </x-app-layout>

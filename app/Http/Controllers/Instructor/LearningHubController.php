@@ -39,6 +39,33 @@ class LearningHubController extends Controller
         return view('instructor.learning_hub', compact('materials', 'categories', 'quizQuestions'));
     }
 
+    /**
+     * AJAX endpoint to get filtered materials
+     */
+    public function getFilteredMaterials(Request $request)
+    {
+        $query = LearningMaterial::with('category');
+
+        if ($request->filled('category')) {
+            $query->where('learning_material_category_id', $request->category);
+        }
+
+        $materials = $query->latest()->get();
+
+        return response()->json([
+            'materials' => $materials->map(function ($material) {
+                return [
+                    'id' => $material->id,
+                    'title' => $material->title,
+                    'description' => $material->description,
+                    'category_name' => $material->category->name ?? 'N/A',
+                    'file_url' => $material->file_url,
+                    'learning_material_category_id' => $material->learning_material_category_id,
+                ];
+            })
+        ]);
+    }
+
     public function create()
     {
         $categories = LearningMaterialCategory::all();
@@ -189,6 +216,7 @@ class LearningHubController extends Controller
     // Quiz management methods
     public function storeQuiz(Request $request)
     {
+        // Fixed validation for subjective questions
         $request->validate([
             'category_id' => 'required|exists:learning_material_categories,id',
             'question_text' => 'required|string',
@@ -198,8 +226,7 @@ class LearningHubController extends Controller
             'option_b' => 'required_if:question_type,MCQ|string|nullable',
             'option_c' => 'required_if:question_type,MCQ|string|nullable',
             'option_d' => 'required_if:question_type,MCQ|string|nullable',
-            'correct_answer' => 'required_if:question_type,MCQ|string|nullable',
-            'subjective_correct_answer' => 'required_if:question_type,Subjective|string|nullable',
+            'correct_answer' => 'required|string',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -211,11 +238,6 @@ class LearningHubController extends Controller
                 $filePath = $file->storeAs('quiz_files', $fileName, 'public');
                 $filePath = 'storage/' . $filePath;
             }
-
-            // Determine the correct answer based on question type
-            $correctAnswer = $request->question_type === 'MCQ' 
-                ? $request->correct_answer 
-                : $request->subjective_correct_answer;
 
             $question = QuizQuestion::create([
                 'category_id' => $request->category_id,
@@ -232,7 +254,7 @@ class LearningHubController extends Controller
 
             QuizAnswer::create([
                 'question_id' => $question->id,
-                'correct_answer' => $correctAnswer
+                'correct_answer' => $request->correct_answer
             ]);
         });
 
@@ -261,6 +283,7 @@ class LearningHubController extends Controller
                 'id' => $question->id,
                 'question_text' => $question->question_text,
                 'question_type' => $question->question_type,
+                'category_id' => $question->category_id,
                 'category_name' => $question->category->name ?? 'Unknown',
                 'status' => $question->status,
                 'file_url' => $question->file_url,
