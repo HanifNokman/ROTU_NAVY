@@ -120,12 +120,12 @@
                                         <div class="text-sm font-medium">
                                             <div class="flex gap-2">
                                                 <button type="button"
-                                                        @click="openEdit({{ json_encode([ 'id' => $material->id, 'title' => $material->title, 'description' => $material->description, 'learning_material_category_id' => $material->learning_material_category_id ]) }})"
+                                                        @click="openEdit({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}', description: '{{ addslashes($material->description ?? '') }}', learning_material_category_id: {{ $material->learning_material_category_id }} })"
                                                         class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
                                                     Edit
                                                 </button>
                                                 <button type="button"
-                                                        @click="openDelete({{ json_encode(['id' => $material->id, 'title' => $material->title]) }})"
+                                                        @click="openDelete({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}' })"
                                                         class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
                                                     Delete
                                                 </button>
@@ -284,7 +284,7 @@
 
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Question Text</label>
-                                        <textarea name="question_text" x-model="editingQuestion.question_text" rows="3" required
+                                        <textarea name="question_text" rows="3" required x-text="editingQuestion.question_text" @input="editingQuestion.question_text = $event.target.value"
                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
                                     </div>
 
@@ -325,7 +325,7 @@
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
                                         <div id="editMcqAnswerSelect" x-show="editingQuestion.question_type === 'MCQ'">
-                                            <select name="correct_answer" x-model="editingQuestion.correct_answer" required
+                                            <select name="correct_answer" x-model="editingQuestion.correct_answer" :required="editingQuestion.question_type === 'MCQ'"
                                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                                                 <option value="">Select Correct Answer</option>
                                                 <option value="A">A</option>
@@ -335,7 +335,7 @@
                                             </select>
                                         </div>
                                         <div id="editSubjectiveAnswerInput" x-show="editingQuestion.question_type === 'Subjective'">
-                                            <textarea name="correct_answer" x-model="editingQuestion.correct_answer" rows="2" placeholder="Enter the correct answer for subjective questions"
+                                            <textarea name="correct_answer" :required="editingQuestion.question_type === 'Subjective'" rows="2" placeholder="Enter the correct answer for subjective questions" x-text="editingQuestion.correct_answer" @input="editingQuestion.correct_answer = $event.target.value"
                                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
                                             <p class="text-xs text-gray-500 mt-1">Note: Subjective answers are checked case-insensitively</p>
                                         </div>
@@ -690,6 +690,15 @@
                 routeTemplate: '{{ route('instructor.learning_materials.update', ['material' => '__id__']) }}',
                 deleteRouteTemplate: '{{ route('instructor.learning_materials.destroy', ['material' => '__id__']) }}',
 
+                init() {
+                    this.$el.addEventListener('open-edit-material', (e) => {
+                        this.openEdit(e.detail);
+                    });
+                    this.$el.addEventListener('open-delete-material', (e) => {
+                        this.openDelete(e.detail);
+                    });
+                },
+
                 get updateUrl() {
                     return this.routeTemplate.replace('__id__', this.material.id);
                 },
@@ -779,12 +788,12 @@
                                 <div class="text-sm font-medium">
                                     <div class="flex gap-2">
                                         <button type="button"
-                                                onclick="openEditMaterial(${material.id}, '${material.title.replace(/'/g, "\\'")}', '${(material.description || '').replace(/'/g, "\\'")}', ${material.learning_material_category_id})"
+                                                onclick='openEditMaterial(${material.id}, "${material.escaped_title}", "${material.escaped_description}", ${material.learning_material_category_id})'
                                                 class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
                                             Edit
                                         </button>
                                         <button type="button"
-                                                onclick="openDeleteMaterial(${material.id}, '${material.title.replace(/'/g, "\\'")}')"
+                                                onclick='openDeleteMaterial(${material.id}, "${material.escaped_title}")'
                                                 class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
                                             Delete
                                         </button>
@@ -805,21 +814,29 @@
 
         // Helper functions for material edit/delete (for dynamically loaded content)
         function openEditMaterial(id, title, description, categoryId) {
-            const alpineComponent = document.querySelector('[x-data*="materialManagement"]').__x.$data;
-            alpineComponent.openEdit({
-                id: id,
-                title: title,
-                description: description,
-                learning_material_category_id: categoryId
-            });
+            const alpineComponent = document.querySelector('[x-data*="materialManagement"]');
+            if (alpineComponent) {
+                alpineComponent.dispatchEvent(new CustomEvent('open-edit-material', {
+                    detail: {
+                        id: id,
+                        title: title.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        description: description.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        learning_material_category_id: categoryId
+                    }
+                }));
+            }
         }
 
         function openDeleteMaterial(id, title) {
-            const alpineComponent = document.querySelector('[x-data*="materialManagement"]').__x.$data;
-            alpineComponent.openDelete({
-                id: id,
-                title: title
-            });
+            const alpineComponent = document.querySelector('[x-data*="materialManagement"]');
+            if (alpineComponent) {
+                alpineComponent.dispatchEvent(new CustomEvent('open-delete-material', {
+                    detail: {
+                        id: id,
+                        title: title.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\')
+                    }
+                }));
+            }
         }
 
         // Material Modal Functions
@@ -959,6 +976,12 @@
                     this.$el.addEventListener('open-delete', (e) => {
                         this.openDelete(e.detail);
                     });
+                    this.$el.addEventListener('open-edit-material', (e) => {
+                        this.openEdit(e.detail);
+                    });
+                    this.$el.addEventListener('open-delete-material', (e) => {
+                        this.openDelete(e.detail);
+                    });
                 },
                 get editUrl() {
                     return this.editRouteTemplate.replace('__id__', this.editingQuestion.id);
@@ -967,8 +990,10 @@
                     return this.deleteRouteTemplate.replace('__id__', this.deletingQuestion.id);
                 },
                 openEdit(questionData) {
-                    this.editingQuestion = questionData;
                     this.showEditModal = true;
+                    this.$nextTick(() => {
+                        this.editingQuestion = questionData;
+                    });
                 },
                 openDelete(questionData) {
                     this.deletingQuestion = questionData;
@@ -1057,12 +1082,12 @@
                                 <div class="text-sm font-medium">
                                     <div class="flex gap-2">
                                         <button type="button"
-                                                onclick="editQuizQuestion(${question.id}, ${JSON.stringify(question.question_text)}, '${question.question_type}', ${question.category_id}, ${JSON.stringify(question.option_a || '')}, ${JSON.stringify(question.option_b || '')}, ${JSON.stringify(question.option_c || '')}, ${JSON.stringify(question.option_d || '')}, ${JSON.stringify(question.correct_answer)}, '${question.status}')"
+                                                onclick='editQuizQuestion(${question.id}, "${question.escaped_question_text}", "${question.question_type}", ${question.category_id}, "${question.escaped_option_a}", "${question.escaped_option_b}", "${question.escaped_option_c}", "${question.escaped_option_d}", "${question.escaped_correct_answer}", "${question.status}")'
                                                 class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
                                             Edit
                                         </button>
                                         <button type="button"
-                                                onclick="deleteQuizQuestion(${question.id}, ${JSON.stringify(questionPreview)})"
+                                                onclick='deleteQuizQuestion(${question.id}, "${question.escaped_question_preview}")'
                                                 class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
                                             Delete
                                         </button>
@@ -1088,14 +1113,14 @@
                 quizContainer.dispatchEvent(new CustomEvent('open-edit', {
                     detail: {
                         id: id,
-                        question_text: questionText,
+                        question_text: questionText.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
                         question_type: questionType,
                         category_id: categoryId,
-                        option_a: optionA || '',
-                        option_b: optionB || '',
-                        option_c: optionC || '',
-                        option_d: optionD || '',
-                        correct_answer: correctAnswer,
+                        option_a: optionA.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        option_b: optionB.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        option_c: optionC.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        option_d: optionD.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        correct_answer: correctAnswer.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
                         status: status
                     }
                 }));
@@ -1108,7 +1133,7 @@
                 quizContainer.dispatchEvent(new CustomEvent('open-delete', {
                     detail: {
                         id: id,
-                        question_text: questionText
+                        question_text: questionText.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\')
                     }
                 }));
             }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('option_b')->nullable();
             $table->string('option_c')->nullable();
             $table->string('option_d')->nullable();
+            $table->text('correct_answer');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();

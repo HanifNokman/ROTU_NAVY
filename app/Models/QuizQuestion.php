@@ -19,6 +19,7 @@ class QuizQuestion extends Model
         'option_b',
         'option_c',
         'option_d',
+        'correct_answer',
         'created_by',
         'status'
     ];
