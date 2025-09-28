@@ -31,7 +31,7 @@ class LearningHubController extends Controller
             ->get();
 
         // Get quiz questions for the current instructor
-        $quizQuestions = QuizQuestion::with(['category', 'answer'])
+        $quizQuestions = QuizQuestion::with(['category'])
             ->where('created_by', auth()->id())
             ->latest()
             ->get();
@@ -57,10 +57,12 @@ class LearningHubController extends Controller
                 return [
                     'id' => $material->id,
                     'title' => $material->title,
-                    'description' => $material->description,
+                    'description' => $material->description ?? '',
                     'category_name' => $material->category->name ?? 'N/A',
                     'file_url' => $material->file_url,
                     'learning_material_category_id' => $material->learning_material_category_id,
+                    'escaped_title' => addslashes($material->title),
+                    'escaped_description' => addslashes($material->description ?? ''),
                 ];
             })
         ]);
@@ -248,13 +250,9 @@ class LearningHubController extends Controller
                 'option_b' => $request->question_type === 'MCQ' ? $request->option_b : null,
                 'option_c' => $request->question_type === 'MCQ' ? $request->option_c : null,
                 'option_d' => $request->question_type === 'MCQ' ? $request->option_d : null,
+                'correct_answer' => $request->correct_answer,
                 'created_by' => auth()->id(),
                 'status' => 'active'
-            ]);
-
-            QuizAnswer::create([
-                'question_id' => $question->id,
-                'correct_answer' => $request->correct_answer
             ]);
         });
 
@@ -267,7 +265,7 @@ class LearningHubController extends Controller
      */
     public function getQuizQuestions(Request $request)
     {
-        $query = QuizQuestion::with(['category', 'answer', 'creator'])
+        $query = QuizQuestion::with(['category', 'creator'])
             ->where('created_by', auth()->id()); // Only show questions created by current instructor
 
         // Apply category filter if provided
@@ -279,6 +277,10 @@ class LearningHubController extends Controller
 
         // Format the response for the frontend
         $formattedQuestions = $questions->map(function ($question) {
+            $questionPreview = $question->question_text;
+            if (strlen($question->question_text) > 100) {
+                $questionPreview = substr($question->question_text, 0, 100) . '...';
+            }
             return [
                 'id' => $question->id,
                 'question_text' => $question->question_text,
@@ -287,11 +289,19 @@ class LearningHubController extends Controller
                 'category_name' => $question->category->name ?? 'Unknown',
                 'status' => $question->status,
                 'file_url' => $question->file_url,
-                'option_a' => $question->option_a,
-                'option_b' => $question->option_b,
-                'option_c' => $question->option_c,
-                'option_d' => $question->option_d,
-                'correct_answer' => $question->answer->correct_answer ?? '',
+                'option_a' => $question->option_a ?? '',
+                'option_b' => $question->option_b ?? '',
+                'option_c' => $question->option_c ?? '',
+                'option_d' => $question->option_d ?? '',
+                'correct_answer' => $question->correct_answer ?? '',
+                'question_preview' => $questionPreview,
+                'escaped_question_text' => addslashes($question->question_text),
+                'escaped_option_a' => addslashes($question->option_a ?? ''),
+                'escaped_option_b' => addslashes($question->option_b ?? ''),
+                'escaped_option_c' => addslashes($question->option_c ?? ''),
+                'escaped_option_d' => addslashes($question->option_d ?? ''),
+                'escaped_correct_answer' => addslashes($question->correct_answer ?? ''),
+                'escaped_question_preview' => addslashes($questionPreview),
                 'created_at' => $question->created_at->format('M d, Y'),
             ];
         });
@@ -341,11 +351,8 @@ class LearningHubController extends Controller
                 'option_b' => $request->question_type === 'MCQ' ? $request->option_b : null,
                 'option_c' => $request->question_type === 'MCQ' ? $request->option_c : null,
                 'option_d' => $request->question_type === 'MCQ' ? $request->option_d : null,
+                'correct_answer' => $request->correct_answer,
                 'status' => $request->status
-            ]);
-
-            $question->answer->update([
-                'correct_answer' => $request->correct_answer
             ]);
         });
 
@@ -363,9 +370,6 @@ class LearningHubController extends Controller
                     Storage::disk('public')->delete($filePath);
                 }
             }
-
-            // Delete answer first (due to foreign key constraint)
-            $question->answer()->delete();
 
             // Delete question
             $question->delete();
