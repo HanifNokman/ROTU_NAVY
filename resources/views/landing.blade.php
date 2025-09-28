@@ -1233,6 +1233,10 @@
             font-weight: bold;
         }
 
+        .requirement-card li.no-tick::before {
+            content: none;
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -1758,24 +1762,24 @@
         <div class="loader"></div>
     </div>
     
-    <!-- Navigation -->
+<!-- Navigation -->
 <nav class="navbar" id="navbar">
     <div class="nav-container">
         <a href="#home" class="nav-logo" id="logoLink">
-            <img src="storage/assets/logo/PSS-LOGO.png" alt="ROTU Logo">
+            <img src="storage/assets/logo/PSS-LOGO.png" alt="Logo ROTU">
             <div class="nav-logo-text">
                 <span class="main-title">PALAPES</span>
                 <span class="sub-title">LAUT UMS</span>
             </div>
         </a>
         <ul class="nav-links" id="navLinks">
-            <li><a href="#introduction">Introduction</a></li>
-            <li><a href="#timeline">Journey</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#benefits">Benefits</a></li>
-            <li><a href="#requirements">Requirements</a></li>
-            <li><a href="#selection">Selection</a></li>
-            <li><a href="#application">Apply</a></li>
+            <li><a href="#introduction">Pengenalan</a></li>
+            <li><a href="#timeline">Perjalanan</a></li>
+            <li><a href="#about">Mengenai</a></li>
+            <li><a href="#benefits">Faedah</a></li>
+            <li><a href="#requirements">Syarat</a></li>
+            <li><a href="#selection">Pemilihan</a></li>
+            <li><a href="#application">Mohon</a></li>
             
             <!-- Authentication-based navigation -->
             @auth
@@ -1811,14 +1815,14 @@
                 <!-- Desktop User Dropdown -->
                 <li class="user-dropdown desktop-only">
                     <button class="user-dropdown-trigger" id="userDropdownTrigger">
-                        <img src="{{ $avatarSrc }}" alt="Profile" class="user-avatar" onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
+                        <img src="{{ $avatarSrc }}" alt="Profil" class="user-avatar" onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
                         <span class="user-name">{{ Auth::user()->name }}</span>
                         <i class="fas fa-chevron-down dropdown-arrow"></i>
                     </button>
                     
                     <div class="user-dropdown-menu" id="userDropdownMenu">
                         <div class="dropdown-header">
-                            <img src="{{ $avatarSrc }}" alt="Profile" class="dropdown-avatar" onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
+                            <img src="{{ $avatarSrc }}" alt="Profil" class="dropdown-avatar" onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
                             <div class="dropdown-user-info">
                                 <div class="dropdown-user-name">{{ Auth::user()->name }}</div>
                                 <div class="dropdown-user-email">{{ Auth::user()->email }}</div>
@@ -1837,7 +1841,7 @@
                             
                             <button type="button" class="dropdown-item logout-item" id="dropdownLogoutBtn">
                                 <i class="fas fa-sign-out-alt"></i>
-                                <span>Log Out</span>
+                                <span>Logout</span>
                             </button>
                         </div>
                     </div>
@@ -1848,7 +1852,7 @@
                     <div class="mobile-profile-dashboard-row">
                         <!-- Profile Section -->
                         <div class="mobile-profile-section">
-                            <img src="{{ $avatarSrc }}" alt="Profile" class="mobile-profile-avatar" onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
+                            <img src="{{ $avatarSrc }}" alt="Profil" class="mobile-profile-avatar" onerror="this.onerror=null; this.src='{{ asset('images/default.png') }}';">
                             <div class="mobile-profile-info">
                                 <div class="mobile-profile-name">{{ Auth::user()->name }}</div>
                                 <div class="mobile-profile-email">{{ Auth::user()->email }}</div>
@@ -1876,13 +1880,13 @@
                 <!-- Mobile Log Out Button -->
                 <li class="mobile-only">
                     <button type="button" class="nav-mobile-item mobile-logout-btn" id="mobileLogoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Log Out
+                        <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </li>
                 
             @else
                 <!-- If user is not logged in, show Login button -->
-                <li><a href="{{ route('login') }}" class="btn-primary">Log In</a></li>
+                <li><a href="{{ route('login') }}" class="btn-primary">Login</a></li>
             @endauth
         </ul>
         
@@ -1899,9 +1903,9 @@
     <section class="notification-banner" id="notificationBanner" style="position: relative;">
         <h3 id="notificationTitle">
             <i class="fas fa-bullhorn"></i>
-            Next Intake Application Open!
+            Permohonan Pengambilan Seterusnya Dibuka!
         </h3>
-        <p id="notificationText">Applications for the upcoming semester are now open. Deadline: {{ \App\Models\ContentSetting::getFormattedDeadline() }}</p>
+        <p id="notificationText">Permohonan untuk semester akan datang kini dibuka. Tarikh Tutup: {{ \App\Models\ContentSetting::getFormattedDeadline() }}</p>
         <button class="notification-close" id="closeNotification" onclick="hideNotification()">
             <i class="fas fa-times"></i>
         </button>
@@ -1940,14 +1944,14 @@
             <i class="fas fa-graduation-cap floating-icon"></i>
         </div>
         <div class="hero-content">
-            <h1 class="hero-title" id="heroTitle">{{ \App\Models\ContentSetting::get('hero_title', 'Excellence in Maritime Leadership') }}</h1>
-            <p class="hero-subtitle" id="heroSubtitle">{{ \App\Models\ContentSetting::get('hero_subtitle', 'Forge your path as a naval officer through comprehensive training, leadership development, and academic excellence at Universiti Malaysia Sabah') }}</p>
+            <h1 class="hero-title" id="heroTitle">{{ \App\Models\ContentSetting::get('hero_title', 'Kecemerlangan dalam Kepimpinan Maritim') }}</h1>
+            <p class="hero-subtitle" id="heroSubtitle">{{ \App\Models\ContentSetting::get('hero_subtitle', 'Bentuk laluan anda sebagai pegawai tentera laut melalui latihan komprehensif, pembangunan kepimpinan, dan kecemerlangan akademik di Universiti Malaysia Sabah') }}</p>
             <div class="hero-cta">
                 <a href="#application" class="btn-primary">
-                    <i class="fas fa-user-plus"></i> Apply Now
+                    <i class="fas fa-user-plus"></i> Mohon Sekarang
                 </a>
                 <a href="#introduction" class="btn-secondary">
-                    <i class="fas fa-info-circle"></i> Learn More
+                    <i class="fas fa-info-circle"></i> Ketahui Lebih Lanjut
                 </a>
             </div>
         </div>
@@ -1958,19 +1962,19 @@
     <div class="stats-container">
         <div class="stat-item animate-on-scroll">
             <span class="stat-number" data-count="500">0</span>
-            <span class="stat-label">Graduates</span>
+            <span class="stat-label">Graduan</span>
         </div>
         <div class="stat-item animate-on-scroll">
             <span class="stat-number" data-count="11">0</span>
-            <span class="stat-label">Intakes Commissioned</span>
+            <span class="stat-label">Intake Ditauliahkan</span>
         </div>
         <div class="stat-item animate-on-scroll">
             <span class="stat-number" data-count="95">0</span>
-            <span class="stat-label">% Success Rate</span>
+            <span class="stat-label">% Kadar Kejayaan</span>
         </div>
         <div class="stat-item animate-on-scroll">
             <span class="stat-number" data-count="120">0</span>
-            <span class="stat-label">Active Cadets</span>
+            <span class="stat-label">Kadet Aktif</span>
         </div>
     </div>
 </section>
@@ -1979,32 +1983,32 @@
 <section id="introduction" class="section">
     <div class="section-container">
         <div class="section-header animate-on-scroll">
-            <div class="section-badge">Program Overview</div>
-            <h2 class="section-title">About PALAPES Laut UMS</h2>
+            <div class="section-badge">Gambaran Keseluruhan Program</div>
+            <h2 class="section-title">Mengenai PALAPES Laut UMS</h2>
             <p class="section-description" id="introDescription">
-                The Reserve Officer Training Unit (PALAPES) represents Malaysia's premier naval leadership development program, combining rigorous academic excellence with comprehensive military training to forge the next generation of maritime leaders.
+                Pasukan Latihan Pegawai Simpanan (PALAPES) mewakili program pembangunan kepimpinan tentera laut terkemuka Malaysia, menggabungkan kecemerlangan akademik yang ketat dengan latihan ketenteraan yang komprehensif untuk membentuk generasi akan datang pemimpin maritim.
             </p>
         </div>
         
         <div class="intro-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
             <div class="enhanced-card animate-on-scroll">
-                <img src="storage/assets/images/intake11.jpeg" alt="PALAPES Training" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
-                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 1.5rem;">Our Mission</h3>
+                <img src="storage/assets/images/intake11.jpeg" alt="Latihan PALAPES" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem;">
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 1.5rem;">Misi Kami</h3>
                 <p style="color: var(--text-secondary); line-height: 1.6;">
-                    To develop exceptional maritime leaders through comprehensive training that combines academic excellence, military discipline, and character development, preparing graduates to serve with honor in Malaysia's naval forces and civilian sectors.
+                    Untuk membangunkan pemimpin maritim yang luar biasa melalui latihan komprehensif yang menggabungkan kecemerlangan akademik, disiplin ketenteraan, dan pembangunan sahsiah, menyediakan graduan untuk berkhidmat dengan kehormatan dalam pasukan tentera laut Malaysia dan sektor awam.
                 </p>
             </div>
 
             <div class="enhanced-card animate-on-scroll">
-                <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.5rem;">Program Highlights</h3>
+                <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.5rem;">Sorotan Program</h3>
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <div style="width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-graduation-cap" style="color: white;"></i>
                         </div>
                         <div>
-                            <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Academic Integration</h4>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Seamless blend of military training with university education</p>
+                            <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Integrasi Akademik</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Gabungan sempurna latihan ketenteraan dengan pendidikan universiti</p>
                         </div>
                     </div>
                     
@@ -2013,8 +2017,8 @@
                             <i class="fas fa-users" style="color: white;"></i>
                         </div>
                         <div>
-                            <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Leadership Development</h4>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Comprehensive leadership training and practical experience</p>
+                            <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Pembangunan Kepimpinan</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Latihan kepimpinan komprehensif dan pengalaman praktikal</p>
                         </div>
                     </div>
                     
@@ -2023,8 +2027,8 @@
                             <i class="fas fa-anchor" style="color: white;"></i>
                         </div>
                         <div>
-                            <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Naval Excellence</h4>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Advanced maritime skills and naval operations training</p>
+                            <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Kecemerlangan Tentera Laut</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Kemahiran maritim lanjutan dan latihan operasi tentera laut</p>
                         </div>
                     </div>
                 </div>
@@ -2039,10 +2043,10 @@
 <section id="timeline" class="section">
     <div class="section-container">
         <div class="section-header animate-on-scroll">
-            <div class="section-badge">Training Excellence</div>
-            <h2 class="section-title">Cadet Journey Timeline</h2>
+            <div class="section-badge">Kecemerlangan Latihan</div>
+            <h2 class="section-title">Garis Masa Perjalanan Kadet</h2>
             <p class="section-description">
-                Follow the comprehensive path from application to commission, designed to transform dedicated students into exceptional naval officers through structured training phases.
+                Ikuti laluan komprehensif dari permohonan hingga pentauliahan, direka untuk mengubah pelajar yang berdedikasi menjadi pegawai tentera laut yang cemerlang melalui fasa latihan berstruktur.
             </p>
         </div>
         
@@ -2059,10 +2063,10 @@
                 <div class="timeline-item timeline-left">
                     <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.jpeg'); background-size: cover; background-position: center;">
                         <div class="timeline-content-inner">
-                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Junior Phase</h3>
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Junior</h3>
                             <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
-                                Introduction to military discipline, naval traditions, basic drills, seamanship, and physical conditioning.  
-                                Cadets develop foundational teamwork, resilience, and commitment. Duration: 6 months.
+                                Pengenalan kepada disiplin ketenteraan, tradisi tentera laut, latihan asas, pelayaran, dan pemulihan fizikal. 
+                                Kadet membangunkan kerja berpasukan asas, daya tahan, dan komitmen.
                             </p>
                         </div>
                     </div>
@@ -2074,7 +2078,7 @@
                             <source src="storage/assets/videos/video-pengambilan.mp4" type="video/mp4">
                             <div class="video-fallback">
                                 <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                                <p>Junior Phase Video</p>
+                                <p>Video Fasa Junior</p>
                             </div>
                         </video>
                     </div>
@@ -2094,7 +2098,7 @@
                             <source src="storage/assets/videos/video-fasa.mp4" type="video/mp4">
                             <div class="video-fallback">
                                 <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                                <p>Intermediate Phase Video</p>
+                                <p>Video Fasa Pertengahan</p>
                             </div>
                         </video>
                     </div>
@@ -2103,10 +2107,10 @@
                 <div class="timeline-item timeline-right">
                     <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/5.png'); background-size: cover; background-position: center;">
                         <div class="timeline-content-inner">
-                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Intermediate Phase</h3>
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Intermediate</h3>
                             <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
-                                Focused on advanced seamanship, navigation, maritime operations, and applied leadership.  
-                                Cadets gain hands-on training, field exercises, and exposure to naval law and safety protocols. Duration: 12 months.
+                                Fokus kepada pelayaran lanjutan, navigasi, operasi maritim, dan kepimpinan gunaan.
+                                Kadet memperoleh latihan praktikal, latihan lapangan, dan pendedahan kepada undang-undang tentera laut dan protokol keselamatan.
                             </p>
                         </div>
                     </div>
@@ -2123,11 +2127,10 @@
                 <div class="timeline-item timeline-left">
                     <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/11.png'); background-size: cover; background-position: center;">
                         <div class="timeline-content-inner">
-                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Senior Phase</h3>
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Senior</h3>
                             <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
-                                Leadership development and preparation for command responsibilities.  
-                                Cadets mentor juniors, manage teams, and practice decision-making in complex naval scenarios.  
-                                Duration: Final year before commissioning.
+                                Pembangunan kepimpinan dan persediaan untuk tanggungjawab komando.
+                                Kadet membimbing junior, menguruskan pasukan, dan mengamalkan membuat keputusan dalam senario tentera laut yang kompleks.
                             </p>
                         </div>
                     </div>
@@ -2139,7 +2142,7 @@
                             <source src="storage/assets/videos/video-fomdex.mp4" type="video/mp4">
                             <div class="video-fallback">
                                 <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                                <p>Senior Phase Video</p>
+                                <p>Video Fasa Senior</p>
                             </div>
                         </video>
                     </div>
@@ -2159,7 +2162,7 @@
                             <source src="storage/assets/videos/video-tauliah.mp4" type="video/mp4">
                             <div class="video-fallback">
                                 <i class="fas fa-video" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
-                                <p>Commissioning Video</p>
+                                <p>Video Pentauliahan</p>
                             </div>
                         </video>
                     </div>
@@ -2168,10 +2171,10 @@
                 <div class="timeline-item timeline-right">
                     <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/9.jpeg'); background-size: cover; background-position: center;">
                         <div class="timeline-content-inner">
-                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Commissioning</h3>
+                            <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Pentauliahan</h3>
                             <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
-                                The final stage of cadetship. Cadets undergo comprehensive evaluation and ceremonial commissioning  
-                                as Second Lieutenants in the Naval Volunteer Reserve (NVR). Officially prepared to serve Malaysia’s naval defense.
+                                Peringkat akhir kekadetaan. Kadet menjalani penilaian komprehensif dan pentauliahan upacara
+                                sebagai Leftenan Muda dalam Pasukan Simpanan Sukarela Tentera Laut (PSSTLDM). Secara rasmi bersedia untuk berkhidmat dalam pertahanan tentera laut Malaysia.
                             </p>
                         </div>
                     </div>
@@ -2185,18 +2188,18 @@
 <section id="about" class="section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
     <div class="section-container">
         <div class="section-header animate-on-scroll">
-            <div class="section-badge">Our Legacy</div>
-            <h2 class="section-title">Excellence Through Tradition</h2>
+            <div class="section-badge">Warisan Kami</div>
+            <h2 class="section-title">Kecemerlangan Melalui Tradisi</h2>
             <p class="section-description" id="aboutDescription">
-                With decades of proven success, PALAPES has established itself as the premier institution for developing maritime leaders who serve with distinction in both military and civilian capacities, upholding the highest standards of honor, courage, and commitment.
+                Dengan dekad kejayaan yang terbukti, PALAPES telah menetapkan dirinya sebagai institusi terkemuka untuk membangunkan pemimpin maritim yang berkhidmat dengan cemerlang dalam kapasiti ketenteraan dan awam, menegakkan standard tertinggi kehormatan, keberanian, dan komitmen.
             </p>
         </div>
 
         <div class="enhanced-card animate-on-scroll" style="text-align: center; margin-top: 4rem;">
-            <img src="storage/assets/images/tauliah.jpg" alt="PALAPES Cadets Formation" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
-            <h3 style="color: var(--primary-blue); font-size: 2rem; margin-bottom: 1.5rem;">Building Tomorrow's Leaders</h3>
+            <img src="storage/assets/images/tauliah.jpg" alt="Formasi Kadet PALAPES" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+            <h3 style="color: var(--primary-blue); font-size: 2rem; margin-bottom: 1.5rem;">Membina Pemimpin Masa Depan</h3>
             <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; max-width: 800px; margin: 0 auto;">
-                Our comprehensive program goes beyond traditional military training, fostering critical thinking, ethical leadership, and the adaptability required to excel in an ever-changing global environment. Graduates emerge as confident, capable leaders ready to make meaningful contributions to society.
+                Program komprehensif kami melampaui latihan ketenteraan tradisional, memupuk pemikiran kritis, kepimpinan beretika, dan kebolehsuaian yang diperlukan untuk cemerlang dalam persekitaran global yang sentiasa berubah. Graduan muncul sebagai pemimpin yang yakin dan berkebolehan siap untuk membuat sumbangan bermakna kepada masyarakat.
             </p>
         </div>
     </div>
@@ -2208,10 +2211,10 @@
 <section id="benefits" class="section">
     <div class="section-container">
         <div class="section-header animate-on-scroll">
-            <div class="section-badge">Program Benefits</div>
-            <h2 class="section-title">Comprehensive Support System</h2>
+            <div class="section-badge">Faedah Program</div>
+            <h2 class="section-title">Sistem Sokongan Komprehensif</h2>
             <p class="section-description">
-                PALAPES provides extensive support to ensure cadet success through financial assistance, accommodation, equipment provision, and unparalleled career development opportunities.
+                PALAPES menyediakan sokongan meluas untuk memastikan kejayaan kadet melalui bantuan kewangan, penginapan, pembekalan peralatan, dan peluang pembangunan kerjaya yang tiada tandingan.
             </p>
         </div>
 
@@ -2220,48 +2223,48 @@
                 <div class="feature-icon">
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
-                <h3 class="feature-title">Monthly Allowance</h3>
-                <p class="feature-description">Competitive monthly stipend throughout the training period to support living expenses and reduce financial burden, allowing you to focus entirely on your development.</p>
+                <h3 class="feature-title">Elaun Bulanan</h3>
+                <p class="feature-description">Elaun bulanan sepanjang 3 tahun latihan untuk menyokong perbelanjaan sara hidup pelajar dan mengurangkan beban kewangan keluarga.</p>
             </div>
 
             <div class="feature-card animate-on-scroll">
                 <div class="feature-icon">
-                    <i class="fas fa-tshirt"></i>
+                    <i class="fas fa-utensils"></i>
                 </div>
-                <h3 class="feature-title">Complete Uniform & Equipment</h3>
-                <p class="feature-description">Full provision of military uniforms, ceremonial dress, training gear, and specialized equipment required for all program activities and formal occasions.</p>
+                <h3 class="feature-title">Makanan Sewaktu Latihan</h3>
+                <p class="feature-description">Makanan disediakan sepanjang tempoh latihan untuk memastikan keperluan asas kadet terpenuhi dengan sempurna.</p>
             </div>
 
             <div class="feature-card animate-on-scroll">
                 <div class="feature-icon">
                     <i class="fas fa-home"></i>
                 </div>
-                <h3 class="feature-title">Guaranteed Campus Housing</h3>
-                <p class="feature-description">Priority accommodation in university residential facilities with specialized cadet quarters designed to foster camaraderie and academic success.</p>
+                <h3 class="feature-title">Jaminan Kolej 3 Tahun</h3>
+                <p class="feature-description">Jaminan penginapan kolej kediaman selama 3 tahun dengan kemudahan lengkap yang kondusif untuk pembelajaran dan latihan.</p>
             </div>
 
             <div class="feature-card animate-on-scroll">
                 <div class="feature-icon">
-                    <i class="fas fa-crosshairs"></i>
+                    <i class="fas fa-tshirt"></i>
                 </div>
-                <h3 class="feature-title">Professional Military Training</h3>
-                <p class="feature-description">Comprehensive firearms training, advanced naval operations, tactical planning, and specialized maritime skills under expert military instruction.</p>
+                <h3 class="feature-title">Uniform & Kelengkapan Tentera</h3>
+                <p class="feature-description">Pembekalan lengkap uniform ketenteraan, kelengkapan tentera, dan semua peralatan yang diperlukan untuk latihan dan aktiviti rasmi.</p>
+            </div>
+
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="feature-title">Tambahan 12 Jam Kredit</h3>
+                <p class="feature-description">Tambahan 12 jam kredit untuk membantu dalam pengijazahan dan meningkatkan pencapaian akademik pelajar.</p>
             </div>
 
             <div class="feature-card animate-on-scroll">
                 <div class="feature-icon">
                     <i class="fas fa-crown"></i>
                 </div>
-                <h3 class="feature-title">Leadership Excellence</h3>
-                <p class="feature-description">Develop essential leadership capabilities, strategic thinking, decision-making skills, and command presence that will distinguish you throughout your career.</p>
-            </div>
-
-            <div class="feature-card animate-on-scroll">
-                <div class="feature-icon">
-                    <i class="fas fa-network-wired"></i>
-                </div>
-                <h3 class="feature-title">Elite Professional Network</h3>
-                <p class="feature-description">Access to exclusive alumni networks, military associations, and leadership communities across Malaysia and internationally for lifelong career benefits.</p>
+                <h3 class="feature-title">Pentauliahan oleh YDPA</h3>
+                <p class="feature-description">Ditauliahkan oleh Yang di-Pertuan Agong sebagai Leftenan Muda dalam pasukan tentera laut simpanan dengan pengiktirafan rasmi.</p>
             </div>
         </div>
     </div>
@@ -2271,59 +2274,64 @@
 <section id="requirements" class="section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
     <div class="section-container">
         <div class="section-header animate-on-scroll">
-            <div class="section-badge">Eligibility Criteria</div>
-            <h2 class="section-title">Application Requirements</h2>
+            <div class="section-badge">Kriteria Kelayakan</div>
+            <h2 class="section-title">Syarat Permohonan</h2>
             <p class="section-description">
-                We seek exceptional individuals who demonstrate academic excellence, physical fitness, moral character, and the potential for outstanding military leadership development.
+                Kami mencari individu yang luar biasa yang menunjukkan kecemerlangan akademik, kecergasan fizikal, peribadi bermoral, dan potensi untuk pembangunan kepimpinan ketenteraan yang cemerlang.
             </p>
         </div>
 
         <div class="requirements-grid">
             <div class="requirement-card animate-on-scroll">
-                <h3>General Requirements</h3>
+                <h3>Syarat Kelayakan Am</h3>
                 <ul>
-                    <li>Malaysian citizen by birth</li>
-                    <li>Full-time university student at UMS</li>
-                    <li>Age 18-25 years</li>
-                    <li>Clean criminal record</li>
-                    <li>CGPA ≥ 2.5 minimum</li>
-                    <li>Demonstrated leadership potential</li>
+                    <li>Warganegara Malaysia</li>
+                    <li>Pelajar prasiswazah sepenuh masa UMS</li>
+                    <li>Tempoh pengajian 3 tahun dan ke atas</li>
+                    <li>Kepujian 3 subjek wajib SPM (BM, BI, Matematik)</li>
+                    <li>Sihat tubuh badan dan mental</li>
+                    <li>Tiada masalah flat foot dan scoliosis</li>
+                    <li>Tidak rabun warna</li>
+                    <li>Pendengaran yang baik</li>
+                    <li>Tahap kecergasan fizikal yang baik</li>
                 </ul>
             </div>
             
             <div class="requirement-card animate-on-scroll">
-                <h3>Physical Requirements</h3>
+                <h3>Syarat Fizikal</h3>
                 <ul>
-                    <li>Excellent physical fitness level</li>
-                    <li>Swimming proficiency (200m)</li>
-                    <li>Pass standardized fitness test</li>
-                    <li>Height: Min 160cm (M), 155cm (F)</li>
-                    <li>BMI within military standards</li>
-                    <li>No chronic physical disabilities</li>
+                    <li class="no-tick"><strong>Ketinggian minimum:</strong></li>
+                    <li>Lelaki: 162 cm</li>
+                    <li>Wanita: 157 cm</li>
+                    <li class="no-tick"><strong>Berat badan minimum:</strong></li>
+                    <li>Lelaki: 47.5 kg ke atas</li>
+                    <li>Wanita: 45.0 kg ke atas</li>
+                    <li>BMI: 18.00 - 26.00</li>
+                    <li class="no-tick"><strong>Ukuran lilit dada (Lelaki):</strong></li>
+                    <li>76 cm (sebelum tarik nafas), 81 cm (selepas tarik nafas)</li>
                 </ul>
             </div>
             
             <div class="requirement-card animate-on-scroll">
-                <h3>Medical Requirements</h3>
+                <h3>Ujian Fizikal</h3>
                 <ul>
-                    <li>Complete medical clearance</li>
-                    <li>Normal vision (correctable to 6/6)</li>
-                    <li>Normal hearing capacity</li>
-                    <li>No serious mental health history</li>
-                    <li>Drug-free medical screening</li>
-                    <li>Current vaccination records</li>
+                    <li>Larian 2.4km</li>
+                    <li>Bangkit Tubi</li>
+                    <li>Pull-up</li>
+                    <li>Lompat jauh statik</li>
+                    <li>Lari ulang alik 4x10m</li>
                 </ul>
             </div>
             
             <div class="requirement-card animate-on-scroll">
-                <h3>Required Documents</h3>
+                <h3>Dokumen Diperlukan</h3>
                 <ul>
-                    <li>Completed application form</li>
-                    <li>Academic transcripts</li>
-                    <li>Identity card copy</li>
-                    <li>Birth certificate copy</li>
-                    <li>Medical examination report</li>
-                    <li>Character reference letters (2)</li>
+                    <li>Kad pengenalan pelajar (3 salinan)</li>
+                    <li>Kad pengenalan ibu bapa/waris (3 salinan)</li>
+                    <li>Sijil kelahiran pelajar & ibu bapa/waris (3 salinan)</li>
+                    <li>Surat berhenti sekolah (3 salinan)</li>
+                    <li>Gambar berukuran passport (3 keping)</li>
+                    <li>Slip keputusan akademik (3 salinan) *SPM/STPM/Matrikulasi/Diploma</li>
                 </ul>
             </div>
         </div>
@@ -2334,48 +2342,48 @@
 <section id="selection" class="section">
     <div class="section-container">
         <div class="section-header animate-on-scroll">
-            <div class="section-badge">Selection Process</div>
-            <h2 class="section-title">Path to Acceptance</h2>
+            <div class="section-badge">Proses Pemilihan</div>
+            <h2 class="section-title">Laluan ke Penerimaan</h2>
             <p class="section-description">
-                Our comprehensive selection process ensures we identify candidates with the highest potential for success in military leadership and academic excellence.
+                Proses pemilihan komprehensif kami memastikan kami mengenal pasti calon dengan potensi tertinggi untuk kejayaan dalam kepimpinan ketenteraan dan kecemerlangan akademik.
             </p>
         </div>
 
         <div class="features-grid">
             <div class="enhanced-card animate-on-scroll" style="position: relative;">
                 <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">1</div>
-                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Document Review</h3>
-                <p style="color: var(--text-secondary);">Initial screening of application documents, academic records, and eligibility verification by our expert selection committee.</p>
+                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Semakan Dokumen</h3>
+                <p style="color: var(--text-secondary);">Saringan awal dokumen permohonan, rekod akademik, dan pengesahan kelayakan oleh jawatankuasa pemilihan pakar kami.</p>
             </div>
             
             <div class="enhanced-card animate-on-scroll" style="position: relative;">
                 <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">2</div>
-                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Written Examination</h3>
-                <p style="color: var(--text-secondary);">Comprehensive written test covering general knowledge, current affairs, mathematics, logical reasoning, and maritime awareness.</p>
+                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Peperiksaan Bertulis</h3>
+                <p style="color: var(--text-secondary);">Ujian bertulis komprehensif merangkumi pengetahuan am, hal ehwal semasa, matematik, penaakulan logik, dan kesedaran maritim.</p>
             </div>
             
             <div class="enhanced-card animate-on-scroll" style="position: relative;">
                 <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">3</div>
-                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Physical Assessment</h3>
-                <p style="color: var(--text-secondary);">Rigorous physical fitness evaluation including endurance tests, strength assessments, swimming proficiency, and obstacle courses.</p>
+                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Penilaian Fizikal</h3>
+                <p style="color: var(--text-secondary);">Penilaian kecergasan fizikal yang ketat termasuk ujian ketahanan, penilaian kekuatan, ujian kawad, dan halangan rintangan.</p>
             </div>
             
             <div class="enhanced-card animate-on-scroll" style="position: relative;">
                 <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">4</div>
-                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Medical Examination</h3>
-                <p style="color: var(--text-secondary);">Comprehensive medical screening conducted by certified military medical officers to ensure complete fitness for naval service.</p>
+                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Pemeriksaan Perubatan</h3>
+                <p style="color: var(--text-secondary);">Saringan perubatan komprehensif yang dijalankan oleh pegawai perubatan ketenteraan yang diperakui untuk memastikan kecergasan lengkap untuk perkhidmatan tentera laut.</p>
             </div>
             
             <div class="enhanced-card animate-on-scroll" style="position: relative;">
                 <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">5</div>
-                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Panel Interview</h3>
-                <p style="color: var(--text-secondary);">In-depth interview with senior officers and instructors to assess leadership potential, motivation, character, and commitment to service.</p>
+                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Temuduga Panel</h3>
+                <p style="color: var(--text-secondary);">Temuduga mendalam dengan pegawai kanan dan pengajar untuk menilai potensi kepimpinan, motivasi, peribadi, dan komitmen untuk berkhidmat.</p>
             </div>
             
             <div class="enhanced-card animate-on-scroll" style="position: relative;">
                 <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">6</div>
-                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Final Selection</h3>
-                <p style="color: var(--text-secondary);">Successful candidates receive formal offer letters and begin their transformative journey as PALAPES cadets.</p>
+                <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Pemilihan Akhir</h3>
+                <p style="color: var(--text-secondary);">Calon yang berjaya menerima surat tawaran rasmi dan memulakan perjalanan transformatif mereka sebagai kadet PALAPES.</p>
             </div>
         </div>
     </div>
@@ -2385,64 +2393,65 @@
     <section id="application" class="section">
         <div class="section-container">
             <div class="section-header animate-on-scroll">
-                <div class="section-badge">Join PALAPES</div>
-                <h2 class="section-title">Begin Your Leadership Journey</h2>
+                <div class="section-badge">Sertai PALAPES</div>
+                <h2 class="section-title">Mulakan Perjalanan Kepimpinan Anda</h2>
                 <p class="section-description">
-                    Take the first decisive step toward becoming a commissioned naval officer. Our comprehensive application process ensures we select the most qualified and dedicated candidates for this prestigious program.
+                    Ambil langkah tegas pertama ke arah menjadi pegawai tentera laut yang ditauliahkan. Proses permohonan komprehensif kami memastikan kami memilih calon yang paling layak dan berdedikasi untuk program berprestij ini.
                 </p>
             </div>
 
             <div class="application-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 4rem;">
                 <div class="enhanced-card animate-on-scroll">
-                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Application Process</h3>
+                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Proses Permohonan</h3>
                     
-                    <div style="margin-bottom: 2rem;">
-                        <h4 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-file-alt" style="color: var(--primary-blue);"></i>
-                            Required Steps
-                        </h4>
-                        <ol style="color: var(--text-secondary); font-size: 1rem; line-height: 1.8; padding-left: 1.5rem;">
-                            <li style="margin-bottom: 0.75rem;">Verify you meet all program requirements</li>
-                            <li style="margin-bottom: 0.75rem;">Complete online application form</li>
-                            <li style="margin-bottom: 0.75rem;">Submit all required documents</li>
-                            <li style="margin-bottom: 0.75rem;">Attend selection assessments</li>
-                            <li style="margin-bottom: 0.75rem;">Begin your PALAPES journey!</li>
-                        </ol>
-                    </div>
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-file-alt" style="color: var(--primary-blue);"></i>
+                        Langkah-langkah Permohonan
+                    </h4>
+                    <ol style="color: var(--text-secondary); font-size: 1rem; line-height: 1.8; padding-left: 1.5rem;">
+                        <li style="margin-bottom: 0.75rem;">Sahkan anda memenuhi semua syarat program</li>
+                        <li style="margin-bottom: 0.75rem;">Lengkapkan borang permohonan dalam talian</li>
+                        <li style="margin-bottom: 0.75rem;">Sediakan semua dokumen diperlukan (3 salinan)</li>
+                        <li style="margin-bottom: 0.75rem;">Hadiri ujian kecergasan asas</li>
+                        <li style="margin-bottom: 0.75rem;">Hadiri temuduga dan penilaian</li>
+                        <li style="margin-bottom: 0.75rem;">Mulakan perjalanan PALAPES anda!</li>
+                    </ol>
+                </div>
 
                     <div style="margin-bottom: 2rem;">
-                        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Ready to serve Malaysia?</p>
-                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Apply today to join PALAPES Laut UMS and develop the leadership skills, discipline, and character that will distinguish you for life.</p>
+                        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Bersedia untuk berkhidmat kepada Malaysia?</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Mohon hari ini untuk menyertai PALAPES Laut UMS dan kembangkan kemahiran kepimpinan, disiplin, dan peribadi yang akan membezakan anda seumur hidup.</p>
                     </div>
 
                     <div style="text-align: center;">
                         <a href="{{ \App\Models\ContentSetting::get('application_portal_url', '#') }}" id="applicationPortalLink" class="btn-primary" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
                             <i class="fas fa-external-link-alt"></i>
-                            Access Application Portal
+                            Akses Portal Permohonan
                         </a>
                     </div>
                 </div>
 
                 <div class="enhanced-card animate-on-scroll" style="text-align: center;">
-                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Quick Access QR Code</h3>
+                    <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Kod QR Akses Pantas</h3>
                     
                     <div style="width: 280px; height: 280px; background: white; margin: 0 auto 2rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
                         @if(\App\Models\ContentSetting::get('qr_code_image'))
-                            <img id="qrCodeImage" src="{{ asset(\App\Models\ContentSetting::get('qr_code_image')) }}" alt="QR Code" style="width: 240px; height: 240px; border-radius: 8px; object-fit: contain;">
+                            <img id="qrCodeImage" src="{{ asset(\App\Models\ContentSetting::get('qr_code_image')) }}" alt="Kod QR" style="width: 240px; height: 240px; border-radius: 8px; object-fit: contain;">
                         @else
                             <div style="color: #666; text-align: center; padding: 2rem;">
                                 <i class="fas fa-qrcode" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                                <p style="margin: 0; font-size: 0.9rem;">QR Code will appear here when uploaded by instructor</p>
+                                <p style="margin: 0; font-size: 0.9rem;">Kod QR akan muncul di sini apabila dimuat naik oleh pengajar</p>
                             </div>
                         @endif
                     </div>
                     
-                    <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">Scan for Instant Access</p>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">Use your mobile device to scan this QR code and access the PALAPES application portal directly</p>
+                    <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">Imbas untuk Akses Segera</p>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">Gunakan peranti mudah alih anda untuk mengimbas kod QR ini dan akses portal permohonan PALAPES secara terus</p>
                     
                     <div style="background: rgba(60, 146, 217, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(60, 146, 217, 0.2);">
-                        <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Need Assistance?</h4>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Contact our admissions team for application support and program inquiries</p>
+                        <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Perlukan Bantuan?</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Hubungi pasukan kemasukan kami untuk sokongan permohonan dan pertanyaan program</p>
                     </div>
                 </div>
             </div>
@@ -2454,7 +2463,7 @@
     <div class="footer-content">
         <div class="footer-section">
             <h3>PALAPES Laut UMS</h3>
-            <p>The Reserve Officer Training Unit at Universiti Malaysia Sabah is committed to developing exceptional maritime leaders through comprehensive training, academic excellence, and character development.</p>
+            <p>Pasukan Latihan Pegawai Simpanan di Universiti Malaysia Sabah komited untuk membangunkan pemimpin maritim yang luar biasa melalui latihan komprehensif, kecemerlangan akademik, dan pembangunan peribadi.</p>
             <div class="social-icons">
                 <a href="#" class="social-icon" title="Facebook">
                     <i class="fab fa-facebook-f"></i>
@@ -2475,11 +2484,11 @@
         </div>
 
         <div class="footer-section">
-            <h3>Contact Information</h3>
+            <h3>Maklumat Hubungan</h3>
             <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem;">
                 <i class="fas fa-map-marker-alt" style="color: var(--primary-blue); margin-top: 0.25rem;"></i>
                 <div>
-                    <p>PALAPES Office, Block B</p>
+                    <p>Pejabat PALAPES, Blok B</p>
                     <p>Universiti Malaysia Sabah</p>
                     <p>Jalan UMS, 88400 Kota Kinabalu</p>
                     <p>Sabah, Malaysia</p>
@@ -2496,24 +2505,24 @@
         </div>
 
         <div class="footer-section">
-            <h3>Find Us Here</h3>
+            <h3>Cari Kami Di Sini</h3>
             <div style="width: 100%; height: 200px; background: rgba(60, 146, 217, 0.1); border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; overflow: hidden;">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d991.9088727330876!2d116.1296105786893!3d6.044647273346967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2smy!4v1758376029404!5m2!1sen!2smy" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
                 <i class="fas fa-map-marker-alt" style="color: var(--primary-blue); margin-top: 0.25rem;"></i>
                 <div>
-                    <p style="margin-bottom: 0.25rem; font-weight: 600; color: var(--text-primary);">Visit Our Campus</p>
-                    <p style="margin: 0; font-size: 0.9rem;">Block B, Universiti Malaysia Sabah<br>Jalan UMS, 88400 Kota Kinabalu<br>Sabah, Malaysia</p>
+                    <p style="margin-bottom: 0.25rem; font-weight: 600; color: var(--text-primary);">Lawati Kampus Kami</p>
+                    <p style="margin: 0; font-size: 0.9rem;">Blok B, Universiti Malaysia Sabah<br>Jalan UMS, 88400 Kota Kinabalu<br>Sabah, Malaysia</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2025 PALAPES Laut UMS - Reserve Officer Training Unit, Universiti Malaysia Sabah. All rights reserved.</p>
+        <p>&copy; 2025 PALAPES Laut UMS - Pasukan Latihan Pegawai Simpanan, Universiti Malaysia Sabah. Hak cipta terpelihara.</p>
         <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
-            Developing Maritime Leaders | Building Character | Serving Malaysia
+            Membangunkan Pemimpin Maritim | Membina Peribadi | Berkhidmat untuk Malaysia
         </p>
     </div>
 </footer>
