@@ -241,11 +241,17 @@
                     <!-- Filter for Quiz Questions -->
                     <div class="mb-6 flex items-center gap-4">
                         <label for="quizCategoryFilter" class="text-sm font-medium text-gray-700">Filter by Category:</label>
-                        <select id="quizCategoryFilter" name="quiz_category" onchange="filterQuizQuestions(this.value)" class="border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                        <select id="quizCategoryFilter" name="quiz_category" class="border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
                             <option value="" selected disabled>Select Category</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
+                        </select>
+                        <label for="quizTypeFilter" class="text-sm font-medium text-gray-700 ml-4">Type:</label>
+                        <select id="quizTypeFilter" name="quiz_type" class="border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                            <option value="all" selected>All</option>
+                            <option value="Subjective">Subjective</option>
+                            <option value="MCQ">MCQ</option>
                         </select>
                     </div>
 
@@ -1009,7 +1015,7 @@
             }
         }
 
-        function loadQuizQuestions(categoryId = '') {
+        function loadQuizQuestions(categoryId = '', type = 'all') {
             const container = document.getElementById('quizQuestionsContainer');
             // If no category is selected, show the placeholder and do not load any questions
             if (!categoryId) {
@@ -1025,7 +1031,7 @@
             // Show loading state
             container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></div>';
             // Fetch quiz questions via AJAX
-            const url = `/instructor/quiz-questions?category=${categoryId}`;
+            const url = `/instructor/quiz-questions?category=${categoryId}&type=${type}`;
             fetch(url, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -1130,8 +1136,10 @@
             }
         };
 
-        function filterQuizQuestions(categoryId) {
-            loadQuizQuestions(categoryId);
+        function filterQuizQuestions() {
+            const categoryId = document.getElementById('quizCategoryFilter').value;
+            const type = document.getElementById('quizTypeFilter').value;
+            loadQuizQuestions(categoryId, type);
         }
 
         // Close modals when clicking outside
@@ -1167,12 +1175,20 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Only load quiz questions if a category is selected
+            // Attach change listeners to both filters
             const quizCategorySelect = document.getElementById('quizCategoryFilter');
+            const quizTypeSelect = document.getElementById('quizTypeFilter');
+            if (quizCategorySelect) {
+                quizCategorySelect.addEventListener('change', filterQuizQuestions);
+            }
+            if (quizTypeSelect) {
+                quizTypeSelect.addEventListener('change', filterQuizQuestions);
+            }
+            // Initial load: Only load quiz questions if a category is selected
             if (quizCategorySelect && quizCategorySelect.value) {
-                loadQuizQuestions(quizCategorySelect.value);
+                loadQuizQuestions(quizCategorySelect.value, quizTypeSelect.value);
             } else {
-                loadQuizQuestions('');
+                loadQuizQuestions('', quizTypeSelect.value);
             }
             // Load materials based on current filter if any
             const categorySelect = document.getElementById('category');
