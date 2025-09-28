@@ -47,7 +47,7 @@
                             <div class="flex items-center gap-2">
                                 <label for="category" class="text-sm font-medium text-gray-700">Filter by Category:</label>
                                 <select name="category" id="category" onchange="filterMaterials(this.value)" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">Select Category</option>
+                                    <option value="" selected disabled>Select Category</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
                                             {{ $category->name }}
@@ -139,7 +139,7 @@
                                         @if(request()->filled('category'))
                                             No learning materials found in this category.
                                         @else
-                                            No learning materials available.
+                                            Please select a category to view learning materials.
                                         @endif
                                     </div>
                                 </div>
@@ -240,9 +240,9 @@
                 <div class="p-6">
                     <!-- Filter for Quiz Questions -->
                     <div class="mb-6 flex items-center gap-4">
-                        <label for="quizCategoryFilter" class="text-sm font-medium text-gray-700">Filter Quiz Questions:</label>
-                        <select id="quizCategoryFilter" class="border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500" onchange="filterQuizQuestions(this.value)">
-                            <option value="">All Categories</option>
+                        <label for="quizCategoryFilter" class="text-sm font-medium text-gray-700">Filter by Category:</label>
+                        <select id="quizCategoryFilter" name="quiz_category" onchange="filterQuizQuestions(this.value)" class="border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                            <option value="" selected disabled>Select Category</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
@@ -267,9 +267,13 @@
                         <!-- Table Body -->
                         <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="quizQuestionsContainer">
                             <!-- Questions will be loaded here via AJAX -->
-                            <div class="px-6 py-8 text-center">
+                            <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
                                 <div class="text-sm text-gray-500">
-                                    No quiz questions available. Click "Add Quiz Question" to create your first question.
+                                    @if(request()->filled('quiz_category'))
+                                        No quiz questions found in this category.
+                                    @else
+                                        Please select a category to view quiz questions.
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -308,25 +312,24 @@
                                     </div>
 
                                     <!-- MCQ Options for Edit -->
-                                    <div id="editMcqOptions" class="mb-4" x-show="editingQuestion.question_type === 'MCQ'">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
-                                        <div class="space-y-2">
-                                            <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A"
-                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B"
-                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C"
-                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D"
-                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                        </div>
-                                    </div>
+                                    <div id="editMcqOptions" class="mb-4">
+                         <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
+                         <div class="space-y-2">
+                          <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A"
+                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                          <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B"
+                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                          <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C"
+                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                          <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D"
+                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                         </div>
+                     </div>
 
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
                                         <div id="editMcqAnswerSelect" x-show="editingQuestion.question_type === 'MCQ'">
-                                            <select name="correct_answer" x-model="editingQuestion.correct_answer" :required="editingQuestion.question_type === 'MCQ'"
-                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <select name="correct_answer" x-model="editingQuestion.correct_answer" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                                                 <option value="">Select Correct Answer</option>
                                                 <option value="A">A</option>
                                                 <option value="B">B</option>
@@ -335,7 +338,7 @@
                                             </select>
                                         </div>
                                         <div id="editSubjectiveAnswerInput" x-show="editingQuestion.question_type === 'Subjective'">
-                                            <textarea name="correct_answer" :required="editingQuestion.question_type === 'Subjective'" rows="2" placeholder="Enter the correct answer for subjective questions" x-text="editingQuestion.correct_answer" @input="editingQuestion.correct_answer = $event.target.value"
+                                            <textarea name="correct_answer" rows="2" placeholder="Enter the correct answer for subjective questions" x-model="editingQuestion.correct_answer"
                                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
                                             <p class="text-xs text-gray-500 mt-1">Note: Subjective answers are checked case-insensitively</p>
                                         </div>
@@ -427,7 +430,7 @@
                             <label for="material_category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
                             <select id="material_category" name="learning_material_category_id" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select Category</option>
+                                <option value="" selected disabled>Select Category</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
@@ -615,7 +618,7 @@
                             <label for="quiz_category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
                             <select id="quiz_category" name="category_id" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                <option value="">Select Category</option>
+                                <option value="" selected disabled>Select Category</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
@@ -1008,10 +1011,19 @@
 
         function loadQuizQuestions(categoryId = '') {
             const container = document.getElementById('quizQuestionsContainer');
-            
+            // If no category is selected, show the placeholder and do not load any questions
+            if (!categoryId) {
+                container.innerHTML = `
+                    <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
+                        <div class="text-sm text-gray-500">
+                            Please select a category to view quiz questions.
+                        </div>
+                    </div>
+                `;
+                return;
+            }
             // Show loading state
             container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></div>';
-
             // Fetch quiz questions via AJAX
             const url = `/instructor/quiz-questions?category=${categoryId}`;
             fetch(url, {
@@ -1026,37 +1038,17 @@
                     container.innerHTML = `
                         <div class="px-6 py-8 text-center">
                             <div class="text-sm text-gray-500">
-                                No quiz questions available. Click "Add Quiz Question" to create your first question.
+                                No quiz questions found in this category.
                             </div>
                         </div>
                     `;
                     return;
                 }
-
                 let questionsHTML = '';
                 data.forEach(question => {
                     const questionPreview = question.question_text.length > 100 
                         ? question.question_text.substring(0, 100) + '...' 
                         : question.question_text;
-
-                    const questionData = JSON.stringify({
-                        id: question.id,
-                        question_text: question.question_text,
-                        question_type: question.question_type,
-                        category_id: question.category_id,
-                        option_a: question.option_a,
-                        option_b: question.option_b,
-                        option_c: question.option_c,
-                        option_d: question.option_d,
-                        correct_answer: question.correct_answer,
-                        status: question.status
-                    });
-
-                    const deleteData = JSON.stringify({
-                        id: question.id,
-                        question_text: questionPreview
-                    });
-
                     questionsHTML += `
                         <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4">
                             <div class="grid grid-cols-6 gap-4 items-center">
@@ -1097,7 +1089,6 @@
                         </div>
                     `;
                 });
-
                 container.innerHTML = questionsHTML;
             })
             .catch(error => {
@@ -1176,8 +1167,13 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadQuizQuestions();
-            
+            // Only load quiz questions if a category is selected
+            const quizCategorySelect = document.getElementById('quizCategoryFilter');
+            if (quizCategorySelect && quizCategorySelect.value) {
+                loadQuizQuestions(quizCategorySelect.value);
+            } else {
+                loadQuizQuestions('');
+            }
             // Load materials based on current filter if any
             const categorySelect = document.getElementById('category');
             if (categorySelect && categorySelect.value) {
