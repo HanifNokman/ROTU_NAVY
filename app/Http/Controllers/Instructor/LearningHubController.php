@@ -265,12 +265,18 @@ class LearningHubController extends Controller
      */
     public function getQuizQuestions(Request $request)
     {
+
         $query = QuizQuestion::with(['category', 'creator'])
             ->where('created_by', auth()->id()); // Only show questions created by current instructor
 
         // Apply category filter if provided
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
+        }
+
+        // Apply type filter if provided and not 'all'
+        if ($request->filled('type') && in_array($request->type, ['MCQ', 'Subjective'])) {
+            $query->where('question_type', $request->type);
         }
 
         $questions = $query->latest()->get();
