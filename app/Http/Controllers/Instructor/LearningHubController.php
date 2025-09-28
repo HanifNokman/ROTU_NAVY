@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LearningMaterial;
 use App\Models\LearningMaterialCategory;
+use App\Models\QuizQuestion;
+use App\Models\QuizAnswer;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class LearningHubController extends Controller
 {
@@ -15,21 +18,25 @@ class LearningHubController extends Controller
         $query = LearningMaterial::with('category');
 
         // Only show materials if a category filter is applied
-        // Default behavior: show nothing until user selects a category
         if ($request->filled('category')) {
             $query->where('learning_material_category_id', $request->category);
             $materials = $query->latest()->get();
         } else {
-            // Return empty collection when no category is selected
             $materials = collect();
         }
 
-        // Get all categories with material counts for the management section
+        // Get all categories with material counts
         $categories = LearningMaterialCategory::withCount('learningMaterials')
             ->orderBy('name')
             ->get();
 
-        return view('instructor.learning_hub', compact('materials', 'categories'));
+        // Get quiz questions for the current instructor
+        $quizQuestions = QuizQuestion::with(['category', 'answer'])
+            ->where('created_by', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('instructor.learning_hub', compact('materials', 'categories', 'quizQuestions'));
     }
 
     public function create()
@@ -177,6 +184,172 @@ class LearningHubController extends Controller
 
         return redirect()->route('instructor.learning_hub')
             ->with('success', "Category '{$categoryName}' deleted successfully.");
+    }
+
+    // Quiz management methods
+    public function storeQuiz(Request $request)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:learning_material_categories,id',
+            'question_text' => 'required|string',
+            'question_type' => 'required|in:MCQ,Subjective',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
+            'option_a' => 'required_if:question_type,MCQ|string|nullable',
+            'option_b' => 'required_if:question_type,MCQ|string|nullable',
+            'option_c' => 'required_if:question_type,MCQ|string|nullable',
+            'option_d' => 'required_if:question_type,MCQ|string|nullable',
+            'correct_answer' => 'required_if:question_type,MCQ|string|nullable',
+            'subjective_correct_answer' => 'required_if:question_type,Subjective|string|nullable',
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $filePath = null;
+
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $fileName = time() . '_quiz_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('quiz_files', $fileName, 'public');
+                $filePath = 'storage/' . $filePath;
+            }
+
+            // Determine the correct answer based on question type
+            $correctAnswer = $request->question_type === 'MCQ' 
+                ? $request->correct_answer 
+                : $request->subjective_correct_answer;
+
+            $question = QuizQuestion::create([
+                'category_id' => $request->category_id,
+                'question_text' => $request->question_text,
+                'question_type' => $request->question_type,
+                'file_url' => $filePath,
+                'option_a' => $request->question_type === 'MCQ' ? $request->option_a : null,
+                'option_b' => $request->question_type === 'MCQ' ? $request->option_b : null,
+                'option_c' => $request->question_type === 'MCQ' ? $request->option_c : null,
+                'option_d' => $request->question_type === 'MCQ' ? $request->option_d : null,
+                'created_by' => auth()->id(),
+                'status' => 'active'
+            ]);
+
+            QuizAnswer::create([
+                'question_id' => $question->id,
+                'correct_answer' => $correctAnswer
+            ]);
+        });
+
+        return redirect()->route('instructor.learning_hub')
+                        ->with('success', 'Quiz question created successfully.');
+    }
+
+    /**
+     * Get quiz questions for management (AJAX endpoint)
+     */
+    public function getQuizQuestions(Request $request)
+    {
+        $query = QuizQuestion::with(['category', 'answer', 'creator'])
+            ->where('created_by', auth()->id()); // Only show questions created by current instructor
+
+        // Apply category filter if provided
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        $questions = $query->latest()->get();
+
+        // Format the response for the frontend
+        $formattedQuestions = $questions->map(function ($question) {
+            return [
+                'id' => $question->id,
+                'question_text' => $question->question_text,
+                'question_type' => $question->question_type,
+                'category_name' => $question->category->name ?? 'Unknown',
+                'status' => $question->status,
+                'file_url' => $question->file_url,
+                'option_a' => $question->option_a,
+                'option_b' => $question->option_b,
+                'option_c' => $question->option_c,
+                'option_d' => $question->option_d,
+                'correct_answer' => $question->answer->correct_answer ?? '',
+                'created_at' => $question->created_at->format('M d, Y'),
+            ];
+        });
+
+        return response()->json($formattedQuestions);
+    }
+
+    public function updateQuiz(Request $request, QuizQuestion $question)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:learning_material_categories,id',
+            'question_text' => 'required|string',
+            'question_type' => 'required|in:MCQ,Subjective',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
+            'option_a' => 'required_if:question_type,MCQ|string',
+            'option_b' => 'required_if:question_type,MCQ|string',
+            'option_c' => 'required_if:question_type,MCQ|string',
+            'option_d' => 'required_if:question_type,MCQ|string',
+            'correct_answer' => 'required|string',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        DB::transaction(function () use ($request, $question) {
+            $filePath = $question->file_url;
+
+            if ($request->hasFile('file')) {
+                // Delete old file if exists
+                if ($question->file_url) {
+                    $oldFilePath = str_replace('storage/', '', $question->file_url);
+                    if (Storage::disk('public')->exists($oldFilePath)) {
+                        Storage::disk('public')->delete($oldFilePath);
+                    }
+                }
+
+                $file = $request->file('file');
+                $fileName = time() . '_quiz_' . $file->getClientOriginalName();
+                $storedPath = $file->storeAs('quiz_files', $fileName, 'public');
+                $filePath = 'storage/' . $storedPath;
+            }
+
+            $question->update([
+                'category_id' => $request->category_id,
+                'question_text' => $request->question_text,
+                'question_type' => $request->question_type,
+                'file_url' => $filePath,
+                'option_a' => $request->question_type === 'MCQ' ? $request->option_a : null,
+                'option_b' => $request->question_type === 'MCQ' ? $request->option_b : null,
+                'option_c' => $request->question_type === 'MCQ' ? $request->option_c : null,
+                'option_d' => $request->question_type === 'MCQ' ? $request->option_d : null,
+                'status' => $request->status
+            ]);
+
+            $question->answer->update([
+                'correct_answer' => $request->correct_answer
+            ]);
+        });
+
+        return redirect()->route('instructor.learning_hub')
+                        ->with('success', 'Quiz question updated successfully.');
+    }
+
+    public function destroyQuiz(QuizQuestion $question)
+    {
+        DB::transaction(function () use ($question) {
+            // Delete associated file if exists
+            if ($question->file_url) {
+                $filePath = str_replace('storage/', '', $question->file_url);
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+            }
+
+            // Delete answer first (due to foreign key constraint)
+            $question->answer()->delete();
+
+            // Delete question
+            $question->delete();
+        });
+
+        return redirect()->route('instructor.learning_hub')
+                        ->with('success', 'Quiz question deleted successfully.');
     }
 
     /**

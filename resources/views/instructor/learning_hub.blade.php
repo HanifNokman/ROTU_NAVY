@@ -19,7 +19,7 @@
                 <p class="text-gray-600">Manage educational materials and learning resources for cadets</p>
             </div>
 
-            <!-- Learning Hub Content -->
+            <!-- Learning Materials Management -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
@@ -34,6 +34,10 @@
                 <div class="p-6 text-gray-900">
                     @if(session('success'))
                         <div class="mb-4 text-green-600">{{ session('success') }}</div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="mb-4 text-red-600">{{ session('error') }}</div>
                     @endif
 
                     <!-- Top controls: filter + buttons -->
@@ -233,6 +237,184 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Quiz Management Section -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Quiz Management
+                            </h3>
+                            <p class="text-gray-600">Create and manage quiz questions for cadets</p>
+                        </div>
+                        <button onclick="openQuizModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Add Quiz Question
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <!-- Filter for Quiz Questions -->
+                    <div class="mb-6 flex items-center gap-4">
+                        <label for="quizCategoryFilter" class="text-sm font-medium text-gray-700">Filter Quiz Questions:</label>
+                        <select id="quizCategoryFilter" class="border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500" onchange="filterQuizQuestions(this.value)">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Quiz Questions Table -->
+                    <div class="border border-gray-200 rounded-lg" x-data="quizManagement()">
+                        <!-- Table Header -->
+                        <div class="bg-gray-50 border-b border-gray-200">
+                            <div class="px-6 py-3">
+                                <div class="grid grid-cols-6 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="col-span-2">Question</div>
+                                    <div>Type</div>
+                                    <div>Category</div>
+                                    <div>Status</div>
+                                    <div>Actions</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Table Body -->
+                        <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="quizQuestionsContainer">
+                            <!-- Questions will be loaded here via AJAX or from backend -->
+                            <div class="px-6 py-8 text-center">
+                                <div class="text-sm text-gray-500">
+                                    No quiz questions available. Click "Add Quiz Question" to create your first question.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Quiz Modal -->
+                        <div x-show="showEditModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
+                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+                                <h2 class="text-lg font-semibold mb-4">Edit Quiz Question</h2>
+                                <form method="POST" :action="editUrl" enctype="multipart/form-data">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Question Text</label>
+                                        <textarea name="question_text" x-model="editingQuestion.question_text" rows="3" required
+                                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Question Type</label>
+                                        <select name="question_type" x-model="editingQuestion.question_type" @change="toggleEditQuestionType()" required
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <option value="MCQ">Multiple Choice Question (MCQ)</option>
+                                            <option value="Subjective">Subjective/Free Text</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                        <select name="category_id" x-model="editingQuestion.category_id" required
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            @foreach($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- MCQ Options for Edit -->
+                                    <div id="editMcqOptions" class="mb-4" x-show="editingQuestion.question_type === 'MCQ'">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
+                                        <div class="space-y-2">
+                                            <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A"
+                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B"
+                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C"
+                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D"
+                                                   class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
+                                        <div id="editMcqAnswerSelect" x-show="editingQuestion.question_type === 'MCQ'">
+                                            <select name="correct_answer" x-model="editingQuestion.correct_answer" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                <option value="">Select Correct Answer</option>
+                                                <option value="A">A</option>
+                                                <option value="B">B</option>
+                                                <option value="C">C</option>
+                                                <option value="D">D</option>
+                                            </select>
+                                        </div>
+                                        <div id="editSubjectiveAnswerInput" x-show="editingQuestion.question_type === 'Subjective'">
+                                            <textarea name="correct_answer" x-model="editingQuestion.correct_answer" rows="2" placeholder="Enter the correct answer for subjective questions"
+                                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                                            <p class="text-xs text-gray-500 mt-1">Note: Subjective answers are checked case-insensitively</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                        <select name="status" x-model="editingQuestion.status" required
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Replace Supporting File (optional)</label>
+                                        <input type="file" name="file"
+                                               accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <p class="text-xs text-gray-500 mt-1">Current file will be replaced if new file is uploaded</p>
+                                    </div>
+
+                                    <div class="flex justify-end gap-3">
+                                        <button type="button" @click="showEditModal = false" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition duration-200">Cancel</button>
+                                        <button type="submit" class="px-4 py-2 rounded bg-purple-600 text-white hover:bg-purple-700 transition duration-200">Update Question</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Delete Quiz Confirmation Modal -->
+                        <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
+                            <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+                                <h2 class="text-lg font-semibold mb-4">Confirm Deletion</h2>
+                                <p class="mb-6 text-gray-700">Are you sure you want to delete this quiz question? This action cannot be undone.</p>
+
+                                <form :action="deleteUrl" method="POST">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                                    <div class="flex justify-end gap-3">
+                                        <button type="button" @click="showDeleteModal = false"
+                                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200">
+                                            Cancel
+                                        </button>
+                                        <button type="submit"
+                                                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200">
+                                            Delete Question
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -422,6 +604,106 @@
         </div>
     </div>
 
+    <!-- Quiz Modal -->
+    <div id="quizModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Add Quiz Question</h3>
+                        <button onclick="closeQuizModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form action="{{ route('instructor.quiz.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="quiz_question_text" class="block text-sm font-medium text-gray-700 mb-2">Question Text</label>
+                            <textarea id="quiz_question_text" name="question_text" rows="3" required
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="quiz_question_type" class="block text-sm font-medium text-gray-700 mb-2">Question Type</label>
+                            <select id="quiz_question_type" name="question_type" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="MCQ">Multiple Choice Question (MCQ)</option>
+                                <option value="Subjective">Subjective/Free Text</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="quiz_category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select id="quiz_category" name="category_id" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="">Select Category</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- MCQ Options -->
+                        <div id="mcqOptions" class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
+                            <div class="space-y-2">
+                                <input type="text" name="option_a" placeholder="Option A" required
+                                       class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <input type="text" name="option_b" placeholder="Option B" required
+                                       class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <input type="text" name="option_c" placeholder="Option C" required
+                                       class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <input type="text" name="option_d" placeholder="Option D" required
+                                       class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="quiz_correct_answer" class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
+                            <div id="mcqAnswerSelect">
+                                <select id="quiz_correct_answer" name="correct_answer" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="">Select Correct Answer</option>
+                                    <option value="A">A - Option A</option>
+                                    <option value="B">B - Option B</option>
+                                    <option value="C">C - Option C</option>
+                                    <option value="D">D - Option D</option>
+                                </select>
+                            </div>
+                            <div id="subjectiveAnswerInput" class="hidden">
+                                <textarea name="correct_answer" rows="2" placeholder="Enter the correct answer for subjective questions"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                                <p class="text-xs text-gray-500 mt-1">Note: Subjective answers are checked case-insensitively</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="quiz_file" class="block text-sm font-medium text-gray-700 mb-2">Supporting File (optional)</label>
+                            <input type="file" id="quiz_file" name="file"
+                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
+                        </div>
+
+                        <div class="flex justify-end gap-3">
+                            <button type="button" onclick="closeQuizModal()"
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-200">
+                                Add Question
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Material Modal Functions
         function openMaterialModal() {
@@ -430,44 +712,36 @@
 
         function closeMaterialModal() {
             document.getElementById('materialModal').classList.add('hidden');
-            // Reset form
             document.querySelector('#materialModal form').reset();
         }
 
         // Category Modal Functions
         function openCategoryModal() {
             document.getElementById('categoryModal').classList.remove('hidden');
-            showAddCategoryForm(); // Default to add category form
+            showAddCategoryForm();
         }
 
         function closeCategoryModal() {
             document.getElementById('categoryModal').classList.add('hidden');
-            // Reset form
             document.querySelector('#categoryModal form').reset();
         }
 
-        // Category Tab Functions
         function showAddCategoryForm() {
-            // Update button styles
             document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
             document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
             
-            // Show/hide sections
             document.getElementById('addCategorySection').classList.remove('hidden');
             document.getElementById('categoriesListSection').classList.add('hidden');
         }
 
         function showCategoriesList() {
-            // Update button styles
             document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
             document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
             
-            // Show/hide sections
             document.getElementById('addCategorySection').classList.add('hidden');
             document.getElementById('categoriesListSection').classList.remove('hidden');
         }
 
-        // Delete Category Functions
         function confirmDeleteCategory(categoryId, categoryName, materialCount) {
             document.getElementById('categoryToDeleteName').textContent = categoryName;
             
@@ -478,7 +752,6 @@
                 warningMessage.textContent = '';
             }
             
-            // Set the form action
             const deleteForm = document.getElementById('deleteCategoryForm');
             deleteForm.action = `{{ route('instructor.learning_material_categories.destroy', ['category' => '__id__']) }}`.replace('__id__', categoryId);
             
@@ -489,11 +762,174 @@
             document.getElementById('deleteCategoryModal').classList.add('hidden');
         }
 
+        // Quiz Modal Functions
+        function openQuizModal() {
+            document.getElementById('quizModal').classList.remove('hidden');
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quizModal').classList.add('hidden');
+            document.querySelector('#quizModal form').reset();
+        }
+
+        // Quiz form type switching
+        document.getElementById('quiz_question_type').addEventListener('change', function() {
+            const questionType = this.value;
+            const mcqOptions = document.getElementById('mcqOptions');
+            const mcqAnswerSelect = document.getElementById('mcqAnswerSelect');
+            const subjectiveAnswerInput = document.getElementById('subjectiveAnswerInput');
+
+            if (questionType === 'MCQ') {
+                mcqOptions.classList.remove('hidden');
+                mcqAnswerSelect.classList.remove('hidden');
+                subjectiveAnswerInput.classList.add('hidden');
+
+                document.querySelectorAll('#mcqOptions input').forEach(input => input.required = true);
+                document.querySelector('#subjectiveAnswerInput textarea').required = false;
+            } else if (questionType === 'Subjective') {
+                mcqOptions.classList.add('hidden');
+                mcqAnswerSelect.classList.add('hidden');
+                subjectiveAnswerInput.classList.remove('hidden');
+
+                document.querySelectorAll('#mcqOptions input').forEach(input => input.required = false);
+                document.querySelector('#subjectiveAnswerInput textarea').required = true;
+            }
+        });
+
+        // Quiz Management Alpine.js component
+        function quizManagement() {
+            return {
+                showEditModal: false,
+                showDeleteModal: false,
+                editingQuestion: {},
+                deletingQuestion: {},
+                editRouteTemplate: '{{ route("instructor.quiz.update", ["question" => "__id__"]) }}',
+                deleteRouteTemplate: '{{ route("instructor.quiz.destroy", ["question" => "__id__"]) }}',
+
+                get editUrl() {
+                    return this.editRouteTemplate.replace('__id__', this.editingQuestion.id);
+                },
+                get deleteUrl() {
+                    return this.deleteRouteTemplate.replace('__id__', this.deletingQuestion.id);
+                },
+                openEdit(questionData) {
+                    this.editingQuestion = JSON.parse(questionData);
+                    this.showEditModal = true;
+                },
+                openDelete(questionData) {
+                    this.deletingQuestion = JSON.parse(questionData);
+                    this.showDeleteModal = true;
+                },
+                toggleEditQuestionType() {
+                    this.editingQuestion.correct_answer = '';
+                }
+            }
+        }
+
+        function loadQuizQuestions(categoryId = '') {
+            const container = document.getElementById('quizQuestionsContainer');
+            
+            // Show loading state
+            container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></div>';
+
+            // Fetch quiz questions via AJAX
+            fetch(`/instructor/quiz-questions?category=${categoryId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = `
+                        <div class="px-6 py-8 text-center">
+                            <div class="text-sm text-gray-500">
+                                No quiz questions available. Click "Add Quiz Question" to create your first question.
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let questionsHTML = '';
+                data.forEach(question => {
+                    const questionPreview = question.question_text.length > 100 
+                        ? question.question_text.substring(0, 100) + '...' 
+                        : question.question_text;
+
+                    const questionData = JSON.stringify({
+                        id: question.id,
+                        question_text: question.question_text,
+                        question_type: question.question_type,
+                        category_id: question.category_id,
+                        option_a: question.option_a,
+                        option_b: question.option_b,
+                        option_c: question.option_c,
+                        option_d: question.option_d,
+                        correct_answer: question.correct_answer,
+                        status: question.status
+                    });
+
+                    questionsHTML += `
+                        <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4">
+                            <div class="grid grid-cols-6 gap-4 items-center">
+                                <div class="col-span-2 text-sm text-gray-900">
+                                    <div class="font-medium">${questionPreview}</div>
+                                    ${question.file_url ? '<p class="text-xs text-blue-600 mt-1">Has supporting file</p>' : ''}
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.question_type === 'MCQ' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+                                        ${question.question_type}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        ${question.category_name}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                        ${question.status.charAt(0).toUpperCase() + question.status.slice(1)}
+                                    </span>
+                                </div>
+                                <div class="text-sm font-medium">
+                                    <div class="flex gap-2">
+                                        <button type="button"
+                                                onclick="document.querySelector('[x-data]').__x.$data.openEdit('${questionData.replace(/'/g, "\\'")})"
+                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                            Edit
+                                        </button>
+                                        <button type="button"
+                                                onclick="document.querySelector('[x-data]').__x.$data.openDelete('${JSON.stringify({id: question.id, question_text: questionPreview}).replace(/'/g, "\\'")}')"
+                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = questionsHTML;
+            })
+            .catch(error => {
+                console.error('Error fetching quiz questions:', error);
+                container.innerHTML = '<div class="px-6 py-8 text-center"><div class="text-sm text-red-500">Error loading quiz questions. Please try again.</div></div>';
+            });
+        }
+
+        function filterQuizQuestions(categoryId) {
+            loadQuizQuestions(categoryId);
+        }
+
         // Close modals when clicking outside
         window.onclick = function(event) {
             const materialModal = document.getElementById('materialModal');
             const categoryModal = document.getElementById('categoryModal');
             const deleteCategoryModal = document.getElementById('deleteCategoryModal');
+            const quizModal = document.getElementById('quizModal');
             
             if (event.target === materialModal) {
                 closeMaterialModal();
@@ -504,6 +940,9 @@
             if (event.target === deleteCategoryModal) {
                 closeDeleteCategoryModal();
             }
+            if (event.target === quizModal) {
+                closeQuizModal();
+            }
         }
 
         // Close modals with Escape key
@@ -512,7 +951,13 @@
                 closeMaterialModal();
                 closeCategoryModal();
                 closeDeleteCategoryModal();
+                closeQuizModal();
             }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQuizQuestions();
         });
     </script>
 </x-app-layout>
