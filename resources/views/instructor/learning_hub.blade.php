@@ -149,7 +149,8 @@
 
                         <!-- Edit Modal -->
                         <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-xl">
+                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-xl relative">
+                                <button type="button" @click="showModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
                                 <h2 class="text-lg font-semibold mb-4">Edit Learning Material</h2>
                                 <form method="POST" :action="updateUrl" enctype="multipart/form-data">
                                     <input type="hidden" name="_method" value="PUT">
@@ -286,7 +287,8 @@
 
                         <!-- Edit Quiz Modal -->
                         <div x-show="showEditModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
+                                <button type="button" @click="showEditModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
                                 <h2 class="text-lg font-semibold mb-4">Edit Quiz Question</h2>
                                 <form method="POST" :action="editUrl" enctype="multipart/form-data">
                                     <input type="hidden" name="_method" value="PUT">
