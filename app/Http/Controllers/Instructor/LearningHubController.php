@@ -316,15 +316,16 @@ class LearningHubController extends Controller
             'question_text' => 'required|string',
             'question_type' => 'required|in:MCQ,Subjective',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
-            'option_a' => 'required_if:question_type,MCQ|string',
-            'option_b' => 'required_if:question_type,MCQ|string',
-            'option_c' => 'required_if:question_type,MCQ|string',
-            'option_d' => 'required_if:question_type,MCQ|string',
+            'option_a' => 'required_if:question_type,MCQ|nullable|string',
+            'option_b' => 'required_if:question_type,MCQ|nullable|string',
+            'option_c' => 'required_if:question_type,MCQ|nullable|string',
+            'option_d' => 'required_if:question_type,MCQ|nullable|string',
             'correct_answer' => 'required|string',
             'status' => 'required|in:active,inactive'
         ]);
 
-        DB::transaction(function () use ($request, $question) {
+    \Log::info('QuizQuestion update request', $request->all());
+    DB::transaction(function () use ($request, $question) {
             $filePath = $question->file_url;
 
             if ($request->hasFile('file')) {
