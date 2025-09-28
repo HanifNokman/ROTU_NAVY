@@ -229,7 +229,7 @@
     </div>
 
     <!-- Quiz Modal -->
-    <div id="quizModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" x-data="quizData()">
+    <div id="quizModal" class="fixed inset-0 bg-black bg-opacity-50 z-50" x-data="quizData()" x-init="''" x-show="window.modalVisible">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <!-- Quiz Header -->
@@ -588,7 +588,7 @@
         },
 
         closeQuiz() {
-            document.getElementById('quizModal').classList.add('hidden');
+            window.modalVisible = false;
             clearInterval(quizTimer);
             this.showResults = false;
         },
@@ -629,10 +629,6 @@ function startQuiz() {
         return;
     }
 
-    // Show loading state
-    const modal = document.getElementById('quizModal');
-    modal.classList.remove('hidden');
-
     // Make API call to start quiz
     fetch('/api/quiz/start', {
         method: 'POST',
@@ -647,14 +643,36 @@ function startQuiz() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
+        if (data.success && Array.isArray(data.questions) && data.questions.length > 0) {
             // Close selection modal
             document.getElementById('quizSelectionModal').classList.add('hidden');
-            // Initialize quiz with Alpine.js data
-            const quizComponent = document.querySelector('[x-data="quizData()"]').__x.$data;
-            quizComponent.initializeQuiz(data);
+            // Poll for Alpine.js initialization for up to 2 seconds
+            console.log('Quiz API success, starting Alpine.js polling...');
+            let attempts = 0;
+            const maxAttempts = 20; // 20 x 100ms = 2 seconds
+            const interval = setInterval(() => {
+                const quizElement = document.querySelector('[x-data="quizData()"]');
+                console.log('Polling for Alpine:', {
+                    attempts,
+                    quizElement,
+                    hasX: quizElement && quizElement.__x,
+                    hasData: quizElement && quizElement.__x && quizElement.__x.$data
+                });
+                if (quizElement && quizElement.__x && quizElement.__x.$data) {
+                    clearInterval(interval);
+                    // Show quiz modal only after Alpine is ready
+                    window.modalVisible = true;
+                    quizElement.__x.$data.initializeQuiz(data);
+                } else if (++attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    window.modalVisible = false;
+                    alert('Quiz component not initialized. Please try again.');
+                }
+            }, 100);
         } else {
-            alert(data.message || 'Error starting quiz');
+            // Hide quiz modal and show error
+            window.modalVisible = false;
+            alert(data.message || 'No questions available for the selected category and difficulty.');
         }
     })
     .catch(error => {
@@ -1031,7 +1049,7 @@ document.addEventListener('keydown', function(e) {
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Any initialization code can go here
+    window.modalVisible = false;
     console.log('Cadet Learning Hub initialized');
 });
     </script>
