@@ -225,8 +225,23 @@ Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(func
         Route::get('/allowance/ajax', [\App\Http\Controllers\Cadet\AllowanceController::class, 'ajax'])->name('allowance.ajax');
     });
 
-    // Cadet Learning Hub
-    Route::get('/cadet/learning_hub', [CadetLearningHubController::class, 'index'])->name('cadet.learning_hub');
+    // Cadet Learning Hub - existing route
+Route::get('/cadet/learning_hub', [CadetLearningHubController::class, 'index'])->name('cadet.learning_hub');
+
+// Add these new API routes for cadet functionality
+Route::middleware('auth')->group(function () {
+    // Material filtering API
+    Route::get('/api/materials', [CadetLearningHubController::class, 'getMaterials'])->name('api.materials');
+    
+    // Instructor filtering API  
+    Route::get('/api/instructors', [CadetLearningHubController::class, 'getInstructors'])->name('api.instructors');
+    Route::get('/api/instructor/{instructor}', [CadetLearningHubController::class, 'getInstructor'])->name('api.instructor');
+    
+    // Quiz API routes
+    Route::post('/api/quiz/start', [CadetLearningHubController::class, 'startQuiz'])->name('api.quiz.start');
+    Route::post('/api/quiz/submit', [CadetLearningHubController::class, 'submitQuiz'])->name('api.quiz.submit');
+    Route::post('/api/quiz/results', [CadetLearningHubController::class, 'getQuizResults'])->name('api.quiz.results');
+});
 
     // Cadet Inventory Routes
     Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
