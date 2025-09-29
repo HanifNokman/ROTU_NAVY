@@ -43,8 +43,9 @@
                         <div class="flex flex-wrap items-center gap-4">
                             <div class="flex flex-col">
                                 <label for="uniform_intake_year" class="text-sm font-medium text-gray-700 mb-1">Intake</label>
-                                <select name="uniform_intake_year" id="uniform_intake_year" 
+                                <select name="uniform_intake_year" id="uniform_intake_year"
                                         class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Select Intake</option>
                                     @foreach($intakeYears as $intake)
                                         <option value="{{ $intake['year'] }}" {{ $selectedUniformIntakeYear == $intake['year'] ? 'selected' : '' }}>
                                             {{ $intake['label'] }}
@@ -55,9 +56,9 @@
                             
                             <div class="flex flex-col">
                                 <label for="uniform_type" class="text-sm font-medium text-gray-700 mb-1">Uniform Type</label>
-                                <select name="uniform_type" id="uniform_type" 
+                                <select name="uniform_type" id="uniform_type"
                                         class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">All Type</option>
+                                    <option value="">Select Type</option>
                                     @foreach($uniformTypes as $type)
                                         <option value="{{ $type->id }}" {{ $selectedUniformType == $type->id ? 'selected' : '' }}>
                                             {{ $type->type_name }}
@@ -68,9 +69,9 @@
                             
                             <div class="flex flex-col">
                                 <label for="uniform_component" class="text-sm font-medium text-gray-700 mb-1">Uniform Component</label>
-                                <select name="uniform_component" id="uniform_component" 
+                                <select name="uniform_component" id="uniform_component"
                                         class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">All Component</option>
+                                    <option value="">Select Component</option>
                                     @foreach($uniformComponents as $component)
                                         <option value="{{ $component->id }}" {{ $selectedUniformComponent == $component->id ? 'selected' : '' }}>
                                             {{ $component->component_name }}
@@ -164,8 +165,9 @@
                         <div class="flex flex-wrap items-center gap-4">
                             <div class="flex flex-col">
                                 <label for="loan_intake_year" class="text-sm font-medium text-gray-700 mb-1">Intake</label>
-                                <select name="loan_intake_year" id="loan_intake_year" 
+                                <select name="loan_intake_year" id="loan_intake_year"
                                         class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="">Select Intake</option>
                                     @foreach($intakeYears as $intake)
                                         <option value="{{ $intake['year'] }}" {{ $selectedLoanIntakeYear == $intake['year'] ? 'selected' : '' }}>
                                             {{ $intake['label'] }}
@@ -591,16 +593,29 @@
 
         // Current filter states
         let currentFilters = {
-            uniformIntakeYear: '{{ $selectedUniformIntakeYear }}',
-            uniformType: '{{ $selectedUniformType }}',
-            uniformComponent: '{{ $selectedUniformComponent }}',
-            loanIntakeYear: '{{ $selectedLoanIntakeYear }}',
+            uniformIntakeYear: '',
+            uniformType: '',
+            uniformComponent: '',
+            loanIntakeYear: '',
             equipmentCategory: '{{ $selectedCategory }}',
             loanStatus: '{{ $selectedStatus }}'
         };
 
         // Instant filtering functions
         function updateUniformSummary() {
+            // Only show data if both intake year and uniform type are selected
+            if (!currentFilters.uniformIntakeYear || !currentFilters.uniformType) {
+                document.getElementById('uniformSummaryContent').innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-gray-400 text-5xl mb-4">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <p class="text-gray-500 text-lg">Please select both Intake and Uniform Type to view size summary.</p>
+                    </div>
+                `;
+                return;
+            }
+
             const data = new URLSearchParams({
                 action: 'uniform_summary',
                 intake_year: currentFilters.uniformIntakeYear,
@@ -627,6 +642,19 @@
         }
 
         function updateEquipmentLoans() {
+            // Only show data if intake year is selected
+            if (!currentFilters.loanIntakeYear) {
+                document.getElementById('equipmentLoansContent').innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-gray-400 text-6xl mb-4">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <p class="text-gray-500 text-lg">Please select an Intake to view equipment loan records.</p>
+                    </div>
+                `;
+                return;
+            }
+
             const data = new URLSearchParams({
                 action: 'equipment_loans',
                 loan_intake_year: currentFilters.loanIntakeYear,
@@ -696,6 +724,16 @@
             // Equipment section filters
             const loanIntakeSelect = document.getElementById('loan_intake_year');
             const equipmentCategorySelect = document.getElementById('equipment_category');
+
+            // Reset uniform filters to empty on page load
+            uniformIntakeSelect.value = '';
+            uniformTypeSelect.value = '';
+            uniformComponentSelect.value = '';
+            updateUniformSummary();
+
+            // Reset equipment loan filters to empty on page load
+            loanIntakeSelect.value = '';
+            updateEquipmentLoans();
 
             if (uniformIntakeSelect) {
                 uniformIntakeSelect.addEventListener('change', function() {
