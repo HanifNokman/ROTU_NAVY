@@ -100,118 +100,178 @@ class LearningHubController extends Controller
 
     // Quiz methods
     public function startQuiz(Request $request)
-    {
-        $request->validate([
-            'category_id' => 'nullable|exists:learning_material_categories,id',
-            'difficulty' => 'required|in:easy,medium,hard'
-        ]);
+{
+    $request->validate([
+        'category_id' => 'nullable|exists:learning_material_categories,id',
+        'difficulty' => 'required|in:easy,medium,hard'
+    ]);
 
-        $categoryId = $request->category_id;
-        $difficulty = $request->difficulty;
+    $categoryId = $request->category_id;
+    $difficulty = $request->difficulty;
 
-        // Get questions based on difficulty
-        $query = QuizQuestion::query()
-            ->active();
+    // Get base query for questions
+    $query = QuizQuestion::query()->active();
 
-        if ($categoryId) {
-            $query->byCategory($categoryId);
-        }
-
-
-        // Apply difficulty-based filtering, fallback to all available if not enough
-        switch ($difficulty) {
-            case 'easy':
-                $questions = $query->mcq()->inRandomOrder()->limit(5)->get();
-                $timeLimit = 300; // 5 minutes
-                if ($questions->count() < 5) {
-                    // Fallback: get all MCQ questions (even if less than 5)
-                    $questions = $query->mcq()->inRandomOrder()->get();
-                }
-                break;
-            case 'medium':
-                $mcqQuestions = $query->mcq()->inRandomOrder()->limit(3)->get();
-                $subjectiveQuestions = $query->subjective()->inRandomOrder()->limit(2)->get();
-                if ($mcqQuestions->count() + $subjectiveQuestions->count() < 5) {
-                    // Fallback: get all available questions (MCQ + Subjective)
-                    $questions = $query->inRandomOrder()->get();
-                } else {
-                    $questions = $mcqQuestions->merge($subjectiveQuestions)->shuffle();
-                }
-                $timeLimit = 600; // 10 minutes
-                break;
-            case 'hard':
-                $mcqQuestions = $query->mcq()->inRandomOrder()->limit(2)->get();
-                $subjectiveQuestions = $query->subjective()->inRandomOrder()->limit(5)->get();
-                if ($mcqQuestions->count() + $subjectiveQuestions->count() < 7) {
-                    // Fallback: get all available questions (MCQ + Subjective)
-                    $questions = $query->inRandomOrder()->get();
-                } else {
-                    $questions = $mcqQuestions->merge($subjectiveQuestions)->shuffle();
-                }
-                $timeLimit = 900; // 15 minutes
-                break;
-        }
-
-        if ($questions->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No questions available for the selected category and difficulty.'
-            ], 404);
-        }
-
-        // Shuffle MCQ options for each question
-        $questions->transform(function ($question) {
-            if ($question->question_type === 'MCQ') {
-                $options = collect([
-                    'A' => $question->option_a,
-                    'B' => $question->option_b,
-                    'C' => $question->option_c,
-                    'D' => $question->option_d
-                ])->shuffle();
-
-                $question->shuffled_options = $options;
-            }
-            return $question;
-        });
-
-        // Store quiz session
-        $quizSession = [
-            'questions' => $questions->map(function ($q) {
-                return [
-                    'id' => $q->id,
-                    'question_text' => $q->question_text,
-                    'question_type' => $q->question_type,
-                    'file_url' => $q->file_url,
-                    'shuffled_options' => $q->shuffled_options ?? null,
-                    'correct_answer' => $q->correct_answer
-                ];
-            }),
-            'category_id' => $categoryId,
-            'difficulty' => $difficulty,
-            'time_limit' => $timeLimit,
-            'start_time' => now()->timestamp,
-            'user_id' => auth()->id()
-        ];
-
-        $sessionKey = 'quiz_' . auth()->id() . '_' . time();
-        Cache::put($sessionKey, $quizSession, now()->addMinutes(30)); // Cache for 30 minutes
-
-        return response()->json([
-            'success' => true,
-            'session_key' => $sessionKey,
-            'questions' => $questions->map(function ($q) {
-                return [
-                    'id' => $q->id,
-                    'question_text' => $q->question_text,
-                    'question_type' => $q->question_type,
-                    'file_url' => $q->file_url,
-                    'shuffled_options' => $q->shuffled_options ?? null
-                ];
-            }),
-            'time_limit' => $timeLimit,
-            'total_questions' => $questions->count()
-        ]);
+    if ($categoryId) {
+        $query->byCategory($categoryId);
     }
+
+    // Get all available questions first
+    $allQuestions = $query->get();
+    $mcqQuestions = $allQuestions->where('question_type', 'MCQ');
+    $subjectiveQuestions = $allQuestions->where('question_type', 'Subjective');
+
+    if ($allQuestions->isEmpty()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No questions available for the selected category.'
+        ], 404);
+    }
+
+    // Initialize variables
+    $questions = collect();
+    $timeLimit = 300; // Default 5 minutes
+
+    // Apply difficulty-based selection with fallbacks
+    switch ($difficulty) {
+        case 'easy':
+            $timeLimit = 300; // 5 minutes
+            if ($mcqQuestions->count() >= 5) {
+                // Ideal case: get 5 MCQ questions
+                $questions = $mcqQuestions->shuffle()->take(5);
+            } elseif ($mcqQuestions->count() > 0) {
+                // Fallback: get all available MCQ questions
+                $questions = $mcqQuestions->shuffle();
+            } else {
+                // Final fallback: get any available questions (up to 5)
+                $questions = $allQuestions->shuffle()->take(5);
+            }
+            break;
+
+        case 'medium':
+            $timeLimit = 600; // 10 minutes
+            $targetMcq = 3;
+            $targetSubjective = 2;
+            
+            // Try to get ideal distribution
+            if ($mcqQuestions->count() >= $targetMcq && $subjectiveQuestions->count() >= $targetSubjective) {
+                $selectedMcq = $mcqQuestions->shuffle()->take($targetMcq);
+                $selectedSubjective = $subjectiveQuestions->shuffle()->take($targetSubjective);
+                $questions = $selectedMcq->merge($selectedSubjective)->shuffle();
+            } else {
+                // Fallback: get what we can, prioritizing the mix
+                $availableMcq = min($mcqQuestions->count(), $targetMcq);
+                $availableSubjective = min($subjectiveQuestions->count(), $targetSubjective);
+                
+                $selectedMcq = $mcqQuestions->shuffle()->take($availableMcq);
+                $selectedSubjective = $subjectiveQuestions->shuffle()->take($availableSubjective);
+                $questions = $selectedMcq->merge($selectedSubjective);
+                
+                // If we don't have enough, fill with any remaining questions
+                $totalSelected = $questions->count();
+                if ($totalSelected < 5) {
+                    $remaining = $allQuestions->whereNotIn('id', $questions->pluck('id'))
+                                           ->shuffle()
+                                           ->take(5 - $totalSelected);
+                    $questions = $questions->merge($remaining);
+                }
+                $questions = $questions->shuffle();
+            }
+            break;
+
+        case 'hard':
+            $timeLimit = 900; // 15 minutes
+            $targetMcq = 2;
+            $targetSubjective = 5;
+            
+            // Try to get ideal distribution
+            if ($mcqQuestions->count() >= $targetMcq && $subjectiveQuestions->count() >= $targetSubjective) {
+                $selectedMcq = $mcqQuestions->shuffle()->take($targetMcq);
+                $selectedSubjective = $subjectiveQuestions->shuffle()->take($targetSubjective);
+                $questions = $selectedMcq->merge($selectedSubjective)->shuffle();
+            } else {
+                // Fallback: get what we can, prioritizing subjective questions for hard difficulty
+                $availableMcq = min($mcqQuestions->count(), $targetMcq);
+                $availableSubjective = min($subjectiveQuestions->count(), $targetSubjective);
+                
+                $selectedMcq = $mcqQuestions->shuffle()->take($availableMcq);
+                $selectedSubjective = $subjectiveQuestions->shuffle()->take($availableSubjective);
+                $questions = $selectedMcq->merge($selectedSubjective);
+                
+                // If we don't have enough, fill with any remaining questions
+                $totalSelected = $questions->count();
+                if ($totalSelected < 7) {
+                    $remaining = $allQuestions->whereNotIn('id', $questions->pluck('id'))
+                                           ->shuffle()
+                                           ->take(7 - $totalSelected);
+                    $questions = $questions->merge($remaining);
+                }
+                $questions = $questions->shuffle();
+            }
+            break;
+    }
+
+    // Final check - if we still don't have any questions, return error
+    if ($questions->isEmpty()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No questions available for the selected category and difficulty.'
+        ], 404);
+    }
+
+    // Shuffle MCQ options for each question
+    $questions->transform(function ($question) {
+        if ($question->question_type === 'MCQ') {
+            $options = collect([
+                'A' => $question->option_a,
+                'B' => $question->option_b,
+                'C' => $question->option_c,
+                'D' => $question->option_d
+            ])->filter()->shuffle(); // Filter out empty options and shuffle
+
+            $question->shuffled_options = $options;
+        }
+        return $question;
+    });
+
+    // Store quiz session
+    $quizSession = [
+        'questions' => $questions->map(function ($q) {
+            return [
+                'id' => $q->id,
+                'question_text' => $q->question_text,
+                'question_type' => $q->question_type,
+                'file_url' => $q->file_url,
+                'shuffled_options' => $q->shuffled_options ?? null,
+                'correct_answer' => $q->correct_answer
+            ];
+        }),
+        'category_id' => $categoryId,
+        'difficulty' => $difficulty,
+        'time_limit' => $timeLimit,
+        'start_time' => now()->timestamp,
+        'user_id' => auth()->id()
+    ];
+
+    $sessionKey = 'quiz_' . auth()->id() . '_' . time();
+    Cache::put($sessionKey, $quizSession, now()->addMinutes(30)); // Cache for 30 minutes
+
+    return response()->json([
+        'success' => true,
+        'session_key' => $sessionKey,
+        'questions' => $questions->map(function ($q) {
+            return [
+                'id' => $q->id,
+                'question_text' => $q->question_text,
+                'question_type' => $q->question_type,
+                'file_url' => $q->file_url,
+                'shuffled_options' => $q->shuffled_options ?? null
+            ];
+        }),
+        'time_limit' => $timeLimit,
+        'total_questions' => $questions->count()
+    ]);
+}
 
     public function submitQuiz(Request $request)
     {
