@@ -149,7 +149,7 @@ class LearningHubController extends Controller
             break;
 
         case 'medium':
-            $timeLimit = 600; // 10 minutes
+            $timeLimit = 300; // 5 minutes
             $targetMcq = 3;
             $targetSubjective = 2;
             
@@ -180,7 +180,7 @@ class LearningHubController extends Controller
             break;
 
         case 'hard':
-            $timeLimit = 900; // 15 minutes
+            $timeLimit = 420; // 7 minutes
             $targetMcq = 2;
             $targetSubjective = 5;
             
@@ -219,17 +219,55 @@ class LearningHubController extends Controller
         ], 404);
     }
 
-    // Shuffle MCQ options for each question
-    $questions->transform(function ($question) {
+        // Shuffle MCQ options for each question
+        $questions->transform(function ($question) {
         if ($question->question_type === 'MCQ') {
-            $options = collect([
+            // Create original options mapping
+            $originalOptions = [
                 'A' => $question->option_a,
                 'B' => $question->option_b,
                 'C' => $question->option_c,
                 'D' => $question->option_d
-            ])->filter()->shuffle(); // Filter out empty options and shuffle
+            ];
+            
+            // Filter out empty options and get the values
+            $optionValues = collect($originalOptions)->filter()->values();
+            
+            // Shuffle the values
+            $shuffledValues = $optionValues->shuffle();
+            
+            // Reassign to A, B, C, D structure
+            $shuffledOptions = [];
+            $keys = ['A', 'B', 'C', 'D'];
+            $shuffledValues->each(function ($value, $index) use (&$shuffledOptions, $keys) {
+                if (isset($keys[$index])) {
+                    $shuffledOptions[$keys[$index]] = $value;
+                }
+            });
 
-            $question->shuffled_options = $options;
+            $question->shuffled_options = $shuffledOptions;
+            
+            // Get the correct answer text based on the original letter
+            $correctAnswerText = '';
+            switch(strtoupper($question->correct_answer)) {
+                case 'A':
+                    $correctAnswerText = $question->option_a;
+                    break;
+                case 'B':
+                    $correctAnswerText = $question->option_b;
+                    break;
+                case 'C':
+                    $correctAnswerText = $question->option_c;
+                    break;
+                case 'D':
+                    $correctAnswerText = $question->option_d;
+                    break;
+                default:
+                    $correctAnswerText = $question->correct_answer;
+            }
+            
+            // Store the actual option text as correct answer
+            $question->correct_answer_text = $correctAnswerText;
         }
         return $question;
     });
@@ -243,7 +281,8 @@ class LearningHubController extends Controller
                 'question_type' => $q->question_type,
                 'file_url' => $q->file_url,
                 'shuffled_options' => $q->shuffled_options ?? null,
-                'correct_answer' => $q->correct_answer
+                // Use the option text instead of letter for MCQ
+                'correct_answer' => $q->question_type === 'MCQ' ? $q->correct_answer_text : $q->correct_answer
             ];
         }),
         'category_id' => $categoryId,
@@ -302,12 +341,14 @@ class LearningHubController extends Controller
         foreach ($questions as $question) {
             $questionId = $question['id'];
             $userAnswer = $userAnswers[$questionId] ?? null;
-            $correctAnswer = $question['correct_answer'];
+            $correctAnswer = $question['correct_answer']; // This is now option text for MCQ
 
             $isCorrect = false;
             if ($question['question_type'] === 'MCQ') {
-                $isCorrect = strtolower($correctAnswer) === strtolower($userAnswer);
+                // Compare option text directly (case-insensitive, trimmed)
+                $isCorrect = strtolower(trim($correctAnswer)) === strtolower(trim($userAnswer ?? ''));
             } elseif ($question['question_type'] === 'Subjective') {
+                // For subjective, do case-insensitive comparison after trimming whitespace
                 $isCorrect = strtolower(trim($correctAnswer)) === strtolower(trim($userAnswer ?? ''));
             }
 
@@ -320,7 +361,7 @@ class LearningHubController extends Controller
                 'question_text' => $question['question_text'],
                 'question_type' => $question['question_type'],
                 'user_answer' => $userAnswer,
-                'correct_answer' => $correctAnswer,
+                'correct_answer' => $correctAnswer, // This will now show the option text
                 'is_correct' => $isCorrect
             ];
         }

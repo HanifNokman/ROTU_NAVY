@@ -320,24 +320,24 @@
                                     </div>
 
                                     <!-- MCQ Options for Edit -->
-                                    <div id="editMcqOptions" class="mb-4">
-                         <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
-                         <div class="space-y-2">
-                          <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A"
-                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                          <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B"
-                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                          <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C"
-                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                          <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D"
-                              class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                         </div>
-                     </div>
+                                    <div id="editMcqOptions" x-show="editingQuestion.question_type === 'MCQ'" class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
+                                        <div class="space-y-2">
+                                        <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A" :required="editingQuestion.question_type === 'MCQ'"
+                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B" :required="editingQuestion.question_type === 'MCQ'"
+                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C" :required="editingQuestion.question_type === 'MCQ'"
+                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D" :required="editingQuestion.question_type === 'MCQ'"
+                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        </div>
+                                    </div>
 
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
                                         <div id="editMcqAnswerSelect" x-show="editingQuestion.question_type === 'MCQ'">
-                        <select name="correct_answer" x-model="editingQuestion.correct_answer" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <select name="correct_answer" x-model="editingQuestion.correct_answer" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                                                 <option value="">Select Correct Answer</option>
                                                 <option value="A">A</option>
                                                 <option value="B">B</option>
@@ -1001,9 +1001,19 @@
                     return this.deleteRouteTemplate.replace('__id__', this.deletingQuestion.id);
                 },
                 openEdit(questionData) {
+                    this.editingQuestion.id = questionData.id;
+                    this.editingQuestion.question_text = questionData.question_text;
+                    this.editingQuestion.question_type = questionData.question_type;
+                    this.editingQuestion.category_id = questionData.category_id;
+                    this.editingQuestion.option_a = questionData.option_a;
+                    this.editingQuestion.option_b = questionData.option_b;
+                    this.editingQuestion.option_c = questionData.option_c;
+                    this.editingQuestion.option_d = questionData.option_d;
+                    this.editingQuestion.correct_answer = questionData.correct_answer;
+                    this.editingQuestion.status = questionData.status;
                     this.showEditModal = true;
                     this.$nextTick(() => {
-                        this.editingQuestion = questionData;
+                        this.toggleEditQuestionType();
                     });
                 },
                 openDelete(questionData) {
@@ -1013,6 +1023,12 @@
                 toggleEditQuestionType() {
                     // Clear the correct answer when switching types
                     this.editingQuestion.correct_answer = '';
+                    if (this.editingQuestion.question_type === 'Subjective') {
+                        this.editingQuestion.option_a = '';
+                        this.editingQuestion.option_b = '';
+                        this.editingQuestion.option_c = '';
+                        this.editingQuestion.option_d = '';
+                    }
                 }
             }
         }
