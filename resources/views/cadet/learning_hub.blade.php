@@ -629,7 +629,7 @@
                     return;
                 }
 
-                // Create quiz HTML with improved styling
+                // Create quiz HTML with mobile-optimized styling
                 const quizHTML = `
                     <div style="
                         background: white;
@@ -644,53 +644,59 @@
                         <!-- Header -->
                         <div style="
                             background: linear-gradient(to right, #ecfdf5, #d1fae5);
-                            padding: 1.5rem;
+                            padding: 1rem;
                             border-bottom: 1px solid #e5e7eb;
                             position: sticky;
                             top: 0;
                             border-radius: 0.75rem 0.75rem 0 0;
                         ">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                                <div style="flex: 1; min-width: 0;">
                                     <h2 style="
-                                        font-size: 1.5rem;
+                                        font-size: clamp(1.125rem, 4vw, 1.5rem);
                                         font-weight: 600;
                                         color: #111827;
-                                        margin: 0 0 0.5rem 0;
+                                        margin: 0 0 0.25rem 0;
+                                        line-height: 1.2;
                                     ">Quiz in Progress</h2>
                                     <p style="
                                         color: #6b7280;
                                         margin: 0;
+                                        font-size: clamp(0.75rem, 3vw, 0.875rem);
+                                        line-height: 1.3;
                                     ">Question ${window.quizState.currentQuestion + 1} of ${window.quizState.questions.length}</p>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="display: flex; align-items: flex-start; gap: 0.75rem; flex-shrink: 0;">
                                     <div style="text-align: right;">
                                         <div id="timer" style="
-                                            font-size: 1.125rem;
+                                            font-size: clamp(0.875rem, 3vw, 1.125rem);
                                             font-weight: 600;
                                             color: #dc2626;
+                                            line-height: 1.2;
                                         ">${this.formatTime(window.quizState.timeRemaining)}</div>
                                         <div style="
-                                            font-size: 0.875rem;
+                                            font-size: clamp(0.625rem, 2.5vw, 0.75rem);
                                             color: #6b7280;
-                                        ">Time Remaining</div>
+                                            white-space: nowrap;
+                                        ">Time Left</div>
                                     </div>
                                     <button onclick="QuizManager.closeQuiz()" style="
                                         background: none;
                                         border: none;
                                         color: #6b7280;
-                                        font-size: 1.5rem;
+                                        font-size: clamp(1.25rem, 5vw, 1.5rem);
                                         font-weight: bold;
                                         cursor: pointer;
                                         padding: 0.25rem;
                                         line-height: 1;
+                                        touch-action: manipulation;
                                     " onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#6b7280'">×</button>
                                 </div>
                             </div>
                             
                             <!-- Progress Bar -->
                             <div style="
-                                margin-top: 1rem;
+                                margin-top: 0.75rem;
                                 background: #e5e7eb;
                                 border-radius: 9999px;
                                 height: 0.5rem;
@@ -706,18 +712,25 @@
                         </div>
 
                         <!-- Content -->
-                        <div style="padding: 1.5rem;">
+                        <div style="padding: clamp(1rem, 4vw, 1.5rem);">
                             <!-- Question -->
                             <div style="margin-bottom: 1.5rem;">
                                 <h3 style="
-                                    font-size: 1.125rem;
+                                    font-size: clamp(1rem, 4vw, 1.125rem);
                                     font-weight: 500;
                                     color: #111827;
                                     margin: 0 0 1rem 0;
                                     line-height: 1.6;
                                 ">${question.question_text}</h3>
+                                
                                 ${question.file_url ? `
-                                    <div style="margin-bottom: 1rem;">
+                                    <div style="
+                                        margin-bottom: 1.5rem;
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        width: 100%;
+                                    ">
                                         ${this.renderFile(question.file_url)}
                                     </div>
                                 ` : ''}
@@ -733,20 +746,23 @@
                                 margin-top: 1.5rem;
                                 padding-top: 1.5rem;
                                 border-top: 1px solid #e5e7eb;
+                                gap: 0.5rem;
                             ">
                                 <button onclick="QuizManager.previousQuestion()" 
                                         ${window.quizState.currentQuestion === 0 ? 
                                             `disabled style="
-                                                padding: 0.5rem 1rem;
+                                                padding: clamp(0.5rem, 3vw, 0.75rem) clamp(0.75rem, 4vw, 1rem);
                                                 background: #d1d5db;
                                                 color: white;
                                                 border: none;
                                                 border-radius: 0.5rem;
                                                 cursor: not-allowed;
                                                 font-weight: 500;
+                                                font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+                                                touch-action: manipulation;
                                             "` : 
                                             `style="
-                                                padding: 0.5rem 1rem;
+                                                padding: clamp(0.5rem, 3vw, 0.75rem) clamp(0.75rem, 4vw, 1rem);
                                                 background: #2563eb;
                                                 color: white;
                                                 border: none;
@@ -754,6 +770,8 @@
                                                 cursor: pointer;
                                                 transition: background 0.2s;
                                                 font-weight: 500;
+                                                font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+                                                touch-action: manipulation;
                                             " onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'"`
                                         }>
                                     Previous
@@ -762,7 +780,7 @@
                                 <div style="display: flex; gap: 0.5rem;">
                                     ${window.quizState.currentQuestion < window.quizState.questions.length - 1 ? 
                                         `<button onclick="QuizManager.nextQuestion()" style="
-                                            padding: 0.5rem 1rem;
+                                            padding: clamp(0.5rem, 3vw, 0.75rem) clamp(0.75rem, 4vw, 1rem);
                                             background: #2563eb;
                                             color: white;
                                             border: none;
@@ -770,9 +788,11 @@
                                             cursor: pointer;
                                             transition: background 0.2s;
                                             font-weight: 500;
+                                            font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+                                            touch-action: manipulation;
                                         " onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">Next</button>` :
                                         `<button onclick="QuizManager.submitQuiz()" style="
-                                            padding: 0.5rem 1.5rem;
+                                            padding: clamp(0.5rem, 3vw, 0.75rem) clamp(0.75rem, 4vw, 1.5rem);
                                             background: #059669;
                                             color: white;
                                             border: none;
@@ -780,6 +800,8 @@
                                             cursor: pointer;
                                             transition: background 0.2s;
                                             font-weight: 600;
+                                            font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+                                            touch-action: manipulation;
                                         " onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">Submit Quiz</button>`
                                     }
                                 </div>
@@ -796,16 +818,49 @@
                 
                 if (/\.(jpg|jpeg|png|gif)$/i.test(fileUrl)) {
                     return `<img src="${url}" alt="Question Image" style="
-                        max-width: 28rem;
+                        max-width: 100%;
+                        max-height: 60vh;
+                        width: auto;
+                        height: auto;
                         border-radius: 0.5rem;
                         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                        object-fit: contain;
                     ">`;
                 } else if (/\.(mp4|webm|avi|mov)$/i.test(fileUrl)) {
                     return `<video controls style="
-                        max-width: 28rem;
+                        max-width: 100%;
+                        max-height: 60vh;
+                        width: auto;
+                        height: auto;
                         border-radius: 0.5rem;
                         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                     "><source src="${url}" type="video/mp4"></video>`;
+                } else if (/\.(mp3|wav|ogg|m4a)$/i.test(fileUrl)) {
+                    return `<div style="
+                        width: 100%;
+                        max-width: 400px;
+                        padding: 1rem;
+                        background: #f8fafc;
+                        border-radius: 0.5rem;
+                        border: 2px solid #e2e8f0;
+                    ">
+                        <div style="
+                            display: flex;
+                            align-items: center;
+                            margin-bottom: 0.75rem;
+                            font-weight: 500;
+                            color: #374151;
+                        ">
+                            🎵 Audio File
+                        </div>
+                        <audio controls style="
+                            width: 100%;
+                            height: 40px;
+                        ">
+                            <source src="${url}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>`;
                 } else {
                     return `<a href="${url}" target="_blank" style="
                         display: inline-flex;
@@ -816,6 +871,8 @@
                         text-decoration: none;
                         border-radius: 0.5rem;
                         transition: background 0.2s;
+                        font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+                        touch-action: manipulation;
                     " onmouseover="this.style.background='#bfdbfe'" onmouseout="this.style.background='#dbeafe'">
                         📄 View Document
                     </a>`;
@@ -827,31 +884,43 @@
                 let optionsHTML = '<div style="margin-bottom: 1.5rem;">';
                 
                 Object.entries(options).forEach(([key, value]) => {
-                    const isChecked = window.quizState.answers[question.id] === key ? 'checked' : '';
+                    // Check if current answer matches this option's text value
+                    const isChecked = window.quizState.answers[question.id] === value ? 'checked' : '';
                     optionsHTML += `
                         <label style="
                             display: flex;
-                            align-items: center;
-                            padding: 0.75rem;
+                            align-items: flex-start;
+                            padding: clamp(0.75rem, 3vw, 1rem);
                             border: 2px solid #e5e7eb;
                             border-radius: 0.5rem;
                             margin-bottom: 0.75rem;
                             cursor: pointer;
                             transition: all 0.2s;
                             background: white;
+                            touch-action: manipulation;
+                            min-height: 3rem;
                         " onmouseover="this.style.background='#f9fafb'; this.style.borderColor='#d1d5db'" 
                            onmouseout="this.style.background='white'; this.style.borderColor='#e5e7eb'"
                            onclick="this.style.borderColor='#059669'; this.style.background='#f0fdf4'">
-                            <input type="radio" name="question_${question.id}" value="${key}" ${isChecked}
-                                   onchange="QuizManager.updateAnswer(${question.id}, '${key}')"
+                            <input type="radio" 
+                                   name="question_${question.id}" 
+                                   value="${value}" 
+                                   ${isChecked}
+                                   onchange="QuizManager.updateAnswer(${question.id}, '${value}'); console.log('Selected option text:', '${value}', 'for question:', ${question.id});"
                                    style="
                                        margin-right: 0.75rem;
+                                       margin-top: 0.125rem;
                                        accent-color: #059669;
-                                       transform: scale(1.2);
+                                       transform: scale(clamp(1.1, 4vw, 1.3));
+                                       flex-shrink: 0;
                                    ">
                             <span style="
                                 color: #374151;
                                 font-weight: 500;
+                                font-size: clamp(0.875rem, 3.5vw, 1rem);
+                                line-height: 1.5;
+                                word-wrap: break-word;
+                                flex: 1;
                             ">${key}. ${value}</span>
                         </label>
                     `;
@@ -867,7 +936,7 @@
                     <div style="margin-bottom: 1.5rem;">
                         <label style="
                             display: block;
-                            font-size: 0.875rem;
+                            font-size: clamp(0.75rem, 3.5vw, 0.875rem);
                             font-weight: 500;
                             color: #374151;
                             margin-bottom: 0.5rem;
@@ -876,14 +945,16 @@
                                   onchange="QuizManager.updateAnswer(${question.id}, this.value)"
                                   style="
                                       width: 100%;
-                                      padding: 0.75rem;
+                                      padding: clamp(0.75rem, 3vw, 1rem);
                                       border: 2px solid #d1d5db;
                                       border-radius: 0.5rem;
                                       font-family: inherit;
-                                      font-size: 1rem;
+                                      font-size: clamp(0.875rem, 3.5vw, 1rem);
                                       transition: border-color 0.2s;
                                       resize: vertical;
                                       box-sizing: border-box;
+                                      min-height: 6rem;
+                                      line-height: 1.5;
                                   "
                                   onfocus="this.style.borderColor='#059669'; this.style.outline='none'"
                                   onblur="this.style.borderColor='#d1d5db'"
@@ -899,8 +970,11 @@
             },
 
             updateAnswer(questionId, value) {
-                window.quizState.answers[questionId] = value;
-                console.log('Answer updated:', questionId, value);
+                // Ensure value is always a string and log for debugging
+                const cleanValue = String(value).trim();
+                window.quizState.answers[questionId] = cleanValue;
+                console.log('Answer updated - Question ID:', questionId, 'Value:', cleanValue, 'Type:', typeof cleanValue);
+                console.log('Current answers state:', window.quizState.answers);
             },
 
             nextQuestion() {
