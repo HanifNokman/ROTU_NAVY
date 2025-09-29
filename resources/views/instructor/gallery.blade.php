@@ -39,58 +39,59 @@
                     </h2>
                     <p class="text-gray-600">View and manage training photos organized by category</p>
                 </div>
-
                 <div class="p-6">
 
                 <!-- Category Toggle Buttons -->
                 <div class="mb-6">
-                    <div class="flex flex-wrap gap-3">
-                        <!-- All Categories Button -->
-                        <a href="{{ route('instructor.gallery') }}" 
-                           class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ !request('category') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                            </svg>
-                            All
-                        </a>
-
-                        <!-- Individual Category Buttons -->
-                        @foreach($categories as $category)
-                            <a href="{{ route('instructor.gallery', ['category' => $category->id]) }}" 
-                               class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ request('category') == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} flex items-center gap-2">
+                    <div class="flex justify-between items-center">
+                        <div class="flex flex-wrap gap-3">
+                            <!-- All Categories Button -->
+                            <button onclick="filterByCategory('all')"
+                                   class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white flex items-center gap-2"
+                                   data-category="all">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                                 </svg>
-                                {{ $category->name }}
-                            </a>
-                        @endforeach
+                                All
+                            </button>
 
-                        <!-- Add Category Button -->
-                        <button onclick="openCategoryModal()" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-green-100 text-green-700 hover:bg-green-200 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Add Category
-                        </button>
+                            <!-- Individual Category Buttons -->
+                            @foreach($categories as $category)
+                                <button onclick="filterByCategory('{{ $category->id }}')"
+                                       class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center gap-2"
+                                       data-category="{{ $category->id }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                    {{ $category->name }}
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button onclick="openGalleryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Add Picture
+                            </button>
+                            <button onclick="openCategoryModal()" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-green-100 text-green-700 hover:bg-green-200 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Add Category
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Gallery Stats -->
                 <div class="mb-6 p-4 bg-blue-50 rounded-lg">
                     <div class="flex flex-wrap gap-4 text-sm text-blue-800">
-                        <span><strong>Total Pictures:</strong> {{ $galleries->count() }}</span>
-                        <span><strong>Categories:</strong> {{ $categories->count() }}</span>
+                        <span><strong>Total Pictures:</strong> <span id="totalPictures">{{ $galleries->count() }}</span></span>
+                        <span><strong>Categories:</strong> <span id="totalCategories">{{ $categories->count() }}</span></span>
+                        <span><strong>Viewing:</strong> <span id="currentViewText">All Categories</span></span>
                     </div>
-                </div>
-
-                <!-- Add Picture Button -->
-                <div class="mb-6 flex justify-end">
-                    <button onclick="openGalleryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Add Picture
-                    </button>
                 </div>
 
                 <!-- Alpine State for Edit and Delete Modal -->
@@ -116,72 +117,96 @@
                         this.deleteGallery = JSON.parse(galleryData);
                         this.showDeleteModal = true;
                     }
-                }">
+                }" x-init="initializeGallery()">
 
-                    <!-- Gallery Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        @forelse($galleries as $gallery)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                            <!-- Image -->
-                            <div class="relative h-48 bg-gray-200">
-                                @if($gallery->image_path)
-                                    <img src="{{ asset($gallery->image_path) }}" 
-                                         alt="{{ $gallery->title }}" 
-                                         class="w-full h-full object-cover cursor-pointer"
-                                         onclick="openImageModal('{{ asset($gallery->image_path) }}', '{{ $gallery->title }}')">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
+                    <!-- Category Overview (Default "All" View) -->
+                    <div id="categoryOverview" class="space-y-6">
+                        @php
+                            $galleriesByCategory = $galleries->groupBy('gallery_category_id');
+                            $categoryColors = [
+                                'background: linear-gradient(135deg, #3c92d9, #2c7ec9);',
+                                'background: linear-gradient(135deg, #06b6d4, #3c92d9);',
+                                'background: linear-gradient(135deg, #10b981, #059669);',
+                                'background: linear-gradient(135deg, #8b5cf6, #ec4899);',
+                                'background: linear-gradient(135deg, #f97316, #ef4444);',
+                                'background: linear-gradient(135deg, #6366f1, #8b5cf6);',
+                                'background: linear-gradient(135deg, #ec4899, #f43f5e);',
+                                'background: linear-gradient(135deg, #14b8a6, #06b6d4);',
+                                'background: linear-gradient(135deg, #ef4444, #ec4899);',
+                                'background: linear-gradient(135deg, #eab308, #f97316);'
+                            ];
+                        @endphp
+                        
+                        @if($categories->count() > 0)
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                @foreach($categories as $index => $category)
+                                    @php
+                                        $categoryGalleries = $galleriesByCategory->get($category->id, collect());
+                                        $color = $categoryColors[$index % count($categoryColors)];
+                                        $photoCount = $categoryGalleries->count();
+                                    @endphp
+                                    
+                                    <div class="category-card text-white rounded-xl p-6 shadow-lg cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-xl" 
+                                         style="{{ $color }}"
+                                         onclick="filterByCategory('{{ $category->id }}')">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-xl font-bold">{{ $category->name }}</h3>
+                                            <svg class="w-8 h-8 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <p class="opacity-75 mb-3">
+                                            Training photos and activities in this category
+                                        </p>
+                                        <div class="flex justify-between items-center">
+                                            <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-medium">
+                                                {{ $photoCount }} {{ Str::plural('Photo', $photoCount) }}
+                                            </span>
+                                            <span class="text-sm opacity-75">Click to manage →</span>
+                                        </div>
                                     </div>
-                                @endif
+                                @endforeach
                             </div>
-                            
-                            <!-- Content -->
-                            <div class="p-4">
-                                <h3 class="font-semibold text-lg text-gray-900 mb-2">{{ $gallery->title }}</h3>
-                                @if($gallery->description)
-                                    <p class="text-sm text-gray-600 mb-3">{{ Str::limit($gallery->description, 100) }}</p>
-                                @endif
-                                
-                                <!-- Category Badge -->
-                                <div class="mb-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        {{ $gallery->category->name ?? 'N/A' }}
-                                    </span>
-                                </div>
-                                
-                                <!-- Actions -->
-                                <div class="flex gap-2">
-                                    <button type="button"
-                                            @click="openEdit('{{ json_encode([ 'id' => $gallery->id, 'title' => $gallery->title, 'description' => $gallery->description, 'gallery_category_id' => $gallery->gallery_category_id ]) }}')"
-                                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm flex-1">
-                                        Edit
-                                    </button>
-                                    <button type="button"
-                                            @click="openDelete('{{ json_encode(['id' => $gallery->id, 'title' => $gallery->title]) }}')"
-                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm flex-1">
-                                        Delete
-                                    </button>
-                                </div>
+                        @else
+                            <div class="text-center py-12">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                                <p class="mt-2 text-gray-500">No categories available.</p>
+                                <p class="text-sm text-gray-400 mt-1">Create your first category to organize your photos!</p>
                             </div>
+                        @endif
+                    </div>
+                    <!-- Individual Photos View -->
+                    <div id="photosView" class="hidden">
+                        <!-- Back to Categories Button -->
+                        <div class="mb-6">
+                            <button onclick="showCategoryOverview()" class="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                                Back to Categories
+                            </button>
                         </div>
-                        @empty
-                        <div class="col-span-full text-center py-12">
+
+                        <!-- Current Category Header -->
+                        <div id="currentCategoryHeader" class="mb-6">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+
+                        <!-- Gallery Grid -->
+                        <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+
+                        <!-- No Results Message -->
+                        <div id="noResults" class="text-center py-12 hidden">
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"></path>
                             </svg>
-                            <p class="mt-2 text-gray-500">
-                                @if(request()->filled('category'))
-                                    No gallery items found in this category.
-                                @else
-                                    No gallery items available.
-                                @endif
-                            </p>
+                            <p class="mt-2 text-gray-500">No gallery items found in this category.</p>
                             <p class="text-sm text-gray-400 mt-1">Add your first picture to get started!</p>
                         </div>
-                        @endforelse
                     </div>
 
                     <!-- Edit Modal -->
@@ -260,7 +285,6 @@
             </div>
         </div>
     </div>
-
     <!-- Image Preview Modal -->
     <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center">
         <div class="relative max-w-4xl max-h-full p-4">
@@ -334,7 +358,6 @@
             </div>
         </div>
     </div>
-
     <!-- Enhanced Category Modal -->
     <div id="categoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
         <div class="relative top-10 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white">
@@ -452,8 +475,202 @@
             </div>
         </div>
     </div>
-
     <script>
+        // Gallery data from PHP
+        const galleryData = @json($galleries->groupBy('gallery_category_id'));
+        const categoriesData = @json($categories);
+        const allGalleries = @json($galleries);
+        let currentFilter = 'all';
+
+        // Initialize gallery on page load
+        function initializeGallery() {
+            updateStats();
+            showCategoryOverview();
+            updateFilterButtons('all');
+        }
+
+        // Filter function
+        function filterByCategory(category) {
+            currentFilter = category;
+            updateFilterButtons(category);
+            
+            if (category === 'all') {
+                showCategoryOverview();
+            } else {
+                showPhotosForCategory(category);
+            }
+            
+            updateStats();
+        }
+
+        // Update filter button states
+        function updateFilterButtons(activeCategory) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                const category = btn.dataset.category;
+                if (category === activeCategory) {
+                    btn.className = 'filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white flex items-center gap-2';
+                } else {
+                    btn.className = 'filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center gap-2';
+                }
+            });
+        }
+
+        // Show category overview
+        function showCategoryOverview() {
+            const overview = document.getElementById('categoryOverview');
+            const photosView = document.getElementById('photosView');
+            
+            overview.classList.remove('hidden');
+            photosView.classList.add('hidden');
+            
+            currentFilter = 'all';
+            updateFilterButtons('all');
+            updateStats();
+        }
+
+        // Show photos for specific category
+        function showPhotosForCategory(categoryId) {
+            const overview = document.getElementById('categoryOverview');
+            const photosView = document.getElementById('photosView');
+            const galleryGrid = document.getElementById('galleryGrid');
+            const noResults = document.getElementById('noResults');
+            
+            const photos = galleryData[categoryId] || [];
+            
+            overview.classList.add('hidden');
+            photosView.classList.remove('hidden');
+            
+            if (photos.length === 0) {
+                galleryGrid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+            
+            galleryGrid.classList.remove('hidden');
+            noResults.classList.add('hidden');
+            
+            // Update category header
+            updateCategoryHeader(categoryId);
+            
+            // Populate photos grid
+            populatePhotosGrid(photos);
+        }
+        // Update category header
+        function updateCategoryHeader(categoryId) {
+            const header = document.getElementById('currentCategoryHeader');
+            const category = categoriesData.find(cat => cat.id == categoryId);
+            
+            if (!category) return;
+            
+            const photoCount = galleryData[categoryId]?.length || 0;
+            
+            header.innerHTML = `
+                <div class="text-white px-8 py-4 rounded-xl shadow-lg" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9);">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold tracking-wide">${category.name}</h2>
+                            <p class="text-blue-100 text-sm mt-1" style="color: rgba(255,255,255,0.8);">Manage photos in this category</p>
+                        </div>
+                        <span class="bg-white bg-opacity-20 text-white px-3 py-1 rounded-full text-sm font-medium">
+                            ${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Populate photos grid
+        function populatePhotosGrid(photos) {
+            const grid = document.getElementById('galleryGrid');
+            
+            grid.innerHTML = photos.map(photo => `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                    <!-- Image -->
+                    <div class="relative h-48 bg-gray-200">
+                        ${photo.image_path ? 
+                            `<img src="{{ asset('') }}${photo.image_path}" 
+                                 alt="${photo.title || 'Gallery Image'}" 
+                                 class="w-full h-full object-cover cursor-pointer"
+                                 onclick="openImageModal('{{ asset('') }}${photo.image_path}', '${photo.title || 'Gallery Image'}')">` :
+                            `<div class="w-full h-full flex items-center justify-center text-gray-400">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>`
+                        }
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-900 mb-2">${photo.title || 'Untitled'}</h3>
+                        ${photo.description ? 
+                            `<p class="text-sm text-gray-600 mb-3">${photo.description.length > 100 ? photo.description.substring(0, 100) + '...' : photo.description}</p>` : 
+                            ''
+                        }
+                        
+                        <!-- Category Badge -->
+                        <div class="mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                ${photo.category?.name || 'N/A'}
+                            </span>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="flex gap-2">
+                            <button type="button"
+                                    onclick="editGalleryItem(${JSON.stringify({
+                                        id: photo.id,
+                                        title: photo.title,
+                                        description: photo.description,
+                                        gallery_category_id: photo.gallery_category_id
+                                    }).replace(/"/g, '&quot;')})"
+                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm flex-1">
+                                Edit
+                            </button>
+                            <button type="button"
+                                    onclick="deleteGalleryItem(${JSON.stringify({
+                                        id: photo.id,
+                                        title: photo.title
+                                    }).replace(/"/g, '&quot;')})"
+                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm flex-1">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Edit gallery item function
+        function editGalleryItem(galleryData) {
+            // Trigger Alpine.js component
+            const alpineComponent = document.querySelector('[x-data]').__x.$data;
+            alpineComponent.openEdit(JSON.stringify(galleryData));
+        }
+
+        // Delete gallery item function
+        function deleteGalleryItem(galleryData) {
+            // Trigger Alpine.js component
+            const alpineComponent = document.querySelector('[x-data]').__x.$data;
+            alpineComponent.openDelete(JSON.stringify(galleryData));
+        }
+
+        // Update statistics
+        function updateStats() {
+            const totalPictures = allGalleries.length;
+            const totalCategories = categoriesData.length;
+            
+            let currentViewText = 'All Categories';
+            if (currentFilter !== 'all') {
+                const category = categoriesData.find(cat => cat.id == currentFilter);
+                currentViewText = category ? category.name : 'Unknown Category';
+            }
+            
+            document.getElementById('totalPictures').textContent = totalPictures;
+            document.getElementById('totalCategories').textContent = totalCategories;
+            document.getElementById('currentViewText').textContent = currentViewText;
+        }
         // Image Preview Functions
         function openImageModal(imageSrc, title) {
             document.getElementById('previewImage').src = imageSrc;
@@ -530,7 +747,6 @@
         function closeDeleteCategoryModal() {
             document.getElementById('deleteCategoryModal').classList.add('hidden');
         }
-
         // Close modals when clicking outside
         window.onclick = function(event) {
             const galleryModal = document.getElementById('galleryModal');
@@ -562,4 +778,21 @@
             }
         });
     </script>
+
+    <style>
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </x-app-layout>
