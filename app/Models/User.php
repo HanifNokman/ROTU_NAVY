@@ -70,4 +70,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Cadet::class, 'user_id');
     }
+
+    /**
+     * Get the instructor record associated with the user.
+     */
+    public function instructor()
+    {
+        return $this->hasOne(Instructor::class, 'user_id');
+    }
 }

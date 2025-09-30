@@ -313,7 +313,7 @@ Route::middleware(['auth', 'verified'])->prefix('cadet')->name('cadet.')->group(
 // ============================================================================
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     Route::get('/dashboard', function () {
         $user = auth()->user();
         if (!$user || $user->status !== 'accepted' || $user->role !== 'admin') {
@@ -323,6 +323,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     })->name('dashboard');
 
     Route::get('/user_management', [App\Http\Controllers\Admin\AdminController::class, 'userManagement'])->name('user_management');
+    Route::get('/user/{id}', [App\Http\Controllers\Admin\AdminController::class, 'getUser'])->name('user.show');
+    Route::put('/user/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateUser'])->name('user.update');
+    Route::delete('/user/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])->name('user.delete');
     Route::get('/data_management', [App\Http\Controllers\Admin\AdminController::class, 'dataManagement'])->name('data_management');
     Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');
 });
