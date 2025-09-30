@@ -28,7 +28,7 @@ return new class extends Migration {
                 'name' => 'Hanif Nokman',
                 'email' => 'hanifnokman02@gmail.com',
                 'password' => Hash::make('Hanif)$)^02'),
-                'role' => 'instructor',
+                'role' => 'admin',
                 'status' => 'accepted',
                 'created_at' => now(),
                 'updated_at' => now(),

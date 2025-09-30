@@ -224,17 +224,6 @@
                     <x-input-error class="mt-2" :messages="$errors->get('rank')" />
                 </div>
                 <div>
-                    <x-input-label for="status" :value="__('Status')" />
-                    @php $selectedStatus = $personal->status; @endphp
-                    <select id="status" name="status" class="mt-1 block w-full">
-                        <option value="">Select Status</option>
-                        <option value="Active" {{ $selectedStatus === 'Active' ? 'selected' : '' }}>Active</option>
-                        <option value="Relocated" {{ $selectedStatus === 'Relocated' ? 'selected' : '' }}>Relocated</option>
-                        <option value="Retired" {{ $selectedStatus === 'Retired' ? 'selected' : '' }}>Retired</option>
-                    </select>
-                    <x-input-error class="mt-2" :messages="$errors->get('status')" />
-                </div>
-                <div>
                     <x-input-label for="time_in_service" :value="__('Time in Service (years)')" />
                     <x-text-input id="time_in_service" name="time_in_service" type="number" min="0" step="1" class="mt-1 block w-full" :value="$personal->time_in_service" />
                     <x-input-error class="mt-2" :messages="$errors->get('time_in_service')" />
