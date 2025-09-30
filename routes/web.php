@@ -278,14 +278,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/cadet/attendance/absence/{attendance}', [AttendanceController::class, 'submitAbsence'])->name('cadet.attendance.absence');
     Route::post('/cadet/attendance/verify-qr', [AttendanceController::class, 'verifyQR'])->name('cadet.attendance.verify-qr');
 
-    // Admin Dashboard
-    Route::get('/admin/dashboard', function () {
-        $user = auth()->user();
-        if (!$user || $user->status !== 'accepted') {
-            abort(403, 'Your account is not accepted.');
-        }
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    // Admin Routes - Restricted to admin role
+    Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            $user = auth()->user();
+            if (!$user || $user->status !== 'accepted' || $user->role !== 'admin') {
+                abort(403, 'Access denied. Admin privileges required.');
+            }
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        Route::get('/user_management', [App\Http\Controllers\Admin\AdminController::class, 'userManagement'])->name('user_management');
+        Route::get('/data_management', [App\Http\Controllers\Admin\AdminController::class, 'dataManagement'])->name('data_management');
+        Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');
+    });
 });
 
 // AJAX API Routes for Learning Hub - FIXED SECTION
