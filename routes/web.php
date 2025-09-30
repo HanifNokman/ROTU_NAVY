@@ -20,6 +20,10 @@ use App\Http\Controllers\Cadet\AttendanceController;
 
 use Illuminate\Support\Facades\Route;
 
+// ============================================================================
+// PUBLIC ROUTES
+// ============================================================================
+
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
@@ -28,19 +32,6 @@ Route::get('/about-me', function () {
     return view('about-me');
 })->name('about-me');
 
-// Content Management Routes (Protected by middleware)
-Route::middleware(['auth'])->group(function () {
-
-    // Update content settings (only instructors and admins)
-    Route::post('/content-management/update', [ContentManagementController::class, 'update'])
-        ->name('content.update');
-
-    // Reset content to defaults (only instructors and admins)
-    Route::post('/content-management/reset', [ContentManagementController::class, 'resetToDefaults'])
-        ->name('content.reset');
-});
-
-// Public API routes for getting current settings
 Route::get('/api/content-settings', [ContentManagementController::class, 'getCurrentSettings'])
     ->name('api.content.settings');
 
@@ -49,265 +40,26 @@ Route::get('/logout-and-landing', function () {
     return redirect('/');
 })->name('logout.and.landing');
 
-Route::get('/dashboard', function () {
-    $user = auth()->user();
-    if (!$user) {
-        return redirect()->route('login');
-    }
-    if ($user->status !== 'accepted') {
-        \Auth::logout();
-        return redirect('/')->with('error', 'Your account is not accepted.');
-    }
-    switch ($user->role) {
-        case 'cadet':
-            return redirect()->route('cadet.dashboard');
-        case 'instructor':
-            return redirect()->route('instructor.dashboard');
-        case 'admin':
-            return redirect()->route('admin.dashboard');
-        default:
-            abort(403);
-    }
-})->middleware(['auth', 'verified'])->name('dashboard');
+// ============================================================================
+// AUTHENTICATED ROUTES
+// ============================================================================
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Replace this section in your routes/web.php file:
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
-    });
-
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/cadet/dashboard', [CadetDashboardController::class, 'index'])->name('cadet.dashboard');
-    });
-
-    Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
-
-    // Updated Instructor Cadet Management Routes
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/instructor/cadet_management', [CadetManagementController::class, 'index'])->name('instructor.cadet_management');
-        Route::get('/instructor/cadets/{cadet}', [CadetManagementController::class, 'show'])->name('instructor.cadets.show');
-        Route::post('/instructor/cadets/positions', [CadetManagementController::class, 'updatePositions'])->name('instructor.cadets.positions.update');
-        Route::post('/instructor/cadets/swimming/mark-passed', [CadetManagementController::class, 'markSwimmingPassed'])->name('instructor.cadets.swimming.mark-passed');
-        Route::delete('/instructor/cadets/{cadet}', [CadetManagementController::class, 'destroy'])->name('instructor.cadets.destroy');
-    });
-
-    // Training route
-    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-        // Main training page
-        Route::get('/training', [InstructorTrainingController::class, 'index'])->name('training');
-
-        // CRUD operations
-        Route::post('/training', [InstructorTrainingController::class, 'store'])->name('training.store');
-        Route::get('/training/{training}', [InstructorTrainingController::class, 'show'])->name('training.show');
-        Route::put('/training/{training}', [InstructorTrainingController::class, 'update'])->name('training.update');
-        Route::delete('/training/{training}', [InstructorTrainingController::class, 'destroy'])->name('training.destroy');
-
-        // New endpoints for additional features
-        Route::post('/training/{training}/end', [InstructorTrainingController::class, 'endTraining'])->name('training.end');
-        Route::get('/training/{training}/qr-code', [InstructorTrainingController::class, 'generateQrCode'])->name('training.qr-code');
-        Route::get('/training/{training}/cadets', [InstructorTrainingController::class, 'getCadetsForAttendance'])->name('training.cadets');
-
-        // Attendance management
-        Route::post('/training/{training}/attendance', [InstructorTrainingController::class, 'saveAttendance'])->name('training.attendance');
-        Route::post('/training/{training}/attendance/qr', [InstructorTrainingController::class, 'recordQrAttendance'])->name('training.attendance.qr');
-        Route::get('/attendance-list', [InstructorTrainingController::class, 'getAllAttendanceList'])->name('attendance.list.all');
-
-        // AJAX endpoints for instructor attendance filters
-        Route::get('/getYears', [InstructorTrainingController::class, 'getYears']);
-        Route::get('/getMonths', [InstructorTrainingController::class, 'getMonths']);
-        Route::get('/getCadetAttendanceList', [InstructorTrainingController::class, 'getCadetAttendanceList']);
-    });
-
-    // Allowance route
-    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-        Route::get('/allowance', [AllowanceController::class, 'index'])->name('allowance');
-        Route::get('/allowance/training/{training}/details', [AllowanceController::class, 'getTrainingDetails'])->name('allowance.training.details');
-    });
-
-    // Inventory route
-    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-        // Main inventory page
-        Route::get('/inventory', [InstructorInventoryController::class, 'index'])->name('inventory');
-
-        // Uniform Type routes
-        Route::post('/inventory/uniform-types', [InstructorInventoryController::class, 'storeUniformType'])->name('inventory.uniform-types.store');
-        Route::get('/inventory/uniform-types', [InstructorInventoryController::class, 'getUniformTypes'])->name('inventory.uniform-types.index');
-        Route::delete('/inventory/uniform-types/{id}', [InstructorInventoryController::class, 'deleteUniformType'])->name('inventory.uniform-types.destroy');
-
-        // Uniform Component routes
-        Route::post('/inventory/uniform-components', [InstructorInventoryController::class, 'storeUniformComponent'])->name('inventory.uniform-components.store');
-        Route::get('/inventory/uniform-components', [InstructorInventoryController::class, 'getUniformComponents'])->name('inventory.uniform-components.index');
-        Route::delete('/inventory/uniform-components/{id}', [InstructorInventoryController::class, 'deleteUniformComponent'])->name('inventory.uniform-components.destroy');
-        Route::get('/inventory/uniform-types/{uniformTypeId}/components', [InstructorInventoryController::class, 'getComponentsByType'])->name('inventory.components-by-type');
-
-        // Equipment routes
-        Route::post('/inventory/equipment', [InstructorInventoryController::class, 'storeEquipment'])->name('inventory.equipment.store');
-        Route::get('/inventory/equipment', [InstructorInventoryController::class, 'getEquipment'])->name('inventory.equipment.index');
-        Route::delete('/inventory/equipment/{id}', [InstructorInventoryController::class, 'deleteEquipment'])->name('inventory.equipment.destroy');
-
-        // Loan management
-        Route::patch('/inventory/loans/{loan}', [InstructorInventoryController::class, 'updateLoanStatus'])->name('inventory.update-loan');
-
-        // Export routes
-        Route::get('/inventory/export/uniforms', [InstructorInventoryController::class, 'exportUniformSizes'])->name('inventory.export.uniforms');
-        Route::get('/inventory/export/loans', [InstructorInventoryController::class, 'exportEquipmentLoans'])->name('inventory.export.loans');
-        Route::get('/inventory/export/uniform-summary', [InstructorInventoryController::class, 'exportUniformSizeSummary'])->name('inventory.export.uniform-summary');
-    });
-
-// Learning Hub routes
-Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-    // Main learning hub page
-    Route::get('/learning_hub', [InstructorLearningHubController::class, 'index'])->name('learning_hub');
-
-    // AJAX endpoints for filtering
-    Route::get('/learning-hub/filter', [InstructorLearningHubController::class, 'getFilteredMaterials'])->name('learning_hub.filter');
-
-    // Learning Materials routes
-    Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
-    Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
-    Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
-    Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
-
-    // Category routes
-    Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
-    Route::delete('/categories/{category}', [InstructorLearningHubController::class, 'destroyCategory'])->name('learning_material_categories.destroy');
-
-    // Quiz routes - FIXED SECTION
-    Route::post('/quiz', [InstructorLearningHubController::class, 'storeQuiz'])->name('quiz.store');
-    Route::put('/quiz/{question}', [InstructorLearningHubController::class, 'updateQuiz'])->name('quiz.update');
-    Route::delete('/quiz/{question}', [InstructorLearningHubController::class, 'destroyQuiz'])->name('quiz.destroy');
-    // Added missing route for loading quiz questions
-    Route::get('/quiz-questions', [InstructorLearningHubController::class, 'getQuizQuestions'])->name('quiz.questions');
-});
-
-    // Gallery routes
-    Route::middleware('auth')->prefix('instructor')->name('instructor.')->group(function () {
-        // Gallery routes
-        Route::get('/gallery', [InstructorGalleryController::class, 'index'])->name('gallery');
-        Route::post('/gallery', [InstructorGalleryController::class, 'store'])->name('gallery.store');
-        Route::put('/gallery/{gallery}', [InstructorGalleryController::class, 'update'])->name('gallery.update');
-        Route::delete('/gallery/{gallery}', [InstructorGalleryController::class, 'destroy'])->name('gallery.destroy');
-
-        // Gallery category routes
-        Route::post('/gallery-categories', [InstructorGalleryController::class, 'storeCategory'])->name('gallery_categories.store');
-        Route::delete('/gallery-categories/{category}', [InstructorGalleryController::class, 'destroyCategory'])->name('gallery_categories.destroy');
-    });
-
-    // Pending Verification routes
-    Route::get('/instructor/pending-verification', [PendingVerificationController::class, 'index'])->name('pending.verification');
-    Route::post('/instructor/pending-verification/{user}/accept', [PendingVerificationController::class, 'accept'])->name('pending.verification.accept');
-    Route::post('/instructor/pending-verification/{user}/reject', [PendingVerificationController::class, 'reject'])->name('pending.verification.reject');
-
-    Route::get('/awaiting-approval', function () {
-        return view('auth.awaiting-approval');
-    })->name('awaiting.approval');
-
-    // Cadet Dashboard
-    Route::get('/cadet/dashboard', function () {
-        $user = auth()->user();
-        if (!$user || $user->status !== 'accepted') {
-            abort(403, 'Your account is not accepted.');
-        }
-        return view('cadet.dashboard');
-    })->name('cadet.dashboard');
-
-    // Cadet Training
-    Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
-        Route::get('/training', [CadetTrainingController::class, 'index'])->name('training');
-        Route::get('/training/{training}', [CadetTrainingController::class, 'show'])
-            ->whereNumber('training')
-            ->name('training.show');
-    });
-
-    // Cadet Allowance
-    Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
-        Route::get('/allowance', [\App\Http\Controllers\Cadet\AllowanceController::class, 'index'])->name('allowance');
-        Route::get('/allowance/ajax', [\App\Http\Controllers\Cadet\AllowanceController::class, 'ajax'])->name('allowance.ajax');
-    });
-
-    // Cadet Learning Hub - existing route
-Route::get('/cadet/learning_hub', [CadetLearningHubController::class, 'index'])->name('cadet.learning_hub');
-
-// Add these new API routes for cadet functionality
-Route::middleware('auth')->group(function () {
-    // Material filtering API
-    Route::get('/api/materials', [CadetLearningHubController::class, 'getMaterials'])->name('api.materials');
-    
-    // Instructor filtering API  
-    Route::get('/api/instructors', [CadetLearningHubController::class, 'getInstructors'])->name('api.instructors');
-    Route::get('/api/instructor/{instructor}', [CadetLearningHubController::class, 'getInstructor'])->name('api.instructor');
-    
-    // Quiz API routes
-    Route::post('/api/quiz/start', [CadetLearningHubController::class, 'startQuiz'])->name('api.quiz.start');
-    Route::post('/api/quiz/submit', [CadetLearningHubController::class, 'submitQuiz'])->name('api.quiz.submit');
-    Route::post('/api/quiz/results', [CadetLearningHubController::class, 'getQuizResults'])->name('api.quiz.results');
-});
-
-    // Cadet Inventory Routes
-    Route::middleware('auth')->prefix('cadet')->name('cadet.')->group(function () {
-        // Specific routes FIRST (order matters!)
-        Route::delete('/inventory/uniform-size/{cadetSize}', [CadetInventoryController::class, 'deleteUniformSize'])->name('inventory.uniform-size.delete');
-        Route::post('/inventory/uniform-size', [CadetInventoryController::class, 'updateUniformSize'])->name('inventory.uniform-size.update');
-
-        // General routes AFTER
-        Route::get('/inventory', [CadetInventoryController::class, 'index'])->name('inventory');
-        Route::get('/inventory/profile', [CadetInventoryController::class, 'myProfile'])->name('inventory.profile');
-
-        // Other routes...
-        Route::get('/inventory/uniform-types/{uniformTypeId}/components', [CadetInventoryController::class, 'getComponentsByType'])->name('inventory.components-by-type');
-        Route::post('/inventory/loan', [CadetInventoryController::class, 'createLoan'])->name('inventory.loan.create');
-        Route::patch('/inventory/loan/{loan}/return', [CadetInventoryController::class, 'returnLoan'])->name('inventory.loan.return');
-    });
-
-    // Cadet Gallery Routes
-    Route::middleware(['auth'])->prefix('cadet')->name('cadet.')->group(function () {
-        // Main gallery page
-        Route::get('/gallery', [CadetGalleryController::class, 'index'])->name('gallery');
-
-        // AJAX endpoints for dynamic filtering (optional - for future enhancements)
-        Route::get('/gallery/category/{categoryId}', [CadetGalleryController::class, 'getByCategory'])->name('gallery.category');
-        Route::get('/gallery/categories', [CadetGalleryController::class, 'getCategories'])->name('gallery.categories');
-    });
-
-    // Alumni Route
-    Route::get('/alumni', [App\Http\Controllers\AlumniController::class, 'index'])->name('alumni')->middleware('auth');
-
-    // Cadet Attendance
-    Route::get('/cadet/attendance', [AttendanceController::class, 'index'])->name('cadet.attendance');
-    Route::post('/cadet/attendance/mark', [AttendanceController::class, 'markPresent'])->name('cadet.attendance.mark');
-    Route::post('/cadet/attendance/absence/{attendance}', [AttendanceController::class, 'submitAbsence'])->name('cadet.attendance.absence');
-    Route::post('/cadet/attendance/verify-qr', [AttendanceController::class, 'verifyQR'])->name('cadet.attendance.verify-qr');
-
-    // Admin Routes - Restricted to admin role
-    Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            $user = auth()->user();
-            if (!$user || $user->status !== 'accepted' || $user->role !== 'admin') {
-                abort(403, 'Access denied. Admin privileges required.');
-            }
-            return view('admin.dashboard');
-        })->name('dashboard');
-
-        Route::get('/user_management', [App\Http\Controllers\Admin\AdminController::class, 'userManagement'])->name('user_management');
-        Route::get('/data_management', [App\Http\Controllers\Admin\AdminController::class, 'dataManagement'])->name('data_management');
-        Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');
-    });
-});
-
-// AJAX API Routes for Learning Hub - FIXED SECTION
 Route::middleware(['auth'])->group(function () {
-    // Quiz API Routes - MOVED AND FIXED
-    Route::post('/api/quiz/start', [CadetLearningHubController::class, 'startQuiz'])->name('api.quiz.start');
-    Route::post('/api/quiz/submit', [CadetLearningHubController::class, 'submitQuiz'])->name('api.quiz.submit');
-    Route::post('/api/quiz/results', [CadetLearningHubController::class, 'getQuizResults'])->name('api.quiz.results');
     
-    // AJAX endpoints for cadet learning hub
-    Route::get('/api/materials', [CadetLearningHubController::class, 'getMaterials'])->name('api.materials');
-    Route::get('/api/instructors', [CadetLearningHubController::class, 'getInstructors'])->name('api.instructors');
-    Route::get('/api/instructor/{instructor}', [CadetLearningHubController::class, 'getInstructor'])->name('api.instructor');
-});
+    // ------------------------------------------------------------------------
+    // Content Management Routes
+    // ------------------------------------------------------------------------
+    
+    Route::post('/content-management/update', [ContentManagementController::class, 'update'])
+        ->name('content.update');
 
-Route::middleware('auth')->group(function () {
+    Route::post('/content-management/reset', [ContentManagementController::class, 'resetToDefaults'])
+        ->name('content.reset');
+
+    // ------------------------------------------------------------------------
+    // Profile Routes
+    // ------------------------------------------------------------------------
+    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/personal', [ProfileController::class, 'updatePersonal'])->name('profile.personal.update');
@@ -315,16 +67,268 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/update-personal-info', [PersonalInfoController::class, 'edit'])->name('personal.edit');
     Route::patch('/update-personal-info', [PersonalInfoController::class, 'update'])->name('personal.update');
+
+    // ------------------------------------------------------------------------
+    // Pending Verification
+    // ------------------------------------------------------------------------
+
+    // Pending Verification routes
+    Route::get('/instructor/pending-verification', [PendingVerificationController::class, 'index'])->name('pending.verification');
+    Route::post('/instructor/pending-verification/{user}/accept', [PendingVerificationController::class, 'accept'])->name('pending.verification.accept');
+    Route::post('/instructor/pending-verification/{user}/reject', [PendingVerificationController::class, 'reject'])->name('pending.verification.reject');
+
+    // ------------------------------------------------------------------------
+    // Dashboard Routes
+    // ------------------------------------------------------------------------
+    
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        if ($user->status !== 'accepted') {
+            \Auth::logout();
+            return redirect('/')->with('error', 'Your account is not accepted.');
+        }
+        switch ($user->role) {
+            case 'cadet':
+                return redirect()->route('cadet.dashboard');
+            case 'instructor':
+                return redirect()->route('instructor.dashboard');
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            default:
+                abort(403);
+        }
+    })->middleware(['verified'])->name('dashboard');
+
+    Route::get('/awaiting-approval', function () {
+        return view('auth.awaiting-approval');
+    })->name('awaiting.approval');
+
+    // ------------------------------------------------------------------------
+    // Alumni Route
+    // ------------------------------------------------------------------------
+    
+    Route::get('/alumni', [App\Http\Controllers\AlumniController::class, 'index'])->name('alumni');
+
+    // ------------------------------------------------------------------------
+    // API Routes
+    // ------------------------------------------------------------------------
+    
+    Route::post('/api/quiz/start', [CadetLearningHubController::class, 'startQuiz'])->name('api.quiz.start');
+    Route::post('/api/quiz/submit', [CadetLearningHubController::class, 'submitQuiz'])->name('api.quiz.submit');
+    Route::post('/api/quiz/results', [CadetLearningHubController::class, 'getQuizResults'])->name('api.quiz.results');
+    Route::get('/api/materials', [CadetLearningHubController::class, 'getMaterials'])->name('api.materials');
+    Route::get('/api/instructors', [CadetLearningHubController::class, 'getInstructors'])->name('api.instructors');
+    Route::get('/api/instructor/{instructor}', [CadetLearningHubController::class, 'getInstructor'])->name('api.instructor');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::match(['get', 'post'], '/instructor/dashboard', [InstructorDashboardController::class, 'index'])->name('instructor.dashboard');
+// ============================================================================
+// INSTRUCTOR ROUTES
+// ============================================================================
+
+Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.')->group(function () {
+    
+    // ------------------------------------------------------------------------
+    // Instructor Dashboard
+    // ------------------------------------------------------------------------
+    
+    Route::match(['get', 'post'], '/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('incrementDuty');
+
+    // ------------------------------------------------------------------------
+    // Cadet Management
+    // ------------------------------------------------------------------------
+    
+    Route::get('/cadet_management', [CadetManagementController::class, 'index'])->name('cadet_management');
+    Route::get('/cadets/{cadet}', [CadetManagementController::class, 'show'])->name('cadets.show');
+    Route::post('/cadets/positions', [CadetManagementController::class, 'updatePositions'])->name('cadets.positions.update');
+    Route::post('/cadets/swimming/mark-passed', [CadetManagementController::class, 'markSwimmingPassed'])->name('cadets.swimming.mark-passed');
+    Route::delete('/cadets/{cadet}', [CadetManagementController::class, 'destroy'])->name('cadets.destroy');
+
+    // ------------------------------------------------------------------------
+    // Training Management
+    // ------------------------------------------------------------------------
+    
+    Route::get('/training', [InstructorTrainingController::class, 'index'])->name('training');
+    Route::post('/training', [InstructorTrainingController::class, 'store'])->name('training.store');
+    Route::get('/training/{training}', [InstructorTrainingController::class, 'show'])->name('training.show');
+    Route::put('/training/{training}', [InstructorTrainingController::class, 'update'])->name('training.update');
+    Route::delete('/training/{training}', [InstructorTrainingController::class, 'destroy'])->name('training.destroy');
+    Route::post('/training/{training}/end', [InstructorTrainingController::class, 'endTraining'])->name('training.end');
+    Route::get('/training/{training}/qr-code', [InstructorTrainingController::class, 'generateQrCode'])->name('training.qr-code');
+    Route::get('/training/{training}/cadets', [InstructorTrainingController::class, 'getCadetsForAttendance'])->name('training.cadets');
+    
+    // Attendance management
+    Route::post('/training/{training}/attendance', [InstructorTrainingController::class, 'saveAttendance'])->name('training.attendance');
+    Route::post('/training/{training}/attendance/qr', [InstructorTrainingController::class, 'recordQrAttendance'])->name('training.attendance.qr');
+    Route::get('/attendance-list', [InstructorTrainingController::class, 'getAllAttendanceList'])->name('attendance.list.all');
+    
+    // AJAX endpoints for instructor attendance filters
+    Route::get('/getYears', [InstructorTrainingController::class, 'getYears']);
+    Route::get('/getMonths', [InstructorTrainingController::class, 'getMonths']);
+    Route::get('/getCadetAttendanceList', [InstructorTrainingController::class, 'getCadetAttendanceList']);
+
+    // ------------------------------------------------------------------------
+    // Allowance Management
+    // ------------------------------------------------------------------------
+    
+    Route::get('/allowance', [AllowanceController::class, 'index'])->name('allowance');
+    Route::get('/allowance/training/{training}/details', [AllowanceController::class, 'getTrainingDetails'])->name('allowance.training.details');
+
+    // ------------------------------------------------------------------------
+    // Inventory Management
+    // ------------------------------------------------------------------------
+    
+    Route::get('/inventory', [InstructorInventoryController::class, 'index'])->name('inventory');
+    
+    // Uniform Type routes
+    Route::post('/inventory/uniform-types', [InstructorInventoryController::class, 'storeUniformType'])->name('inventory.uniform-types.store');
+    Route::get('/inventory/uniform-types', [InstructorInventoryController::class, 'getUniformTypes'])->name('inventory.uniform-types.index');
+    Route::delete('/inventory/uniform-types/{id}', [InstructorInventoryController::class, 'deleteUniformType'])->name('inventory.uniform-types.destroy');
+    
+    // Uniform Component routes
+    Route::post('/inventory/uniform-components', [InstructorInventoryController::class, 'storeUniformComponent'])->name('inventory.uniform-components.store');
+    Route::get('/inventory/uniform-components', [InstructorInventoryController::class, 'getUniformComponents'])->name('inventory.uniform-components.index');
+    Route::delete('/inventory/uniform-components/{id}', [InstructorInventoryController::class, 'deleteUniformComponent'])->name('inventory.uniform-components.destroy');
+    Route::get('/inventory/uniform-types/{uniformTypeId}/components', [InstructorInventoryController::class, 'getComponentsByType'])->name('inventory.components-by-type');
+    
+    // Equipment routes
+    Route::post('/inventory/equipment', [InstructorInventoryController::class, 'storeEquipment'])->name('inventory.equipment.store');
+    Route::get('/inventory/equipment', [InstructorInventoryController::class, 'getEquipment'])->name('inventory.equipment.index');
+    Route::delete('/inventory/equipment/{id}', [InstructorInventoryController::class, 'deleteEquipment'])->name('inventory.equipment.destroy');
+    
+    // Loan management
+    Route::patch('/inventory/loans/{loan}', [InstructorInventoryController::class, 'updateLoanStatus'])->name('inventory.update-loan');
+    
+    // Export routes
+    Route::get('/inventory/export/uniforms', [InstructorInventoryController::class, 'exportUniformSizes'])->name('inventory.export.uniforms');
+    Route::get('/inventory/export/loans', [InstructorInventoryController::class, 'exportEquipmentLoans'])->name('inventory.export.loans');
+    Route::get('/inventory/export/uniform-summary', [InstructorInventoryController::class, 'exportUniformSizeSummary'])->name('inventory.export.uniform-summary');
+
+    // ------------------------------------------------------------------------
+    // Learning Hub Management
+    // ------------------------------------------------------------------------
+    
+    Route::get('/learning_hub', [InstructorLearningHubController::class, 'index'])->name('learning_hub');
+    Route::get('/learning-hub/filter', [InstructorLearningHubController::class, 'getFilteredMaterials'])->name('learning_hub.filter');
+    
+    // Learning Materials routes
+    Route::post('/learning-materials', [InstructorLearningHubController::class, 'store'])->name('learning_materials.store');
+    Route::get('/learning-materials/{material}/edit', [InstructorLearningHubController::class, 'edit'])->name('learning_materials.edit');
+    Route::put('/learning-materials/{material}', [InstructorLearningHubController::class, 'update'])->name('learning_materials.update');
+    Route::delete('/learning-materials/{material}', [InstructorLearningHubController::class, 'destroy'])->name('learning_materials.destroy');
+    
+    // Category routes
+    Route::post('/categories', [InstructorLearningHubController::class, 'storeCategory'])->name('learning_material_categories.store');
+    Route::delete('/categories/{category}', [InstructorLearningHubController::class, 'destroyCategory'])->name('learning_material_categories.destroy');
+    
+    // Quiz routes
+    Route::post('/quiz', [InstructorLearningHubController::class, 'storeQuiz'])->name('quiz.store');
+    Route::put('/quiz/{question}', [InstructorLearningHubController::class, 'updateQuiz'])->name('quiz.update');
+    Route::delete('/quiz/{question}', [InstructorLearningHubController::class, 'destroyQuiz'])->name('quiz.destroy');
+    Route::get('/quiz-questions', [InstructorLearningHubController::class, 'getQuizQuestions'])->name('quiz.questions');
+
+    // ------------------------------------------------------------------------
+    // Gallery Management
+    // ------------------------------------------------------------------------
+    
+    Route::get('/gallery', [InstructorGalleryController::class, 'index'])->name('gallery');
+    Route::post('/gallery', [InstructorGalleryController::class, 'store'])->name('gallery.store');
+    Route::put('/gallery/{gallery}', [InstructorGalleryController::class, 'update'])->name('gallery.update');
+    Route::delete('/gallery/{gallery}', [InstructorGalleryController::class, 'destroy'])->name('gallery.destroy');
+    
+    // Gallery category routes
+    Route::post('/gallery-categories', [InstructorGalleryController::class, 'storeCategory'])->name('gallery_categories.store');
+    Route::delete('/gallery-categories/{category}', [InstructorGalleryController::class, 'destroyCategory'])->name('gallery_categories.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/cadet/dashboard', [CadetDashboardController::class, 'index'])->name('cadet.dashboard');
+// ============================================================================
+// CADET ROUTES
+// ============================================================================
+
+Route::middleware(['auth', 'verified'])->prefix('cadet')->name('cadet.')->group(function () {
+    
+    // ------------------------------------------------------------------------
+    // Cadet Dashboard
+    // ------------------------------------------------------------------------
+    
+    Route::get('/dashboard', [CadetDashboardController::class, 'index'])->name('dashboard');
+
+    // ------------------------------------------------------------------------
+    // Training
+    // ------------------------------------------------------------------------
+    
+    Route::get('/training', [CadetTrainingController::class, 'index'])->name('training');
+    Route::get('/training/{training}', [CadetTrainingController::class, 'show'])
+        ->whereNumber('training')
+        ->name('training.show');
+
+    // ------------------------------------------------------------------------
+    // Allowance
+    // ------------------------------------------------------------------------
+    
+    Route::get('/allowance', [\App\Http\Controllers\Cadet\AllowanceController::class, 'index'])->name('allowance');
+    Route::get('/allowance/ajax', [\App\Http\Controllers\Cadet\AllowanceController::class, 'ajax'])->name('allowance.ajax');
+
+    // ------------------------------------------------------------------------
+    // Learning Hub
+    // ------------------------------------------------------------------------
+    
+    Route::get('/learning_hub', [CadetLearningHubController::class, 'index'])->name('learning_hub');
+
+    // ------------------------------------------------------------------------
+    // Inventory
+    // ------------------------------------------------------------------------
+    
+    Route::delete('/inventory/uniform-size/{cadetSize}', [CadetInventoryController::class, 'deleteUniformSize'])->name('inventory.uniform-size.delete');
+    Route::post('/inventory/uniform-size', [CadetInventoryController::class, 'updateUniformSize'])->name('inventory.uniform-size.update');
+    Route::get('/inventory', [CadetInventoryController::class, 'index'])->name('inventory');
+    Route::get('/inventory/profile', [CadetInventoryController::class, 'myProfile'])->name('inventory.profile');
+    Route::get('/inventory/uniform-types/{uniformTypeId}/components', [CadetInventoryController::class, 'getComponentsByType'])->name('inventory.components-by-type');
+    Route::post('/inventory/loan', [CadetInventoryController::class, 'createLoan'])->name('inventory.loan.create');
+    Route::patch('/inventory/loan/{loan}/return', [CadetInventoryController::class, 'returnLoan'])->name('inventory.loan.return');
+
+    // ------------------------------------------------------------------------
+    // Gallery
+    // ------------------------------------------------------------------------
+    
+    Route::get('/gallery', [CadetGalleryController::class, 'index'])->name('gallery');
+    Route::get('/gallery/category/{categoryId}', [CadetGalleryController::class, 'getByCategory'])->name('gallery.category');
+    Route::get('/gallery/categories', [CadetGalleryController::class, 'getCategories'])->name('gallery.categories');
+
+    // ------------------------------------------------------------------------
+    // Attendance
+    // ------------------------------------------------------------------------
+    
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+    Route::post('/attendance/mark', [AttendanceController::class, 'markPresent'])->name('attendance.mark');
+    Route::post('/attendance/absence/{attendance}', [AttendanceController::class, 'submitAbsence'])->name('attendance.absence');
+    Route::post('/attendance/verify-qr', [AttendanceController::class, 'verifyQR'])->name('attendance.verify-qr');
 });
 
-Route::post('/instructor/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('instructor.incrementDuty');
+// ============================================================================
+// ADMIN ROUTES
+// ============================================================================
+
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if (!$user || $user->status !== 'accepted' || $user->role !== 'admin') {
+            abort(403, 'Access denied. Admin privileges required.');
+        }
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    Route::get('/user_management', [App\Http\Controllers\Admin\AdminController::class, 'userManagement'])->name('user_management');
+    Route::get('/data_management', [App\Http\Controllers\Admin\AdminController::class, 'dataManagement'])->name('data_management');
+    Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');
+});
+
+// ============================================================================
+// AUTH ROUTES
+// ============================================================================
 
 require __DIR__.'/auth.php';
