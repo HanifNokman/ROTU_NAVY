@@ -327,6 +327,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('/user/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateUser'])->name('user.update');
     Route::delete('/user/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])->name('user.delete');
     Route::get('/data_management', [App\Http\Controllers\Admin\AdminController::class, 'dataManagement'])->name('data_management');
+    Route::get('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'getData'])->name('data.show');
+    Route::put('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateData'])->name('data.update');
+    Route::delete('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteData'])->name('data.delete');
     Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');
 });
 

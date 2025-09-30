@@ -20,4 +20,9 @@ class LearningMaterial extends Model
     {
         return $this->belongsTo(LearningMaterialCategory::class, 'learning_material_category_id');
     }
+
+    public function instructor()
+    {
+        return $this->belongsTo(Instructor::class, 'instructor_id');
+    }
 }
