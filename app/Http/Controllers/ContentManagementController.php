@@ -14,8 +14,8 @@ class ContentManagementController extends Controller
      */
     public function update(Request $request)
     {
-        // Check if user is instructor or admin
-        if (!in_array(auth()->user()->role, ['instructor', 'admin'])) {
+        // Check if user is instructor
+        if (!in_array(auth()->user()->role, ['instructor'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized access'
@@ -140,8 +140,8 @@ class ContentManagementController extends Controller
      */
     public function resetToDefaults()
     {
-        // Check if user is instructor or admin
-        if (!in_array(auth()->user()->role, ['instructor', 'admin'])) {
+        // Check if user is instructor
+        if (!in_array(auth()->user()->role, ['instructor'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized access'
