@@ -91,7 +91,7 @@
                         <select name="status" id="status" onchange="this.form.submit()" class="mt-1 block w-48 pl-3 pr-10 py-1 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md">
                             <option value="">All Statuses</option>
                             @foreach($statuses as $statusOption)
-                                <option value="{{ $statusOption }}" {{ $request->status == $statusOption ? 'selected' : '' }}>{{ $statusOption }}</option>
+                                <option value="{{ $statusOption }}" {{ ($request->status == $statusOption || (!$request->status && $statusOption == 'Active')) ? 'selected' : '' }}>{{ $statusOption }}</option>
                             @endforeach
                         </select>
                     </form>
@@ -147,7 +147,7 @@
 
     <!-- Edit Modal -->
     <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="relative top-10 mx-auto p-5 border w-5/6 max-w-7xl shadow-lg rounded-md bg-white">
             <button onclick="closeEditModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
@@ -311,7 +311,10 @@
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Position</label><input type="text" name="position" value="${instructor.position || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
 
                 // Professional Info
-                const expertiseOptions = ['', 'PAP', 'JJM', 'PNK', 'TNL', 'BDI', 'KOM', 'PKOR'];
+                let expertiseOptions = ['', 'PAP', 'JJM', 'PNK', 'TNL', 'BDI', 'KOM', 'PKOR'];
+                if (instructor.expertise === 'Admin') {
+                    expertiseOptions.push('Admin');
+                }
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Expertise</label><select name="expertise" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">`;
                 expertiseOptions.forEach(option => {
                     const displayText = option === '' ? 'Select Expertise' : option;
