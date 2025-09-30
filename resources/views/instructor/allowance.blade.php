@@ -152,32 +152,20 @@
                                 
                                     <!-- Training Details (Hidden by default) -->
                                     <div class="hidden training-details" id="details-{{ $training->id }}">
-                                        <!-- Intake Filter Row - Enhanced Version -->
-                                        <div class="px-4 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-                                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-                                                <div class="flex items-center space-x-3">
-                                                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
-                                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-                                                        </svg>
-                                                    </div>
-                                                    <div>
-                                                        <label for="intake-{{ $training->id }}" class="text-sm font-semibold text-gray-800 block">Filter Cadets</label>
-                                                        <p class="text-xs text-gray-600">Select intake to view specific cadets</p>
-                                                    </div>
+                                        <!-- Intake Filter Row - Fixed Overlap -->
+                                        <div class="px-4 py-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                                            <div class="flex items-center justify-between gap-3">
+                                                <div class="flex items-center gap-2 flex-shrink-0">
+                                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                                    </svg>
+                                                    <label for="intake-' . $training->id . '" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
                                                 </div>
-                                                <div class="relative">
-                                                    <select id="intake-{{ $training->id }}" 
-                                                            class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 shadow-sm hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 min-w-[180px]"
-                                                            onchange="filterByIntake({{ $training->id }})">
-                                                        <option value="">All Intakes</option>
-                                                    </select>
-                                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                                        </svg>
-                                                    </div>
-                                                </div>
+                                                <select id="intake-' . $training->id . '" 
+                                                        class="bg-white border border-gray-300 rounded-md pl-3 pr-8 py-1.5 text-sm text-gray-700 shadow-sm hover:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 min-w-[140px]"
+                                                        onchange="filterByIntake(' . $training->id . ')">
+                                                    <option value="">All Intakes</option>
+                                                </select>
                                             </div>
                                         </div>
                                                                             
