@@ -330,7 +330,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'getData'])->name('data.show');
     Route::put('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateData'])->name('data.update');
     Route::delete('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteData'])->name('data.delete');
+    
+    // Access Management Routes
     Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');
+    Route::post('/access_management/transfer', [App\Http\Controllers\Admin\AdminController::class, 'transferAdmin'])->name('access_management.transfer');
 });
 
 // ============================================================================

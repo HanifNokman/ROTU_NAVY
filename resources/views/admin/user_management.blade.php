@@ -359,7 +359,7 @@
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Position</label><input type="text" name="position" value="${instructor.position || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
 
                 // Professional Info
-                let expertiseOptions = ['', 'PAP', 'JJM', 'PNK', 'TNL', 'BDI', 'KOM', 'PKOR'];
+                let expertiseOptions = ['', 'PAP', 'JJM', 'PNK', 'TNL', 'BDI', 'KOM', 'PKOR', 'YO'];
                 if (instructor.expertise === 'Admin') {
                     expertiseOptions.push('Admin');
                 }
