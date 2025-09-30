@@ -16,9 +16,9 @@
                     <form method="GET" action="{{ route('admin.user_management') }}" class="mb-4">
                         <label for="intake" class="block text-sm font-medium text-gray-700">Filter by Intake:</label>
                         <select name="intake" id="intake" onchange="this.form.submit()" class="mt-1 block w-48 pl-3 pr-10 py-1 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md">
-                            <option value="">All Intakes</option>
-                            @foreach($intakes as $intake)
-                                <option value="{{ $intake }}" @if(!$request->intake && $loop->first) selected @elseif($request->intake == $intake) selected @endif>{{ $intake }}</option>
+                            <option value="no_intake" @if($request->intake == 'no_intake') selected @endif>No Intake Year</option>
+                            @foreach($intakes->filter(fn($intake) => !empty($intake)) as $intake)
+                                <option value="{{ $intake }}" @if($request->intake == $intake || (!$request->intake && $loop->first)) selected @endif>Intake - {{ $intake - 2011 }} ({{ $intake }})</option>
                             @endforeach
                         </select>
                     </form>
@@ -111,7 +111,6 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Past Unit</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Pic</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
@@ -130,7 +129,6 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $instructor->past_unit }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $instructor->user->email }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $instructor->phone_number }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $instructor->gender }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $instructor->profile_pic }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $instructor->status }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -187,6 +185,8 @@
     </div>
 
     <script>
+        const intakes = @json($intakes);
+
         document.addEventListener('DOMContentLoaded', function() {
             // Edit modal functionality
             document.querySelectorAll('.edit-btn').forEach(btn => {
@@ -275,7 +275,12 @@
                 fields += `</select></div>`;
 
                 // Academic Info
-                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Intake Year</label><input type="number" name="intake_year" value="${cadet.intake_year || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
+                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Intake Year</label><select name="intake_year" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">`;
+                intakes.forEach(intake => {
+                    const intakeNum = intake - 2011;
+                    fields += `<option value="${intake}" ${cadet.intake_year == intake ? 'selected' : ''}>Intake - ${intakeNum} (${intake})</option>`;
+                });
+                fields += `</select></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Matric No</label><input type="text" name="matric_no" value="${cadet.matric_no || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Current CGPA</label><input type="number" step="0.01" name="current_cgpa" value="${cadet.current_cgpa || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Past CGPA</label><input type="number" step="0.01" name="past_cgpa" value="${cadet.past_cgpa || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
@@ -295,7 +300,6 @@
 
                 // Contact Info
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Phone Number</label><input type="text" name="phone_number" value="${instructor.phone_number || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
-                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Gender</label><select name="gender" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"><option value="Male" ${instructor.gender === 'Male' ? 'selected' : ''}>Male</option><option value="Female" ${instructor.gender === 'Female' ? 'selected' : ''}>Female</option></select></div>`;
 
                 // Rank and Position
                 const instructorRanks = ['Kpt', 'Kdr', 'Lt.Kdr', 'Lt', 'Lt.Dya', 'Lt.M', 'PWI', 'PWII', 'BK', 'BM', 'LK', 'LKI', 'LKII'];
@@ -314,18 +318,53 @@
                     fields += `<option value="${option}" ${instructor.expertise === option ? 'selected' : ''}>${displayText}</option>`;
                 });
                 fields += `</select></div>`;
-                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Time in Service</label><input type="text" name="time_in_service" value="${instructor.time_in_service || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
-                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">TTP</label><input type="text" name="ttp" value="${instructor.ttp || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
+                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Time in Service</label><input type="number" name="time_in_service" value="${instructor.time_in_service || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
+                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">TTP</label><input type="date" name="ttp" value="${instructor.ttp || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Status</label><select name="status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"><option value="Active" ${instructor.status === 'Active' ? 'selected' : ''}>Active</option><option value="Relocated" ${instructor.status === 'Relocated' ? 'selected' : ''}>Relocated</option><option value="Retired" ${instructor.status === 'Retired' ? 'selected' : ''}>Retired</option></select></div>`;
 
                 // Service Info
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Service Number</label><input type="text" name="service_number" value="${instructor.service_number || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
-                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Past Unit</label><input type="text" name="past_unit" value="${instructor.past_unit || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
+                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Past Unit(s)</label>`;
+                fields += `<table class="w-full mb-2"><tbody id="past-unit-table">`;
+                let pastUnits = [];
+                if (instructor.past_unit) {
+                    try {
+                        pastUnits = JSON.parse(instructor.past_unit);
+                    } catch (e) {
+                        pastUnits = [instructor.past_unit];
+                    }
+                }
+                if (pastUnits.length === 0) pastUnits = [''];
+                pastUnits.forEach(unit => {
+                    fields += `<tr><td><input type="text" name="past_unit[]" value="${unit}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" maxlength="32"></td><td><button type="button" class="remove-past-unit px-2 py-1 bg-red-500 text-white rounded">Remove</button></td></tr>`;
+                });
+                fields += `</tbody></table>`;
+                fields += `<button type="button" id="add-past-unit" class="px-4 py-2 bg-blue-500 text-white rounded">Add Past Unit</button></div>`;
             }
 
             fields += '</div>';
             document.getElementById('formFields').innerHTML = fields;
             document.getElementById('editForm').action = `/admin/user/${data.user.id}`;
+
+            // Add event listeners for past unit table if instructor
+            if (type === 'instructor') {
+                const addBtn = document.getElementById('add-past-unit');
+                const table = document.getElementById('past-unit-table');
+                if (addBtn) {
+                    addBtn.addEventListener('click', function() {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td><input type="text" name="past_unit[]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" maxlength="32"></td><td><button type="button" class="remove-past-unit px-2 py-1 bg-red-500 text-white rounded">Remove</button></td>`;
+                        table.appendChild(row);
+                    });
+                }
+                if (table) {
+                    table.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('remove-past-unit')) {
+                            e.target.closest('tr').remove();
+                        }
+                    });
+                }
+            }
         }
 
         function closeEditModal() {
@@ -350,10 +389,16 @@
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     alert('User updated successfully!');
@@ -363,7 +408,16 @@
                 }
             })
             .catch(error => {
-                alert('Error updating user: ' + error.message);
+                if (error.errors) {
+                    // Validation errors
+                    let errorMsg = 'Validation errors:\n';
+                    for (let field in error.errors) {
+                        errorMsg += field + ': ' + error.errors[field].join(', ') + '\n';
+                    }
+                    alert(errorMsg);
+                } else {
+                    alert('Error updating user: ' + (error.message || 'Unknown error'));
+                }
             });
         });
 
