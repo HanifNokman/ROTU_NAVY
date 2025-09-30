@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->string('position', 50)->nullable();
             $table->string('phone_number', 15)->nullable();
             $table->enum('rank', ['LKII','LKI','LK','BM','BK','PWI','PWII','Lt.M','Lt.Dya','Lt','Lt.Kdr','Kdr','Kpt'])->nullable();
-            $table->enum('expertise', ['PAP','JJM','PNK','TNL','BDI','KOM','PKOR','Admin'])->nullable();
+            $table->enum('expertise', ['PAP','JJM','PNK','TNL','BDI','KOM','PKOR','YO','Admin'])->nullable();
             $table->integer('time_in_service')->nullable();
             $table->date('ttp')->nullable();
             $table->enum('status', ['Active','Relocated','Retired'])->default('Active');

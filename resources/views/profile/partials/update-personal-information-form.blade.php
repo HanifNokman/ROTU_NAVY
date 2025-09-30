@@ -155,6 +155,7 @@
                         <option value="BDI" {{ $selectedExpertise === 'BDI' ? 'selected' : '' }}>BDI</option>
                         <option value="KOM" {{ $selectedExpertise === 'KOM' ? 'selected' : '' }}>KOM</option>
                         <option value="PKOR" {{ $selectedExpertise === 'PKOR' ? 'selected' : '' }}>PKOR</option>
+                        <option value="YO" {{ $selectedExpertise === 'YO' ? 'selected' : '' }}>YO</option>
                     </select>
                     <x-input-error class="mt-2" :messages="$errors->get('expertise')" />
                 </div>

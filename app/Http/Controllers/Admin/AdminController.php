@@ -15,6 +15,9 @@ use App\Models\EquipmentLoan;
 use App\Models\Gallery;
 use App\Models\Training;
 use App\Models\QuizQuestion;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -122,20 +125,136 @@ class AdminController extends Controller
         return view('admin.data_management', compact('counts', 'models', 'selectedModel', 'data', 'request'));
     }
 
-    public function accessManagement()
-    {
-        return view('admin.access_management');
+// REPLACE the existing accessManagement() method in your AdminController with this:
+
+public function accessManagement()
+{
+    // Get current user
+    $user = auth()->user();
+    
+    // Check if user has accepted status
+    if (!$user || $user->status !== 'accepted') {
+        abort(403, 'Access denied. Your account must be accepted.');
     }
 
-    public function getUser($id)
-    {
-        $user = User::with('cadet', 'instructor')->findOrFail($id);
-        return response()->json([
-            'user' => $user,
-            'cadet' => $user->cadet,
-            'instructor' => $user->instructor,
-        ]);
+    // Allow access if user is admin OR instructor with Admin expertise
+    $isAdmin = $user->role === 'admin';
+    $isAdminInstructor = $user->role === 'instructor' && 
+                         $user->instructor && 
+                         $user->instructor->expertise === 'Admin';
+    
+    if (!$isAdmin && !$isAdminInstructor) {
+        abort(403, 'Access denied. Admin privileges required.');
     }
+
+    // Get all instructors except the current admin
+    // Filter out those who already have Admin expertise
+    $instructors = Instructor::with('user')
+        ->whereHas('user', function($query) use ($user) {
+            $query->where('id', '!=', $user->id)
+                  ->where('role', 'instructor')
+                  ->where('status', 'accepted');
+        })
+        ->where('expertise', '!=', 'Admin')
+        ->where('status', 'Active')
+        ->orderBy('rank')
+        ->get();
+
+    return view('admin.access_management', compact('instructors'));
+}
+
+// ADD this new method to your AdminController:
+
+public function transferAdmin(Request $request)
+{
+    // Ensure only Admin can perform this action
+    $currentUser = auth()->user();
+    if (!$currentUser || $currentUser->status !== 'accepted' || $currentUser->role !== 'admin') {
+        return redirect()->route('admin.dashboard')
+            ->with('error', 'Access denied. Only Admins can transfer admin role.');
+    }
+
+    // Check if current user has an instructor profile with Admin expertise
+    if (!$currentUser->instructor || $currentUser->instructor->expertise !== 'Admin') {
+        return redirect()->route('admin.dashboard')
+            ->with('error', 'Access denied. Only instructors with Admin expertise can perform this action.');
+    }
+
+    // Validate the request
+    $request->validate([
+        'instructor_id' => ['required', 'exists:instructors,id'],
+        'password' => ['required', 'string'],
+    ]);
+
+    // Verify the current admin's password
+    if (!Hash::check($request->password, $currentUser->password)) {
+        return back()
+            ->withErrors(['password' => 'The provided password is incorrect.'])
+            ->withInput($request->except('password'));
+    }
+
+    // Get the selected instructor
+    $newAdminInstructor = Instructor::with('user')->findOrFail($request->instructor_id);
+
+    // Prevent transferring to someone who is already an admin
+    if ($newAdminInstructor->expertise === 'Admin') {
+        return back()
+            ->with('error', 'The selected instructor already has Admin expertise.')
+            ->withInput();
+    }
+
+    // Prevent transferring to yourself
+    if ($newAdminInstructor->user_id === $currentUser->id) {
+        return back()
+            ->with('error', 'You cannot transfer admin role to yourself.')
+            ->withInput();
+    }
+
+    // Ensure the selected instructor has accepted status
+    if ($newAdminInstructor->user->status !== 'accepted' || $newAdminInstructor->user->role !== 'instructor') {
+        return back()
+            ->with('error', 'The selected instructor must have accepted status and instructor role.')
+            ->withInput();
+    }
+
+    try {
+        // Use a database transaction to ensure both updates succeed or fail together
+        DB::transaction(function () use ($currentUser, $newAdminInstructor) {
+            $currentAdminInstructor = $currentUser->instructor;
+
+            // Store the new admin's current expertise before changing
+            $previousExpertise = $newAdminInstructor->expertise;
+
+            // Update the new admin's expertise to Admin
+            $newAdminInstructor->expertise = 'Admin';
+            $newAdminInstructor->save();
+
+            // Update the current admin's expertise to YO
+            $currentAdminInstructor->expertise = 'YO';
+            $currentAdminInstructor->save();
+
+            // Log the transfer
+            \Log::info('Admin role transferred', [
+                'previous_admin_id' => $currentUser->id,
+                'previous_admin_name' => $currentUser->name,
+                'new_admin_id' => $newAdminInstructor->user_id,
+                'new_admin_name' => $newAdminInstructor->user->name,
+                'new_admin_previous_expertise' => $previousExpertise,
+                'timestamp' => now(),
+            ]);
+        });
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Admin role has been successfully transferred to ' . $newAdminInstructor->user->name . '. Your expertise has been changed to YO.');
+
+    } catch (\Exception $e) {
+        \Log::error('Admin transfer failed: ' . $e->getMessage());
+        
+        return back()
+            ->with('error', 'An error occurred while transferring admin role. Please try again.')
+            ->withInput();
+    }
+}
 
     public function updateUser(Request $request, $id)
     {
