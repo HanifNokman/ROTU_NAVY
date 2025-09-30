@@ -54,7 +54,12 @@ class AdminController extends Controller
         // Status options for instructors
         $statuses = ['Active', 'Relocated', 'Retired'];
 
-        return view('admin.user_management', compact('cadets', 'instructors', 'intakes', 'statuses', 'request'));
+        // Summary statistics
+        $totalUsers = User::count();
+        $totalActiveCadets = Cadet::where('cadet_status', 'Active')->count();
+        $totalActiveInstructors = Instructor::where('status', 'Active')->count();
+
+        return view('admin.user_management', compact('cadets', 'instructors', 'intakes', 'statuses', 'request', 'totalUsers', 'totalActiveCadets', 'totalActiveInstructors'));
     }
 
     public function dataManagement()
