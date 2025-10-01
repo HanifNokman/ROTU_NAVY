@@ -8,7 +8,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- PAGE HEADER --}}
+            {{-- ================================================================ --}}
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,7 +29,9 @@
                 <div class="mb-4 text-red-600">{{ session('error') }}</div>
             @endif
 
-            <!-- Learning Materials Management -->
+            {{-- ================================================================ --}}
+            {{-- LEARNING MATERIALS SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
@@ -40,9 +44,10 @@
                 </div>
                 
                 <div class="p-6 text-gray-900">
-                    <!-- Top controls: filter + buttons -->
+                    {{-- ================================================================ --}}
+                    {{-- FILTER AND ACTION BUTTONS --}}
+                    {{-- ================================================================ --}}
                     <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
-                        <!-- Left side: Filter only -->
                         <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
                             <div class="flex items-center gap-2">
                                 <label for="category" class="text-sm font-medium text-gray-700">Filter by Category:</label>
@@ -57,7 +62,6 @@
                             </div>
                         </div>
 
-                        <!-- Right side: Buttons -->
                         <div class="flex gap-2">
                             <button onclick="openMaterialModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,12 +78,11 @@
                         </div>
                     </div>
 
-                    <!-- Alpine State for Edit and Delete Modal -->
+                    {{-- ================================================================ --}}
+                    {{-- MATERIALS TABLE WITH ALPINE.JS --}}
+                    {{-- ================================================================ --}}
                     <div x-data="materialManagement()">
-
-                        <!-- Materials Table Container -->
                         <div class="border border-gray-200 rounded-lg">
-                            <!-- Fixed Table Header -->
                             <div class="bg-gray-50 border-b border-gray-200">
                                 <div class="px-6 py-3">
                                     <div class="grid grid-cols-4 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -91,7 +94,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Scrollable Table Body -->
                             <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="materialsContainer">
                                 @forelse($materials as $material)
                                 <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4" data-material-id="{{ $material->id }}">
@@ -147,7 +149,9 @@
                             </div>
                         </div>
 
-                        <!-- Edit Modal -->
+                        {{-- ================================================================ --}}
+                        {{-- EDIT MATERIAL MODAL --}}
+                        {{-- ================================================================ --}}
                         <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-xl relative">
                                 <button type="button" @click="showModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
@@ -190,7 +194,9 @@
                             </div>
                         </div>
 
-                        <!-- Delete Confirmation Modal -->
+                        {{-- ================================================================ --}}
+                        {{-- DELETE MATERIAL CONFIRMATION MODAL --}}
+                        {{-- ================================================================ --}}
                         <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
                                 <h2 class="text-lg font-semibold mb-4">Confirm Deletion</h2>
@@ -216,7 +222,9 @@
                     </div>
                 </div>
             </div>
-            <!-- Quiz Management Section -->
+            {{-- ================================================================ --}}
+            {{-- QUIZ MANAGEMENT SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -239,7 +247,9 @@
                 </div>
                 
                 <div class="p-6">
-                    <!-- Filter for Quiz Questions -->
+                    {{-- ================================================================ --}}
+                    {{-- QUIZ FILTERS --}}
+                    {{-- ================================================================ --}}
                     <div class="mb-6 flex items-center gap-4">
                         <label for="quizCategoryFilter" class="text-sm font-medium text-gray-700">Filter by Category:</label>
                         <select id="quizCategoryFilter" name="quiz_category" class="border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
@@ -256,9 +266,10 @@
                         </select>
                     </div>
 
-                    <!-- Quiz Questions Table -->
-                    <div class="border border-gray-200 rounded-lg" x-data="quizManagement()" x-init="init()">
-                        <!-- Table Header -->
+                    {{-- ================================================================ --}}
+                    {{-- QUIZ QUESTIONS TABLE --}}
+                    {{-- ================================================================ --}}
+                    <div class="border border-gray-200 rounded-lg" x-data="quizManagement()">
                         <div class="bg-gray-50 border-b border-gray-200">
                             <div class="px-6 py-3">
                                 <div class="grid grid-cols-6 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -271,9 +282,7 @@
                             </div>
                         </div>
                         
-                        <!-- Table Body -->
                         <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="quizQuestionsContainer">
-                            <!-- Questions will be loaded here via AJAX -->
                             <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
                                 <div class="text-sm text-gray-500">
                                     @if(request()->filled('quiz_category'))
@@ -285,7 +294,9 @@
                             </div>
                         </div>
 
-                        <!-- Edit Quiz Modal -->
+                        {{-- ================================================================ --}}
+                        {{-- EDIT QUIZ MODAL --}}
+                        {{-- ================================================================ --}}
                         <div x-show="showEditModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
                             <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
                                 <button type="button" @click="showEditModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
@@ -319,25 +330,24 @@
                                         </select>
                                     </div>
 
-                                    <!-- MCQ Options for Edit -->
                                     <div id="editMcqOptions" x-show="editingQuestion.question_type === 'MCQ'" class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
                                         <div class="space-y-2">
-                                        <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A" :required="editingQuestion.question_type === 'MCQ'"
-                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                        <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B" :required="editingQuestion.question_type === 'MCQ'"
-                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                        <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C" :required="editingQuestion.question_type === 'MCQ'"
-                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                        <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D" :required="editingQuestion.question_type === 'MCQ'"
-                                            class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A" :required="editingQuestion.question_type === 'MCQ'"
+                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B" :required="editingQuestion.question_type === 'MCQ'"
+                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C" :required="editingQuestion.question_type === 'MCQ'"
+                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D" :required="editingQuestion.question_type === 'MCQ'"
+                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
                                         </div>
                                     </div>
 
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
                                         <div id="editMcqAnswerSelect" x-show="editingQuestion.question_type === 'MCQ'">
-                                        <select name="correct_answer" x-model="editingQuestion.correct_answer" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <select name="correct_answer" x-model="editingQuestion.correct_answer" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                                                 <option value="">Select Correct Answer</option>
                                                 <option value="A">A</option>
                                                 <option value="B">B</option>
@@ -377,7 +387,9 @@
                             </div>
                         </div>
 
-                        <!-- Delete Quiz Confirmation Modal -->
+                        {{-- ================================================================ --}}
+                        {{-- DELETE QUIZ CONFIRMATION MODAL --}}
+                        {{-- ================================================================ --}}
                         <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
                             <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
                                 <h2 class="text-lg font-semibold mb-4">Confirm Deletion</h2>
@@ -405,7 +417,9 @@
             </div>
         </div>
     </div>
-    <!-- Add Material Modal -->
+    {{-- ================================================================ --}}
+    {{-- ADD MATERIAL MODAL --}}
+    {{-- ================================================================ --}}
     <div id="materialModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
@@ -469,7 +483,9 @@
         </div>
     </div>
 
-    <!-- Enhanced Category Modal -->
+    {{-- ================================================================ --}}
+    {{-- CATEGORY MANAGEMENT MODAL --}}
+    {{-- ================================================================ --}}
     <div id="categoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -483,7 +499,6 @@
                         </button>
                     </div>
 
-                    <!-- Toggle Buttons -->
                     <div class="flex mb-6 bg-gray-100 p-1 rounded-lg">
                         <button id="addCategoryBtn" onclick="showAddCategoryForm()" 
                                 class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white">
@@ -495,7 +510,6 @@
                         </button>
                     </div>
 
-                    <!-- Add Category Form -->
                     <div id="addCategorySection">
                         <form action="{{ route('instructor.learning_material_categories.store') }}" method="POST">
                             @csrf
@@ -519,7 +533,6 @@
                         </form>
                     </div>
 
-                    <!-- Categories List -->
                     <div id="categoriesListSection" class="hidden">
                         <div class="max-h-96 overflow-y-auto">
                             @if($categories->isEmpty())
@@ -552,7 +565,9 @@
         </div>
     </div>
 
-    <!-- Delete Category Confirmation Modal -->
+    {{-- ================================================================ --}}
+    {{-- DELETE CATEGORY CONFIRMATION MODAL --}}
+    {{-- ================================================================ --}}
     <div id="deleteCategoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[60]">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
@@ -590,8 +605,9 @@
             </div>
         </div>
     </div>
-
-    <!-- Quiz Modal -->
+    {{-- ================================================================ --}}
+    {{-- ADD QUIZ QUESTION MODAL --}}
+    {{-- ================================================================ --}}
     <div id="quizModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -633,7 +649,6 @@
                             </select>
                         </div>
 
-                        <!-- MCQ Options -->
                         <div id="mcqOptions" class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
                             <div class="space-y-2">
@@ -690,8 +705,15 @@
             </div>
         </div>
     </div>
-<script>
-        // Material Management Functions
+
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT --}}
+    {{-- ================================================================ --}}
+    <script>
+        {{-- ================================================================ --}}
+        {{-- ALPINE.JS COMPONENTS --}}
+        {{-- ================================================================ --}}
+        
         function materialManagement() {
             return {
                 showModal: false,
@@ -713,13 +735,16 @@
                 get updateUrl() {
                     return this.routeTemplate.replace('__id__', this.material.id);
                 },
+                
                 get deleteUrl() {
                     return this.deleteRouteTemplate.replace('__id__', this.deleteMaterial.id);
                 },
+                
                 openEdit(materialData) {
                     this.material = materialData;
                     this.showModal = true;
                 },
+                
                 openDelete(materialData) {
                     this.deleteMaterial = materialData;
                     this.showDeleteModal = true;
@@ -727,14 +752,120 @@
             }
         }
 
-        // AJAX Filter for Materials (no page reload)
+        function quizManagement() {
+            return {
+                showEditModal: false,
+                showDeleteModal: false,
+                editingQuestion: {},
+                deletingQuestion: {},
+                editRouteTemplate: '{{ route("instructor.quiz.update", ["question" => "__id__"]) }}',
+                deleteRouteTemplate: '{{ route("instructor.quiz.destroy", ["question" => "__id__"]) }}',
+
+                init() {
+                    this.$el.addEventListener('open-edit', (e) => {
+                        this.openEdit(e.detail);
+                    });
+                    this.$el.addEventListener('open-delete', (e) => {
+                        this.openDelete(e.detail);
+                    });
+                },
+                
+                get editUrl() {
+                    return this.editRouteTemplate.replace('__id__', this.editingQuestion.id);
+                },
+                
+                get deleteUrl() {
+                    return this.deleteRouteTemplate.replace('__id__', this.deletingQuestion.id);
+                },
+                
+                openEdit(questionData) {
+                    this.editingQuestion = {
+                        id: questionData.id,
+                        question_text: questionData.question_text,
+                        question_type: questionData.question_type,
+                        category_id: questionData.category_id,
+                        option_a: questionData.option_a,
+                        option_b: questionData.option_b,
+                        option_c: questionData.option_c,
+                        option_d: questionData.option_d,
+                        correct_answer: questionData.correct_answer,
+                        status: questionData.status
+                    };
+                    this.showEditModal = true;
+                    this.$nextTick(() => {
+                        this.toggleEditQuestionType();
+                    });
+                },
+                
+                openDelete(questionData) {
+                    this.deletingQuestion = questionData;
+                    this.showDeleteModal = true;
+                },
+                
+                toggleEditQuestionType() {
+                    const editMcqOptions = document.getElementById('editMcqOptions');
+                    const editMcqAnswerSelect = document.getElementById('editMcqAnswerSelect');
+                    const editSubjectiveAnswerInput = document.getElementById('editSubjectiveAnswerInput');
+                    const mcqInputs = document.querySelectorAll('#editMcqOptions input');
+                    const correctAnswerSelect = document.querySelector('#editMcqAnswerSelect select[name="correct_answer"]');
+                    const correctAnswerTextarea = document.querySelector('#editSubjectiveAnswerInput textarea');
+
+                    if (this.editingQuestion.question_type === 'MCQ') {
+                        if (editMcqOptions) editMcqOptions.classList.remove('hidden');
+                        if (editMcqAnswerSelect) editMcqAnswerSelect.classList.remove('hidden');
+                        if (editSubjectiveAnswerInput) editSubjectiveAnswerInput.classList.add('hidden');
+
+                        mcqInputs.forEach(input => {
+                            input.required = true;
+                            input.disabled = false;
+                        });
+
+                        if (correctAnswerSelect) {
+                            correctAnswerSelect.required = true;
+                            correctAnswerSelect.disabled = false;
+                            correctAnswerSelect.setAttribute('name', 'correct_answer');
+                        }
+
+                        if (correctAnswerTextarea) {
+                            correctAnswerTextarea.required = false;
+                            correctAnswerTextarea.disabled = true;
+                            correctAnswerTextarea.removeAttribute('name');
+                        }
+                    } else if (this.editingQuestion.question_type === 'Subjective') {
+                        if (editMcqOptions) editMcqOptions.classList.add('hidden');
+                        if (editMcqAnswerSelect) editMcqAnswerSelect.classList.add('hidden');
+                        if (editSubjectiveAnswerInput) editSubjectiveAnswerInput.classList.remove('hidden');
+
+                        mcqInputs.forEach(input => {
+                            input.required = false;
+                            input.disabled = true;
+                        });
+
+                        if (correctAnswerSelect) {
+                            correctAnswerSelect.required = false;
+                            correctAnswerSelect.disabled = true;
+                            correctAnswerSelect.removeAttribute('name');
+                        }
+
+                        if (correctAnswerTextarea) {
+                            correctAnswerTextarea.required = true;
+                            correctAnswerTextarea.disabled = false;
+                            correctAnswerTextarea.setAttribute('name', 'correct_answer');
+                        }
+                    }
+                }
+            }
+        }
+
+        {{-- ================================================================ --}}
+        {{-- MATERIAL FILTERING --}}
+        {{-- ================================================================ --}}
+        
         function filterMaterials(categoryId) {
             const container = document.getElementById('materialsContainer');
             
-            // Show loading state
             container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading materials...</p></div>';
 
-            // Build URL with category parameter
             const url = new URL('{{ route('instructor.learning_hub.filter') }}', window.location.origin);
             if (categoryId) {
                 url.searchParams.set('category', categoryId);
@@ -768,18 +899,6 @@
                     const fileLink = material.file_url 
                         ? `<a href="{{ asset('') }}${material.file_url}" target="_blank" class="text-indigo-600 hover:text-indigo-900 font-medium">View File</a>`
                         : '<span class="text-gray-400">No file</span>';
-
-                    const materialData = JSON.stringify({
-                        id: material.id,
-                        title: material.title,
-                        description: material.description,
-                        learning_material_category_id: material.learning_material_category_id
-                    });
-
-                    const deleteMaterialData = JSON.stringify({
-                        id: material.id,
-                        title: material.title
-                    });
 
                     materialsHTML += `
                         <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4" data-material-id="${material.id}">
@@ -823,7 +942,6 @@
             });
         }
 
-        // Helper functions for material edit/delete (for dynamically loaded content)
         function openEditMaterial(id, title, description, categoryId) {
             const alpineComponent = document.querySelector('[x-data*="materialManagement"]');
             if (alpineComponent) {
@@ -849,8 +967,206 @@
                 }));
             }
         }
+        {{-- ================================================================ --}}
+        {{-- QUIZ FILTERING AND LOADING --}}
+        {{-- ================================================================ --}}
+        
+        function loadQuizQuestions(categoryId = '', type = 'all') {
+            const container = document.getElementById('quizQuestionsContainer');
+            
+            if (!categoryId) {
+                container.innerHTML = `
+                    <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
+                        <div class="text-sm text-gray-500">
+                            Please select a category to view quiz questions.
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></div>';
+            
+            const url = `/instructor/quiz-questions?category=${categoryId}&type=${type}`;
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = `
+                        <div class="px-6 py-8 text-center">
+                            <div class="text-sm text-gray-500">
+                                No quiz questions found in this category.
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let questionsHTML = '';
+                data.forEach(question => {
+                    const questionPreview = question.question_text.length > 100 
+                        ? question.question_text.substring(0, 100) + '...' 
+                        : question.question_text;
+                    
+                    questionsHTML += `
+                        <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4">
+                            <div class="grid grid-cols-6 gap-4 items-center">
+                                <div class="col-span-2 text-sm text-gray-900">
+                                    <div class="font-medium">${questionPreview}</div>
+                                    ${question.file_url ? '<p class="text-xs text-blue-600 mt-1">Has supporting file</p>' : ''}
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.question_type === 'MCQ' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+                                        ${question.question_type}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        ${question.category_name}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                        ${question.status.charAt(0).toUpperCase() + question.status.slice(1)}
+                                    </span>
+                                </div>
+                                <div class="text-sm font-medium">
+                                    <div class="flex gap-2">
+                                        <button type="button"
+                                                onclick='editQuizQuestion(${question.id}, "${question.escaped_question_text}", "${question.question_type}", ${question.category_id}, "${question.escaped_option_a}", "${question.escaped_option_b}", "${question.escaped_option_c}", "${question.escaped_option_d}", "${question.escaped_correct_answer}", "${question.status}")'
+                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                            Edit
+                                        </button>
+                                        <button type="button"
+                                                onclick='deleteQuizQuestion(${question.id}, "${question.escaped_question_preview}")'
+                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = questionsHTML;
+            })
+            .catch(error => {
+                console.error('Error fetching quiz questions:', error);
+                container.innerHTML = '<div class="px-6 py-8 text-center"><div class="text-sm text-red-500">Error loading quiz questions. Please try again.</div></div>';
+            });
+        }
 
-        // Material Modal Functions
+        window.editQuizQuestion = function(id, questionText, questionType, categoryId, optionA, optionB, optionC, optionD, correctAnswer, status) {
+            const quizContainer = document.querySelector('[x-data*="quizManagement"]');
+            if (quizContainer) {
+                quizContainer.dispatchEvent(new CustomEvent('open-edit', {
+                    detail: {
+                        id: id,
+                        question_text: questionText.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        question_type: questionType,
+                        category_id: categoryId,
+                        option_a: optionA.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        option_b: optionB.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        option_c: optionC.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        option_d: optionD.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        correct_answer: correctAnswer.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        status: status
+                    }
+                }));
+            }
+        };
+
+        window.deleteQuizQuestion = function(id, questionText) {
+            const quizContainer = document.querySelector('[x-data*="quizManagement"]');
+            if (quizContainer) {
+                quizContainer.dispatchEvent(new CustomEvent('open-delete', {
+                    detail: {
+                        id: id,
+                        question_text: questionText.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\')
+                    }
+                }));
+            }
+        };
+
+        function filterQuizQuestions() {
+            const categoryId = document.getElementById('quizCategoryFilter').value;
+            const type = document.getElementById('quizTypeFilter').value;
+            loadQuizQuestions(categoryId, type);
+        }
+
+        {{-- ================================================================ --}}
+        {{-- QUIZ QUESTION TYPE TOGGLE --}}
+        {{-- ================================================================ --}}
+        
+        function toggleQuizQuestionType(questionType = null) {
+            const typeSelect = document.getElementById('quiz_question_type');
+            const actualType = questionType || typeSelect.value;
+            
+            const mcqOptions = document.getElementById('mcqOptions');
+            const mcqAnswerSelect = document.getElementById('mcqAnswerSelect');
+            const subjectiveAnswerInput = document.getElementById('subjectiveAnswerInput');
+            const correctAnswerSelect = document.querySelector('#mcqAnswerSelect select');
+            const correctAnswerTextarea = document.querySelector('#subjectiveAnswerInput textarea');
+            const mcqInputs = document.querySelectorAll('#mcqOptions input');
+
+            if (actualType === 'MCQ') {
+                mcqOptions.classList.remove('hidden');
+                mcqAnswerSelect.classList.remove('hidden');
+                subjectiveAnswerInput.classList.add('hidden');
+
+                mcqInputs.forEach(input => {
+                    input.required = true;
+                    input.disabled = false;
+                });
+                
+                if (correctAnswerSelect) {
+                    correctAnswerSelect.required = true;
+                    correctAnswerSelect.disabled = false;
+                    correctAnswerSelect.setAttribute('name', 'correct_answer');
+                }
+                
+                if (correctAnswerTextarea) {
+                    correctAnswerTextarea.required = false;
+                    correctAnswerTextarea.disabled = true;
+                    correctAnswerTextarea.value = '';
+                    correctAnswerTextarea.removeAttribute('name');
+                }
+            } else if (actualType === 'Subjective') {
+                mcqOptions.classList.add('hidden');
+                mcqAnswerSelect.classList.add('hidden');
+                subjectiveAnswerInput.classList.remove('hidden');
+
+                mcqInputs.forEach(input => {
+                    input.required = false;
+                    input.disabled = true;
+                    input.value = '';
+                });
+                
+                if (correctAnswerSelect) {
+                    correctAnswerSelect.required = false;
+                    correctAnswerSelect.disabled = true;
+                    correctAnswerSelect.value = '';
+                    correctAnswerSelect.removeAttribute('name');
+                }
+                
+                if (correctAnswerTextarea) {
+                    correctAnswerTextarea.required = true;
+                    correctAnswerTextarea.disabled = false;
+                    correctAnswerTextarea.setAttribute('name', 'correct_answer');
+                }
+            }
+        }
+
+        {{-- ================================================================ --}}
+        {{-- MODAL MANAGEMENT FUNCTIONS --}}
+        {{-- ================================================================ --}}
+        
         function openMaterialModal() {
             document.getElementById('materialModal').classList.remove('hidden');
         }
@@ -860,7 +1176,6 @@
             document.querySelector('#materialModal form').reset();
         }
 
-        // Category Modal Functions
         function openCategoryModal() {
             document.getElementById('categoryModal').classList.remove('hidden');
             showAddCategoryForm();
@@ -907,7 +1222,6 @@
             document.getElementById('deleteCategoryModal').classList.add('hidden');
         }
 
-        // Quiz Modal Functions
         function openQuizModal() {
             document.getElementById('quizModal').classList.remove('hidden');
         }
@@ -915,252 +1229,13 @@
         function closeQuizModal() {
             document.getElementById('quizModal').classList.add('hidden');
             document.querySelector('#quizModal form').reset();
-            // Reset to MCQ by default
             toggleQuizQuestionType('MCQ');
         }
 
-        // Quiz form type switching (Fixed)
-        function toggleQuizQuestionType(questionType = null) {
-            const typeSelect = document.getElementById('quiz_question_type');
-            const actualType = questionType || typeSelect.value;
-            
-            const mcqOptions = document.getElementById('mcqOptions');
-            const mcqAnswerSelect = document.getElementById('mcqAnswerSelect');
-            const subjectiveAnswerInput = document.getElementById('subjectiveAnswerInput');
-            const correctAnswerSelect = document.querySelector('#mcqAnswerSelect select[name="correct_answer"]');
-            const correctAnswerTextarea = document.querySelector('#subjectiveAnswerInput textarea[name="correct_answer"]');
-
-            if (actualType === 'MCQ') {
-                mcqOptions.classList.remove('hidden');
-                mcqAnswerSelect.classList.remove('hidden');
-                subjectiveAnswerInput.classList.add('hidden');
-
-                // Set required attributes correctly
-                document.querySelectorAll('#mcqOptions input').forEach(input => input.required = true);
-                if (correctAnswerSelect) correctAnswerSelect.required = true;
-                if (correctAnswerTextarea) {
-                    correctAnswerTextarea.required = false;
-                    correctAnswerTextarea.value = '';
-                }
-            } else if (actualType === 'Subjective') {
-                mcqOptions.classList.add('hidden');
-                mcqAnswerSelect.classList.add('hidden');
-                subjectiveAnswerInput.classList.remove('hidden');
-
-                // Set required attributes correctly
-                document.querySelectorAll('#mcqOptions input').forEach(input => {
-                    input.required = false;
-                    input.value = '';
-                });
-                if (correctAnswerSelect) {
-                    correctAnswerSelect.required = false;
-                    correctAnswerSelect.value = '';
-                }
-                if (correctAnswerTextarea) correctAnswerTextarea.required = true;
-            }
-        }
-
-        // Attach event listener for quiz type change
-        document.addEventListener('DOMContentLoaded', function() {
-            const quizTypeSelect = document.getElementById('quiz_question_type');
-            if (quizTypeSelect) {
-                quizTypeSelect.addEventListener('change', function() {
-                    toggleQuizQuestionType(this.value);
-                });
-            }
-        });
-
-        // Quiz Management Alpine.js component (Fixed)
-        function quizManagement() {
-            return {
-                showEditModal: false,
-                showDeleteModal: false,
-                editingQuestion: {},
-                deletingQuestion: {},
-                editRouteTemplate: '{{ route("instructor.quiz.update", ["question" => "__id__"]) }}',
-                deleteRouteTemplate: '{{ route("instructor.quiz.destroy", ["question" => "__id__"]) }}',
-
-                init() {
-                    this.$el.addEventListener('open-edit', (e) => {
-                        this.openEdit(e.detail);
-                    });
-                    this.$el.addEventListener('open-delete', (e) => {
-                        this.openDelete(e.detail);
-                    });
-                    this.$el.addEventListener('open-edit-material', (e) => {
-                        this.openEdit(e.detail);
-                    });
-                    this.$el.addEventListener('open-delete-material', (e) => {
-                        this.openDelete(e.detail);
-                    });
-                },
-                get editUrl() {
-                    return this.editRouteTemplate.replace('__id__', this.editingQuestion.id);
-                },
-                get deleteUrl() {
-                    return this.deleteRouteTemplate.replace('__id__', this.deletingQuestion.id);
-                },
-                openEdit(questionData) {
-                    this.editingQuestion.id = questionData.id;
-                    this.editingQuestion.question_text = questionData.question_text;
-                    this.editingQuestion.question_type = questionData.question_type;
-                    this.editingQuestion.category_id = questionData.category_id;
-                    this.editingQuestion.option_a = questionData.option_a;
-                    this.editingQuestion.option_b = questionData.option_b;
-                    this.editingQuestion.option_c = questionData.option_c;
-                    this.editingQuestion.option_d = questionData.option_d;
-                    this.editingQuestion.correct_answer = questionData.correct_answer;
-                    this.editingQuestion.status = questionData.status;
-                    this.showEditModal = true;
-                    this.$nextTick(() => {
-                        this.toggleEditQuestionType();
-                    });
-                },
-                openDelete(questionData) {
-                    this.deletingQuestion = questionData;
-                    this.showDeleteModal = true;
-                },
-                toggleEditQuestionType() {
-                    // Clear the correct answer when switching types
-                    this.editingQuestion.correct_answer = '';
-                    if (this.editingQuestion.question_type === 'Subjective') {
-                        this.editingQuestion.option_a = '';
-                        this.editingQuestion.option_b = '';
-                        this.editingQuestion.option_c = '';
-                        this.editingQuestion.option_d = '';
-                    }
-                }
-            }
-        }
-
-        function loadQuizQuestions(categoryId = '', type = 'all') {
-            const container = document.getElementById('quizQuestionsContainer');
-            // If no category is selected, show the placeholder and do not load any questions
-            if (!categoryId) {
-                container.innerHTML = `
-                    <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
-                        <div class="text-sm text-gray-500">
-                            Please select a category to view quiz questions.
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            // Show loading state
-            container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></div>';
-            // Fetch quiz questions via AJAX
-            const url = `/instructor/quiz-questions?category=${categoryId}&type=${type}`;
-            fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.length === 0) {
-                    container.innerHTML = `
-                        <div class="px-6 py-8 text-center">
-                            <div class="text-sm text-gray-500">
-                                No quiz questions found in this category.
-                            </div>
-                        </div>
-                    `;
-                    return;
-                }
-                let questionsHTML = '';
-                data.forEach(question => {
-                    const questionPreview = question.question_text.length > 100 
-                        ? question.question_text.substring(0, 100) + '...' 
-                        : question.question_text;
-                    questionsHTML += `
-                        <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4">
-                            <div class="grid grid-cols-6 gap-4 items-center">
-                                <div class="col-span-2 text-sm text-gray-900">
-                                    <div class="font-medium">${questionPreview}</div>
-                                    ${question.file_url ? '<p class="text-xs text-blue-600 mt-1">Has supporting file</p>' : ''}
-                                </div>
-                                <div class="text-sm text-gray-900">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.question_type === 'MCQ' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
-                                        ${question.question_type}
-                                    </span>
-                                </div>
-                                <div class="text-sm text-gray-900">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                        ${question.category_name}
-                                    </span>
-                                </div>
-                                <div class="text-sm text-gray-900">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                                        ${question.status.charAt(0).toUpperCase() + question.status.slice(1)}
-                                    </span>
-                                </div>
-                                <div class="text-sm font-medium">
-                                    <div class="flex gap-2">
-                                        <button type="button"
-                                                onclick='editQuizQuestion(${question.id}, "${question.escaped_question_text}", "${question.question_type}", ${question.category_id}, "${question.escaped_option_a}", "${question.escaped_option_b}", "${question.escaped_option_c}", "${question.escaped_option_d}", "${question.escaped_correct_answer}", "${question.status}")'
-                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                            Edit
-                                        </button>
-                                        <button type="button"
-                                                onclick='deleteQuizQuestion(${question.id}, "${question.escaped_question_preview}")'
-                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = questionsHTML;
-            })
-            .catch(error => {
-                console.error('Error fetching quiz questions:', error);
-                container.innerHTML = '<div class="px-6 py-8 text-center"><div class="text-sm text-red-500">Error loading quiz questions. Please try again.</div></div>';
-            });
-        }
-
-        // Updated helper functions using window.Alpine for better compatibility
-        window.editQuizQuestion = function(id, questionText, questionType, categoryId, optionA, optionB, optionC, optionD, correctAnswer, status) {
-            const quizContainer = document.querySelector('[x-data*="quizManagement"]');
-            if (quizContainer) {
-                quizContainer.dispatchEvent(new CustomEvent('open-edit', {
-                    detail: {
-                        id: id,
-                        question_text: questionText.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
-                        question_type: questionType,
-                        category_id: categoryId,
-                        option_a: optionA.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
-                        option_b: optionB.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
-                        option_c: optionC.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
-                        option_d: optionD.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
-                        correct_answer: correctAnswer.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
-                        status: status
-                    }
-                }));
-            }
-        };
-
-        window.deleteQuizQuestion = function(id, questionText) {
-            const quizContainer = document.querySelector('[x-data*="quizManagement"]');
-            if (quizContainer) {
-                quizContainer.dispatchEvent(new CustomEvent('open-delete', {
-                    detail: {
-                        id: id,
-                        question_text: questionText.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\')
-                    }
-                }));
-            }
-        };
-
-        function filterQuizQuestions() {
-            const categoryId = document.getElementById('quizCategoryFilter').value;
-            const type = document.getElementById('quizTypeFilter').value;
-            loadQuizQuestions(categoryId, type);
-        }
-
-        // Close modals when clicking outside
+        {{-- ================================================================ --}}
+        {{-- EVENT HANDLERS --}}
+        {{-- ================================================================ --}}
+        
         window.onclick = function(event) {
             const materialModal = document.getElementById('materialModal');
             const categoryModal = document.getElementById('categoryModal');
@@ -1181,7 +1256,6 @@
             }
         }
 
-        // Close modals with Escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeMaterialModal();
@@ -1191,24 +1265,36 @@
             }
         });
 
-        // Initialize on page load
+        {{-- ================================================================ --}}
+        {{-- INITIALIZATION --}}
+        {{-- ================================================================ --}}
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Attach change listeners to both filters
+            const quizTypeSelect = document.getElementById('quiz_question_type');
+            if (quizTypeSelect) {
+                toggleQuizQuestionType(quizTypeSelect.value);
+                
+                quizTypeSelect.addEventListener('change', function() {
+                    toggleQuizQuestionType(this.value);
+                });
+            }
+
             const quizCategorySelect = document.getElementById('quizCategoryFilter');
-            const quizTypeSelect = document.getElementById('quizTypeFilter');
+            const quizTypeFilterSelect = document.getElementById('quizTypeFilter');
+            
             if (quizCategorySelect) {
                 quizCategorySelect.addEventListener('change', filterQuizQuestions);
             }
-            if (quizTypeSelect) {
-                quizTypeSelect.addEventListener('change', filterQuizQuestions);
+            if (quizTypeFilterSelect) {
+                quizTypeFilterSelect.addEventListener('change', filterQuizQuestions);
             }
-            // Initial load: Only load quiz questions if a category is selected
+            
             if (quizCategorySelect && quizCategorySelect.value) {
-                loadQuizQuestions(quizCategorySelect.value, quizTypeSelect.value);
+                loadQuizQuestions(quizCategorySelect.value, quizTypeFilterSelect.value);
             } else {
-                loadQuizQuestions('', quizTypeSelect.value);
+                loadQuizQuestions('', quizTypeFilterSelect.value);
             }
-            // Load materials based on current filter if any
+            
             const categorySelect = document.getElementById('category');
             if (categorySelect && categorySelect.value) {
                 filterMaterials(categorySelect.value);
