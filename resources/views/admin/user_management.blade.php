@@ -384,15 +384,20 @@
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Position</label><input type="text" name="position" value="${instructor.position || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
 
                 let expertiseOptions = ['', 'PAP', 'JJM', 'PNK', 'TNL', 'BDI', 'KOM', 'PKOR', 'YO'];
-                if (instructor.expertise === 'Admin') {
+                let isAdminExpertise = instructor.expertise === 'Admin';
+                if (isAdminExpertise) {
                     expertiseOptions.push('Admin');
                 }
-                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Expertise</label><select name="expertise" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">`;
+                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Expertise</label><select name="expertise" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${isAdminExpertise ? 'disabled' : ''}>`;
                 expertiseOptions.forEach(option => {
                     const displayText = option === '' ? 'Select Expertise' : option;
                     fields += `<option value="${option}" ${instructor.expertise === option ? 'selected' : ''}>${displayText}</option>`;
                 });
-                fields += `</select></div>`;
+                fields += `</select>`;
+                if (isAdminExpertise) {
+                    fields += `<p class="text-sm text-gray-500 mt-1">Admin expertise cannot be changed through this form.</p>`;
+                }
+                fields += `</div>`;
 
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Time in Service</label><input type="number" name="time_in_service" value="${instructor.time_in_service || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">TTP</label><input type="date" name="ttp" value="${instructor.ttp || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;

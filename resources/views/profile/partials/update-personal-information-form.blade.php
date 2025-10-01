@@ -146,7 +146,7 @@
                 <div>
                     <x-input-label for="expertise" :value="__('Expertise')" />
                     @php $selectedExpertise = $personal->expertise; @endphp
-                    <select id="expertise" name="expertise" class="mt-1 block w-full">
+                    <select id="expertise" name="expertise" class="mt-1 block w-full" {{ $selectedExpertise === 'Admin' ? 'disabled' : '' }}>
                         <option value="">Select Expertise</option>
                         <option value="PAP" {{ $selectedExpertise === 'PAP' ? 'selected' : '' }}>PAP</option>
                         <option value="JJM" {{ $selectedExpertise === 'JJM' ? 'selected' : '' }}>JJM</option>
@@ -156,7 +156,13 @@
                         <option value="KOM" {{ $selectedExpertise === 'KOM' ? 'selected' : '' }}>KOM</option>
                         <option value="PKOR" {{ $selectedExpertise === 'PKOR' ? 'selected' : '' }}>PKOR</option>
                         <option value="YO" {{ $selectedExpertise === 'YO' ? 'selected' : '' }}>YO</option>
+                        @if($personal->expertise === 'Admin')
+                            <option value="Admin" {{ $selectedExpertise === 'Admin' ? 'selected' : '' }}>Admin</option>
+                        @endif
                     </select>
+                    @if($personal->expertise === 'Admin')
+                        <p class="text-sm text-gray-500 mt-1">Admin expertise cannot be changed through this form.</p>
+                    @endif
                     <x-input-error class="mt-2" :messages="$errors->get('expertise')" />
                 </div>
                 <div>
