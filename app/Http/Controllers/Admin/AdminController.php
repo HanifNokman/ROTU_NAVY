@@ -65,10 +65,21 @@ class AdminController extends Controller
             ->orderBy('service_number')
             ->get();
 
-        $intakes = Cadet::select('intake_year')
-            ->distinct()
-            ->orderBy('intake_year', 'asc')
-            ->pluck('intake_year');
+        // Always show max 4 intakes: current year and 3 years below
+        $currentYear = now()->year;
+        $minYear = $currentYear - 3;
+        $intakeYears = collect(range($currentYear, $minYear))->filter(function($year) {
+            $intakeNumber = $year - 2011;
+            return $intakeNumber > 0;
+        });
+
+        $intakes = $intakeYears->map(function($year) {
+            $intakeNumber = $year - 2011;
+            return [
+                'year' => $year,
+                'label' => 'Intake - ' . $intakeNumber . ' (' . $year . ')',
+            ];
+        })->values();
 
         $statuses = ['Active', 'Relocated', 'Retired'];
 
