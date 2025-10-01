@@ -8,7 +8,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Success Message -->
+            {{-- ================================================================ --}}
+            {{-- SUCCESS MESSAGE ALERT --}}
+            {{-- ================================================================ --}}
             @if(session('success'))
                 <div id="success-alert" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                     <span class="block sm:inline">{{ session('success') }}</span>
@@ -21,7 +23,9 @@
                 </div>
             @endif
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- DASHBOARD HEADER --}}
+            {{-- ================================================================ --}}
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,11 +36,12 @@
                 </h1>
                 <p class="text-gray-600">Your command center for cadet management and analytics</p>
             </div>
-            <!-- Profile Section -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
-                x-data="{ open: false }">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 cursor-pointer"
-                    @click="open = !open">
+            {{-- ================================================================ --}}
+            {{-- PERSONAL PROFILE SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300" x-data="{ open: false }">
+                
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 cursor-pointer" @click="open = !open">
                     <h2 class="text-2xl font-semibold mb-2 flex items-center justify-between text-gray-900">
                         <div class="flex items-center">
                             <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,28 +49,23 @@
                             </svg>
                             Personal Profile
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200"
-                            :class="{ 'rotate-180': open }"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </h2>
                     <p class="text-gray-600">Your profile information and service details</p>
                 </div>
 
-                <div class="p-6 flex flex-col md:flex-row gap-6"
-                    x-show="open"
-                    x-transition>
-                    <!-- Profile Picture -->
+                <div class="p-6 flex flex-col md:flex-row gap-6" x-show="open" x-transition>
+                    
                     <div class="flex justify-center lg:justify-start">
-                        <img src="{{ $instructor?->profile_pic ? asset('storage/' . $instructor->profile_pic) : asset('images/default.png') }}"
-                            alt="Profile Picture"
-                            class="w-40 h-52 md:w-60 md:h-80 object-cover border rounded-md">
+                        <img src="{{ $instructor?->profile_pic ? asset('storage/' . $instructor->profile_pic) : asset('images/default.png') }}" 
+                             alt="Profile Picture" 
+                             class="w-40 h-52 md:w-60 md:h-80 object-cover border rounded-md">
                     </div>
 
-                    <!-- Profile Information -->
                     <div class="flex-1 space-y-6">
-                        <!-- Row 1 -->
+                        
                         <div class="flex items-center justify-center md:justify-start gap-4">
                             <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold px-6 py-2 rounded-xl shadow-lg whitespace-nowrap">
                                 <i class="fas fa-shield-alt mr-2"></i>
@@ -74,18 +74,16 @@
                             @php
                                 $prefix = '';
                                 if (str_starts_with($instructor?->service_number, 'NV')) {
-                                    $prefix = ' PSSTLDM'; // include space before
+                                    $prefix = ' PSSTLDM';
                                 } elseif (str_starts_with($instructor?->service_number, 'N')) {
-                                    $prefix = ' TLDM'; // include space before
+                                    $prefix = ' TLDM';
                                 }
                             @endphp
-
                             <p class="text-2xl font-semibold text-gray-800">
                                 {{ ($instructor?->rank ?? 'Unknown') . ' ' . ($user?->name ?? 'No Name') . $prefix }}
                             </p>
                         </div>
 
-                        <!-- Row 2: Contact Info -->
                         <div class="bg-gray-50 rounded-xl p-4">
                             <div class="flex items-center mb-3">
                                 <i class="fas fa-address-book w-5 text-blue-500 mr-2"></i>
@@ -103,7 +101,6 @@
                             </div>
                         </div>
 
-                        <!-- Row 3: Service Info -->
                         <div class="bg-gray-50 rounded-xl p-4">
                             <div class="flex items-center mb-3">
                                 <i class="fas fa-medal w-5 text-purple-500 mr-2"></i>
@@ -143,12 +140,16 @@
                     </div>
                 </div>
             </div>
-            <!-- Performance Metrics Section -->
+            {{-- ================================================================ --}}
+            {{-- PERFORMANCE METRICS GRID --}}
+            {{-- ================================================================ --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <!-- Duty Ranking Card -->
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
-                    x-data="{ open: false, selected: [] }">
+                {{-- ================================================================ --}}
+                {{-- DUTY RANKING CARD --}}
+                {{-- ================================================================ --}}
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300" x-data="{ open: false, selected: [] }">
+                    
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
                         <div class="flex justify-between items-center">
                             <div>
@@ -160,9 +161,7 @@
                                 </h2>
                                 <p class="text-gray-600">Manage cadet duty assignments and performance</p>
                             </div>
-                            <button
-                                @click="$store.modal.open = true"
-                                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                            <button @click="$store.modal.open = true" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
@@ -172,7 +171,7 @@
                     </div>
 
                     <div class="p-6">
-                        <!-- Filter Form for Duty Ranking -->
+                        
                         <div class="mb-4 flex justify-center">
                             <form method="GET" action="{{ route('instructor.dashboard') }}" class="flex gap-2">
                                 <select id="duty-intake-year" name="duty_intake_year" class="rounded-md border-gray-300 shadow-sm" onchange="this.form.submit()">
@@ -188,14 +187,12 @@
                                     <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Lowest First</option>
                                 </select>
 
-                                <!-- Preserve other filter values -->
                                 <input type="hidden" name="cgpa_intake_year" value="{{ $selectedCgpaIntakeYear }}">
                                 <input type="hidden" name="cgpa_sort_order" value="{{ $cgpaSortOrder }}">
                                 <input type="hidden" name="absence_intake_filter" value="{{ $selectedAbsenceIntake ?? '' }}">
                             </form>
                         </div>
 
-                        <!-- Loading indicator -->
                         <div id="duty-loading" class="hidden text-center py-4">
                             <div class="inline-flex items-center">
                                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -206,7 +203,6 @@
                             </div>
                         </div>
 
-                        <!-- Leaderboard Bars -->
                         <div id="duty-ranking-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                             @php
                                 $maxCount = $cadets->max('daily_duty_count') ?: 1;
@@ -215,14 +211,12 @@
                             @forelse ($cadets as $index => $cadet)
                                 @php
                                     $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
-
-                                    // Calculate RGB color from red → yellow → green based on percentage
                                     if ($percentage < 50) {
-                                        $ratio = $percentage / 50; // 0 to 1
+                                        $ratio = $percentage / 50;
                                         $r = 255;
                                         $g = (int)(180 * $ratio);
                                     } else {
-                                        $ratio = ($percentage - 50) / 50; // 0 to 1
+                                        $ratio = ($percentage - 50) / 50;
                                         $r = (int)(255 * (1 - $ratio));
                                         $g = 180;
                                     }
@@ -230,7 +224,6 @@
                                 @endphp
 
                                 <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
-                                    <!-- Avatar -->
                                     <div class="flex-shrink-0">
                                         <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
                                             <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
@@ -239,15 +232,13 @@
                                         </div>
                                     </div>
 
-                                    <!-- Bar + Name -->
                                     <div class="flex-1 w-full">
                                         <div class="text-sm font-medium mb-1 text-center sm:text-left">
                                             #{{ $index + 1 }} - {{ $cadet->name }}
                                         </div>
 
                                         <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                            <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
-                                                style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
+                                            <div class="absolute top-0 left-0 h-full rounded-full flex items-center" style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
                                                 <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
                                                     {{ $cadet->daily_duty_count }} {{ Str::plural('Day', $cadet->daily_duty_count) }}
                                                 </span>
@@ -260,28 +251,23 @@
                             @endforelse
                         </div>
 
-                        <!-- Duty Increment Modal -->
-                        <div x-show="$store.modal.open"
-                            x-cloak
-                            x-transition
-                            class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-                            @click.self="$store.modal.open = false; $store.modal.selected = []">
-
+                        {{-- ================================================================ --}}
+                        {{-- DUTY INCREMENT MODAL --}}
+                        {{-- ================================================================ --}}
+                        <div x-show="$store.modal.open" x-cloak x-transition class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" @click.self="$store.modal.open = false; $store.modal.selected = []">
                             <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto relative">
-                                <!-- X Close Button -->
-                                <button
-                                    @click="$store.modal.open = false; $store.modal.selected = []"
-                                    class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                                
+                                <button @click="$store.modal.open = false; $store.modal.selected = []" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">
                                     ×
                                 </button>
 
-<h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
-<p class="text-center text-gray-600 mb-4">Intake - {{ $selectedDutyIntakeYear - 2011 }}</p>
+                                <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
+                                <p class="text-center text-gray-600 mb-4">Intake - {{ $selectedDutyIntakeYear - 2011 }}</p>
 
-<form method="POST" action="{{ route('instructor.incrementDuty') }}">
-    @csrf
-    <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
-    <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
+                                <form method="POST" action="{{ route('instructor.incrementDuty') }}">
+                                    @csrf
+                                    <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
+                                    <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
 
                                     <div id="modal-cadet-list" class="space-y-2 max-h-[400px] overflow-y-auto border p-2 rounded mb-4">
                                         <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
@@ -293,11 +279,7 @@
                                     </div>
 
                                     <div class="text-center">
-                                        <button
-                                            type="submit"
-                                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2"
-                                            :disabled="$store.modal.selected.length === 0"
-                                        >
+                                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2" :disabled="$store.modal.selected.length === 0">
                                             <i class="fas fa-plus"></i>
                                             <span>Add Duty Count</span>
                                         </button>
@@ -307,8 +289,11 @@
                         </div>
                     </div>
                 </div>
-                <!-- Cadet CGPA Card -->
+                {{-- ================================================================ --}}
+                {{-- CGPA ANALYTICS CARD --}}
+                {{-- ================================================================ --}}
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                    
                     <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
                         <div class="flex justify-between items-center">
                             <div>
@@ -324,7 +309,7 @@
                     </div>
 
                     <div class="p-6">
-                        <!-- Filter Form for CGPA Comparison -->
+                        
                         <div class="mb-4 flex justify-center gap-2">
                             <select id="cgpa-intake-year" class="rounded-md border-gray-300 shadow-sm">
                                 @foreach ($intakeOptions as $option)
@@ -340,7 +325,6 @@
                             </select>
                         </div>
 
-                        <!-- Loading indicator -->
                         <div id="cgpa-loading" class="hidden text-center py-4">
                             <div class="inline-flex items-center">
                                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -351,7 +335,6 @@
                             </div>
                         </div>
 
-                        <!-- CGPA Comparison Bars -->
                         <div id="cgpa-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                             @php
                                 $maxCgpa = max($cgpaCadets->max('current_cgpa'), $cgpaCadets->max('past_cgpa')) ?: 4.0;
@@ -362,14 +345,11 @@
                                     $pastPercentage = ($cadet->past_cgpa / $maxCgpa) * 100;
                                     $currentPercentage = ($cadet->current_cgpa / $maxCgpa) * 100;
                                     $cgpaChange = $cadet->current_cgpa - $cadet->past_cgpa;
-                                        
-                                    // Color logic: green if improved, red if declined
-                                    $currentColor = $cgpaChange >= 0 ? '#10b981' : '#ef4444'; // green-500 or red-500
-                                    $pastColor = '#3b82f6'; // blue-500
+                                    $currentColor = $cgpaChange >= 0 ? '#10b981' : '#ef4444';
+                                    $pastColor = '#3b82f6';
                                 @endphp
 
                                 <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
-                                    <!-- Avatar -->
                                     <div class="flex-shrink-0">
                                         <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
                                             <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
@@ -378,7 +358,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Bar + Name -->
                                     <div class="flex-1 w-full">
                                         <div class="text-sm font-medium mb-1 text-center sm:text-left flex justify-between items-center">
                                             <span>#{{ $index + 1 }} - {{ $cadet->name }}</span>
@@ -387,26 +366,19 @@
                                             </span>
                                         </div>
 
-                                        <!-- Current CGPA Bar -->
                                         <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                            <div class="absolute top-0 left-0 h-full rounded-full"
-                                                style="width: {{ $currentPercentage }}%; background-color: {{ $currentColor }};">
-                                            </div>
+                                            <div class="absolute top-0 left-0 h-full rounded-full" style="width: {{ $currentPercentage }}%; background-color: {{ $currentColor }};"></div>
                                             <span class="absolute inset-0 flex items-center justify-start pl-2 text-white font-semibold text-xs">
                                                 Current: {{ number_format($cadet->current_cgpa, 2) }}
                                             </span>
                                         </div>
 
-                                        <!-- Past CGPA Bar (Background) -->
                                         <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden mb-1">
-                                            <div class="absolute top-0 left-0 h-full rounded-full"
-                                                style="width: {{ $pastPercentage }}%; background-color: {{ $pastColor }};">
-                                            </div>
+                                            <div class="absolute top-0 left-0 h-full rounded-full" style="width: {{ $pastPercentage }}%; background-color: {{ $pastColor }};"></div>
                                             <span class="absolute inset-0 flex items-center justify-start pl-2 text-white font-semibold text-xs">
                                                 Past: {{ number_format($cadet->past_cgpa, 2) }}
                                             </span>
                                         </div>
-
                                     </div>
                                 </div>
                             @empty
@@ -414,7 +386,6 @@
                             @endforelse
                         </div>
 
-                        <!-- Legend -->
                         <div class="flex justify-center gap-4 text-sm mt-4">
                             <div class="flex items-center gap-2">
                                 <div class="w-4 h-4 bg-blue-500 rounded"></div>
@@ -432,8 +403,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Pending Absence Reasons Section with Toggle -->
+            {{-- ================================================================ --}}
+            {{-- PENDING ABSENCE REASONS SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                
                 <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
                     <div class="flex justify-between items-center">
                         <div>
@@ -450,31 +424,22 @@
                             </h2>
                             <p id="absence-section-description" class="text-gray-600">Cadets with training absences requiring documentation</p>
                         </div>
-                        <!-- Controls Container -->
+                        
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                            <!-- View Toggle -->
+                            
                             <div class="flex bg-gray-100 rounded-lg p-1 self-stretch sm:self-auto">
-                                <button
-                                    id="pending-view-btn"
-                                    onclick="toggleAbsenceView('pending')"
-                                    class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm flex-1 sm:flex-none"
-                                >
+                                <button id="pending-view-btn" onclick="toggleAbsenceView('pending')" class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm flex-1 sm:flex-none">
                                     <i class="fas fa-exclamation-triangle mr-1"></i>
                                     <span class="hidden sm:inline">Pending</span>
                                     <span class="sm:hidden">Pending</span>
                                 </button>
-                                <button
-                                    id="leaderboard-view-btn"
-                                    onclick="toggleAbsenceView('leaderboard')"
-                                    class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 flex-1 sm:flex-none"
-                                >
+                                <button id="leaderboard-view-btn" onclick="toggleAbsenceView('leaderboard')" class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 flex-1 sm:flex-none">
                                     <i class="fas fa-chart-bar mr-1"></i>
                                     <span class="hidden sm:inline">Absence List</span>
                                     <span class="sm:hidden">List</span>
                                 </button>
                             </div>
 
-                            <!-- Filter -->
                             <div id="absence-filter-container" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
                                 <label for="absence-intake-filter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
                                 <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm w-full sm:w-auto">
@@ -491,22 +456,24 @@
                 </div>
 
                 <div class="p-6">
-                    <!-- Loading indicator -->
+                    
                     <div id="absence-loading" class="hidden text-center py-4">
                         <div class="inline-flex items-center">
                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 818-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             Loading absence data...
                         </div>
                     </div>
-                    <!-- Pending Absence Data -->
+                    {{-- ================================================================ --}}
+                    {{-- PENDING ABSENCE DATA --}}
+                    {{-- ================================================================ --}}
                     <div id="absence-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absentCadets) && !empty($absentCadets))
                             @foreach ($absentCadets as $intakeLabel => $cadets)
                                 @if(($selectedAbsenceIntake ?? '') === '' || ($selectedAbsenceIntake ?? '') === 'all')
-                                    <!-- Show intake grouping when All Intakes is selected -->
+                                    
                                     <div class="border border-red-200 rounded-lg overflow-hidden">
                                         <div class="bg-red-50 px-4 py-3 border-b border-red-200">
                                             <h4 class="font-semibold text-red-800 flex items-center">
@@ -519,12 +486,8 @@
                                         </div>
                                         <div class="p-4 space-y-3">
                                             @foreach($cadets as $cadet)
-                                                <!-- Cadet Absence Dropdown -->
                                                 <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
-                                                    <button 
-                                                        onclick="toggleAbsenceDropdown({{ $cadet->id }})"
-                                                        class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200"
-                                                    >
+                                                    <button onclick="toggleAbsenceDropdown({{ $cadet->id }})" class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200">
                                                         <div class="flex items-center space-x-3">
                                                             <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
                                                                 <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
@@ -540,13 +503,7 @@
                                                             <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                                                                 {{ count($cadet->pending_absences) }} {{ Str::plural('absence', count($cadet->pending_absences)) }}
                                                             </span>
-                                                            <svg 
-                                                                id="absence-icon-{{ $cadet->id }}" 
-                                                                class="w-5 h-5 text-gray-400 transform transition-transform duration-200" 
-                                                                fill="none" 
-                                                                stroke="currentColor" 
-                                                                viewBox="0 0 24 24"
-                                                            >
+                                                            <svg id="absence-icon-{{ $cadet->id }}" class="w-5 h-5 text-gray-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                                             </svg>
                                                         </div>
@@ -575,9 +532,7 @@
                                                                                 </div>
                                                                                 <div class="flex items-center">
                                                                                     <i class="fas fa-exclamation-triangle w-4 text-orange-500 mr-2"></i>
-                                                                                    <span class="text-xs">
-                                                                                        Missing: {{ $absence->missing_items }}
-                                                                                    </span>
+                                                                                    <span class="text-xs">Missing: {{ $absence->missing_items }}</span>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -593,84 +548,72 @@
                                             @endforeach
                                         </div>
                                     </div>
-                            @else
-                                <!-- Show individual cadets when specific intake is selected -->
-                                <div class="p-4 space-y-3">
-                                    @foreach($cadets as $cadet)
-                                        <!-- Same cadet dropdown structure as above -->
-                                        <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
-                                            <button
-                                                onclick="toggleAbsenceDropdown({{ $cadet->id }})"
-                                                class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200"
-                                            >
-                                                <div class="flex items-center space-x-3">
-                                                    <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                                        <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                                                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                                    </svg>
-                                                </div>
-                                                <div class="text-left">
-                                                    <p class="font-semibold text-gray-900">{{ $cadet->name }}</p>
-                                                    <p class="text-sm text-gray-600">Service: {{ $cadet->service_number ?? 'N/A' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center space-x-3">
-                                                <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                                    {{ count($cadet->pending_absences) }} {{ Str::plural('absence', count($cadet->pending_absences)) }}
-                                                </span>
-                                                <svg
-                                                    id="absence-icon-{{ $cadet->id }}"
-                                                    class="w-5 h-5 text-gray-400 transform transition-transform duration-200"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                                </svg>
-                                            </div>
-                                        </button>
-
-                                        <div id="absence-dropdown-{{ $cadet->id }}" class="hidden border-t border-orange-200">
-                                            <div class="p-4 space-y-3">
-                                                <h5 class="font-medium text-gray-800 mb-3 flex items-center">
-                                                    <i class="fas fa-list mr-2 text-red-500"></i>
-                                                    Missing Documentation for:
-                                                </h5>
-
-                                                @foreach($cadet->pending_absences as $absence)
-                                                    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-                                                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                                                            <div class="flex-1">
-                                                                <h6 class="font-semibold text-red-900">{{ $absence->training_title }}</h6>
-                                                                <div class="text-sm text-red-700 space-y-1 mt-2">
-                                                                    <div class="flex items-center">
-                                                                        <i class="fas fa-calendar w-4 text-red-500 mr-2"></i>
-                                                                        <span>{{ $absence->training_date }}</span>
-                                                                    </div>
-                                                                    <div class="flex items-center">
-                                                                        <i class="fas fa-map-marker-alt w-4 text-red-500 mr-2"></i>
-                                                                        <span>{{ $absence->training_location }}</span>
-                                                                    </div>
-                                                                    <div class="flex items-center">
-                                                                        <i class="fas fa-exclamation-triangle w-4 text-orange-500 mr-2"></i>
-                                                                        <span class="text-xs">
-                                                                            Missing: {{ $absence->missing_items }}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium self-start sm:self-auto">
-                                                                Pending
-                                                            </span>
+                                @else
+                                    
+                                    <div class="p-4 space-y-3">
+                                        @foreach($cadets as $cadet)
+                                            <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
+                                                <button onclick="toggleAbsenceDropdown({{ $cadet->id }})" class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200">
+                                                    <div class="flex items-center space-x-3">
+                                                        <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="text-left">
+                                                            <p class="font-semibold text-gray-900">{{ $cadet->name }}</p>
+                                                            <p class="text-sm text-gray-600">Service: {{ $cadet->service_number ?? 'N/A' }}</p>
                                                         </div>
                                                     </div>
-                                                @endforeach
+                                                    <div class="flex items-center space-x-3">
+                                                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                                            {{ count($cadet->pending_absences) }} {{ Str::plural('absence', count($cadet->pending_absences)) }}
+                                                        </span>
+                                                        <svg id="absence-icon-{{ $cadet->id }}" class="w-5 h-5 text-gray-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                        </svg>
+                                                    </div>
+                                                </button>
+
+                                                <div id="absence-dropdown-{{ $cadet->id }}" class="hidden border-t border-orange-200">
+                                                    <div class="p-4 space-y-3">
+                                                        <h5 class="font-medium text-gray-800 mb-3 flex items-center">
+                                                            <i class="fas fa-list mr-2 text-red-500"></i>
+                                                            Missing Documentation for:
+                                                        </h5>
+
+                                                        @foreach($cadet->pending_absences as $absence)
+                                                            <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                                                                    <div class="flex-1">
+                                                                        <h6 class="font-semibold text-red-900">{{ $absence->training_title }}</h6>
+                                                                        <div class="text-sm text-red-700 space-y-1 mt-2">
+                                                                            <div class="flex items-center">
+                                                                                <i class="fas fa-calendar w-4 text-red-500 mr-2"></i>
+                                                                                <span>{{ $absence->training_date }}</span>
+                                                                            </div>
+                                                                            <div class="flex items-center">
+                                                                                <i class="fas fa-map-marker-alt w-4 text-red-500 mr-2"></i>
+                                                                                <span>{{ $absence->training_location }}</span>
+                                                                            </div>
+                                                                            <div class="flex items-center">
+                                                                                <i class="fas fa-exclamation-triangle w-4 text-orange-500 mr-2"></i>
+                                                                                <span class="text-xs">Missing: {{ $absence->missing_items }}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium self-start sm:self-auto">
+                                                                        Pending
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
+                                        @endforeach
+                                    </div>
+                                @endif
                             @endforeach
                         @else
                             <div class="text-center py-16">
@@ -684,7 +627,9 @@
                             </div>
                         @endif
                     </div>
-                    <!-- Absence Leaderboard (Hidden by default) -->
+                    {{-- ================================================================ --}}
+                    {{-- ABSENCE LEADERBOARD --}}
+                    {{-- ================================================================ --}}
                     <div id="absence-leaderboard-content" class="hidden space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absenceLeaderboard) && !empty($absenceLeaderboard))
                             @if(($selectedAbsenceIntake ?? '') === '' || ($selectedAbsenceIntake ?? '') === 'all')
@@ -740,26 +685,26 @@
                                         @endphp
                                         <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
                                             <div class="flex-shrink-0">
-                                                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                                    <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <div class="flex-1 w-full">
-                                                <div class="text-sm font-medium mb-1 text-center sm:text-left">
-                                                    #{{ $index + 1 }} - {{ $cadet->cadet_name }}
-                                                </div>
-                                                <div class="text-center sm:text-left">
-                                                    <span class="text-sm font-semibold text-gray-800">
-                                                        Training Attended: {{ $attended }} / {{ $cadet->total_trainings }}
-                                                    </span>
-                                                    <span class="text-sm font-semibold text-red-600 ml-4">
-                                                        Total Absence: {{ $cadet->absence_count }}
-                                                    </span>
-                                                </div>
+                                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                </svg>
                                             </div>
                                         </div>
+                                        <div class="flex-1 w-full">
+                                            <div class="text-sm font-medium mb-1 text-center sm:text-left">
+                                                #{{ $index + 1 }} - {{ $cadet->cadet_name }}
+                                            </div>
+                                            <div class="text-center sm:text-left">
+                                                <span class="text-sm font-semibold text-gray-800">
+                                                    Training Attended: {{ $attended }} / {{ $cadet->total_trainings }}
+                                                </span>
+                                                <span class="text-sm font-semibold text-red-600 ml-4">
+                                                    Total Absence: {{ $cadet->absence_count }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                     @endforeach
                                 </div>
                             @endif
@@ -779,12 +724,16 @@
             </div>
         </div>
     </div>
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT --}}
+    {{-- ================================================================ --}}
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Global variables to track current view
         let currentAbsenceView = 'pending';
         
-        // Toggle function for absence view
+        {{-- ================================================================ --}}
+        {{-- ABSENCE VIEW TOGGLE FUNCTION --}}
+        {{-- ================================================================ --}}
         function toggleAbsenceView(view) {
             const pendingBtn = document.getElementById('pending-view-btn');
             const leaderboardBtn = document.getElementById('leaderboard-view-btn');
@@ -796,70 +745,57 @@
             const filterContainer = document.getElementById('absence-filter-container');
             
             if (view === 'pending') {
-                // Switch to pending view
                 currentAbsenceView = 'pending';
                 
-                // Update buttons
                 pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
                 pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
                 leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
                 leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
                 
-                // Update content visibility
                 pendingContent.classList.remove('hidden');
                 leaderboardContent.classList.add('hidden');
                 
-                // Show filter for pending view
                 if (filterContainer) {
                     filterContainer.classList.remove('hidden');
                 }
                 
-                // Update header
                 sectionTitle.textContent = 'Pending Absence Reasons';
                 sectionDescription.textContent = 'Cadets with training absences requiring documentation';
                 if (countBadge) countBadge.classList.remove('hidden');
                 
             } else if (view === 'leaderboard') {
-                // Switch to leaderboard view
                 currentAbsenceView = 'leaderboard';
                 
-                // Update buttons
                 leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
                 leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
                 pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
                 pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
                 
-                // Update content visibility
                 leaderboardContent.classList.remove('hidden');
                 pendingContent.classList.add('hidden');
                 
-                // Hide filter for leaderboard view (shows all intakes)
                 if (filterContainer) {
                     filterContainer.classList.add('hidden');
                 }
                 
-                // Update header
                 sectionTitle.textContent = 'Absence Summary - All Intakes';
                 sectionDescription.textContent = 'Overview of cadets requiring attendance improvement';
                 if (countBadge) countBadge.classList.add('hidden');
             }
         }
 
-        // Make toggleAbsenceView globally accessible
         window.toggleAbsenceView = toggleAbsenceView;
 
-
-
-        // AJAX function for CGPA analytics
+        {{-- ================================================================ --}}
+        {{-- CGPA ANALYTICS AJAX LOADER --}}
+        {{-- ================================================================ --}}
         function loadCgpaAnalytics() {
             const intakeYear = document.getElementById('cgpa-intake-year').value;
             const sortOrder = document.getElementById('cgpa-sort-order').value;
 
-            // Show loading indicator
             document.getElementById('cgpa-loading').classList.remove('hidden');
             document.getElementById('cgpa-content').classList.add('opacity-50');
 
-            // Create form data
             const formData = new FormData();
             formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
             formData.append('sort_order', document.getElementById('duty-sort-order').value);
@@ -885,31 +821,27 @@
                 console.error('Error loading CGPA analytics:', error);
             })
             .finally(() => {
-                // Hide loading indicator
                 document.getElementById('cgpa-loading').classList.add('hidden');
                 document.getElementById('cgpa-content').classList.remove('opacity-50');
             });
         }
 
-        // AJAX function for absence data
+        {{-- ================================================================ --}}
+        {{-- ABSENCE DATA AJAX LOADER --}}
+        {{-- ================================================================ --}}
         function loadAbsenceData() {
             const intakeFilter = document.getElementById('absence-intake-filter').value;
 
-            // Show loading indicator
             document.getElementById('absence-loading').classList.remove('hidden');
             
-            // Add opacity to both content areas
             const pendingContent = document.getElementById('absence-content');
             const leaderboardContent = document.getElementById('absence-leaderboard-content');
             
             if (pendingContent) pendingContent.classList.add('opacity-50');
             if (leaderboardContent) leaderboardContent.classList.add('opacity-50');
 
-            // Create form data - IMPORTANT: Include all current filter states
             const formData = new FormData();
             formData.append('absence_intake_filter', intakeFilter);
-            
-            // Also include other filters to maintain state
             formData.append('duty_intake_year', document.getElementById('duty-intake-year').value);
             formData.append('sort_order', document.getElementById('duty-sort-order').value);
             formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
@@ -934,7 +866,6 @@
                     leaderboardContent.innerHTML = data.absence_leaderboard_html;
                 }
                 
-                // Update the count badge if present
                 const countBadge = document.getElementById('absence-count-badge');
                 if (countBadge && data.absence_count !== undefined) {
                     if (data.absence_count > 0) {
@@ -949,27 +880,22 @@
                 console.error('Error loading absence data:', error);
             })
             .finally(() => {
-                // Hide loading indicator and remove opacity
                 document.getElementById('absence-loading').classList.add('hidden');
                 if (pendingContent) pendingContent.classList.remove('opacity-50');
                 if (leaderboardContent) leaderboardContent.classList.remove('opacity-50');
             });
         }
 
-
-
-        // Event listeners for CGPA analytics filters
+        {{-- ================================================================ --}}
+        {{-- EVENT LISTENERS --}}
+        {{-- ================================================================ --}}
         document.getElementById('cgpa-intake-year').addEventListener('change', loadCgpaAnalytics);
         document.getElementById('cgpa-sort-order').addEventListener('change', loadCgpaAnalytics);
-
-        // Event listener for absence filter
         document.getElementById('absence-intake-filter').addEventListener('change', loadAbsenceData);
 
-        // Make loadDutyRanking globally accessible for the modal
-        // Removed loadDutyRanking function and reference as duty ranking is no longer AJAX
-        // window.loadDutyRanking = loadDutyRanking;
-
-        // Dropdown toggle function
+        {{-- ================================================================ --}}
+        {{-- ABSENCE DROPDOWN TOGGLE --}}
+        {{-- ================================================================ --}}
         window.toggleAbsenceDropdown = function(cadetId) {
             const dropdown = document.getElementById('absence-dropdown-' + cadetId);
             const icon = document.getElementById('absence-icon-' + cadetId);
@@ -984,7 +910,9 @@
         };
     });
 
-    // Alpine.js initialization for modal functionality
+    {{-- ================================================================ --}}
+    {{-- ALPINE.JS MODAL STORE --}}
+    {{-- ================================================================ --}}
     document.addEventListener('alpine:init', () => {
         Alpine.store('modal', {
             open: false,
@@ -998,7 +926,5 @@
             }))
         });
     });
-
-    // Removed AJAX fetch override for duty ranking cadet list update as no longer needed
-</script>
+    </script>
 </x-app-layout>
