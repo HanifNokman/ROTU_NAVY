@@ -264,12 +264,13 @@
                                     ×
                                 </button>
 
-                                <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
+<h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
+<p class="text-center text-gray-600 mb-4">Intake - {{ $selectedDutyIntakeYear - 2011 }}</p>
 
-                                <form method="POST" action="{{ route('instructor.incrementDuty') }}">
-                                    @csrf
-                                    <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
-                                    <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
+<form method="POST" action="{{ route('instructor.incrementDuty') }}">
+    @csrf
+    <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
+    <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
 
                                     <div id="modal-cadet-list" class="space-y-2 max-h-[400px] overflow-y-auto border p-2 rounded mb-4">
                                         <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
