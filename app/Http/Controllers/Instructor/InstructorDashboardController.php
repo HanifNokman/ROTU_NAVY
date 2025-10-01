@@ -27,35 +27,26 @@ class InstructorDashboardController extends Controller
         }
 
         $currentYear = now()->year;
-        $cadetYears = \App\Models\Cadet::distinct()->pluck('intake_year')->sort()->reverse()->values();
 
         // ================================================================
         // INTAKE OPTIONS GENERATION
         // ================================================================
-        
-        if ($cadetYears->isEmpty()) {
-            $minYear = $currentYear - 3;
-            $intakeOptions = collect(range($currentYear, $minYear))->map(function($year) {
-                $intakeNumber = $year - 2011;
-                return $intakeNumber > 0 ? [
-                    'year' => $year,
-                    'label' => 'Intake - ' . $intakeNumber,
-                ] : null;
-            })->filter()->values();
-            
-            $latestIntakeYear = $currentYear;
-        } else {
-            $recentYears = $cadetYears->take(4);
-            $intakeOptions = $recentYears->map(function($year) {
-                $intakeNumber = $year - 2011;
-                return $intakeNumber > 0 ? [
-                    'year' => $year,
-                    'label' => 'Intake - ' . $intakeNumber,
-                ] : null;
-            })->filter()->values();
-            
-            $latestIntakeYear = $recentYears->first();
-        }
+        // Always show max 4 intakes: current year and 3 years below
+        $minYear = $currentYear - 3;
+        $intakeYears = collect(range($currentYear, $minYear))->filter(function($year) {
+            $intakeNumber = $year - 2011;
+            return $intakeNumber > 0;
+        });
+
+        $intakeOptions = $intakeYears->map(function($year) {
+            $intakeNumber = $year - 2011;
+            return [
+                'year' => $year,
+                'label' => 'Intake - ' . $intakeNumber . ' (' . $year . ')',
+            ];
+        })->values();
+
+        $latestIntakeYear = $currentYear;
 
         if ($intakeOptions->isEmpty()) {
             $startYear = 2012;

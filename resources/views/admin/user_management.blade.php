@@ -72,8 +72,8 @@
                         <label for="intake" class="block text-sm font-medium text-gray-700">Filter by Intake:</label>
                         <select name="intake" id="intake" onchange="this.form.submit()" class="mt-1 block w-48 pl-3 pr-10 py-1 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md">
                             <option value="no_intake" @if($request->intake == 'no_intake') selected @endif>No Intake Year</option>
-                            @foreach($intakes->filter(fn($intake) => !empty($intake)) as $intake)
-                                <option value="{{ $intake }}" @if($request->intake == $intake || (!$request->intake && $loop->first)) selected @endif>Intake - {{ $intake - 2011 }} ({{ $intake }})</option>
+                            @foreach($intakes as $intake)
+                                <option value="{{ $intake['year'] }}" @if($request->intake == $intake['year'] || (!$request->intake && $loop->first)) selected @endif>{{ $intake['label'] }}</option>
                             @endforeach
                         </select>
                     </form>
@@ -104,7 +104,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($cadets as $cadet)
+                                @forelse($cadets as $cadet)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cadet->service_number }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cadet->user->name }}</td>
@@ -128,7 +128,13 @@
                                             <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $cadet->user->id }}" data-type="cadet" data-name="{{ $cadet->user->name }}">Delete</button>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="18" class="px-6 py-12 text-center text-gray-500">
+                                            <p>No cadets found for the selected filter.</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -174,7 +180,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($instructors as $instructor)
+                                @forelse($instructors as $instructor)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $instructor->service_number }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $instructor->user->name }}</td>
@@ -193,7 +199,13 @@
                                             <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $instructor->user->id }}" data-type="instructor" data-name="{{ $instructor->user->name }}">Delete</button>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="13" class="px-6 py-12 text-center text-gray-500">
+                                            <p>No instructors found for the selected filter.</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -349,8 +361,7 @@
 
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Intake Year</label><select name="intake_year" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">`;
                 intakes.forEach(intake => {
-                    const intakeNum = intake - 2011;
-                    fields += `<option value="${intake}" ${cadet.intake_year == intake ? 'selected' : ''}>Intake - ${intakeNum} (${intake})</option>`;
+                    fields += `<option value="${intake.year}" ${cadet.intake_year == intake.year ? 'selected' : ''}>${intake.label}</option>`;
                 });
                 fields += `</select></div>`;
 
