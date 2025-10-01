@@ -1,4 +1,7 @@
 <x-app-layout>
+    {{-- ================================================================ --}}
+    {{-- PAGE HEADER --}}
+    {{-- ================================================================ --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Cadet Management (Instructor)') }}
@@ -8,7 +11,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- PAGE TITLE SECTION --}}
+            {{-- ================================================================ --}}
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,8 +24,12 @@
                 <p class="text-gray-600">Manage cadet information, positions, and qualifications</p>
             </div>
 
-            <!-- Cadet Management Header -->
+            {{-- ================================================================ --}}
+            {{-- MAIN CONTENT CARD --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                
+                {{-- Card Header --}}
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
                         <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,122 +39,137 @@
                     </h3>
                     <p class="text-gray-600">Manage cadet information, positions, and qualifications</p>
                 </div>
+
+                {{-- Card Body --}}
                 <div class="p-6 text-gray-900">
-<!-- Top Section: Filters and Sort Options - STATIC -->
-<div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
-    <!-- Left Side Filters -->
-    <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
-        <!-- Intake Filter -->
-        <div class="flex flex-col">
-            <label class="text-sm font-medium text-gray-700 mb-1">Cadet Intake</label>
-            <select id="intakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                @if(!empty($recentIntakes) && is_array($recentIntakes))
-                    @foreach($recentIntakes as $intake)
-                        <option value="{{ $intake['year'] }}" {{ $intakeYear == $intake['year'] ? 'selected' : '' }}>
-                            {{ $intake['label'] }}
-                        </option>
-                    @endforeach
-                @else
-                    @php
-                        $currentYear = now()->year;
-                        for ($i = 0; $i < 4; $i++) {
-                            $year = $currentYear - $i;
-                            $intakeNumber = 14 - $i;
-                            echo "<option value='{$year}'" . ($intakeYear == $year ? ' selected' : '') . ">Intake - {$intakeNumber} ({$year})</option>";
-                        }
-                    @endphp
-                @endif
-            </select>
-        </div>
 
-<!-- Dynamic Sorting Filter -->
-@if($infoType !== 'seniority')
-<div class="flex flex-col space-y-2">
-    @if($infoType != 'cgpa')
-    <div class="flex flex-col">
-        <label class="text-sm font-medium text-gray-700 mb-1">
-            @switch($infoType)
-                @case('bmi')
-                    Sort Order
-                    @break
-                @case('position')
-                    Filter
-                    @break
-                @case('gender')
-                    Gender
-                    @break
-                @case('swimming')
-                    Status
-                    @break
-            @endswitch
-        </label>
-        <select id="sortFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-            @switch($infoType)
-                @case('bmi')
-                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                    <option value="overweight" {{ $filterBy == 'overweight' ? 'selected' : '' }}>BMI > 26.9</option>
-                    <option value="underweight" {{ $filterBy == 'underweight' ? 'selected' : '' }}>BMI < 18.0</option>
-                    @break
-                @case('position')
-                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                    <option value="rank_holders" {{ $filterBy == 'rank_holders' ? 'selected' : '' }}>Rank Holders Only</option>
-                    @break
-                @case('gender')
-                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                    <option value="male" {{ $filterBy == 'male' ? 'selected' : '' }}>Male</option>
-                    <option value="female" {{ $filterBy == 'female' ? 'selected' : '' }}>Female</option>
-                    @break
-                @case('swimming')
-                    <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                    <option value="pass" {{ $filterBy == 'pass' ? 'selected' : '' }}>Pass</option>
-                    <option value="in_progress" {{ $filterBy == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                    <option value="fail" {{ $filterBy == 'fail' ? 'selected' : '' }}>Fail</option>
-                    @break
-            @endswitch
-        </select>
-    </div>
-    @endif
+                    {{-- ================================================================ --}}
+                    {{-- FILTERS AND CONTROLS SECTION --}}
+                    {{-- ================================================================ --}}
+                    <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
+                        
+                        {{-- Left Side: Intake and Dynamic Filters --}}
+                        <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
+                            
+                            {{-- Intake Filter --}}
+                            <div class="flex flex-col">
+                                <label class="text-sm font-medium text-gray-700 mb-1">Cadet Intake</label>
+                                <select id="intakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @if(!empty($recentIntakes) && is_array($recentIntakes))
+                                        @foreach($recentIntakes as $intake)
+                                            <option value="{{ $intake['year'] }}" {{ $intakeYear == $intake['year'] ? 'selected' : '' }}>
+                                                {{ $intake['label'] }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        @php
+                                            $currentYear = now()->year;
+                                            for ($i = 0; $i < 4; $i++) {
+                                                $year = $currentYear - $i;
+                                                $intakeNumber = 14 - $i;
+                                                echo "<option value='{$year}'" . ($intakeYear == $year ? ' selected' : '') . ">Intake - {$intakeNumber} ({$year})</option>";
+                                            }
+                                        @endphp
+                                    @endif
+                                </select>
+                            </div>
 
-    @if($infoType == 'cgpa')
-    <div class="flex flex-col">
-        <label class="text-sm font-medium text-gray-700 mb-1">CGPA Range Filter</label>
-        <select id="cgpaRangeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-            <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-            <option value="3.67_and_above" {{ $filterBy == '3.67_and_above' ? 'selected' : '' }}>3.67 and above</option>
-            <option value="3.00_to_3.66" {{ $filterBy == '3.00_to_3.66' ? 'selected' : '' }}>3.00 - 3.66</option>
-            <option value="2.50_to_2.99" {{ $filterBy == '2.50_to_2.99' ? 'selected' : '' }}>2.50 - 2.99</option>
-            <option value="2.49_and_below" {{ $filterBy == '2.49_and_below' ? 'selected' : '' }}>2.49 and below</option>
-        </select>
-    </div>
-    @endif
-</div>
-@endif
+                            {{-- Dynamic Sorting/Filter Controls --}}
+                            @if($infoType !== 'seniority')
+                                <div class="flex flex-col space-y-2">
+                                    
+                                    {{-- Standard Filter Dropdown (BMI, Position, Gender, Swimming) --}}
+                                    @if($infoType != 'cgpa')
+                                        <div class="flex flex-col">
+                                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                                @switch($infoType)
+                                                    @case('bmi')
+                                                        Sort Order
+                                                        @break
+                                                    @case('position')
+                                                        Filter
+                                                        @break
+                                                    @case('gender')
+                                                        Gender
+                                                        @break
+                                                    @case('swimming')
+                                                        Status
+                                                        @break
+                                                @endswitch
+                                            </label>
+                                            <select id="sortFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                @switch($infoType)
+                                                    @case('bmi')
+                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                                                        <option value="overweight" {{ $filterBy == 'overweight' ? 'selected' : '' }}>BMI > 26.9</option>
+                                                        <option value="underweight" {{ $filterBy == 'underweight' ? 'selected' : '' }}>BMI < 18.0</option>
+                                                        @break
+                                                    @case('position')
+                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                                                        <option value="rank_holders" {{ $filterBy == 'rank_holders' ? 'selected' : '' }}>Rank Holders Only</option>
+                                                        @break
+                                                    @case('gender')
+                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                                                        <option value="male" {{ $filterBy == 'male' ? 'selected' : '' }}>Male</option>
+                                                        <option value="female" {{ $filterBy == 'female' ? 'selected' : '' }}>Female</option>
+                                                        @break
+                                                    @case('swimming')
+                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                                                        <option value="pass" {{ $filterBy == 'pass' ? 'selected' : '' }}>Pass</option>
+                                                        <option value="in_progress" {{ $filterBy == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                                                        <option value="fail" {{ $filterBy == 'fail' ? 'selected' : '' }}>Fail</option>
+                                                        @break
+                                                @endswitch
+                                            </select>
+                                        </div>
+                                    @endif
+
+                                    {{-- CGPA Range Filter --}}
+                                    @if($infoType == 'cgpa')
+                                        <div class="flex flex-col">
+                                            <label class="text-sm font-medium text-gray-700 mb-1">CGPA Range Filter</label>
+                                            <select id="cgpaRangeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
+                                                <option value="3.67_and_above" {{ $filterBy == '3.67_and_above' ? 'selected' : '' }}>3.67 and above</option>
+                                                <option value="3.00_to_3.66" {{ $filterBy == '3.00_to_3.66' ? 'selected' : '' }}>3.00 - 3.66</option>
+                                                <option value="2.50_to_2.99" {{ $filterBy == '2.50_to_2.99' ? 'selected' : '' }}>2.50 - 2.99</option>
+                                                <option value="2.49_and_below" {{ $filterBy == '2.49_and_below' ? 'selected' : '' }}>2.49 and below</option>
+                                            </select>
+                                        </div>
+                                    @endif
+                                    
+                                </div>
+                            @endif
                         </div>
 
-<!-- Right Side: Information Type Buttons -->
-<div class="flex flex-wrap gap-2 items-center">
-    @php
-        $infoTypes = [
-            'seniority' => 'Seniority',
-            'position' => 'Position', 
-            'gender' => 'Gender',
-            'cgpa' => 'CGPA',
-            'swimming' => 'Swimming',
-            'bmi' => 'BMI'
-        ];
-    @endphp
-    @foreach($infoTypes as $type => $label)
-        <button 
-            class="info-type-btn px-4 py-2 rounded-md text-sm font-medium transition-colors
-                   {{ $infoType == $type ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
-            data-type="{{ $type }}">
-            {{ $label }}
-        </button>
-    @endforeach
-</div>
+                        {{-- Right Side: Information Type Buttons --}}
+                        <div class="flex flex-wrap gap-2 items-center">
+                            @php
+                                $infoTypes = [
+                                    'seniority' => 'Seniority',
+                                    'position' => 'Position', 
+                                    'gender' => 'Gender',
+                                    'cgpa' => 'CGPA',
+                                    'swimming' => 'Swimming',
+                                    'bmi' => 'BMI'
+                                ];
+                            @endphp
+                            @foreach($infoTypes as $type => $label)
+                                <button 
+                                    class="info-type-btn px-4 py-2 rounded-md text-sm font-medium transition-colors
+                                           {{ $infoType == $type ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
+                                    data-type="{{ $type }}">
+                                    {{ $label }}
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
 
-                    <!-- Save Changes Button for Position Management - STATIC -->
+                    {{-- ================================================================ --}}
+                    {{-- ACTION BUTTONS SECTION --}}
+                    {{-- ================================================================ --}}
+                    
+                    {{-- Save Changes Button (Position Management) --}}
                     @if($infoType == 'position' && $cadets->count() > 0)
                         <div class="mb-4 flex justify-end">
                             <button id="savePositionsBtn" 
@@ -155,7 +179,7 @@
                         </div>
                     @endif
 
-                    <!-- Mark as Passed Button for Swimming Management - STATIC -->
+                    {{-- Mark as Passed Button (Swimming Management) --}}
                     @if($infoType == 'swimming' && $cadets->count() > 0)
                         <div class="mb-4 flex justify-end">
                             <button id="markAsPassedBtn" 
@@ -166,9 +190,12 @@
                         </div>
                     @endif
 
-                    <!-- SCROLLABLE Cadet Information Table Container -->
+                    {{-- ================================================================ --}}
+                    {{-- CADET TABLE SECTION --}}
+                    {{-- ================================================================ --}}
                     <div class="border border-gray-200 rounded-lg">
-                        <!-- Fixed Table Header -->
+                        
+                        {{-- Table Header (Fixed) --}}
                         <div class="bg-gray-50 border-b border-gray-200">
                             <div class="px-6 py-3">
                                 <div class="grid grid-cols-5 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -200,7 +227,9 @@
                                     <div>
                                         @if($infoType == 'swimming')
                                             <div class="flex items-center">
-                                                <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
+                                                <input type="checkbox" 
+                                                       id="selectAll" 
+                                                       class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
                                                 <span>Select All</span>
                                             </div>
                                         @else
@@ -211,42 +240,48 @@
                             </div>
                         </div>
                         
-                        <!-- Scrollable Table Body - MAX 10 ROWS VISIBLE -->
+                        {{-- Table Body (Scrollable) --}}
                         <div class="overflow-y-auto" style="max-height: 600px;">
                             <div class="bg-white">
                                 @forelse($cadets as $index => $cadet)
-                                    <div class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer cadet-row px-6 py-4" data-cadet-id="{{ $cadet->id }}">
+                                    <div class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer cadet-row px-6 py-4" 
+                                         data-cadet-id="{{ $cadet->id }}">
                                         <div class="grid grid-cols-5 gap-4 items-center">
-                                            <!-- No. -->
+                                            
+                                            {{-- Column 1: Number --}}
                                             <div class="text-sm text-gray-900">
                                                 {{ $cadets->firstItem() + $index }}
                                             </div>
                                             
-                                            <!-- Service Number -->
+                                            {{-- Column 2: Service Number --}}
                                             <div class="text-sm text-gray-900">
                                                 {{ $cadet->service_number ?? 'N/A' }}
                                             </div>
                                             
-                                            <!-- Name -->
+                                            {{-- Column 3: Name --}}
                                             <div class="text-sm font-medium text-gray-900">
                                                 {{ $cadet->user->name ?? 'Unknown' }}
                                             </div>
                                             
-                                            <!-- Dynamic Info Column -->
+                                            {{-- Column 4: Dynamic Info --}}
                                             <div class="text-sm text-gray-900">
                                                 @switch($infoType)
                                                     @case('seniority')
                                                         {{ $cadet->ic_number ?? 'N/A' }}
                                                         @break
+                                                        
                                                     @case('position')
                                                         {{ $cadet->position ?? 'Normal Cadet' }}
                                                         @break
+                                                        
                                                     @case('gender')
                                                         {{ $cadet->gender ?? 'N/A' }}
                                                         @break
+                                                        
                                                     @case('cgpa')
                                                         {{ $cadet->current_cgpa ? number_format($cadet->current_cgpa, 2) : 'N/A' }}
                                                         @break
+                                                        
                                                     @case('swimming')
                                                         @if($cadet->swimming_qualification)
                                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
@@ -260,6 +295,7 @@
                                                             </span>
                                                         @endif
                                                         @break
+                                                        
                                                     @case('bmi')
                                                         <div>
                                                             <div class="font-medium">{{ $cadet->BMI ? number_format($cadet->BMI, 1) : 'N/A' }}</div>
@@ -271,7 +307,7 @@
                                                 @endswitch
                                             </div>
                                             
-                                            <!-- Actions Column -->
+                                            {{-- Column 5: Actions --}}
                                             <div class="text-sm font-medium">
                                                 @switch($infoType)
                                                     @case('seniority')
@@ -281,6 +317,7 @@
                                                             Remove Cadet
                                                         </button>
                                                         @break
+                                                        
                                                     @case('position')
                                                         <select class="position-select border-gray-300 rounded text-sm" 
                                                                 data-cadet-id="{{ $cadet->id }}"
@@ -293,6 +330,7 @@
                                                             @endforeach
                                                         </select>
                                                         @break
+                                                        
                                                     @case('swimming')
                                                         @if($cadet->swimming_qualification != 'Pass')
                                                             <input type="checkbox" 
@@ -303,6 +341,7 @@
                                                             <span class="text-green-600 font-medium">Passed</span>
                                                         @endif
                                                         @break
+                                                        
                                                     @default
                                                         <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn" 
                                                                 data-cadet-id="{{ $cadet->id }}">
@@ -324,16 +363,21 @@
                         </div>
                     </div>
 
-                    <!-- Pagination - STATIC -->
+                    {{-- ================================================================ --}}
+                    {{-- PAGINATION SECTION --}}
+                    {{-- ================================================================ --}}
                     <div class="mt-6">
                         {{ $cadets->appends(request()->query())->links() }}
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Cadet Profile Modal -->
+    {{-- ================================================================ --}}
+    {{-- CADET PROFILE MODAL --}}
+    {{-- ================================================================ --}}
     <div id="cadetModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -346,15 +390,15 @@
                             </svg>
                         </button>
                     </div>
-                    <div id="cadetProfileContent">
-                        <!-- Profile content will be loaded here -->
-                    </div>
+                    <div id="cadetProfileContent"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Remove Cadet Confirmation Modal -->
+    {{-- ================================================================ --}}
+    {{-- REMOVE CADET CONFIRMATION MODAL --}}
+    {{-- ================================================================ --}}
     <div id="removeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
@@ -364,14 +408,17 @@
                         To confirm removal, please type the cadet's full name: 
                         <strong id="cadetNameToConfirm"></strong>
                     </p>
-                    <input type="text" id="confirmationNameInput" 
+                    <input type="text" 
+                           id="confirmationNameInput" 
                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 mb-4"
                            placeholder="Type the full name here">
                     <div class="flex justify-end space-x-3">
-                        <button id="cancelRemove" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                        <button id="cancelRemove" 
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
                             Cancel
                         </button>
-                        <button id="confirmRemove" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+                        <button id="confirmRemove" 
+                                class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
                             Remove Cadet
                         </button>
                     </div>
@@ -380,17 +427,25 @@
         </div>
     </div>
 
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT --}}
+    {{-- ================================================================ --}}
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Info type buttons
+            
+            // ============================================================
+            // EVENT LISTENERS: Info Type Buttons
+            // ============================================================
             document.querySelectorAll('.info-type-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     updateFilters(this.dataset.type);
                 });
             });
 
-            // Filter changes
+            // ============================================================
+            // EVENT LISTENERS: Filter Dropdowns
+            // ============================================================
             document.getElementById('intakeFilter').addEventListener('change', function() {
                 updateFilters();
             });
@@ -407,7 +462,9 @@
                 });
             }
 
-            // Swimming qualification checkbox functionality
+            // ============================================================
+            // SWIMMING QUALIFICATION: Checkbox Functionality
+            // ============================================================
             const selectAllCheckbox = document.getElementById('selectAll');
             const cadetCheckboxes = document.querySelectorAll('.cadet-checkbox');
             const markAsPassedBtn = document.getElementById('markAsPassedBtn');
@@ -488,7 +545,9 @@
                 });
             }
 
-            // Profile viewing
+            // ============================================================
+            // CADET PROFILE: View Profile Modal
+            // ============================================================
             document.querySelectorAll('.cadet-row, .view-profile-btn').forEach(element => {
                 element.addEventListener('click', function(e) {
                     if (e.target.classList.contains('remove-cadet-btn') || 
@@ -503,7 +562,9 @@
                 });
             });
 
-            // Remove cadet functionality
+            // ============================================================
+            // REMOVE CADET: Button Click Handler
+            // ============================================================
             document.querySelectorAll('.remove-cadet-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -513,7 +574,9 @@
                 });
             });
 
-            // Position select validation
+            // ============================================================
+            // POSITION MANAGEMENT: Validation
+            // ============================================================
             document.querySelectorAll('.position-select').forEach(select => {
                 select.addEventListener('change', function(e) {
                     e.stopPropagation();
@@ -521,12 +584,13 @@
                 });
             });
 
-            // Save positions
             document.getElementById('savePositionsBtn')?.addEventListener('click', function() {
                 savePositions();
             });
 
-            // Modal close buttons
+            // ============================================================
+            // MODAL CONTROLS: Close Buttons
+            // ============================================================
             document.getElementById('closeModal').addEventListener('click', function() {
                 document.getElementById('cadetModal').classList.add('hidden');
             });
@@ -540,56 +604,59 @@
             });
         });
 
-function updateFilters(infoType = null) {
-    const url = new URL(window.location);
-    
-    if (infoType) {
-        url.searchParams.set('info_type', infoType);
-    }
-    
-    url.searchParams.set('intake_year', document.getElementById('intakeFilter').value);
-    
-    const currentInfoType = infoType || url.searchParams.get('info_type') || 'seniority';
+        // ============================================================
+        // FUNCTION: Update Filters
+        // ============================================================
+        function updateFilters(infoType = null) {
+            const url = new URL(window.location);
+            
+            if (infoType) {
+                url.searchParams.set('info_type', infoType);
+            }
+            
+            url.searchParams.set('intake_year', document.getElementById('intakeFilter').value);
+            
+            const currentInfoType = infoType || url.searchParams.get('info_type') || 'seniority';
 
-    if (currentInfoType === 'seniority') {
-        // For seniority, always set sort_by to asc and do not allow changing it
-        url.searchParams.set('sort_by', 'asc');
-        url.searchParams.delete('filter_by');
-    } else {
-            if (currentInfoType === 'cgpa') {
-            const cgpaRangeFilter = document.getElementById('cgpaRangeFilter');
-            if (cgpaRangeFilter) {
-                url.searchParams.set('filter_by', cgpaRangeFilter.value);
-            } else {
+            if (currentInfoType === 'seniority') {
+                url.searchParams.set('sort_by', 'asc');
                 url.searchParams.delete('filter_by');
-            }
-            // fixed sort order for CGPA, no sort_by param needed
-            url.searchParams.delete('sort_by');
-        } else if (currentInfoType === 'bmi') {
-            const bmiFilter = document.getElementById('sortFilter');
-            if (bmiFilter) {
-                url.searchParams.set('filter_by', bmiFilter.value);
             } else {
-                url.searchParams.delete('filter_by');
+                if (currentInfoType === 'cgpa') {
+                    const cgpaRangeFilter = document.getElementById('cgpaRangeFilter');
+                    if (cgpaRangeFilter) {
+                        url.searchParams.set('filter_by', cgpaRangeFilter.value);
+                    } else {
+                        url.searchParams.delete('filter_by');
+                    }
+                    url.searchParams.delete('sort_by');
+                } else if (currentInfoType === 'bmi') {
+                    const bmiFilter = document.getElementById('sortFilter');
+                    if (bmiFilter) {
+                        url.searchParams.set('filter_by', bmiFilter.value);
+                    } else {
+                        url.searchParams.delete('filter_by');
+                    }
+                    url.searchParams.delete('sort_by');
+                } else {
+                    const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'asc';
+                    url.searchParams.set('filter_by', sortValue);
+                    url.searchParams.delete('sort_by');
+                }
             }
-            url.searchParams.delete('sort_by');
-        } else {
-            const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'asc';
-            url.searchParams.set('filter_by', sortValue);
-            url.searchParams.delete('sort_by');
+            
+            window.location.href = url.toString();
         }
-    }
-    
-    window.location.href = url.toString();
-}
 
+        // ============================================================
+        // FUNCTION: Validate Position Selection
+        // ============================================================
         function validatePositionSelection(selectElement) {
             const selectedPosition = selectElement.value;
             const cadetId = selectElement.dataset.cadetId;
             const specialPositions = ['CO', 'Thana', 'Zayn', 'PMC'];
             
             if (specialPositions.includes(selectedPosition)) {
-                // Check if another cadet already has this position
                 const otherSelects = document.querySelectorAll('.position-select');
                 let conflictFound = false;
                 
@@ -601,17 +668,18 @@ function updateFilters(infoType = null) {
                 
                 if (conflictFound) {
                     alert(`Only one cadet per intake can hold the ${selectedPosition} position. Please change the other cadet's position first.`);
-                    // Reset to previous value or Normal Cadet
                     selectElement.value = selectElement.dataset.originalValue || 'Normal Cadet';
                     return false;
                 }
             }
             
-            // Store the current value as original for future validation
             selectElement.dataset.originalValue = selectedPosition;
             return true;
         }
 
+        // ============================================================
+        // FUNCTION: Show Cadet Profile Modal
+        // ============================================================
         function showCadetProfile(cadetId) {
             fetch(`/instructor/cadets/${cadetId}`)
                 .then(response => response.json())
@@ -624,6 +692,7 @@ function updateFilters(infoType = null) {
                         const fallbackAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name)}`;
                         profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
                     }
+
                     const profileContent = `
                         <div class="flex items-center space-x-4 mb-6">
                             <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center">
@@ -722,6 +791,9 @@ function updateFilters(infoType = null) {
                 });
         }
 
+        // ============================================================
+        // FUNCTION: Show Remove Cadet Modal
+        // ============================================================
         function showRemoveModal(cadetId, cadetName) {
             document.getElementById('cadetNameToConfirm').textContent = cadetName;
             document.getElementById('confirmationNameInput').value = '';
@@ -729,6 +801,9 @@ function updateFilters(infoType = null) {
             document.getElementById('removeModal').classList.remove('hidden');
         }
 
+        // ============================================================
+        // FUNCTION: Confirm Cadet Removal
+        // ============================================================
         function confirmRemoval() {
             const cadetId = document.getElementById('confirmRemove').dataset.cadetId;
             const confirmationName = document.getElementById('confirmationNameInput').value;
@@ -758,8 +833,10 @@ function updateFilters(infoType = null) {
             });
         }
 
+        // ============================================================
+        // FUNCTION: Save Positions
+        // ============================================================
         function savePositions() {
-            // Validate all positions before saving
             const positionSelects = document.querySelectorAll('.position-select');
             const positionCounts = { 'CO': 0, 'Thana': 0, 'Zayn': 0, 'PMC': 0 };
             
@@ -770,7 +847,6 @@ function updateFilters(infoType = null) {
                 }
             });
             
-            // Check for conflicts
             const conflicts = Object.entries(positionCounts).filter(([position, count]) => count > 1);
             if (conflicts.length > 0) {
                 const conflictMessage = conflicts.map(([position, count]) => 

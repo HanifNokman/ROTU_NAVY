@@ -15,9 +15,9 @@
 ## Instructor
 ### Controllers
 - [ ] app/Http/Controllers/Instructor/AllowanceController.php
-- [ ] app/Http/Controllers/Instructor/CadetManagementController.php
+- [X] app/Http/Controllers/Instructor/CadetManagementController.php
 - [ ] app/Http/Controllers/Instructor/GalleryController.php
-- [ ] app/Http/Controllers/Instructor/InstructorDashboardController.php
+- [X] app/Http/Controllers/Instructor/InstructorDashboardController.php
 - [ ] app/Http/Controllers/Instructor/InventoryController.php
 - [ ] app/Http/Controllers/Instructor/LearningHubController.php
 - [ ] app/Http/Controllers/Instructor/PendingVerificationController.php
@@ -28,8 +28,8 @@
 
 ### Blades
 - [ ] resources/views/instructor/allowance.blade.php
-- [ ] resources/views/instructor/cadet_management.blade.php
-- [ ] resources/views/instructor/dashboard.blade.php
+- [X] resources/views/instructor/cadet_management.blade.php
+- [X] resources/views/instructor/dashboard.blade.php
 - [ ] resources/views/instructor/gallery.blade.php
 - [ ] resources/views/instructor/inventory.blade.php
 - [ ] resources/views/instructor/learning_hub.blade.php
