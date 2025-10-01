@@ -618,6 +618,12 @@ class InstructorDashboardController extends Controller
             \App\Models\Cadet::where('id', $cadetId)->increment('daily_duty_count');
         }
 
-        return response()->json(['message' => 'Duty count updated.']);
+        // For AJAX requests, return JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => 'Duty count updated.']);
+        }
+
+        // For form submissions, redirect back with success message
+        return redirect()->back()->with('success', 'Duty count updated successfully.');
     }
 }
