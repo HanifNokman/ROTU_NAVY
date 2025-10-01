@@ -16,12 +16,12 @@
 ### Controllers
 - [X] app/Http/Controllers/Instructor/AllowanceController.php
 - [X] app/Http/Controllers/Instructor/CadetManagementController.php
-- [ ] app/Http/Controllers/Instructor/GalleryController.php
+- [X] app/Http/Controllers/Instructor/GalleryController.php
 - [X] app/Http/Controllers/Instructor/InstructorDashboardController.php
 - [ ] app/Http/Controllers/Instructor/InventoryController.php
-- [ ] app/Http/Controllers/Instructor/LearningHubController.php
-- [ ] app/Http/Controllers/Instructor/PendingVerificationController.php
-- [ ] app/Http/Controllers/Instructor/TrainingController.php
+- [X] app/Http/Controllers/Instructor/LearningHubController.php
+- [X] app/Http/Controllers/Instructor/PendingVerificationController.php
+- [X] app/Http/Controllers/Instructor/TrainingController.php
 
 ### Models
 - [ ] app/Models/ (shared models)
@@ -33,8 +33,8 @@
 - [ ] resources/views/instructor/gallery.blade.php
 - [ ] resources/views/instructor/inventory.blade.php
 - [ ] resources/views/instructor/learning_hub.blade.php
-- [ ] resources/views/instructor/pending-verification.blade.php
-- [X] resources/views/instructor/training.blade.php
+- [X] resources/views/instructor/pending-verification.blade.php
+- [ ] resources/views/instructor/training.blade.php
 
 ## Cadet
 ### Controllers

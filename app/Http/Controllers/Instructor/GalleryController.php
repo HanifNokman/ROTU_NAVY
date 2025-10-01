@@ -12,22 +12,20 @@ use Illuminate\Validation\Rule;
 
 class GalleryController extends Controller
 {
-    /**
-     * Display a listing of the gallery items.
-     */
+    // ================================================================
+    // GALLERY ITEM METHODS
+    // ================================================================
+
     public function index(Request $request)
     {
         $instructorId = Auth::id();
         
-        // Get categories for the current instructor
         $categories = GalleryCategory::where('instructor_id', $instructorId)->get();
         
-        // Build query for gallery items
         $query = Gallery::where('instructor_id', $instructorId)
                        ->with('category')
                        ->orderBy('created_at', 'desc');
         
-        // Apply category filter if specified
         if ($request->filled('category')) {
             $query->where('gallery_category_id', $request->category);
         }
@@ -37,16 +35,13 @@ class GalleryController extends Controller
         return view('instructor.gallery', compact('galleries', 'categories'));
     }
 
-    /**
-     * Store a newly created gallery item.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'gallery_category_id' => 'required|exists:gallery_categories,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB max
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $imagePath = null;
@@ -66,12 +61,8 @@ class GalleryController extends Controller
                         ->with('success', 'Gallery item added successfully!');
     }
 
-    /**
-     * Update the specified gallery item.
-     */
     public function update(Request $request, Gallery $gallery)
     {
-        // Check if the gallery belongs to the current instructor
         if ($gallery->instructor_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -80,7 +71,7 @@ class GalleryController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'gallery_category_id' => 'required|exists:gallery_categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB max
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $updateData = [
@@ -89,9 +80,7 @@ class GalleryController extends Controller
             'gallery_category_id' => $request->gallery_category_id,
         ];
 
-        // Handle image update
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($gallery->image_path && file_exists(public_path($gallery->image_path))) {
                 unlink(public_path($gallery->image_path));
             }
@@ -106,17 +95,12 @@ class GalleryController extends Controller
                         ->with('success', 'Gallery item updated successfully!');
     }
 
-    /**
-     * Remove the specified gallery item.
-     */
     public function destroy(Gallery $gallery)
     {
-        // Check if the gallery belongs to the current instructor
         if ($gallery->instructor_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Delete the image file if exists
         if ($gallery->image_path && file_exists(public_path($gallery->image_path))) {
             unlink(public_path($gallery->image_path));
         }
@@ -127,9 +111,10 @@ class GalleryController extends Controller
                         ->with('success', 'Gallery item deleted successfully!');
     }
 
-    /**
-     * Store a newly created gallery category.
-     */
+    // ================================================================
+    // GALLERY CATEGORY METHODS
+    // ================================================================
+
     public function storeCategory(Request $request)
     {
         $request->validate([
@@ -152,17 +137,12 @@ class GalleryController extends Controller
                         ->with('success', 'Gallery category added successfully!');
     }
 
-    /**
-     * Remove the specified gallery category.
-     */
     public function destroyCategory(GalleryCategory $category)
     {
-        // Check if the category belongs to the current instructor
         if ($category->instructor_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Delete all gallery items in this category and their images
         $galleries = Gallery::where('gallery_category_id', $category->id)->get();
         foreach ($galleries as $gallery) {
             if ($gallery->image_path && file_exists(public_path($gallery->image_path))) {
@@ -170,10 +150,8 @@ class GalleryController extends Controller
             }
         }
 
-        // Delete all galleries in this category
         Gallery::where('gallery_category_id', $category->id)->delete();
         
-        // Delete the category
         $category->delete();
 
         return redirect()->route('instructor.gallery')

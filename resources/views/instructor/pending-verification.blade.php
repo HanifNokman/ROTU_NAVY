@@ -8,7 +8,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- PAGE HEADER --}}
+            {{-- ================================================================ --}}
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,8 +21,12 @@
                 <p class="text-gray-600">Review and approve pending account registrations</p>
             </div>
 
-            <!-- Verification Section with Tabs -->
+            {{-- ================================================================ --}}
+            {{-- VERIFICATION SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                
+                {{-- Section Header --}}
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
                     <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
                         <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,6 +38,7 @@
                 </div>
 
                 <div class="p-6">
+                    {{-- Success Message --}}
                     @if(session('success'))
                         <div class="mb-4 text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
                             <div class="flex items-center">
@@ -43,7 +50,9 @@
                         </div>
                     @endif
 
-                    <!-- Tab Navigation -->
+                    {{-- ================================================================ --}}
+                    {{-- TAB NAVIGATION --}}
+                    {{-- ================================================================ --}}
                     <div class="mb-6">
                         <div class="border-b border-gray-200">
                             <nav class="-mb-px flex space-x-8">
@@ -60,7 +69,9 @@
                         </div>
                     </div>
 
-                    <!-- Cadets Tab Content -->
+                    {{-- ================================================================ --}}
+                    {{-- CADETS TAB CONTENT --}}
+                    {{-- ================================================================ --}}
                     <div id="cadets-content" class="tab-content {{ $pendingCadets->count() > 0 ? 'block' : 'hidden' }}">
                         @if($pendingCadets->count() > 0)
                             <div class="mb-4">
@@ -123,7 +134,9 @@
                         @endif
                     </div>
 
-                    <!-- Instructors Tab Content -->
+                    {{-- ================================================================ --}}
+                    {{-- INSTRUCTORS TAB CONTENT --}}
+                    {{-- ================================================================ --}}
                     <div id="instructors-content" class="tab-content {{ $pendingCadets->count() == 0 ? 'block' : 'hidden' }}">
                         @if($pendingInstructors->count() > 0)
                             <div class="mb-4">
@@ -190,6 +203,9 @@
         </div>
     </div>
 
+    {{-- ================================================================ --}}
+    {{-- TAB SWITCHING JAVASCRIPT --}}
+    {{-- ================================================================ --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const cadetsTab = document.getElementById('cadets-tab');
@@ -197,7 +213,6 @@
             const cadetsContent = document.getElementById('cadets-content');
             const instructorsContent = document.getElementById('instructors-content');
 
-            // Tab switching functionality
             cadetsTab.addEventListener('click', function() {
                 cadetsTab.className = cadetsTab.className.replace('border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'border-blue-500 text-blue-600');
                 instructorsTab.className = instructorsTab.className.replace('border-blue-500 text-blue-600', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300');

@@ -12,11 +12,14 @@ use Illuminate\Support\Facades\DB;
 
 class LearningHubController extends Controller
 {
+    // ================================================================
+    // MAIN INDEX & FILTERING
+    // ================================================================
+
     public function index(Request $request)
     {
         $query = LearningMaterial::with('category');
 
-        // Only show materials if a category filter is applied
         if ($request->filled('category')) {
             $query->where('learning_material_category_id', $request->category);
             $materials = $query->latest()->get();
@@ -24,12 +27,10 @@ class LearningHubController extends Controller
             $materials = collect();
         }
 
-        // Get all categories with material counts
         $categories = LearningMaterialCategory::withCount('learningMaterials')
             ->orderBy('name')
             ->get();
 
-        // Get quiz questions for the current instructor
         $quizQuestions = QuizQuestion::with(['category'])
             ->where('created_by', auth()->id())
             ->latest()
@@ -38,9 +39,6 @@ class LearningHubController extends Controller
         return view('instructor.learning_hub', compact('materials', 'categories', 'quizQuestions'));
     }
 
-    /**
-     * AJAX endpoint to get filtered materials
-     */
     public function getFilteredMaterials(Request $request)
     {
         $query = LearningMaterial::with('category');
@@ -67,6 +65,10 @@ class LearningHubController extends Controller
         ]);
     }
 
+    // ================================================================
+    // LEARNING MATERIAL CRUD
+    // ================================================================
+
     public function create()
     {
         $categories = LearningMaterialCategory::all();
@@ -79,8 +81,7 @@ class LearningHubController extends Controller
             'title' => 'required|max:255',
             'description' => 'nullable|string',
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
-            // Updated to support video files with larger size limit
-            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200', // 50MB max
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
         ]);
 
         $filePath = null;
@@ -111,7 +112,6 @@ class LearningHubController extends Controller
 
     public function update(Request $request, LearningMaterial $material)
     {
-        // Check if the material belongs to the authenticated instructor (optional security check)
         if ($material->instructor_id && $material->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -120,8 +120,7 @@ class LearningHubController extends Controller
             'title' => 'required|max:255',
             'description' => 'nullable|string',
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
-            // Updated to support video files with larger size limit
-            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200', // 50MB max
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
         ]);
 
         $data = [
@@ -131,9 +130,7 @@ class LearningHubController extends Controller
         ];
 
         if ($request->hasFile('file')) {
-            // Delete old file if exists (improved file deletion)
             if ($material->file_url) {
-                // Extract the storage path from the URL
                 $oldFilePath = str_replace('storage/', '', $material->file_url);
                 if (Storage::disk('public')->exists($oldFilePath)) {
                     Storage::disk('public')->delete($oldFilePath);
@@ -154,14 +151,11 @@ class LearningHubController extends Controller
 
     public function destroy(LearningMaterial $material)
     {
-        // Check if the material belongs to the authenticated instructor (optional security check)
         if ($material->instructor_id && $material->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Delete associated file (improved file deletion)
         if ($material->file_url) {
-            // Extract the storage path from the URL
             $filePath = str_replace('storage/', '', $material->file_url);
             if (Storage::disk('public')->exists($filePath)) {
                 Storage::disk('public')->delete($filePath);
@@ -174,7 +168,10 @@ class LearningHubController extends Controller
                         ->with('success', 'Learning material deleted successfully.');
     }
 
-    // Category management methods
+    // ================================================================
+    // CATEGORY MANAGEMENT
+    // ================================================================
+
     public function storeCategory(Request $request)
     {
         $request->validate([
@@ -183,28 +180,20 @@ class LearningHubController extends Controller
 
         LearningMaterialCategory::create([
             'name' => $request->name,
-            'created_by' => auth()->id(), // Optional: track who created the category
+            'created_by' => auth()->id(),
         ]);
 
         return redirect()->route('instructor.learning_hub')
                         ->with('success', 'Category created successfully.');
     }
 
-    /**
-     * Delete a category (NEW METHOD)
-     */
     public function destroyCategory(LearningMaterialCategory $category)
     {
-        // Check if category has associated materials
         $materialCount = $category->learningMaterials()->count();
         
         if ($materialCount > 0) {
             return redirect()->route('instructor.learning_hub')
                 ->with('error', "Cannot delete category '{$category->name}' because it contains {$materialCount} material(s). Please move or delete the materials first.");
-            
-            // Alternative approach: Set materials to null category (uncomment if preferred)
-            // $category->learningMaterials()->update(['learning_material_category_id' => null]);
-            // $successMessage = "Category '{$category->name}' deleted successfully. {$materialCount} material(s) were moved to 'Uncategorized'.";
         }
 
         $categoryName = $category->name;
@@ -214,10 +203,12 @@ class LearningHubController extends Controller
             ->with('success', "Category '{$categoryName}' deleted successfully.");
     }
 
-    // Quiz management methods
+    // ================================================================
+    // QUIZ QUESTION CRUD
+    // ================================================================
+
     public function storeQuiz(Request $request)
     {
-        // Fixed validation for subjective questions
         $request->validate([
             'category_id' => 'required|exists:learning_material_categories,id',
             'question_text' => 'required|string',
@@ -240,7 +231,7 @@ class LearningHubController extends Controller
                 $filePath = 'storage/' . $filePath;
             }
 
-            $question = QuizQuestion::create([
+            QuizQuestion::create([
                 'category_id' => $request->category_id,
                 'question_text' => $request->question_text,
                 'question_type' => $request->question_type,
@@ -259,33 +250,27 @@ class LearningHubController extends Controller
                         ->with('success', 'Quiz question created successfully.');
     }
 
-    /**
-     * Get quiz questions for management (AJAX endpoint)
-     */
     public function getQuizQuestions(Request $request)
     {
-
         $query = QuizQuestion::with(['category', 'creator'])
-            ->where('created_by', auth()->id()); // Only show questions created by current instructor
+            ->where('created_by', auth()->id());
 
-        // Apply category filter if provided
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
-        // Apply type filter if provided and not 'all'
         if ($request->filled('type') && in_array($request->type, ['MCQ', 'Subjective'])) {
             $query->where('question_type', $request->type);
         }
 
         $questions = $query->latest()->get();
 
-        // Format the response for the frontend
         $formattedQuestions = $questions->map(function ($question) {
             $questionPreview = $question->question_text;
             if (strlen($question->question_text) > 100) {
                 $questionPreview = substr($question->question_text, 0, 100) . '...';
             }
+
             return [
                 'id' => $question->id,
                 'question_text' => $question->question_text,
@@ -329,12 +314,12 @@ class LearningHubController extends Controller
             'status' => 'required|in:active,inactive'
         ]);
 
-    \Log::info('QuizQuestion update request', $request->all());
-    DB::transaction(function () use ($request, $question) {
+        \Log::info('QuizQuestion update request', $request->all());
+
+        DB::transaction(function () use ($request, $question) {
             $filePath = $question->file_url;
 
             if ($request->hasFile('file')) {
-                // Delete old file if exists
                 if ($question->file_url) {
                     $oldFilePath = str_replace('storage/', '', $question->file_url);
                     if (Storage::disk('public')->exists($oldFilePath)) {
@@ -369,7 +354,6 @@ class LearningHubController extends Controller
     public function destroyQuiz(QuizQuestion $question)
     {
         DB::transaction(function () use ($question) {
-            // Delete associated file if exists
             if ($question->file_url) {
                 $filePath = str_replace('storage/', '', $question->file_url);
                 if (Storage::disk('public')->exists($filePath)) {
@@ -377,7 +361,6 @@ class LearningHubController extends Controller
                 }
             }
 
-            // Delete question
             $question->delete();
         });
 
@@ -385,9 +368,10 @@ class LearningHubController extends Controller
                         ->with('success', 'Quiz question deleted successfully.');
     }
 
-    /**
-     * Helper method to get file type icon or class (optional utility method)
-     */
+    // ================================================================
+    // UTILITY METHODS
+    // ================================================================
+
     private function getFileTypeIcon($filePath)
     {
         if (!$filePath) return 'file';
