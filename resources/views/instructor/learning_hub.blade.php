@@ -919,7 +919,7 @@
             toggleQuizQuestionType('MCQ');
         }
 
-        // Quiz form type switching (Fixed)
+        // Quiz form type switching 
         function toggleQuizQuestionType(questionType = null) {
             const typeSelect = document.getElementById('quiz_question_type');
             const actualType = questionType || typeSelect.value;
@@ -929,44 +929,83 @@
             const subjectiveAnswerInput = document.getElementById('subjectiveAnswerInput');
             const correctAnswerSelect = document.querySelector('#mcqAnswerSelect select[name="correct_answer"]');
             const correctAnswerTextarea = document.querySelector('#subjectiveAnswerInput textarea[name="correct_answer"]');
+            const mcqInputs = document.querySelectorAll('#mcqOptions input');
 
             if (actualType === 'MCQ') {
                 mcqOptions.classList.remove('hidden');
                 mcqAnswerSelect.classList.remove('hidden');
                 subjectiveAnswerInput.classList.add('hidden');
 
-                // Set required attributes correctly
-                document.querySelectorAll('#mcqOptions input').forEach(input => input.required = true);
-                if (correctAnswerSelect) correctAnswerSelect.required = true;
+                mcqInputs.forEach(input => {
+                    input.required = true;
+                    input.disabled = false;
+                });
+                
+                if (correctAnswerSelect) {
+                    correctAnswerSelect.required = true;
+                    correctAnswerSelect.disabled = false;
+                }
+                
                 if (correctAnswerTextarea) {
                     correctAnswerTextarea.required = false;
+                    correctAnswerTextarea.disabled = true;
                     correctAnswerTextarea.value = '';
+                    correctAnswerTextarea.removeAttribute('name');
                 }
             } else if (actualType === 'Subjective') {
                 mcqOptions.classList.add('hidden');
                 mcqAnswerSelect.classList.add('hidden');
                 subjectiveAnswerInput.classList.remove('hidden');
 
-                // Set required attributes correctly
-                document.querySelectorAll('#mcqOptions input').forEach(input => {
+                mcqInputs.forEach(input => {
                     input.required = false;
+                    input.disabled = true;
                     input.value = '';
                 });
+                
                 if (correctAnswerSelect) {
                     correctAnswerSelect.required = false;
+                    correctAnswerSelect.disabled = true;
                     correctAnswerSelect.value = '';
                 }
-                if (correctAnswerTextarea) correctAnswerTextarea.required = true;
+                
+                if (correctAnswerTextarea) {
+                    correctAnswerTextarea.required = true;
+                    correctAnswerTextarea.disabled = false;
+                    correctAnswerTextarea.setAttribute('name', 'correct_answer');
+                }
             }
         }
 
-        // Attach event listener for quiz type change
         document.addEventListener('DOMContentLoaded', function() {
             const quizTypeSelect = document.getElementById('quiz_question_type');
             if (quizTypeSelect) {
+                toggleQuizQuestionType(quizTypeSelect.value);
+                
                 quizTypeSelect.addEventListener('change', function() {
                     toggleQuizQuestionType(this.value);
                 });
+            }
+
+            const quizCategorySelect = document.getElementById('quizCategoryFilter');
+            const quizTypeFilterSelect = document.getElementById('quizTypeFilter');
+            
+            if (quizCategorySelect) {
+                quizCategorySelect.addEventListener('change', filterQuizQuestions);
+            }
+            if (quizTypeFilterSelect) {
+                quizTypeFilterSelect.addEventListener('change', filterQuizQuestions);
+            }
+            
+            if (quizCategorySelect && quizCategorySelect.value) {
+                loadQuizQuestions(quizCategorySelect.value, quizTypeFilterSelect.value);
+            } else {
+                loadQuizQuestions('', quizTypeFilterSelect.value);
+            }
+            
+            const categorySelect = document.getElementById('category');
+            if (categorySelect && categorySelect.value) {
+                filterMaterials(categorySelect.value);
             }
         });
 
@@ -1021,13 +1060,55 @@
                     this.showDeleteModal = true;
                 },
                 toggleEditQuestionType() {
-                    // Clear the correct answer when switching types
-                    this.editingQuestion.correct_answer = '';
-                    if (this.editingQuestion.question_type === 'Subjective') {
-                        this.editingQuestion.option_a = '';
-                        this.editingQuestion.option_b = '';
-                        this.editingQuestion.option_c = '';
-                        this.editingQuestion.option_d = '';
+                    const editMcqOptions = document.getElementById('editMcqOptions');
+                    const editMcqAnswerSelect = document.getElementById('editMcqAnswerSelect');
+                    const editSubjectiveAnswerInput = document.getElementById('editSubjectiveAnswerInput');
+                    const mcqInputs = document.querySelectorAll('#editMcqOptions input');
+                    const correctAnswerSelect = document.querySelector('#editMcqAnswerSelect select[name="correct_answer"]');
+                    const correctAnswerTextarea = document.querySelector('#editSubjectiveAnswerInput textarea');
+
+                    if (this.editingQuestion.question_type === 'MCQ') {
+                        if (editMcqOptions) editMcqOptions.classList.remove('hidden');
+                        if (editMcqAnswerSelect) editMcqAnswerSelect.classList.remove('hidden');
+                        if (editSubjectiveAnswerInput) editSubjectiveAnswerInput.classList.add('hidden');
+
+                        mcqInputs.forEach(input => {
+                            input.required = true;
+                            input.disabled = false;
+                        });
+
+                        if (correctAnswerSelect) {
+                            correctAnswerSelect.required = true;
+                            correctAnswerSelect.disabled = false;
+                            correctAnswerSelect.setAttribute('name', 'correct_answer');
+                        }
+
+                        if (correctAnswerTextarea) {
+                            correctAnswerTextarea.required = false;
+                            correctAnswerTextarea.disabled = true;
+                            correctAnswerTextarea.removeAttribute('name');
+                        }
+                    } else if (this.editingQuestion.question_type === 'Subjective') {
+                        if (editMcqOptions) editMcqOptions.classList.add('hidden');
+                        if (editMcqAnswerSelect) editMcqAnswerSelect.classList.add('hidden');
+                        if (editSubjectiveAnswerInput) editSubjectiveAnswerInput.classList.remove('hidden');
+
+                        mcqInputs.forEach(input => {
+                            input.required = false;
+                            input.disabled = true;
+                        });
+
+                        if (correctAnswerSelect) {
+                            correctAnswerSelect.required = false;
+                            correctAnswerSelect.disabled = true;
+                            correctAnswerSelect.removeAttribute('name');
+                        }
+
+                        if (correctAnswerTextarea) {
+                            correctAnswerTextarea.required = true;
+                            correctAnswerTextarea.disabled = false;
+                            correctAnswerTextarea.setAttribute('name', 'correct_answer');
+                        }
                     }
                 }
             }
