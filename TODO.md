@@ -30,9 +30,9 @@
 - [X] resources/views/instructor/allowance.blade.php
 - [X] resources/views/instructor/cadet_management.blade.php
 - [X] resources/views/instructor/dashboard.blade.php
-- [ ] resources/views/instructor/gallery.blade.php
+- [X] resources/views/instructor/gallery.blade.php
 - [ ] resources/views/instructor/inventory.blade.php
-- [ ] resources/views/instructor/learning_hub.blade.php
+- [X] resources/views/instructor/learning_hub.blade.php
 - [X] resources/views/instructor/pending-verification.blade.php
 - [ ] resources/views/instructor/training.blade.php
 
@@ -86,18 +86,12 @@
 ### Blades
 - [ ] resources/views/about-me.blade.php
 - [ ] resources/views/alumni.blade.php
-- [ ] resources/views/dashboard.blade.php
 - [ ] resources/views/landing.blade.php
 - [ ] resources/views/auth/awaiting-approval.blade.php
-- [ ] resources/views/auth/confirm-password.blade.php
 - [ ] resources/views/auth/forgot-password.blade.php
 - [ ] resources/views/auth/login.blade.php
 - [ ] resources/views/auth/register.blade.php
 - [ ] resources/views/auth/reset-password.blade.php
-- [ ] resources/views/auth/verify-email.blade.php
-- [ ] resources/views/components/application-logo.blade.php
-- [ ] resources/views/components/auth-session-status.blade.php
 - [ ] resources/views/emails/user-accepted.blade.php
-- [ ] resources/views/layouts/app.blade.php
-- [ ] resources/views/layouts/guest.blade.php
+- [X] resources/views/layouts/app.blade.php
 
