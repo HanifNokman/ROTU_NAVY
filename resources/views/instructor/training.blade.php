@@ -1571,7 +1571,6 @@ function fetchAttendanceListMonths() {
             if (data.success && data.months) {
                 const monthSelect = document.getElementById('attendanceListMonthFilter');
                 monthSelect.innerHTML = '';
-                // Sort months in descending order (most recent first)
                 const sortedMonths = data.months.sort((a, b) => b - a);
                 sortedMonths.forEach(monthNum => {
                     const date = new Date(currentAttendanceListYear, monthNum - 1);
@@ -1581,7 +1580,6 @@ function fetchAttendanceListMonths() {
                     option.textContent = monthDisplay;
                     monthSelect.appendChild(option);
                 });
-                // Set current month as default if available
                 const now = new Date();
                 const currentMonth = now.getMonth() + 1;
                 if (sortedMonths.includes(currentMonth)) {
@@ -1591,6 +1589,11 @@ function fetchAttendanceListMonths() {
                     monthSelect.value = sortedMonths[0];
                     currentAttendanceListMonth = sortedMonths[0];
                 }
+                
+                // CRITICAL FIX: Reset intake filter and data when month changes
+                allAvailableIntakes = [];
+                currentAttendanceListIntake = '';
+                
                 fetchAttendanceListData();
             }
         })
@@ -1600,8 +1603,12 @@ function fetchAttendanceListMonths() {
 
     document.getElementById('attendanceListMonthFilter').onchange = function() {
         currentAttendanceListMonth = this.value;
+        
+        // CRITICAL FIX: Reset intake filter when month changes
         currentAttendanceListIntake = '';
-        trainingFilters = {}; // Reset all training filters
+        allAvailableIntakes = [];
+        trainingFilters = {};
+        
         document.getElementById('attendanceListTrainings').innerHTML = '';
         
         if (currentAttendanceListMonth) {
@@ -1623,11 +1630,10 @@ function fetchAttendanceListData() {
         .then(data => {
             if (data.success) {
                 attendanceListData = data.trainings || [];
-                // Only setup intake filter if it hasn't been set up yet or if we're changing months/years
-                const shouldSetupIntakeFilter = allAvailableIntakes.length === 0;
-                if (shouldSetupIntakeFilter) {
-                    setupIntakeFilter();
-                }
+                
+                // ALWAYS setup intake filter when data changes
+                setupIntakeFilter();
+                
                 renderTrainingAccordions();
             } else {
                 showAttendanceListError(data.message || 'Failed to load attendance data');
@@ -1640,8 +1646,7 @@ function fetchAttendanceListData() {
 }
 
 function setupIntakeFilter() {
-    // Collect all available intakes from the data
-    const currentAvailableIntakes = [];
+    // Collect all available intakes from the CURRENT month's data
     const intakeSet = new Set();
     
     attendanceListData.forEach(training => {
@@ -1653,7 +1658,6 @@ function setupIntakeFilter() {
     });
     
     const newIntakes = Array.from(intakeSet).sort((a, b) => {
-        // Extract number from "Intake - X" format and sort numerically
         const aNum = parseInt(a.match(/Intake - (\d+)/)?.[1] || '0');
         const bNum = parseInt(b.match(/Intake - (\d+)/)?.[1] || '0');
         return aNum - bNum;
@@ -1662,64 +1666,16 @@ function setupIntakeFilter() {
     const intakeSection = document.getElementById('attendanceListIntakeSection');
     const intakeSelect = document.getElementById('attendanceListIntakeFilter');
     
-    if (newIntakes.length > 1) {
-        // Store the current selection before rebuilding
-        const currentSelection = intakeSelect.value || currentAttendanceListIntake;
-        
+    // Store the current selection before rebuilding
+    const previousSelection = currentAttendanceListIntake;
+    
+    // Update available intakes
+    allAvailableIntakes = newIntakes;
+    
+    if (newIntakes.length > 0) {
         intakeSection.classList.remove('hidden');
         
-        // Only rebuild the dropdown if the available intakes have changed
-        const intakesChanged = JSON.stringify(allAvailableIntakes) !== JSON.stringify(newIntakes);
-        
-        if (intakesChanged) {
-            allAvailableIntakes = newIntakes;
-            
-            // Rebuild dropdown options - ADD "All Intakes" option first
-            intakeSelect.innerHTML = '';
-            
-            // Add "All Intakes" option as the first option
-            const allOption = document.createElement('option');
-            allOption.value = '';
-            allOption.textContent = 'All Intakes';
-            intakeSelect.appendChild(allOption);
-            
-            // Add individual intake options
-            allAvailableIntakes.forEach(intake => {
-                const option = document.createElement('option');
-                option.value = intake;
-                option.textContent = intake;
-                intakeSelect.appendChild(option);
-            });
-        }
-        
-        // Set the selection - Default to "All Intakes" (empty value)
-        if (currentSelection && (currentSelection === '' || allAvailableIntakes.includes(currentSelection))) {
-            intakeSelect.value = currentSelection;
-            currentAttendanceListIntake = currentSelection;
-        } else {
-            // Default to "All Intakes" (empty value)
-            intakeSelect.value = '';
-            currentAttendanceListIntake = '';
-        }
-        
-        // Set up event listener only once
-        if (!intakeSelect.onchange) {
-            intakeSelect.onchange = function() {
-                const previousIntake = currentAttendanceListIntake;
-                currentAttendanceListIntake = this.value;
-                
-                // Only fetch new data if the intake actually changed
-                if (previousIntake !== currentAttendanceListIntake) {
-                    trainingFilters = {}; // Reset all training filters when intake changes
-                    fetchAttendanceListData();
-                }
-            };
-        }
-    } else if (newIntakes.length === 1) {
-        // If only one intake available, still show "All Intakes" option
-        intakeSection.classList.remove('hidden');
-        allAvailableIntakes = newIntakes;
-        
+        // Rebuild dropdown options
         intakeSelect.innerHTML = '';
         
         // Add "All Intakes" option
@@ -1728,15 +1684,24 @@ function setupIntakeFilter() {
         allOption.textContent = 'All Intakes';
         intakeSelect.appendChild(allOption);
         
-        // Add the single intake option
-        const option = document.createElement('option');
-        option.value = newIntakes[0];
-        option.textContent = newIntakes[0];
-        intakeSelect.appendChild(option);
+        // Add individual intake options
+        newIntakes.forEach(intake => {
+            const option = document.createElement('option');
+            option.value = intake;
+            option.textContent = intake;
+            intakeSelect.appendChild(option);
+        });
         
-        // Default to "All Intakes"
-        intakeSelect.value = '';
-        currentAttendanceListIntake = '';
+        // CRITICAL FIX: Check if previous selection still exists in new data
+        if (previousSelection && newIntakes.includes(previousSelection)) {
+            // Keep the previous selection if it exists in new month
+            intakeSelect.value = previousSelection;
+            currentAttendanceListIntake = previousSelection;
+        } else {
+            // Reset to "All Intakes" if previous selection doesn't exist
+            intakeSelect.value = '';
+            currentAttendanceListIntake = '';
+        }
         
         // Set up event listener only once
         if (!intakeSelect.onchange) {
