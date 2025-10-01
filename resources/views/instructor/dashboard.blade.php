@@ -8,6 +8,19 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
+            <!-- Success Message -->
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                        <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <title>Close</title>
+                            <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+                        </svg>
+                    </span>
+                </div>
+            @endif
+
             <!-- Header Section -->
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
@@ -150,8 +163,8 @@
                     <div class="p-6">
                         <!-- Filter Form for Duty Ranking -->
                         <div class="mb-4 flex justify-center">
-                            <div class="flex gap-2">
-                                <select id="duty-intake-year" class="rounded-md border-gray-300 shadow-sm">
+                            <form method="GET" action="{{ route('instructor.dashboard') }}" class="flex gap-2">
+                                <select id="duty-intake-year" name="duty_intake_year" class="rounded-md border-gray-300 shadow-sm" onchange="this.form.submit()">
                                     @foreach ($intakeOptions as $option)
                                         <option value="{{ $option['year'] }}" {{ $selectedDutyIntakeYear == $option['year'] ? 'selected' : '' }}>
                                             {{ $option['label'] }}
@@ -159,11 +172,16 @@
                                     @endforeach
                                 </select>
 
-                                <select id="duty-sort-order" class="rounded-md border-gray-300 shadow-sm">
+                                <select id="duty-sort-order" name="sort_order" class="rounded-md border-gray-300 shadow-sm" onchange="this.form.submit()">
                                     <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Highest First</option>
                                     <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Lowest First</option>
                                 </select>
-                            </div>
+
+                                <!-- Preserve other filter values -->
+                                <input type="hidden" name="cgpa_intake_year" value="{{ $selectedCgpaIntakeYear }}">
+                                <input type="hidden" name="cgpa_sort_order" value="{{ $cgpaSortOrder }}">
+                                <input type="hidden" name="absence_intake_filter" value="{{ $selectedAbsenceIntake ?? '' }}">
+                            </form>
                         </div>
 
                         <!-- Loading indicator -->
@@ -248,40 +266,31 @@
 
                                 <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
 
-                                <div id="modal-cadet-list" class="space-y-2">
-                                    <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
-                                        <div class="flex items-center justify-between border p-2 rounded">
-                                            <span x-text="cadet.name + ' (' + cadet.service_number + ')'"></span>
-                                            <input type="checkbox" x-model="$store.modal.selected" :value="cadet.id">
-                                        </div>
-                                    </template>
-                                </div>
+                                <form method="POST" action="{{ route('instructor.incrementDuty') }}">
+                                    @csrf
+                                    <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
+                                    <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
 
-                                <div class="mt-6 text-center">
-                                    <button
-                                        @click="
-                                            fetch('{{ route('instructor.incrementDuty') }}', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                                },
-                                                body: JSON.stringify({ cadet_ids: $store.modal.selected })
-                                            }).then(response => {
-                                                if (response.ok) {
-                                                    $store.modal.open = false;
-                                                    $store.modal.selected = [];
-                                                    loadDutyRanking();
-                                                }
-                                            }).catch(error => {
-                                                console.error('Error:', error);
-                                            });
-                                        "
-                                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2">
-                                        <i class="fas fa-plus"></i>
-                                        <span>Add Duty Count</span>
-                                    </button>
-                                </div>
+                                    <div id="modal-cadet-list" class="space-y-2 max-h-[400px] overflow-y-auto border p-2 rounded mb-4">
+                                        <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
+                                            <div class="flex items-center justify-between border p-2 rounded">
+                                                <span x-text="cadet.name + ' (' + cadet.service_number + ')'"></span>
+                                                <input type="checkbox" x-model="$store.modal.selected" :value="cadet.id" name="cadet_ids[]">
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button
+                                            type="submit"
+                                            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2"
+                                            :disabled="$store.modal.selected.length === 0"
+                                        >
+                                            <i class="fas fa-plus"></i>
+                                            <span>Add Duty Count</span>
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -827,50 +836,7 @@
         // Make toggleAbsenceView globally accessible
         window.toggleAbsenceView = toggleAbsenceView;
 
-        // AJAX function for duty ranking
-        function loadDutyRanking() {
-            const intakeYear = document.getElementById('duty-intake-year').value;
-            const sortOrder = document.getElementById('duty-sort-order').value;
 
-            // Show loading indicator
-            document.getElementById('duty-loading').classList.remove('hidden');
-            document.getElementById('duty-ranking-content').classList.add('opacity-50');
-
-            // Create form data
-            const formData = new FormData();
-            formData.append('duty_intake_year', intakeYear);
-            formData.append('sort_order', sortOrder);
-            formData.append('cgpa_intake_year', document.getElementById('cgpa-intake-year').value);
-            formData.append('cgpa_sort_order', document.getElementById('cgpa-sort-order').value);
-
-            fetch('{{ route("instructor.dashboard") }}', {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Duty ranking AJAX response:', data);
-                if (data.duty_html) {
-                    document.getElementById('duty-ranking-content').innerHTML = data.duty_html;
-                }
-                if (data.cadet_list) {
-                    // Update the modal cadet list
-                    Alpine.store('modal').cadets = data.cadet_list;
-                }
-            })
-            .catch(error => {
-                console.error('Error loading duty ranking:', error);
-            })
-            .finally(() => {
-                // Hide loading indicator
-                document.getElementById('duty-loading').classList.add('hidden');
-                document.getElementById('duty-ranking-content').classList.remove('opacity-50');
-            });
-        }
 
         // AJAX function for CGPA analytics
         function loadCgpaAnalytics() {
@@ -978,9 +944,7 @@
             });
         }
 
-        // Event listeners for duty ranking filters
-        document.getElementById('duty-intake-year').addEventListener('change', loadDutyRanking);
-        document.getElementById('duty-sort-order').addEventListener('change', loadDutyRanking);
+
 
         // Event listeners for CGPA analytics filters
         document.getElementById('cgpa-intake-year').addEventListener('change', loadCgpaAnalytics);
@@ -990,7 +954,8 @@
         document.getElementById('absence-intake-filter').addEventListener('change', loadAbsenceData);
 
         // Make loadDutyRanking globally accessible for the modal
-        window.loadDutyRanking = loadDutyRanking;
+        // Removed loadDutyRanking function and reference as duty ranking is no longer AJAX
+        // window.loadDutyRanking = loadDutyRanking;
 
         // Dropdown toggle function
         window.toggleAbsenceDropdown = function(cadetId) {
@@ -1022,21 +987,6 @@
         });
     });
 
-    // Update modal cadets when AJAX response includes cadet_list
-    document.addEventListener('DOMContentLoaded', function() {
-        const originalFetch = window.fetch;
-        window.fetch = function(...args) {
-            return originalFetch.apply(this, args).then(response => {
-                if (response.url.includes('instructor/dashboard') && args[1] && args[1].body) {
-                    response.clone().json().then(data => {
-                        if (data.cadet_list) {
-                            Alpine.store('modal').cadets = data.cadet_list;
-                        }
-                    });
-                }
-                return response;
-            });
-        };
-    });
+    // Removed AJAX fetch override for duty ranking cadet list update as no longer needed
 </script>
 </x-app-layout>
