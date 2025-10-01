@@ -12,14 +12,16 @@ use Illuminate\Support\Facades\DB;
 
 class CadetManagementController extends Controller
 {
+    // ================================================================
+    // INDEX: Main Cadet Management View
+    // ================================================================
     public function index(Request $request)
     {
-        // Debug: Add logging to see what's happening
         Log::info('Cadet Management Index called', [
             'request_params' => $request->all()
         ]);
 
-        // Initialize ALL variables with safe defaults - be very explicit
+        // Initialize variables with defaults
         $infoType = $request->get('info_type', 'seniority');
         $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
         
@@ -28,14 +30,13 @@ class CadetManagementController extends Controller
             $filterBy = 'all';
         } else {
             if ($infoType === 'cgpa') {
-                $sortBy = 'desc'; // CGPA should be descending (highest first)
+                $sortBy = 'desc';
             } else {
                 $sortBy = $request->get('sort_by', 'asc');
             }
             $filterBy = $request->get('filter_by', 'all');
         }
 
-        // Debug: Log the variables
         Log::info('Variables set', [
             'infoType' => $infoType,
             'intakeYear' => $intakeYear,
@@ -43,7 +44,7 @@ class CadetManagementController extends Controller
             'filterBy' => $filterBy
         ]);
 
-        // Create fallback recent intakes
+        // Create recent intakes array
         $currentYear = now()->year;
         $recentIntakes = [];
         for ($i = 0; $i < 4; $i++) {
@@ -55,38 +56,32 @@ class CadetManagementController extends Controller
             ];
         }
 
-        // Basic query - check if Cadet model exists and has data
+        // Build cadet query
         try {
-            // Check if Cadet table exists and has User relationship
             if (!Schema::hasTable('cadets')) {
                 Log::warning('Cadets table does not exist');
                 $cadets = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20, 1);
             } else {
                 $query = Cadet::query();
                 
-                // Check if User relationship exists
                 if (Schema::hasTable('users')) {
                     $query = $query->with('user');
                 }
                 
-                // Apply basic filtering
                 if ($intakeYear && Schema::hasColumn('cadets', 'intake_year')) {
                     $query->where('intake_year', $intakeYear);
                 }
 
-                // Apply filters and sorting based on info type
                 $this->applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy);
 
                 $cadets = $query->paginate(20);
             }
             
         } catch (\Exception $e) {
-            // If there's an error, return empty collection
             Log::error('Error in Cadet Management: ' . $e->getMessage());
             $cadets = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20, 1);
         }
 
-        // Prepare data array with ALL required variables
         $viewData = [
             'cadets' => $cadets,
             'infoType' => $infoType,
@@ -96,33 +91,28 @@ class CadetManagementController extends Controller
             'recentIntakes' => $recentIntakes
         ];
 
-        // Debug: Log what we're sending to the view
         Log::info('Sending to view', array_keys($viewData));
 
-        // Make sure to return the correct view path that matches your file structure
         return view('instructor.cadet_management', $viewData);
     }
 
-    /**
-     * Apply filters and sorting based on info type with proper service number sorting
-     */
+    // ================================================================
+    // FILTERS AND SORTING: Apply query filters based on info type
+    // ================================================================
     private function applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy)
     {
         switch ($infoType) {
             case 'seniority':
-                // Default sorting by service number ascending
                 if (Schema::hasColumn('cadets', 'service_number')) {
                     $query->orderBy('service_number', 'asc');
                 }
                 break;
 
             case 'position':
-                // Apply filter first
                 if ($filterBy === 'rank_holders' && Schema::hasColumn('cadets', 'position')) {
                     $query->whereIn('position', ['CO', 'Thana', 'Zayn', 'PMC']);
                 }
                 
-                // Special sorting for positions: CO, Thana, Zayn, PMC, then Normal Cadets
                 if (Schema::hasColumn('cadets', 'position') && Schema::hasColumn('cadets', 'service_number')) {
                     $query->orderByRaw("
                         CASE 
@@ -137,19 +127,16 @@ class CadetManagementController extends Controller
                 break;
 
             case 'gender':
-                // Apply filter
                 if (in_array($filterBy, ['male', 'female']) && Schema::hasColumn('cadets', 'gender')) {
                     $query->where('gender', ucfirst($filterBy));
                 }
                 
-                // Sort by gender, then by service number
                 if (Schema::hasColumn('cadets', 'gender') && Schema::hasColumn('cadets', 'service_number')) {
                     $query->orderBy('gender', 'asc')->orderBy('service_number', 'asc');
                 }
                 break;
 
             case 'cgpa':
-                // Apply CGPA range filter
                 if (Schema::hasColumn('cadets', 'current_cgpa')) {
                     switch ($filterBy) {
                         case '3.67_and_above':
@@ -166,7 +153,6 @@ class CadetManagementController extends Controller
                             break;
                     }
                     
-                    // Sort by CGPA descending (highest first), then by service number ascending
                     if (Schema::hasColumn('cadets', 'service_number')) {
                         $query->orderBy('current_cgpa', 'desc')->orderBy('service_number', 'asc');
                     } else {
@@ -176,7 +162,6 @@ class CadetManagementController extends Controller
                 break;
 
             case 'swimming':
-                // Apply swimming status filter
                 if (in_array($filterBy, ['pass', 'in_progress', 'fail']) && Schema::hasColumn('cadets', 'swimming_qualification')) {
                     $statusMap = [
                         'pass' => 'Pass',
@@ -186,7 +171,6 @@ class CadetManagementController extends Controller
                     $query->where('swimming_qualification', $statusMap[$filterBy]);
                 }
                 
-                // Sort by swimming status (Pass, In Progress, Fail), then by service number
                 if (Schema::hasColumn('cadets', 'swimming_qualification') && Schema::hasColumn('cadets', 'service_number')) {
                     $query->orderByRaw("
                         CASE swimming_qualification
@@ -202,7 +186,6 @@ class CadetManagementController extends Controller
                 break;
 
             case 'bmi':
-                // Apply BMI filter
                 if (Schema::hasColumn('cadets', 'BMI')) {
                     switch ($filterBy) {
                         case 'overweight':
@@ -213,7 +196,6 @@ class CadetManagementController extends Controller
                             break;
                     }
                     
-                    // Sort by BMI, then by service number
                     if (Schema::hasColumn('cadets', 'service_number')) {
                         $query->orderBy('BMI', 'asc')->orderBy('service_number', 'asc');
                     } else {
@@ -223,7 +205,6 @@ class CadetManagementController extends Controller
                 break;
 
             default:
-                // Default sorting by service number ascending
                 if (Schema::hasColumn('cadets', 'service_number')) {
                     $query->orderBy('service_number', 'asc');
                 }
@@ -231,9 +212,9 @@ class CadetManagementController extends Controller
         }
     }
 
-    /**
-     * Mark selected cadets as passed in swimming qualification
-     */
+    // ================================================================
+    // SWIMMING: Mark selected cadets as passed
+    // ================================================================
     public function markSwimmingPassed(Request $request)
     {
         $request->validate([
@@ -243,7 +224,6 @@ class CadetManagementController extends Controller
         ]);
 
         try {
-            // Only update cadets who are not already passed and belong to the specified intake
             $updatedCount = Cadet::whereIn('id', $request->cadet_ids)
                 ->where('intake_year', $request->intake_year)
                 ->where('swimming_qualification', '!=', 'Pass')
@@ -263,6 +243,9 @@ class CadetManagementController extends Controller
         }
     }
 
+    // ================================================================
+    // SHOW: Get individual cadet profile
+    // ================================================================
     public function show($cadetId)
     {
         try {
@@ -280,6 +263,9 @@ class CadetManagementController extends Controller
         }
     }
 
+    // ================================================================
+    // POSITIONS: Update cadet positions
+    // ================================================================
     public function updatePositions(Request $request)
     {
         $request->validate([
@@ -291,7 +277,6 @@ class CadetManagementController extends Controller
             $positions = $request->positions;
             $intakeYear = $request->intake_year;
             
-            // Validate that special positions are unique within the intake
             $specialPositions = ['CO', 'Thana', 'Zayn', 'PMC'];
             $positionCounts = array_count_values($positions);
             
@@ -305,7 +290,6 @@ class CadetManagementController extends Controller
             }
             
             foreach ($positions as $cadetId => $position) {
-                // Map "Normal Cadet" to "Normal" to match enum values in DB
                 if ($position === 'Normal Cadet') {
                     $position = 'Normal';
                 }
@@ -328,6 +312,9 @@ class CadetManagementController extends Controller
         }
     }
 
+    // ================================================================
+    // DESTROY: Remove cadet and associated user
+    // ================================================================
     public function destroy(Request $request, $cadetId)
     {
         $request->validate([
@@ -346,12 +333,9 @@ class CadetManagementController extends Controller
                 ], 422);
             }
 
-            // Use database transaction to ensure data integrity
-            \DB::transaction(function () use ($cadet, $user) {
-                // Delete the cadet record first
+            DB::transaction(function () use ($cadet, $user) {
                 $cadet->delete();
                 
-                // If user exists, delete the user and all related records
                 if ($user) {
                     $this->deleteUserCompletely($user);
                 }
@@ -374,73 +358,55 @@ class CadetManagementController extends Controller
         }
     }
 
-    /**
-     * Completely delete a user and all associated records from all tables
-     */
+    // ================================================================
+    // USER DELETION: Complete user and related records cleanup
+    // ================================================================
     private function deleteUserCompletely(User $user)
     {
         try {
             $userId = $user->id;
             
-            // Define all possible tables that might have user_id foreign key
-            // Add or remove tables based on your actual database schema
             $relatedTables = [
-                'cadets',                    // Cadet records
-                'password_reset_tokens',     // Password reset tokens
-                'sessions',                  // User sessions
-                'personal_access_tokens',    // API tokens (if using Sanctum)
-                'notifications',             // User notifications
-                'user_preferences',          // User preferences (if exists)
-                'user_profiles',             // Extended user profiles (if exists)
-                'activity_logs',             // User activity logs (if exists)
-                'user_roles',                // User roles (if using custom role system)
-                'user_permissions',          // User permissions (if exists)
-                'audit_logs',                // Audit logs (if exists)
-                // Add any other tables that reference users
+                'cadets',
+                'password_reset_tokens',
+                'sessions',
+                'personal_access_tokens',
+                'notifications',
+                'user_preferences',
+                'user_profiles',
+                'activity_logs',
+                'user_roles',
+                'user_permissions',
+                'audit_logs',
             ];
 
-            // Delete from related tables first (to maintain referential integrity)
             foreach ($relatedTables as $table) {
                 if (Schema::hasTable($table) && Schema::hasColumn($table, 'user_id')) {
-                    \DB::table($table)->where('user_id', $userId)->delete();
+                    DB::table($table)->where('user_id', $userId)->delete();
                     Log::info("Deleted records from {$table} for user {$userId}");
                 }
             }
 
-            // Handle tables with different foreign key naming conventions
-            $customRelatedTables = [
-                // Add tables that use different column names to reference users
-                // Example: ['table_name' => 'column_name']
-                // 'posts' => 'author_id',
-                // 'comments' => 'created_by',
-            ];
+            $customRelatedTables = [];
 
             foreach ($customRelatedTables as $table => $column) {
                 if (Schema::hasTable($table) && Schema::hasColumn($table, $column)) {
-                    \DB::table($table)->where($column, $userId)->delete();
+                    DB::table($table)->where($column, $userId)->delete();
                     Log::info("Deleted records from {$table} for user {$userId} using column {$column}");
                 }
             }
 
-            // Handle pivot tables (many-to-many relationships)
-            $pivotTables = [
-                // Add pivot tables that reference users
-                // 'user_groups',
-                // 'user_courses',
-                // 'user_events',
-            ];
+            $pivotTables = [];
 
             foreach ($pivotTables as $table) {
                 if (Schema::hasTable($table) && Schema::hasColumn($table, 'user_id')) {
-                    \DB::table($table)->where('user_id', $userId)->delete();
+                    DB::table($table)->where('user_id', $userId)->delete();
                     Log::info("Deleted pivot records from {$table} for user {$userId}");
                 }
             }
 
-            // Delete files associated with the user (if any)
             $this->deleteUserFiles($user);
 
-            // Finally, delete the user record
             $user->delete();
             
             Log::info("Successfully deleted user {$userId} and all associated records");
@@ -450,17 +416,16 @@ class CadetManagementController extends Controller
                 'user_id' => $user->id,
                 'trace' => $e->getTraceAsString()
             ]);
-            throw $e; // Re-throw to be caught by the transaction
+            throw $e;
         }
     }
 
-    /**
-     * Delete files associated with the user
-     */
+    // ================================================================
+    // FILE DELETION: Remove user-associated files
+    // ================================================================
     private function deleteUserFiles(User $user)
     {
         try {
-            // Delete profile picture if it exists
             if (method_exists($user, 'cadet') && $user->cadet && $user->cadet->profile_pic) {
                 $profilePicPath = storage_path('app/public/' . $user->cadet->profile_pic);
                 if (file_exists($profilePicPath)) {
@@ -469,14 +434,12 @@ class CadetManagementController extends Controller
                 }
             }
 
-            // Delete user avatar if stored locally
             $avatarPath = storage_path('app/public/avatars/' . $user->id . '.jpg');
             if (file_exists($avatarPath)) {
                 unlink($avatarPath);
                 Log::info("Deleted avatar: {$avatarPath}");
             }
 
-            // Delete any other user-specific files
             $userFolder = storage_path('app/public/users/' . $user->id);
             if (is_dir($userFolder)) {
                 $this->deleteDirectory($userFolder);
@@ -487,13 +450,12 @@ class CadetManagementController extends Controller
             Log::warning('Error deleting user files: ' . $e->getMessage(), [
                 'user_id' => $user->id
             ]);
-            // Don't throw exception for file deletion errors - continue with user deletion
         }
     }
 
-    /**
-     * Recursively delete a directory and its contents
-     */
+    // ================================================================
+    // UTILITY: Recursively delete directory
+    // ================================================================
     private function deleteDirectory($dir)
     {
         if (!is_dir($dir)) {
