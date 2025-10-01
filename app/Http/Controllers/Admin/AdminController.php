@@ -149,6 +149,17 @@ class AdminController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function getUser($id)
+    {
+        $user = User::with(['cadet', 'instructor'])->findOrFail($id);
+
+        return response()->json([
+            'user' => $user,
+            'cadet' => $user->cadet,
+            'instructor' => $user->instructor,
+        ]);
+    }
+
     public function deleteUser(Request $request, $id)
     {
         $user = User::findOrFail($id);
