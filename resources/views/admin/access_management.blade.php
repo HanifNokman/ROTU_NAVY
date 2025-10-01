@@ -7,21 +7,22 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Success Message -->
+            {{-- ================================================================ --}}
+            {{-- ALERT MESSAGES --}}
+            {{-- ================================================================ --}}
+            
             @if(session('success'))
                 <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                     <span class="block sm:inline">{{ session('success') }}</span>
                 </div>
             @endif
 
-            <!-- Error Message -->
             @if(session('error'))
                 <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                     <span class="block sm:inline">{{ session('error') }}</span>
                 </div>
             @endif
 
-            <!-- Validation Errors -->
             @if ($errors->any())
                 <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
                     <ul class="list-disc list-inside">
@@ -32,6 +33,10 @@
                 </div>
             @endif
 
+            {{-- ================================================================ --}}
+            {{-- TRANSFER ADMIN ROLE FORM --}}
+            {{-- ================================================================ --}}
+            
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-semibold mb-4">Transfer Admin Role</h3>
@@ -43,7 +48,7 @@
                     <form method="POST" action="{{ route('admin.access_management.transfer') }}" class="space-y-6">
                         @csrf
 
-                        <!-- Select Instructor -->
+                        {{-- Instructor Selection --}}
                         <div>
                             <label for="instructor_id" class="block text-sm font-medium text-gray-700 mb-2">
                                 Select Instructor to Promote to Admin
@@ -66,7 +71,7 @@
                             @enderror
                         </div>
 
-                        <!-- Password Confirmation -->
+                        {{-- Password Confirmation --}}
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
                                 Confirm Your Password
@@ -102,7 +107,7 @@
                             </p>
                         </div>
 
-                        <!-- Warning Message -->
+                        {{-- Warning Message --}}
                         <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                             <div class="flex">
                                 <div class="flex-shrink-0">
@@ -119,7 +124,7 @@
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
+                        {{-- Form Actions --}}
                         <div class="flex items-center justify-end space-x-4">
                             <a 
                                 href="{{ route('admin.dashboard') }}" 
@@ -138,7 +143,10 @@
                 </div>
             </div>
 
-            <!-- Current Admin Information -->
+            {{-- ================================================================ --}}
+            {{-- CURRENT ADMIN INFORMATION --}}
+            {{-- ================================================================ --}}
+            
             <div class="mt-6 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold mb-4">Current Admin Information</h3>
@@ -156,10 +164,10 @@
                             <p class="text-base font-medium">{{ auth()->user()->role }}</p>
                         </div>
                         @if(auth()->user()->instructor)
-                        <div>
-                            <p class="text-sm text-gray-600">Current Expertise</p>
-                            <p class="text-base font-medium">{{ auth()->user()->instructor->expertise ?? 'Not Set' }}</p>
-                        </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Current Expertise</p>
+                                <p class="text-base font-medium">{{ auth()->user()->instructor->expertise ?? 'Not Set' }}</p>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -167,6 +175,10 @@
         </div>
     </div>
 
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT --}}
+    {{-- ================================================================ --}}
+    
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');

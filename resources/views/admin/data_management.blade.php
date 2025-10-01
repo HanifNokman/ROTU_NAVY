@@ -7,7 +7,10 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Summary Cards -->
+
+            {{-- ============================================================================
+            SUMMARY CARDS GRID
+            =========================================================================== --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                 @foreach($models as $key => $info)
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
@@ -15,54 +18,54 @@
                             <div class="flex-shrink-0">
                                 @switch($key)
                                     @case('users')
-                                        <!-- User Icon -->
                                         <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                         @break
+
                                     @case('learning_materials')
-                                        <!-- Book Open Icon -->
                                         <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a9 9 0 00-9 9v5a2 2 0 002 2h14a2 2 0 002-2v-5a9 9 0 00-9-9z" />
                                         </svg>
                                         @break
+
                                     @case('quiz_questions')
-                                        <!-- Academic Cap Icon -->
                                         <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m0 0H6m6 0h6" />
                                         </svg>
                                         @break
+
                                     @case('trainings')
-                                        <!-- Calendar Icon -->
                                         <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                         @break
+
                                     @case('instructors')
-                                        <!-- Presentation Chart Bar Icon -->
                                         <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M9 17v-6m4 6V7m4 10v-4" />
                                         </svg>
                                         @break
+
                                     @case('galleries')
-                                        <!-- Photograph Icon -->
                                         <svg class="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4-4a3 3 0 014 0l4 4M4 8h16M4 8V6a2 2 0 012-2h12a2 2 0 012 2v2" />
                                         </svg>
                                         @break
+
                                     @case('inventory_items')
-                                        <!-- Cube Icon -->
                                         <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0v6a8 8 0 01-16 0V7m16 0L12 13m0 0L4 7m8 6v6" />
                                         </svg>
                                         @break
+
                                     @default
-                                        <!-- Default Chart Bar Icon -->
                                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M9 17v-6m4 6V7m4 10v-4" />
                                         </svg>
                                 @endswitch
                             </div>
+
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-500">{{ $info['name'] }}</div>
                                 <div class="text-2xl font-semibold text-gray-900">{{ $counts[$key] }}</div>
@@ -72,7 +75,9 @@
                 @endforeach
             </div>
 
-            <!-- Model Toggles -->
+            {{-- ============================================================================
+            MODEL SELECTION TOGGLES
+            =========================================================================== --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-8">
                 <div class="p-6">
                     <h3 class="text-lg font-medium mb-4">Select Data Model</h3>
@@ -86,8 +91,9 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Data Table -->
+            {{-- ============================================================================
+            DATA TABLE CONTAINER
+            =========================================================================== --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
@@ -99,6 +105,9 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: LEARNING MATERIALS
+                                    =========================================================================== --}}
                                     @if($selectedModel == 'learning_materials')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
@@ -107,14 +116,20 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File URL</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    
+
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: UNIFORM TYPES
+                                    =========================================================================== --}}
                                     @elseif($selectedModel == 'uniform_types')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type Name</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    
+
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: INVENTORY ITEMS
+                                    =========================================================================== --}}
                                     @elseif($selectedModel == 'inventory_items')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -123,14 +138,20 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available Qty</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    
+
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: UNIFORM COMPONENTS
+                                    =========================================================================== --}}
                                     @elseif($selectedModel == 'uniform_components')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component Name</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uniform Type</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    
+
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: EQUIPMENT LOANS
+                                    =========================================================================== --}}
                                     @elseif($selectedModel == 'equipment_loans')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cadet</th>
@@ -140,7 +161,10 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Date</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    
+
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: GALLERIES
+                                    =========================================================================== --}}
                                     @elseif($selectedModel == 'galleries')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
@@ -149,7 +173,10 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image Path</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    
+
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: TRAININGS
+                                    =========================================================================== --}}
                                     @elseif($selectedModel == 'trainings')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
@@ -159,7 +186,10 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration (hrs)</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    
+
+                                    {{-- ============================================================================
+                                    TABLE HEADERS: QUIZ QUESTIONS
+                                    =========================================================================== --}}
                                     @elseif($selectedModel == 'quiz_questions')
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Question Text</th>
@@ -174,6 +204,9 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($data as $item)
                                     <tr>
+                                        {{-- ============================================================================
+                                        TABLE ROWS: LEARNING MATERIALS
+                                        =========================================================================== --}}
                                         @if($selectedModel == 'learning_materials')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
@@ -185,7 +218,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: UNIFORM TYPES
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'uniform_types')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->type_name }}</td>
@@ -195,7 +231,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: INVENTORY ITEMS
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'inventory_items')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->name }}</td>
@@ -207,7 +246,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: UNIFORM COMPONENTS
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'uniform_components')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->component_name }}</td>
@@ -217,7 +259,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: EQUIPMENT LOANS
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'equipment_loans')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->cadet->user->name ?? 'N/A' }}</td>
@@ -230,7 +275,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: GALLERIES
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'galleries')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
@@ -242,7 +290,9 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+                                        {{-- ============================================================================
+                                        TABLE ROWS: TRAININGS
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'trainings')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
@@ -255,18 +305,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->location }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->start_datetime ? \Carbon\Carbon::parse($item->start_datetime)->format('d/m/Y H:i') : 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->end_datetime ? \Carbon\Carbon::parse($item->end_datetime)->format('d/m/Y H:i') : 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->duration_hours }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: QUIZ QUESTIONS
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'quiz_questions')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->question_text, 50) }}</td>
@@ -278,7 +320,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: TRAINING ATTENDANCES
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'training_attendances')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->training->title ?? 'N/A' }}</td>
@@ -290,7 +335,10 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
+
+                                        {{-- ============================================================================
+                                        TABLE ROWS: CONTENT SETTINGS
+                                        =========================================================================== --}}
                                         @elseif($selectedModel == 'content_settings')
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $item->key }}</td>
@@ -301,21 +349,9 @@
                                                 <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
                                                 <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
                                             </td>
-                                        
-                                        @elseif($selectedModel == 'quiz_questions')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->question_text, 50) }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->category->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->question_type }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->creator->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
                                         @endif
                                     </tr>
-                                    </tr>
+
                                 @empty
                                     <tr>
                                         <td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500">No records found</td>
@@ -326,51 +362,75 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
-
-    <!-- Edit Modal -->
+    {{-- ============================================================================
+    EDIT MODAL
+    =========================================================================== --}}
     <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-10 mx-auto p-5 border w-5/6 max-w-4xl shadow-lg rounded-md bg-white">
             <button onclick="closeEditModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Record</h3>
+                
                 <form id="editForm" method="POST">
                     @csrf
                     @method('PUT')
+                    
                     <div id="formFields" class="max-h-96 overflow-y-auto"></div>
+                    
                     <div class="flex justify-end mt-4">
-                        <button type="button" class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400" onclick="closeEditModal()">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Update</button>
+                        <button type="button" class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400" onclick="closeEditModal()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            Update
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Delete Modal -->
+    {{-- ============================================================================
+    DELETE MODAL
+    =========================================================================== --}}
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Deletion</h3>
-                <p class="text-sm text-gray-500 mb-4">Are you sure you want to delete this record? This action cannot be undone.</p>
+                <p class="text-sm text-gray-500 mb-4">
+                    Are you sure you want to delete this record? This action cannot be undone.
+                </p>
+                
                 <form id="deleteForm" method="POST">
                     @csrf
                     @method('DELETE')
+                    
                     <div class="flex justify-end mt-4">
-                        <button type="button" class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400" onclick="closeDeleteModal()">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+                        <button type="button" class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400" onclick="closeDeleteModal()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                            Delete
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
     <script>
+    {{-- ============================================================================
+    CONSTANTS
+    =========================================================================== --}}
         const selectedModel = '{{ $selectedModel }}';
 
+        // ============================================================================
+        // EVENT LISTENERS INITIALIZATION
+        // ============================================================================
         document.addEventListener('DOMContentLoaded', function() {
-            // Edit modal functionality
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.getAttribute('data-id');
@@ -378,7 +438,6 @@
                 });
             });
 
-            // Delete modal functionality
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.getAttribute('data-id');
@@ -387,6 +446,9 @@
             });
         });
 
+        // ============================================================================
+        // MODAL FUNCTIONS
+        // ============================================================================
         function openEditModal(id) {
             fetch(`/admin/data/${selectedModel}/${id}`)
                 .then(response => {
@@ -405,10 +467,24 @@
                 });
         }
 
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function openDeleteModal(id) {
+            document.getElementById('deleteForm').action = `/admin/data/${selectedModel}/${id}`;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+        // ============================================================================
+        // FORM POPULATION FUNCTION
+        // ============================================================================
         function populateEditForm(data) {
             let fields = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
             
-            // Generate form fields based on model type
             switch(selectedModel) {
                 case 'learning_materials':
                     fields += generateField('Instructor ID', 'instructor_id', data.instructor_id, 'number', true);
@@ -485,7 +561,9 @@
             document.getElementById('formFields').innerHTML = fields;
             document.getElementById('editForm').action = `/admin/data/${selectedModel}/${data.id}`;
         }
-
+        // ============================================================================
+        // FIELD GENERATOR FUNCTIONS
+        // ============================================================================
         function generateField(label, name, value, type = 'text', required = false, colSpan = '') {
             const reqAttr = required ? 'required' : '';
             const val = value || '';
@@ -528,24 +606,13 @@
                 </div>
             `;
         }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.add('hidden');
-        }
-
-        function openDeleteModal(id) {
-            document.getElementById('deleteForm').action = `/admin/data/${selectedModel}/${id}`;
-            document.getElementById('deleteModal').classList.remove('hidden');
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-        }
-
-        // Handle edit form submission
+        // ============================================================================
+        // FORM SUBMISSION HANDLERS
+        // ============================================================================
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -581,10 +648,10 @@
             });
         });
 
-        // Handle delete form submission
         document.getElementById('deleteForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
