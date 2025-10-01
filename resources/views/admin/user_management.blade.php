@@ -333,7 +333,7 @@
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Phone Number</label><input type="text" name="phone_number" value="${cadet.phone_number || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Gender</label><select name="gender" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"><option value="Male" ${cadet.gender === 'Male' ? 'selected' : ''}>Male</option><option value="Female" ${cadet.gender === 'Female' ? 'selected' : ''}>Female</option></select></div>`;
 
-                const cadetRanks = ['Lt. M', 'PKK', 'PK'];
+                const cadetRanks = ['Lt.M', 'PKK', 'PK'];
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Rank</label><select name="rank" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">`;
                 cadetRanks.forEach(rank => {
                     fields += `<option value="${rank}" ${cadet.rank === rank ? 'selected' : ''}>${rank}</option>`;

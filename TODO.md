@@ -2,15 +2,15 @@
 
 ## Admin
 ### Controllers
-- [ ] app/Http/Controllers/Admin/AdminController.php
+- [X] app/Http/Controllers/Admin/AdminController.php
 
 ### Models
 - [ ] app/Models/ (shared models)
 
 ### Blades
-- [ ] resources/views/admin/access_management.blade.php
-- [ ] resources/views/admin/data_management.blade.php
-- [ ] resources/views/admin/user_management.blade.php
+- [X] resources/views/admin/access_management.blade.php
+- [X] resources/views/admin/data_management.blade.php
+- [X] resources/views/admin/user_management.blade.php
 
 ## Instructor
 ### Controllers
