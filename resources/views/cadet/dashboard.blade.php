@@ -20,18 +20,29 @@
                 <p class="text-gray-600">Your personal overview and performance metrics</p>
             </div>
             <!-- Profile Section -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
+                x-data="{ open: false }">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 cursor-pointer"
+                    @click="open = !open">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center justify-between text-gray-900">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Personal Profile
+                        </div>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200"
+                            :class="{ 'rotate-180': open }"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                        Personal Profile
                     </h2>
                     <p class="text-gray-600">Your profile information and details</p>
                 </div>
 
-                <div class="p-6 flex flex-col md:flex-row gap-6">
+                <div class="p-6 flex flex-col md:flex-row gap-6"
+                    x-show="open"
+                    x-transition>
                     <!-- Profile Picture -->
                     <div class="flex justify-center lg:justify-start">
                         <img src="{{ $cadet?->profile_pic ? asset('storage/' . $cadet->profile_pic) : asset('images/default.png') }}"
