@@ -10,16 +10,18 @@ use App\Models\Cadet;
 
 class CadetDashboardController extends Controller
 {
+    // ================================================================
+    // DISPLAY CADET DASHBOARD
+    // ================================================================
+    
     public function index(Request $request)
     {
         $user = Auth::user();
         $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
 
-        // Calculate Tauliah Date
         $intakeYear = $cadet->intake_year ?? now()->year;
         $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
 
-        // Auto-update rank if date has passed and not yet updated
         if (now()->greaterThanOrEqualTo($tauliahDate) && $cadet->rank !== 'Lt.M') {
             $cadet->rank = 'Lt.M';
             $cadet->cadet_status = 'Completed';
@@ -28,19 +30,16 @@ class CadetDashboardController extends Controller
 
         $sortOrder = $request->get('sort_order', 'desc');
 
-        // Cadets in same intake
         $cadets = Cadet::where('intake_year', $cadet->intake_year)
             ->with('user')
             ->orderBy('daily_duty_count', $sortOrder)
             ->get();
 
-        // Duty cadets filtered by same intake
         $dutyCadets = Cadet::where('intake_year', $cadet->intake_year)
             ->with('user')
             ->orderBy('daily_duty_count', $sortOrder)
             ->get();
 
-        // Get absence data only for authorized positions
         $absentCadets = [];
         $absenceLeaderboard = [];
         if (in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn'])) {
@@ -48,16 +47,19 @@ class CadetDashboardController extends Controller
             $absenceLeaderboard = $this->getAbsenceLeaderboardForIntake($cadet->intake_year);
         }
 
-        // Handle AJAX request for duty ranking filter
         if ($request->ajax()) {
             return $this->getDutyRankingData($dutyCadets);
         }
 
         return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets', 'absentCadets', 'absenceLeaderboard'));
     }
+
+    // ================================================================
+    // GET ABSENCE DATA FOR INTAKE
+    // ================================================================
+    
     private function getAbsenceDataForIntake($intakeYear)
     {
-        // Get cadets from the same intake with pending absence reasons
         $absences = \DB::table('training_attendances')
             ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
             ->join('users', 'cadets.user_id', '=', 'users.id')
@@ -66,7 +68,6 @@ class CadetDashboardController extends Controller
             ->where('trainings.status', 'Completed')
             ->where('cadets.intake_year', $intakeYear)
             ->where(function($q) {
-                // Missing either absence reason OR supporting file (or both)
                 $q->whereNull('training_attendances.absence_reason')
                   ->orWhereNull('training_attendances.file_url')
                   ->orWhere('training_attendances.absence_reason', '')
@@ -85,13 +86,11 @@ class CadetDashboardController extends Controller
             ->orderBy('cadets.service_number', 'asc')
             ->get();
 
-        // Group by cadet
         $groupedData = [];
         
         foreach ($absences as $absence) {
             $cadetId = $absence->cadet_id;
             
-            // Initialize cadet if not exists
             if (!isset($groupedData[$cadetId])) {
                 $groupedData[$cadetId] = (object)[
                     'id' => $cadetId,
@@ -101,7 +100,6 @@ class CadetDashboardController extends Controller
                 ];
             }
             
-            // Determine what's missing
             $missingItems = [];
             if (!$absence->absence_reason || trim($absence->absence_reason) === '') {
                 $missingItems[] = 'Reason';
@@ -110,7 +108,6 @@ class CadetDashboardController extends Controller
                 $missingItems[] = 'Supporting File';
             }
             
-            // Add absence to cadet
             $groupedData[$cadetId]->pending_absences[] = (object)[
                 'training_title' => $absence->training_title,
                 'training_location' => $absence->training_location,
@@ -119,13 +116,15 @@ class CadetDashboardController extends Controller
             ];
         }
         
-        // Return as indexed array
         return array_values($groupedData);
     }
 
+    // ================================================================
+    // GET ABSENCE LEADERBOARD FOR INTAKE
+    // ================================================================
+    
     private function getAbsenceLeaderboardForIntake($intakeYear)
     {
-        // Get total trainings and absence count per cadet in the same intake
         $absenceData = \DB::table('training_attendances')
             ->join('cadets', 'training_attendances.cadet_id', '=', 'cadets.id')
             ->join('users', 'cadets.user_id', '=', 'users.id')
@@ -147,6 +146,11 @@ class CadetDashboardController extends Controller
 
         return $absenceData;
     }
+
+    // ================================================================
+    // GET DUTY RANKING DATA (AJAX)
+    // ================================================================
+    
     private function getDutyRankingData($dutyCadets)
     {
         $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
@@ -158,13 +162,12 @@ class CadetDashboardController extends Controller
             foreach ($dutyCadets as $index => $cadet) {
                 $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
 
-                // Calculate RGB color from red → yellow → green based on percentage
                 if ($percentage < 50) {
-                    $ratio = $percentage / 50; // 0 to 1
+                    $ratio = $percentage / 50;
                     $r = 255;
                     $g = (int)(180 * $ratio);
                 } else {
-                    $ratio = ($percentage - 50) / 50; // 0 to 1
+                    $ratio = ($percentage - 50) / 50;
                     $r = (int)(255 * (1 - $ratio));
                     $g = 180;
                 }

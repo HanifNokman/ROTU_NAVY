@@ -1,4 +1,7 @@
 <x-app-layout>
+    {{-- ================================================================ --}}
+    {{-- PAGE HEADER --}}
+    {{-- ================================================================ --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Attendance (Cadet)') }}
@@ -10,7 +13,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- PAGE TITLE SECTION --}}
+            {{-- ================================================================ --}}
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-800 mb-3 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,8 +26,12 @@
                 <p class="text-gray-600 text-lg">Mark your attendance and manage absence records</p>
             </div>
 
-            <!-- Today's Training Section -->
+            {{-- ================================================================ --}}
+            {{-- TODAY'S TRAINING SESSIONS --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                
+                {{-- Section Header --}}
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
                     <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
                         <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,6 +42,7 @@
                     <p class="text-gray-600">Mark your attendance for active training sessions</p>
                 </div>
                 
+                {{-- Section Content --}}
                 <div class="p-8">
                     @if(isset($todaysTrainings) && $todaysTrainings->count() > 0)
                         <div class="space-y-6">
@@ -42,7 +52,10 @@
                                         ->where('cadet_id', $cadet->id)
                                         ->first();
                                 @endphp
+                                
                                 <div class="p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border-l-4 border-blue-500 hover:shadow-lg transition-all duration-200">
+                                    
+                                    {{-- Training Info --}}
                                     <div class="flex items-start justify-between mb-4">
                                         <div class="flex-1">
                                             <h3 class="text-xl font-bold text-gray-800 mb-3">{{ $training->title }}</h3>
@@ -54,12 +67,10 @@
                                                 <div class="flex items-center">
                                                     <i class="fas fa-clock w-5 text-green-500 mr-3"></i>
                                                     @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
-                                                        <!-- Multi-day training -->
                                                         <span>{{ $training->start_datetime->format('M d, Y') }} - {{ $training->end_datetime->format('M d, Y') }}</span>
                                                         <span class="mx-2 text-gray-400">|</span>
                                                         <span>{{ $training->formatted_start_time }} - {{ $training->end_datetime->format('h:i A') }}</span>
                                                     @else
-                                                        <!-- Single day training -->
                                                         <span>{{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}</span>
                                                         @if($training->end_datetime)
                                                             <span class="ml-2 text-gray-500">- {{ $training->end_datetime->format('h:i A') }}</span>
@@ -67,19 +78,21 @@
                                                     @endif
                                                 </div>
                                                 @if($training->involvement)
-                                                <div class="flex items-center">
-                                                    <i class="fas fa-users w-5 text-purple-500 mr-3"></i>
-                                                    <span>{{ $training->involvement }}</span>
-                                                </div>
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-users w-5 text-purple-500 mr-3"></i>
+                                                        <span>{{ $training->involvement }}</span>
+                                                    </div>
                                                 @endif
                                                 @if($training->description)
-                                                <div class="flex items-start md:col-span-2">
-                                                    <i class="fas fa-info-circle w-5 text-blue-500 mr-3 mt-1"></i>
-                                                    <span>{{ $training->description }}</span>
-                                                </div>
+                                                    <div class="flex items-start md:col-span-2">
+                                                        <i class="fas fa-info-circle w-5 text-blue-500 mr-3 mt-1"></i>
+                                                        <span>{{ $training->description }}</span>
+                                                    </div>
                                                 @endif
                                             </div>
                                         </div>
+                                        
+                                        {{-- Status Badges --}}
                                         <div class="ml-6 flex flex-col gap-2">
                                             <span class="inline-block px-4 py-2 rounded-full text-sm font-semibold
                                                 {{ $training->status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
@@ -105,8 +118,8 @@
                                         </div>
                                     </div>
 
+                                    {{-- Attendance Action --}}
                                     @if(!$attendance || !$attendance->present)
-                                        <!-- Mark Present Button -->
                                         <div class="pt-4 border-t border-gray-200">
                                             <form method="POST" action="{{ route('cadet.attendance.mark') }}" class="w-full">
                                                 @csrf
@@ -150,8 +163,12 @@
                 </div>
             </div>
 
-            <!-- Absence Records Section -->
+            {{-- ================================================================ --}}
+            {{-- ABSENCE RECORDS SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                
+                {{-- Section Header --}}
                 <div class="bg-gradient-to-r from-orange-50 to-red-50 p-6 border-b border-gray-200">
                     <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
                         <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,9 +184,11 @@
                     <p class="text-gray-600">Submit reasons for your absences with supporting documentation</p>
                 </div>
                 
+                {{-- Section Content --}}
                 <div class="p-6">
                     @if($absentAttendances->count() > 0)
-                        <!-- Filter Section -->
+                        
+                        {{-- Filter Section --}}
                         <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                             <h4 class="font-medium text-gray-800 mb-4">
                                 <span class="flex items-center">
@@ -181,7 +200,6 @@
                             </h4>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Status Summary -->
                                 <div class="space-y-2">
                                     <label class="block text-sm font-medium text-gray-700">
                                         Pending Submissions
@@ -194,7 +212,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Absence Selector -->
                                 <div class="space-y-2">
                                     <label for="absenceDropdown" class="block text-sm font-medium text-gray-700">
                                         Jump to Specific Absence
@@ -211,7 +228,7 @@
                             </div>
                         </div>
 
-                        <!-- Absence Records Accordion -->
+                        {{-- Absence Records Accordion --}}
                         <div class="mt-6 pt-6 border-t border-gray-200">
                             <h4 class="font-medium text-gray-800 mb-4">
                                 <span class="flex items-center">
@@ -225,6 +242,8 @@
                             <div id="absenceContainer">
                                 @foreach($absentAttendances as $attendance)
                                     <div id="absence-{{ $attendance->id }}" x-data="{ open: false }" class="border border-orange-200 rounded-lg mb-4">
+                                        
+                                        {{-- Accordion Header --}}
                                         <button @click="open = !open"
                                                 class="w-full flex justify-between items-center px-6 py-4 bg-orange-100 hover:bg-orange-200 text-left text-orange-800 font-medium text-lg rounded-t-lg">
                                             <div class="flex items-center">
@@ -243,7 +262,11 @@
                                                 </svg>
                                             </div>
                                         </button>
+                                        
+                                        {{-- Accordion Content --}}
                                         <div x-show="open" x-transition class="p-6 bg-white rounded-b-lg border-t">
+                                            
+                                            {{-- Training Details --}}
                                             <div class="mb-6">
                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 text-sm">
                                                     <div class="flex items-center">
@@ -267,6 +290,7 @@
                                                 </div>
                                             </div>
 
+                                            {{-- Absence Form --}}
                                             <form method="POST" action="{{ route('cadet.attendance.absence', $attendance->id) }}" 
                                                   enctype="multipart/form-data" class="space-y-6">
                                                 @csrf
@@ -341,10 +365,13 @@
                     @endif
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- Success/Error Messages -->
+    {{-- ================================================================ --}}
+    {{-- SUCCESS/ERROR MESSAGES --}}
+    {{-- ================================================================ --}}
     @if(session('success'))
         <div id="success-message" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl z-50 animate-slide-in">
             <div class="flex items-center">
@@ -358,16 +385,6 @@
                 </button>
             </div>
         </div>
-        <script>
-            setTimeout(() => {
-                const msg = document.getElementById('success-message');
-                if (msg) {
-                    msg.style.opacity = '0';
-                    msg.style.transform = 'translateX(100%)';
-                    setTimeout(() => msg.remove(), 300);
-                }
-            }, 5000);
-        </script>
     @endif
 
     @if(session('error'))
@@ -383,16 +400,6 @@
                 </button>
             </div>
         </div>
-        <script>
-            setTimeout(() => {
-                const msg = document.getElementById('error-message');
-                if (msg) {
-                    msg.style.opacity = '0';
-                    msg.style.transform = 'translateX(100%)';
-                    setTimeout(() => msg.remove(), 300);
-                }
-            }, 5000);
-        </script>
     @endif
 
     @if($errors->any())
@@ -415,129 +422,159 @@
                 </button>
             </div>
         </div>
-        <script>
-            setTimeout(() => {
-                const msg = document.getElementById('validation-errors');
-                if (msg) {
-                    msg.style.opacity = '0';
-                    msg.style.transform = 'translateX(100%)';
-                    setTimeout(() => msg.remove(), 300);
-                }
-            }, 8000);
-        </script>
     @endif
 
-    <style>
-        .animate-slide-in {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            0% { 
-                opacity: 0; 
-                transform: translateX(100%); 
+    {{-- ================================================================ --}}
+    {{-- CUSTOM STYLES --}}
+    {{-- ================================================================ --}}
+    @push('styles')
+        <style>
+            .animate-slide-in {
+                animation: slideIn 0.3s ease-out;
             }
-            100% { 
-                opacity: 1; 
-                transform: translateX(0); 
+            
+            @keyframes slideIn {
+                0% { 
+                    opacity: 0; 
+                    transform: translateX(100%); 
+                }
+                100% { 
+                    opacity: 1; 
+                    transform: translateX(0); 
+                }
             }
-        }
-        
-        /* Custom file input styling */
-        input[type="file"]::-webkit-file-upload-button {
-            transition: all 0.2s ease;
-        }
-        
-        /* Smooth transitions for all interactive elements */
-        button, .hover\:shadow-lg, .hover\:shadow-xl {
-            transition: all 0.2s ease;
-        }
+            
+            input[type="file"]::-webkit-file-upload-button {
+                transition: all 0.2s ease;
+            }
+            
+            button, .hover\:shadow-lg, .hover\:shadow-xl {
+                transition: all 0.2s ease;
+            }
 
-        /* Character count color changes */
-        .char-count-warning {
-            color: #f59e0b;
-        }
-        
-        .char-count-danger {
-            color: #ef4444;
-        }
-    </style>
+            .char-count-warning {
+                color: #f59e0b;
+            }
+            
+            .char-count-danger {
+                color: #ef4444;
+            }
+        </style>
+    @endpush
 
-    <script>
-        // Open specific absence record (like Learning Hub material selector)
-        function openAbsenceRecord(absenceId) {
-            if (absenceId) {
-                // First, scroll to the absence record
-                const element = document.getElementById(absenceId);
-                if (element) {
-                    element.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT --}}
+    {{-- ================================================================ --}}
+    @push('scripts')
+        <script>
+            // ================================================================
+            // ABSENCE RECORD NAVIGATION
+            // ================================================================
+            function openAbsenceRecord(absenceId) {
+                if (absenceId) {
+                    const element = document.getElementById(absenceId);
+                    if (element) {
+                        element.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
 
-                    // Wait a bit for the scroll to complete, then open the accordion
-                    setTimeout(() => {
-                        const button = element.querySelector('button');
-                        if (button) {
-                            // Check if the accordion is closed and open it
-                            const isOpen = element.querySelector('[x-data]').__x.$data.open;
-
-                            if (!isOpen) {
-                                button.click();
+                        setTimeout(() => {
+                            const button = element.querySelector('button');
+                            if (button) {
+                                const isOpen = element.querySelector('[x-data]').__x.$data.open;
+                                if (!isOpen) {
+                                    button.click();
+                                }
                             }
-                        }
-                    }, 500);
-                }
+                        }, 500);
+                    }
 
-                // Reset the dropdown to default
-                document.getElementById('absenceDropdown').value = '';
-            }
-        }
-
-        // Character counter function with better visual feedback
-        function updateCharCount(textarea, counterId) {
-            const counter = document.getElementById(counterId);
-            if (counter) {
-                const length = textarea.value.length;
-                counter.textContent = length;
-                
-                // Remove all classes first
-                counter.classList.remove('text-gray-500', 'char-count-warning', 'char-count-danger');
-                
-                if (length > 450) {
-                    counter.classList.add('char-count-danger');
-                } else if (length > 350) {
-                    counter.classList.add('char-count-warning');
-                } else {
-                    counter.classList.add('text-gray-500');
+                    document.getElementById('absenceDropdown').value = '';
                 }
             }
-        }
 
-        // Initialize character counters on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const textareas = document.querySelectorAll('textarea[name="absence_reason"]');
-            textareas.forEach(textarea => {
-                // Extract attendance ID from the form action URL
-                const form = textarea.closest('form');
-                const actionUrl = form.getAttribute('action');
-                const attendanceId = actionUrl.split('/').pop();
-                const counterId = `char-count-${attendanceId}`;
-                updateCharCount(textarea, counterId);
-            });
-
-            // Auto-open accordion if there are validation errors
-            const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
-            if (hasErrors) {
-                // Find the first absence accordion and open it
-                const firstAccordion = document.querySelector('[id^="absence-"]');
-                if (firstAccordion) {
-                    const button = firstAccordion.querySelector('button');
-                    if (button && !firstAccordion.querySelector('[x-data]').__x.$data.open) {
-                        button.click();
+            // ================================================================
+            // CHARACTER COUNTER
+            // ================================================================
+            function updateCharCount(textarea, counterId) {
+                const counter = document.getElementById(counterId);
+                if (counter) {
+                    const length = textarea.value.length;
+                    counter.textContent = length;
+                    
+                    counter.classList.remove('text-gray-500', 'char-count-warning', 'char-count-danger');
+                    
+                    if (length > 450) {
+                        counter.classList.add('char-count-danger');
+                    } else if (length > 350) {
+                        counter.classList.add('char-count-warning');
+                    } else {
+                        counter.classList.add('text-gray-500');
                     }
                 }
             }
-        });
-    </script>
+
+            // ================================================================
+            // INITIALIZATION
+            // ================================================================
+            document.addEventListener('DOMContentLoaded', function() {
+                const textareas = document.querySelectorAll('textarea[name="absence_reason"]');
+                textareas.forEach(textarea => {
+                    const form = textarea.closest('form');
+                    const actionUrl = form.getAttribute('action');
+                    const attendanceId = actionUrl.split('/').pop();
+                    const counterId = `char-count-${attendanceId}`;
+                    updateCharCount(textarea, counterId);
+                });
+
+                const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
+                if (hasErrors) {
+                    const firstAccordion = document.querySelector('[id^="absence-"]');
+                    if (firstAccordion) {
+                        const button = firstAccordion.querySelector('button');
+                        if (button && !firstAccordion.querySelector('[x-data]').__x.$data.open) {
+                            button.click();
+                        }
+                    }
+                }
+            });
+
+            // ================================================================
+            // AUTO-HIDE NOTIFICATIONS
+            // ================================================================
+            @if(session('success'))
+                setTimeout(() => {
+                    const msg = document.getElementById('success-message');
+                    if (msg) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateX(100%)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 5000);
+            @endif
+
+            @if(session('error'))
+                setTimeout(() => {
+                    const msg = document.getElementById('error-message');
+                    if (msg) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateX(100%)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 5000);
+            @endif
+
+            @if($errors->any())
+                setTimeout(() => {
+                    const msg = document.getElementById('validation-errors');
+                    if (msg) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateX(100%)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 8000);
+            @endif
+        </script>
+    @endpush
 </x-app-layout>

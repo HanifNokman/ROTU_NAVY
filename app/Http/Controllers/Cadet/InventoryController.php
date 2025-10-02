@@ -17,6 +17,10 @@ use Illuminate\Validation\Rule;
 
 class InventoryController extends Controller
 {
+    // ================================================================
+    // DISPLAY INVENTORY INDEX
+    // ================================================================
+    
     public function index(Request $request)
     {
         $cadet = $this->getCurrentCadet();
@@ -27,10 +31,8 @@ class InventoryController extends Controller
 
         $selectedUniformType = $request->get('uniform_type');
 
-        // Get all uniform types
         $uniformTypes = UniformType::orderBy('type_name')->get();
 
-        // Get uniform components related to selected uniform type
         $uniformComponents = collect();
         if ($selectedUniformType) {
             $uniformComponents = UniformComponent::where('uniform_type_id', $selectedUniformType)
@@ -38,7 +40,6 @@ class InventoryController extends Controller
                 ->get();
         }
 
-        // Get cadet's uniform sizes for components of selected uniform type
         $uniformSizes = collect();
         if ($selectedUniformType) {
             $uniformSizes = CadetSize::with('uniformComponent')
@@ -48,20 +49,16 @@ class InventoryController extends Controller
                 ->keyBy('component_id');
         }
 
-        // Get past equipment loans
         $pastLoans = $cadet->pastLoans()->with('inventoryItem')->paginate(10, ['*'], 'past_page');
 
-        // Get active equipment loans
         $activeLoans = $cadet->activeLoans()->with('inventoryItem')->get();
 
-        // Get available items for borrowing - BOTH Equipment and Uniform
         $availableItems = InventoryItem::whereIn('category', ['equipment', 'uniform'])
             ->where('available_quantity', '>', 0)
             ->orderBy('category')
             ->orderBy('name')
             ->get();
 
-        // Debug log
         \Log::info('Index method - Available items: ', [
             'total_inventory_items' => InventoryItem::count(),
             'equipment_items' => InventoryItem::where('category', 'equipment')->count(),
@@ -83,6 +80,10 @@ class InventoryController extends Controller
         ));
     }
 
+    // ================================================================
+    // GET UNIFORM COMPONENTS BY TYPE (AJAX)
+    // ================================================================
+    
     public function getComponentsByType($uniformTypeId)
     {
         $cadet = $this->getCurrentCadet();
@@ -91,18 +92,15 @@ class InventoryController extends Controller
             return response()->json(['error' => 'Cadet profile not found.'], 404);
         }
 
-        // Get uniform components for the selected type
         $uniformComponents = UniformComponent::where('uniform_type_id', $uniformTypeId)
             ->orderBy('component_name')
             ->get();
 
-        // Get cadet's existing sizes for these components
         $uniformSizes = CadetSize::where('cadet_id', $cadet->id)
             ->whereIn('component_id', $uniformComponents->pluck('id'))
             ->get()
             ->keyBy('component_id');
 
-        // Prepare the response data
         $components = $uniformComponents->map(function ($component) use ($uniformSizes) {
             $sizeEntry = $uniformSizes->get($component->id);
             return [
@@ -120,6 +118,10 @@ class InventoryController extends Controller
         ]);
     }
 
+    // ================================================================
+    // UPDATE UNIFORM SIZE
+    // ================================================================
+    
     public function updateUniformSize(Request $request)
     {
         $cadet = $this->getCurrentCadet();
@@ -128,7 +130,6 @@ class InventoryController extends Controller
             return redirect()->back()->with('error', 'Cadet profile not found.');
         }
 
-        // Validate all the components and sizes at once
         $request->validate([
             'component_id' => 'required|array',
             'component_id.*' => 'required|exists:uniform_components,id',
@@ -144,15 +145,13 @@ class InventoryController extends Controller
         $sizes = $request->input('size');
         $updatedCount = 0;
 
-        // Process each component-size pair
         foreach ($componentIds as $index => $componentId) {
             $size = $sizes[$index] ?? null;
             
             if (!$size || trim($size) === '') {
-                continue; // Skip if no size provided
+                continue;
             }
 
-            // Validate size format based on component
             $component = UniformComponent::find($componentId);
             if (!$component) {
                 continue;
@@ -165,16 +164,14 @@ class InventoryController extends Controller
                 return redirect()->back()->with('error', "Invalid size format for {$component->component_name}. Please check the format requirements.");
             }
 
-            // Check if this component already has an issued uniform
             $existingSize = CadetSize::where('cadet_id', $cadet->id)
                 ->where('component_id', $componentId)
                 ->first();
 
             if ($existingSize && $existingSize->is_issued) {
-                continue; // Skip updating issued uniforms
+                continue;
             }
 
-            // Update or create the size entry
             CadetSize::updateOrCreate(
                 [
                     'cadet_id' => $cadet->id,
@@ -182,7 +179,7 @@ class InventoryController extends Controller
                 ],
                 [
                     'size' => trim($size),
-                    'is_issued' => false // Reset issued status when size changes
+                    'is_issued' => false
                 ]
             );
 
@@ -196,28 +193,32 @@ class InventoryController extends Controller
         }
     }
 
+    // ================================================================
+    // VALIDATE SIZE FORMAT
+    // ================================================================
+    
     private function validateSizeFormat($componentName, $size)
     {
-        $size = strtoupper(trim($size)); // Normalize to uppercase
+        $size = strtoupper(trim($size));
 
         if (strpos($componentName, 'hat') !== false || strpos($componentName, 'cap') !== false) {
-            // Hat sizes: e.g. 6 3/4, 7 1/2, 7
             return preg_match('/^\d{1,2}( \d\/\d)?$/', $size);
         } elseif (strpos($componentName, 'boot') !== false || strpos($componentName, 'shoe') !== false) {
-            // Boot/shoe sizes: 6, 7.5, 10, etc.
             return preg_match('/^\d{1,2}(\.\d)?$/', $size);
         } elseif (strpos($componentName, 'shirt') !== false || strpos($componentName, 'jacket') !== false || 
                 strpos($componentName, 'uniform') !== false || strpos($componentName, 'blouse') !== false) {
-            // Only allow XS, S, M, L, XL, XXL, XXXL (uppercase only)
             return preg_match('/^X{0,3}(S|M|L)$/', $size);
         } elseif (strpos($componentName, 'trouser') !== false || strpos($componentName, 'pant') !== false) {
             return preg_match('/^\d{1,2}$/', $size);
         } else {
-            // General fallback rule
             return preg_match('/^(X{0,3}(S|M|L)|\d{1,2}|\d{1,3}(\.\d)?|\d{1,2} \d\/\d)$/', $size);
         }
     }
 
+    // ================================================================
+    // CREATE EQUIPMENT LOAN
+    // ================================================================
+    
     public function createLoan(Request $request)
     {
         \Log::info('=== LOAN CREATION DEBUG START ===');
@@ -229,19 +230,19 @@ class InventoryController extends Controller
             return redirect()->back()->with('error', 'Cadet profile not found.');
         }
 
-        // Check if we're handling multiple items or a single item
         if ($request->has('item_ids')) {
-            // Handle multiple items
             return $this->createMultipleLoans($request, $cadet);
         } else {
-            // Handle single item (existing functionality)
             return $this->createSingleLoan($request, $cadet);
         }
     }
 
+    // ================================================================
+    // CREATE SINGLE LOAN
+    // ================================================================
+    
     private function createSingleLoan(Request $request, $cadet)
     {
-        // Debug the specific item being requested
         $requestedItem = InventoryItem::find($request->item_id);
         \Log::info('Requested Item Details: ', [
             'item' => $requestedItem?->toArray(),
@@ -262,7 +263,6 @@ class InventoryController extends Controller
                         'is_borrowable' => $item && in_array($item->category, ['equipment', 'uniform']) ? 'Yes' : 'No'
                     ]);
                     
-                    // Updated validation - allow both Equipment and Uniform
                     if ($item && !in_array($item->category, ['equipment', 'uniform'])) {
                         $fail("Only equipment and uniform items can be borrowed. This item is categorized as: {$item->category}");
                     }
@@ -296,7 +296,6 @@ class InventoryController extends Controller
             'category' => $item->category
         ]);
 
-        // Check if cadet already has an active loan for this item
         $existingLoan = EquipmentLoan::where('cadet_id', $cadet->id)
             ->where('item_id', $request->item_id)
             ->where('status', 'Borrowed')
@@ -310,11 +309,9 @@ class InventoryController extends Controller
         \Log::info('No existing active loan found');
 
         try {
-            // Start database transaction
             \DB::beginTransaction();
             \Log::info('Database transaction started');
 
-            // Prepare loan data
             $loanData = [
                 'cadet_id' => $cadet->id,
                 'item_id' => (int)$request->item_id,
@@ -325,7 +322,6 @@ class InventoryController extends Controller
 
             \Log::info('Loan data prepared: ', $loanData);
 
-            // Create the loan
             $loan = EquipmentLoan::create($loanData);
             
             \Log::info('Loan created successfully: ', [
@@ -333,7 +329,6 @@ class InventoryController extends Controller
                 'loan_data' => $loan->toArray()
             ]);
 
-            // Update available quantity
             $oldQuantity = $item->available_quantity;
             $item->decrement('available_quantity', $request->quantity);
             $item->refresh();
@@ -344,11 +339,9 @@ class InventoryController extends Controller
                 'decremented_by' => $request->quantity
             ]);
 
-            // Commit transaction
             \DB::commit();
             \Log::info('Database transaction committed successfully');
 
-            // Verify the loan was actually saved
             $savedLoan = EquipmentLoan::find($loan->id);
             if ($savedLoan) {
                 \Log::info('Loan verification successful: ', $savedLoan->toArray());
@@ -374,11 +367,14 @@ class InventoryController extends Controller
         }
     }
 
+    // ================================================================
+    // CREATE MULTIPLE LOANS
+    // ================================================================
+    
     private function createMultipleLoans(Request $request, $cadet)
     {
         \Log::info('Creating multiple loans', ['item_ids' => $request->item_ids, 'quantities' => $request->quantities]);
 
-        // Validate the request
         $request->validate([
             'item_ids' => 'required|array',
             'item_ids.*' => 'exists:inventory_items,id',
@@ -386,7 +382,6 @@ class InventoryController extends Controller
             'borrow_date' => 'required|date|before_or_equal:today'
         ]);
 
-        // Validate each item and quantity
         foreach ($request->item_ids as $itemId) {
             $item = InventoryItem::find($itemId);
             $quantity = (int)($request->quantities[$itemId] ?? 0);
@@ -407,7 +402,6 @@ class InventoryController extends Controller
                 return redirect()->back()->with('error', "Only {$item->available_quantity} {$item->name} items are available.");
             }
 
-            // Check if cadet already has an active loan for this item
             $existingLoan = EquipmentLoan::where('cadet_id', $cadet->id)
                 ->where('item_id', $itemId)
                 ->where('status', 'Borrowed')
@@ -419,19 +413,16 @@ class InventoryController extends Controller
         }
 
         try {
-            // Start database transaction
             \DB::beginTransaction();
             \Log::info('Database transaction started for multiple loans');
 
             $loanCount = 0;
 
-            // Create loans for each item
             foreach ($request->item_ids as $itemId) {
                 $item = InventoryItem::find($itemId);
                 $quantity = (int)($request->quantities[$itemId] ?? 0);
 
                 if ($quantity > 0) {
-                    // Prepare loan data
                     $loanData = [
                         'cadet_id' => $cadet->id,
                         'item_id' => $itemId,
@@ -442,7 +433,6 @@ class InventoryController extends Controller
 
                     \Log::info('Loan data prepared: ', $loanData);
 
-                    // Create the loan
                     $loan = EquipmentLoan::create($loanData);
                     $loanCount++;
 
@@ -451,7 +441,6 @@ class InventoryController extends Controller
                         'loan_data' => $loan->toArray()
                     ]);
 
-                    // Update available quantity
                     $oldQuantity = $item->available_quantity;
                     $item->decrement('available_quantity', $quantity);
                     $item->refresh();
@@ -466,7 +455,6 @@ class InventoryController extends Controller
                 }
             }
 
-            // Commit transaction
             \DB::commit();
             \Log::info('Database transaction committed successfully for multiple loans');
 
@@ -488,6 +476,10 @@ class InventoryController extends Controller
         }
     }
 
+    // ================================================================
+    // RETURN EQUIPMENT LOAN
+    // ================================================================
+    
     public function returnLoan(Request $request, EquipmentLoan $loan)
     {
         $cadet = $this->getCurrentCadet();
@@ -509,12 +501,15 @@ class InventoryController extends Controller
             'return_date' => $request->return_date ?? now()->toDateString()
         ]);
 
-        // Update available quantity
         $loan->inventoryItem->increment('available_quantity', $loan->quantity);
 
         return redirect()->back()->with('success', 'Equipment returned successfully.');
     }
 
+    // ================================================================
+    // DELETE UNIFORM SIZE
+    // ================================================================
+    
     public function deleteUniformSize(CadetSize $cadetSize)
     {
         $cadet = $this->getCurrentCadet();
@@ -533,11 +528,19 @@ class InventoryController extends Controller
         return redirect()->back()->with('success', "Uniform size for {$componentName} removed successfully.");
     }
 
+    // ================================================================
+    // GET CURRENT CADET
+    // ================================================================
+    
     private function getCurrentCadet()
     {
         return Cadet::where('user_id', Auth::id())->first();
     }
 
+    // ================================================================
+    // DISPLAY CADET PROFILE
+    // ================================================================
+    
     public function myProfile()
     {
         $cadet = $this->getCurrentCadet();

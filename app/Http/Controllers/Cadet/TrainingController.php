@@ -9,9 +9,12 @@ use Carbon\Carbon;
 
 class TrainingController extends Controller
 {
+    // ================================================================
+    // DISPLAY TRAINING INDEX
+    // ================================================================
+    
     public function index()
     {
-        // Get the current cadet
         $cadet = Cadet::where('user_id', auth()->id())->first();
         
         if (!$cadet) {
@@ -23,23 +26,19 @@ class TrainingController extends Controller
             ]);
         }
 
-        // Calculate cadet's intake label based on 2022 = Intake - 11
         $intakeNumber = $cadet->intake_year - 2011;
         $cadetIntake = "Intake - {$intakeNumber}";
 
-        // Update expired trainings first
         $this->updateExpiredTrainings();
 
-        // Get trainings where the cadet's intake is involved
         $trainings = Training::where(function ($query) use ($cadetIntake) {
                 $query->where('involvement', 'like', "%{$cadetIntake}%")
-                      ->orWhereNull('involvement')  // Include trainings with no specific involvement
-                      ->orWhere('involvement', '');  // Include trainings with empty involvement
+                      ->orWhereNull('involvement')
+                      ->orWhere('involvement', '');
             })
             ->orderBy('start_datetime', 'asc')
             ->get();
 
-        // Format trainings for calendar
         $calendarEvents = $trainings->map(function ($training) {
             return [
                 'id' => $training->id,
@@ -55,23 +54,21 @@ class TrainingController extends Controller
         return view('cadet.training', compact('trainings', 'calendarEvents', 'cadetIntake'));
     }
 
-    /**
-     * Get training details for viewing (read-only)
-     */
+    // ================================================================
+    // SHOW TRAINING DETAILS (READ-ONLY)
+    // ================================================================
+    
     public function show(Training $training)
     {
-        // Get the current cadet
         $cadet = Cadet::where('user_id', auth()->id())->first();
         
         if (!$cadet) {
             return response()->json(['error' => 'Cadet profile not found'], 404);
         }
 
-        // Calculate cadet's intake label
         $intakeNumber = $cadet->intake_year - 2011;
         $cadetIntake = "Intake - {$intakeNumber}";
 
-        // Check if this training involves the cadet's intake
         $isInvolved = str_contains($training->involvement ?? '', $cadetIntake) || 
                      empty($training->involvement);
 
@@ -79,10 +76,8 @@ class TrainingController extends Controller
             return response()->json(['error' => 'Training not accessible'], 403);
         }
 
-        // Update status if needed
         $this->updateTrainingStatus($training);
 
-        // Prepare formatted fields for frontend
         $freshTraining = $training->fresh();
         $startDate = $freshTraining->start_datetime ? $freshTraining->start_datetime->format('Y-m-d') : null;
         $startTime = $freshTraining->start_datetime ? $freshTraining->start_datetime->format('H:i') : null;
@@ -95,13 +90,11 @@ class TrainingController extends Controller
             default => 'bg-blue-100 text-blue-800',
         };
 
-        // Duration calculation (hours)
         $durationHours = null;
         if ($freshTraining->start_datetime && $freshTraining->end_datetime) {
             $durationHours = $freshTraining->start_datetime->diffInHours($freshTraining->end_datetime);
         }
 
-        // Allowance type and amount
         $allowanceType = $freshTraining->allowance_type ?? ($durationHours && $durationHours >= 8 ? 'daily' : 'hourly');
         $allowanceAmount = $freshTraining->allowance_amount ?? null;
 
@@ -125,9 +118,10 @@ class TrainingController extends Controller
         ]);
     }
 
-    /**
-     * Update expired trainings to completed status
-     */
+    // ================================================================
+    // UPDATE EXPIRED TRAININGS TO COMPLETED STATUS
+    // ================================================================
+    
     private function updateExpiredTrainings(): void
     {
         Training::where('status', 'Active')
@@ -141,9 +135,10 @@ class TrainingController extends Controller
             ->update(['status' => 'Completed']);
     }
 
-    /**
-     * Update a specific training's status if expired
-     */
+    // ================================================================
+    // UPDATE SPECIFIC TRAINING STATUS IF EXPIRED
+    // ================================================================
+    
     private function updateTrainingStatus(Training $training): void
     {
         if ($training->status === 'Active') {
@@ -162,16 +157,17 @@ class TrainingController extends Controller
         }
     }
 
-    /**
-     * Get status color for calendar events
-     */
+    // ================================================================
+    // GET STATUS COLOR FOR CALENDAR EVENTS
+    // ================================================================
+    
     private function getStatusColor(string $status): string
     {
         return match($status) {
-            'Active' => '#10B981',     // Green
-            'Completed' => '#6B7280',  // Gray
-            'Cancelled' => '#EF4444',  // Red
-            default => '#3B82F6'       // Blue
+            'Active' => '#10B981',
+            'Completed' => '#6B7280',
+            'Cancelled' => '#EF4444',
+            default => '#3B82F6'
         };
     }
 }

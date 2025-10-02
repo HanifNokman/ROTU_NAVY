@@ -185,9 +185,9 @@ class TrainingController extends Controller
             $training->allowance_type = 'hourly';
         } else {
             $days = $start->diffInDays($end) + 1;
-            
-            $training->duration_hours = null;
-            $training->allowance_amount = $days * 50;
+
+            $training->duration_hours = $days;
+            $training->allowance_amount = (int)($days * 50);
             $training->allowance_type = 'daily';
         }
         
@@ -544,12 +544,12 @@ class TrainingController extends Controller
                 $validated['duration_hours'] = $hours;
                 $validated['allowance_amount'] = $hours * 8;
                 $validated['allowance_type'] = 'hourly';
-            } else {
-                $days = $start->diffInDays($end) + 1;
-                $validated['duration_hours'] = null;
-                $validated['allowance_amount'] = $days * 50;
-                $validated['allowance_type'] = 'daily';
-            }
+        } else {
+            $days = $start->diffInDays($end) + 1;
+            $validated['duration_hours'] = $days;
+            $validated['allowance_amount'] = (int)($days * 50);
+            $validated['allowance_type'] = 'daily';
+        }
         } else {
             $validated['duration_hours'] = null;
             $validated['allowance_amount'] = null;

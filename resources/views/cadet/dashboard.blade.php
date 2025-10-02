@@ -8,7 +8,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- HEADER SECTION --}}
+            {{-- ================================================================ --}}
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,7 +21,10 @@
                 </h1>
                 <p class="text-gray-600">Your personal overview and performance metrics</p>
             </div>
-            <!-- Profile Section -->
+
+            {{-- ================================================================ --}}
+            {{-- PROFILE SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
                 x-data="{ open: false }">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 cursor-pointer"
@@ -43,16 +48,16 @@
                 <div class="p-6 flex flex-col md:flex-row gap-6"
                     x-show="open"
                     x-transition>
-                    <!-- Profile Picture -->
+                    {{-- Profile Picture --}}
                     <div class="flex justify-center lg:justify-start">
                         <img src="{{ $cadet?->profile_pic ? asset('storage/' . $cadet->profile_pic) : asset('images/default.png') }}"
                             alt="Profile Picture"
                             class="w-40 h-52 md:w-60 md:h-80 object-cover border rounded-md">
                     </div>
 
-                    <!-- Profile Information -->
+                    {{-- Profile Information --}}
                     <div class="flex-1 space-y-6">
-                        <!-- Row 1 -->
+                        {{-- Rank and Name --}}
                         <div class="flex items-center justify-center md:justify-start gap-4">
                             <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold px-6 py-2 rounded-xl shadow-lg whitespace-nowrap">
                                 <i class="fas fa-shield-alt mr-2"></i>
@@ -61,16 +66,15 @@
                             @php
                                 $prefix = '';
                                 if (trim($cadet?->rank) === 'Lt.M') {
-                                    $prefix = ' PSSTLDM'; // add space before
+                                    $prefix = ' PSSTLDM';
                                 }
                             @endphp
-
                             <p class="text-2xl font-semibold text-gray-800">
                                 {{ ($cadet?->rank ?? 'Unknown') . ' ' . ($user?->name ?? 'No Name') . $prefix }}
                             </p>
                         </div>
 
-                        <!-- Row 2: Contact Info -->
+                        {{-- Contact Information --}}
                         <div class="bg-gray-50 rounded-xl p-4">
                             <div class="flex items-center mb-3">
                                 <i class="fas fa-address-book w-5 text-blue-500 mr-2"></i>
@@ -88,7 +92,7 @@
                             </div>
                         </div>
 
-                        <!-- Row 3: General Info -->
+                        {{-- General Information --}}
                         <div class="bg-gray-50 rounded-xl p-4">
                             <div class="flex items-center mb-3">
                                 <i class="fas fa-info-circle w-5 text-purple-500 mr-2"></i>
@@ -143,10 +147,13 @@
                     </div>
                 </div>
             </div>
-            <!-- Performance Metrics Section -->
+
+            {{-- ================================================================ --}}
+            {{-- PERFORMANCE METRICS SECTION --}}
+            {{-- ================================================================ --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <!-- Duty Ranking Card -->
+                {{-- Duty Ranking Card --}}
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
                         <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
@@ -161,7 +168,7 @@
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-center mb-4">Performance Leaderboard</h3>
 
-                        <!-- Sort Form -->
+                        {{-- Sort Form --}}
                         <div class="mb-1 flex justify-center">
                             <div>
                                 <select id="sort_order" class="rounded border-gray-300">
@@ -171,7 +178,7 @@
                             </div>
                         </div>
 
-                        <!-- Leaderboard Bars -->
+                        {{-- Leaderboard Bars --}}
                         <div id="duty-ranking-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                             @php
                                 $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
@@ -180,13 +187,12 @@
                                 @php
                                     $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
 
-                                    // Calculate RGB color from red → yellow → green based on percentage
                                     if ($percentage < 50) {
-                                        $ratio = $percentage / 50; // 0 to 1
+                                        $ratio = $percentage / 50;
                                         $r = 255;
                                         $g = (int)(180 * $ratio);
                                     } else {
-                                        $ratio = ($percentage - 50) / 50; // 0 to 1
+                                        $ratio = ($percentage - 50) / 50;
                                         $r = (int)(255 * (1 - $ratio));
                                         $g = 180;
                                     }
@@ -208,8 +214,7 @@
                                         </div>
 
                                         <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                            <div
-                                                class="absolute top-0 left-0 h-full rounded-full flex items-center"
+                                            <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
                                                 style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
                                                 <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
                                                     {{ $cadet->daily_duty_count }} {{ Str::plural('Day', $cadet->daily_duty_count) }}
@@ -224,7 +229,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- Tauliah Countdown Card -->
+
+                {{-- Tauliah Countdown Card --}}
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
                         <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
@@ -241,25 +247,24 @@
 
                         @php
                             $intakeYear = $cadet->intake_year ?? now()->year;
-                            $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15); // 3 years later on Sep 15
+                            $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
                             $today = \Carbon\Carbon::today();
                             $daysLeft = $today->diffInDays($tauliahDate, false);
-                            $totalPrepDays = 1095; // 3 years in days
+                            $totalPrepDays = 1095;
 
                             $progress = min(100, max(0, (1 - ($daysLeft / $totalPrepDays)) * 100));
                             $progressDegrees = floor(($progress / 100) * 360);
 
-                            // Gradient color transition (blue → purple → pink → gold)
                             $dynamicColor = match (true) {
-                                $progress < 25 => '#3b82f6',         // Blue
-                                $progress < 50 => '#6366f1',         // Indigo
-                                $progress < 75 => '#ec4899',         // Pink
-                                default       => '#ffd700',          // Gold
+                                $progress < 25 => '#3b82f6',
+                                $progress < 50 => '#6366f1',
+                                $progress < 75 => '#ec4899',
+                                default => '#ffd700',
                             };
                         @endphp
 
                         @if ($daysLeft > 0)
-                            <!-- Countdown Circle -->
+                            {{-- Countdown Circle --}}
                             <div class="flex justify-center">
                                 <div class="relative w-48 h-48 rounded-full flex items-center justify-center"
                                     style="background: conic-gradient({{ $dynamicColor }} {{ $progressDegrees }}deg, #e5e7eb {{ $progressDegrees }}deg);">
@@ -276,7 +281,7 @@
                                 </div>
                             </div>
                         @else
-                            <!-- After Countdown -->
+                            {{-- Congratulations Message --}}
                             <div class="flex flex-col items-center text-center mt-1 space-y-4 animate-pulse">
                                 <div class="text-2xl md:text-3xl font-semibold text-gray-800">
                                     Congratulations on Your Promotion to <span class="text-yellow-600">Lt. Muda!</span>
@@ -292,7 +297,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Intake Absence Tracking Section (Only for CO, Thana, Zayn positions) -->
+
+            {{-- ================================================================ --}}
+            {{-- INTAKE ABSENCE TRACKING SECTION --}}
+            {{-- Only visible for CO, Thana, Zayn positions --}}
+            {{-- ================================================================ --}}
             @if(in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn']))
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
@@ -311,21 +320,20 @@
                             </h2>
                             <p id="cadet-absence-section-description" class="text-gray-600">Track your intake mates requiring absence documentation</p>
                         </div>
-                        <!-- View Toggle for Cadet -->
+
+                        {{-- View Toggle --}}
                         <div class="flex bg-gray-100 rounded-lg p-1">
                             <button 
                                 id="cadet-pending-view-btn"
                                 onclick="toggleCadetAbsenceView('pending')"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm"
-                            >
+                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm">
                                 <i class="fas fa-exclamation-triangle mr-1"></i>
                                 Pending
                             </button>
                             <button 
                                 id="cadet-leaderboard-view-btn"
                                 onclick="toggleCadetAbsenceView('leaderboard')"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900"
-                            >
+                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900">
                                 <i class="fas fa-chart-bar mr-1"></i>
                                 Absence List
                             </button>
@@ -334,16 +342,14 @@
                 </div>
 
                 <div class="p-6">
-                    <!-- Pending Absence Data -->
+                    {{-- Pending Absence Data --}}
                     <div id="cadet-absence-content" class="space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absentCadets) && !empty($absentCadets))
                             @foreach($absentCadets as $cadetData)
-                                <!-- Cadet Absence Dropdown -->
                                 <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
                                     <button 
                                         onclick="toggleAbsenceDropdown({{ $cadetData->id }})"
-                                        class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200"
-                                    >
+                                        class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200">
                                         <div class="flex items-center space-x-3">
                                             <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
                                                 <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
@@ -364,8 +370,7 @@
                                                 class="w-5 h-5 text-gray-400 transform transition-transform duration-200" 
                                                 fill="none" 
                                                 stroke="currentColor" 
-                                                viewBox="0 0 24 24"
-                                            >
+                                                viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                             </svg>
                                         </div>
@@ -422,7 +427,8 @@
                             </div>
                         @endif
                     </div>
-                    <!-- Absence Leaderboard (Hidden by default) -->
+
+                    {{-- Absence Leaderboard --}}
                     <div id="cadet-absence-leaderboard-content" class="hidden space-y-4 max-h-[600px] overflow-y-auto">
                         @if(isset($absenceLeaderboard) && !empty($absenceLeaderboard))
                             @foreach($absenceLeaderboard as $index => $cadetData)
@@ -441,14 +447,14 @@
                                         <div class="text-sm font-medium mb-1 text-center sm:text-left">
                                             #{{ $index + 1 }} - {{ $cadetData->cadet_name }}
                                         </div>
-                                                            <div class="text-center sm:text-left flex flex-col sm:flex-row gap-1 sm:gap-0">
-                                                                <span class="text-sm font-semibold text-gray-800">
-                                                                    Training Attended: {{ $attended }} / {{ $cadetData->total_trainings }}
-                                                                </span>
-                                                                <span class="text-sm font-semibold text-red-600 sm:ml-4">
-                                                                    Total Absence: {{ $cadetData->absence_count }}
-                                                                </span>
-                                                            </div>
+                                        <div class="text-center sm:text-left flex flex-col sm:flex-row gap-1 sm:gap-0">
+                                            <span class="text-sm font-semibold text-gray-800">
+                                                Training Attended: {{ $attended }} / {{ $cadetData->total_trainings }}
+                                            </span>
+                                            <span class="text-sm font-semibold text-red-600 sm:ml-4">
+                                                Total Absence: {{ $cadetData->absence_count }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
@@ -459,19 +465,31 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-600 mb-2">Perfect Attendance!</h3>
-                                <p class="text-gray-500">No training absences recorded in your intake.</p>
+                                @if($cadets->count() > 0)
+                                    <h3 class="text-xl font-semibold text-gray-600 mb-2">Perfect Attendance!</h3>
+                                    <p class="text-gray-500">No training absences recorded in your intake.</p>
+                                @else
+                                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Cadets</h3>
+                                    <p class="text-gray-500">No cadets in your intake.</p>
+                                @endif
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
             @endif
+
         </div>
     </div>
+
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT --}}
+    {{-- ================================================================ --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Function to toggle between cadet absence views
+            // ================================================================
+            // CADET ABSENCE VIEW TOGGLE
+            // ================================================================
             function toggleCadetAbsenceView(view) {
                 const pendingBtn = document.getElementById('cadet-pending-view-btn');
                 const leaderboardBtn = document.getElementById('cadet-leaderboard-view-btn');
@@ -482,7 +500,6 @@
                 const countBadge = document.getElementById('cadet-absence-count-badge');
                 
                 if (view === 'pending') {
-                    // Switch to pending view
                     pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
                     pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
                     leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
@@ -496,7 +513,6 @@
                     if (countBadge) countBadge.classList.remove('hidden');
                     
                 } else if (view === 'leaderboard') {
-                    // Switch to leaderboard view
                     leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
                     leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
                     pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
@@ -511,10 +527,11 @@
                 }
             }
 
-            // Make function globally accessible
             window.toggleCadetAbsenceView = toggleCadetAbsenceView;
 
-            // Duty ranking sort functionality
+            // ================================================================
+            // DUTY RANKING SORT
+            // ================================================================
             const sortSelect = document.getElementById('sort_order');
             const contentContainer = document.getElementById('duty-ranking-content');
 
@@ -522,10 +539,8 @@
                 sortSelect.addEventListener('change', function() {
                     const sortOrder = this.value;
                     
-                    // Show loading state
                     contentContainer.innerHTML = '<div class="text-center text-gray-500 py-4">Loading...</div>';
 
-                    // Make AJAX request
                     fetch(window.location.pathname + '?sort_order=' + sortOrder, {
                         method: 'GET',
                         headers: {
@@ -544,7 +559,9 @@
                 });
             }
 
-            // Dropdown toggle function for absence section
+            // ================================================================
+            // ABSENCE DROPDOWN TOGGLE
+            // ================================================================
             window.toggleAbsenceDropdown = function(cadetId) {
                 const dropdown = document.getElementById('absence-dropdown-' + cadetId);
                 const icon = document.getElementById('absence-icon-' + cadetId);
