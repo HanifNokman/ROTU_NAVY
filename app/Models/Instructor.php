@@ -22,13 +22,13 @@ class Instructor extends Model
     ];
 
     protected $hidden = [
-        // Add any fields you want hidden, e.g. ''
+        // For hidden fields
     ];
 
     protected function casts(): array
     {
         return [
-            // Add any casts needed, e.g. 'created_at' => 'datetime'
+            // For any type casting
         ];
     }
 

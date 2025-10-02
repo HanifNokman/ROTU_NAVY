@@ -5,7 +5,7 @@
 - [X] app/Http/Controllers/Admin/AdminController.php
 
 ### Models
-- [ ] app/Models/ (shared models)
+- [X] app/Models/ (shared models)
 
 ### Blades
 - [X] resources/views/admin/access_management.blade.php
@@ -24,7 +24,7 @@
 - [X] app/Http/Controllers/Instructor/TrainingController.php
 
 ### Models
-- [ ] app/Models/ (shared models)
+- [X] app/Models/ (shared models)
 
 ### Blades
 - [X] resources/views/instructor/allowance.blade.php
@@ -47,12 +47,12 @@
 - [X] app/Http/Controllers/Cadet/TrainingController.php
 
 ### Models
-- [ ] app/Models/Cadet.php
-- [ ] app/Models/CadetSize.php
-- [ ] app/Models/EquipmentLoan.php
-- [ ] app/Models/TrainingAttendance.php
-- [ ] app/Models/UniformComponent.php
-- [ ] app/Models/UniformType.php
+- [X] app/Models/Cadet.php
+- [X] app/Models/CadetSize.php
+- [X] app/Models/EquipmentLoan.php
+- [X] app/Models/TrainingAttendance.php
+- [X] app/Models/UniformComponent.php
+- [X] app/Models/UniformType.php
 
 ### Blades
 - [X] resources/views/cadet/allowance.blade.php
@@ -72,16 +72,16 @@
 - [ ] app/Http/Controllers/ProfileController.php
 
 ### Models
-- [ ] app/Models/ContentSetting.php
-- [ ] app/Models/Gallery.php
-- [ ] app/Models/GalleryCategory.php
-- [ ] app/Models/Instructor.php
-- [ ] app/Models/InventoryItem.php
-- [ ] app/Models/LearningMaterial.php
-- [ ] app/Models/LearningMaterialCategory.php
-- [ ] app/Models/QuizQuestion.php
-- [ ] app/Models/Training.php
-- [ ] app/Models/User.php
+- [X] app/Models/ContentSetting.php
+- [X] app/Models/Gallery.php
+- [X] app/Models/GalleryCategory.php
+- [X] app/Models/Instructor.php
+- [X] app/Models/InventoryItem.php
+- [X] app/Models/LearningMaterial.php
+- [X] app/Models/LearningMaterialCategory.php
+- [X] app/Models/QuizQuestion.php
+- [X] app/Models/Training.php
+- [X] app/Models/User.php
 
 ### Blades
 - [ ] resources/views/about-me.blade.php

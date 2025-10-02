@@ -9,7 +9,7 @@ class LearningMaterialCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name']; // Changed from 'category' to 'name' to match your form
+    protected $fillable = ['name'];
 
     public function learningMaterials()
     {

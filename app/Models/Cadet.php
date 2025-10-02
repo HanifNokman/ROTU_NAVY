@@ -49,7 +49,6 @@ class Cadet extends Model
 
     /**
      * Training attendance relationship
-     * ADDED FOR ATTENDANCE IMPROVEMENTS
      */
     public function trainingAttendances()
     {
@@ -127,7 +126,6 @@ class Cadet extends Model
     }
 
     /**
-     * ADDED FOR ATTENDANCE IMPROVEMENTS
      * Scope to get cadets with training attendance stats
      */
     public function scopeWithAttendanceStats($query, $trainingId = null)
@@ -155,7 +153,6 @@ class Cadet extends Model
     }
 
     /**
-     * ADDED FOR ATTENDANCE IMPROVEMENTS  
      * Get intake label in the format used by training involvement
      */
     public function getIntakeLabelAttribute()
@@ -170,7 +167,6 @@ class Cadet extends Model
     }
 
     /**
-     * ADDED FOR ATTENDANCE IMPROVEMENTS
      * Get full name from user relationship
      */
     public function getFullNameAttribute()
@@ -179,7 +175,6 @@ class Cadet extends Model
     }
 
     /**
-     * ADDED FOR ATTENDANCE IMPROVEMENTS
      * Get attendance percentage for a specific training or overall
      */
     public function getAttendancePercentage($trainingId = null)
@@ -215,7 +210,6 @@ class Cadet extends Model
     }
 
     /**
-     * ADDED FOR ATTENDANCE IMPROVEMENTS
      * Get cadets grouped by intake for attendance purposes
      */
     public static function getByIntakesForAttendance($intakeNumbers)
