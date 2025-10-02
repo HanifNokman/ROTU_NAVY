@@ -67,9 +67,6 @@
 ### Controllers
 - [X] app/Http/Controllers/AlumniController.php
 - [ ] app/Http/Controllers/ContentManagementController.php
-- [ ] app/Http/Controllers/Controller.php
-- [ ] app/Http/Controllers/PersonalInfoController.php
-- [ ] app/Http/Controllers/ProfileController.php
 
 ### Models
 - [X] app/Models/ContentSetting.php
@@ -85,13 +82,12 @@
 
 ### Blades
 - [ ] resources/views/about-me.blade.php
-- [X] resources/views/alumni.blade.php
+- [ ] resources/views/alumni.blade.php
 - [ ] resources/views/landing.blade.php
-- [ ] resources/views/auth/awaiting-approval.blade.php
-- [ ] resources/views/auth/forgot-password.blade.php
-- [ ] resources/views/auth/login.blade.php
-- [ ] resources/views/auth/register.blade.php
-- [ ] resources/views/auth/reset-password.blade.php
-- [ ] resources/views/emails/user-accepted.blade.php
+- [X] resources/views/auth/awaiting-approval.blade.php
+- [X] resources/views/auth/forgot-password.blade.php
+- [X] resources/views/auth/login.blade.php
+- [X] resources/views/auth/register.blade.php
+- [X] resources/views/auth/reset-password.blade.php
 - [X] resources/views/layouts/app.blade.php
 

@@ -1,14 +1,19 @@
 <x-guest-layout>
+    {{-- ================================================================ --}}
+    {{-- STYLES --}}
+    {{-- ================================================================ --}}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+        /* ================================================================ */
+        /* BASE STYLES */
+        /* ================================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        /* Base Container */
         .auth-container {
             display: flex;
             min-height: 100vh;
@@ -21,7 +26,9 @@
             to { opacity: 1; }
         }
         
-        /* Desktop Layout */
+        /* ================================================================ */
+        /* FORM PANEL */
+        /* ================================================================ */
         .form-panel {
             flex: 1;
             background: white;
@@ -33,7 +40,6 @@
             min-height: 100vh;
         }
         
-        /* Background Logo for Form Panel */
         .form-panel::before {
             content: '';
             position: absolute;
@@ -49,17 +55,6 @@
             opacity: 0.08;
             z-index: 1;
             pointer-events: none;
-        }
-        
-        .illustration-panel {
-            flex: 1;
-            background: #0D1B2A;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            min-height: 100vh;
         }
         
         .form-content {
@@ -85,6 +80,9 @@
             line-height: 1;
         }
         
+        /* ================================================================ */
+        /* FORM ELEMENTS */
+        /* ================================================================ */
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -115,6 +113,9 @@
             box-shadow: 0 0 0 4px rgba(13, 27, 42, 0.1);
         }
         
+        /* ================================================================ */
+        /* PASSWORD FIELD */
+        /* ================================================================ */
         .password-field {
             position: relative;
         }
@@ -138,6 +139,9 @@
             color: #0D1B2A;
         }
         
+        /* ================================================================ */
+        /* FORM AUXILIARY ELEMENTS */
+        /* ================================================================ */
         .forgot-password {
             text-align: right;
             margin-top: 0.5rem;
@@ -174,6 +178,15 @@
             cursor: pointer;
         }
         
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* ================================================================ */
+        /* BUTTONS */
+        /* ================================================================ */
         .btn-primary {
             width: 100%;
             background: #0D1B2A;
@@ -198,6 +211,26 @@
             transform: translateY(0);
         }
         
+        .btn-secondary {
+            background: white;
+            color: #0D1B2A;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+        
+        /* ================================================================ */
+        /* AUTH LINKS */
+        /* ================================================================ */
         .auth-link {
             text-align: center;
             color: #5A5A5A;
@@ -215,7 +248,20 @@
             color: #152C46;
         }
         
-        /* Illustration Panel */
+        /* ================================================================ */
+        /* ILLUSTRATION PANEL */
+        /* ================================================================ */
+        .illustration-panel {
+            flex: 1;
+            background: #0D1B2A;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+        
         .illustration-image {
             width: 100%;
             height: 100%;
@@ -265,6 +311,9 @@
             line-height: 1.4;
         }
         
+        /* ================================================================ */
+        /* AUTH PROMPT */
+        /* ================================================================ */
         .auth-prompt {
             display: flex;
             align-items: center;
@@ -290,30 +339,9 @@
             opacity: 0.8;
         }
         
-        .btn-secondary {
-            background: white;
-            color: #0D1B2A;
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            display: inline-block;
-        }
-        
-        .btn-secondary:hover {
-            background: #f8f9fa;
-            transform: translateY(-1px);
-        }
-        
-        .error-message {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
-        
-        /* Mobile Bottom Navigation */
+        /* ================================================================ */
+        /* MOBILE BOTTOM NAVIGATION */
+        /* ================================================================ */
         .mobile-bottom-nav {
             display: none;
             position: fixed;
@@ -360,7 +388,9 @@
             transform: translateY(-2px);
         }
         
-        /* Mobile Responsive Design */
+        /* ================================================================ */
+        /* RESPONSIVE DESIGN - TABLET */
+        /* ================================================================ */
         @media (max-width: 1024px) {
             .auth-container {
                 flex-direction: column;
@@ -383,7 +413,6 @@
                 background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             }
             
-            /* Mobile Background Logo */
             .form-panel::before {
                 width: 250px;
                 height: 250px;
@@ -409,6 +438,9 @@
             }
         }
         
+        /* ================================================================ */
+        /* RESPONSIVE DESIGN - MOBILE */
+        /* ================================================================ */
         @media (max-width: 480px) {
             .form-panel {
                 padding: 1rem;
@@ -442,31 +474,54 @@
         }
     </style>
 
+    {{-- ================================================================ --}}
+    {{-- MAIN CONTAINER --}}
+    {{-- ================================================================ --}}
     <div class="auth-container">
-        <!-- Form Panel -->
+        
+        {{-- ================================================================ --}}
+        {{-- FORM PANEL --}}
+        {{-- ================================================================ --}}
         <div class="form-panel">
             <div class="form-content">
                 <h1 class="form-title">Welcome Back</h1>
                 <p class="form-subtitle">Sign in to your account</p>
 
-                <!-- Session Status -->
                 <x-auth-session-status class="mb-4" :status="session('status')" />
 
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
-                    <!-- Email Address -->
+                    {{-- Email Address --}}
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
-                        <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Enter your email" />
+                        <input 
+                            id="email" 
+                            class="form-input" 
+                            type="email" 
+                            name="email" 
+                            :value="old('email')" 
+                            required 
+                            autofocus 
+                            autocomplete="username" 
+                            placeholder="Enter your email" 
+                        />
                         <x-input-error :messages="$errors->get('email')" class="error-message" />
                     </div>
 
-                    <!-- Password -->
+                    {{-- Password --}}
                     <div class="form-group">
                         <label for="password" class="form-label">Password</label>
                         <div class="password-field">
-                            <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password" />
+                            <input 
+                                id="password" 
+                                class="form-input" 
+                                type="password" 
+                                name="password" 
+                                required 
+                                autocomplete="current-password" 
+                                placeholder="Enter your password" 
+                            />
                             <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                 <i class="fas fa-eye" id="password-eye"></i>
                             </button>
@@ -474,7 +529,7 @@
                         <x-input-error :messages="$errors->get('password')" class="error-message" />
                     </div>
 
-                    <!-- Forgot Password Link -->
+                    {{-- Forgot Password Link --}}
                     <div class="forgot-password">
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}">
@@ -483,16 +538,18 @@
                         @endif
                     </div>
 
-                    <!-- Remember Me -->
+                    {{-- Remember Me --}}
                     <div class="remember-me">
                         <input id="remember_me" type="checkbox" name="remember">
                         <label for="remember_me">Keep me signed in</label>
                     </div>
 
+                    {{-- Submit Button --}}
                     <button type="submit" class="btn-primary">
                         Sign In
                     </button>
 
+                    {{-- Registration Link --}}
                     <div class="auth-link">
                         Don't have an account? <a href="{{ route('register') }}">Create one</a>
                     </div>
@@ -500,7 +557,9 @@
             </div>
         </div>
 
-        <!-- Illustration Panel - Desktop Only -->
+        {{-- ================================================================ --}}
+        {{-- ILLUSTRATION PANEL (DESKTOP ONLY) --}}
+        {{-- ================================================================ --}}
         <div class="illustration-panel">
             <div class="illustration-image">
                 <img src="storage/assets/images/tldm2.jpeg" alt="Naval Training" />
@@ -522,7 +581,9 @@
         </div>
     </div>
 
-    <!-- Mobile Bottom Navigation -->
+    {{-- ================================================================ --}}
+    {{-- MOBILE BOTTOM NAVIGATION --}}
+    {{-- ================================================================ --}}
     <div class="mobile-bottom-nav">
         <div class="auth-text">
             <p class="auth-main">Don't have an account?</p>
@@ -531,6 +592,9 @@
         <a href="{{ route('register') }}" class="btn-secondary">Sign Up</a>
     </div>
 
+    {{-- ================================================================ --}}
+    {{-- SCRIPTS --}}
+    {{-- ================================================================ --}}
     <script>
         function togglePassword(fieldId) {
             const passwordField = document.getElementById(fieldId);
@@ -548,6 +612,8 @@
         }
     </script>
 
-    <!-- Font Awesome for password toggle icons -->
+    {{-- ================================================================ --}}
+    {{-- EXTERNAL RESOURCES --}}
+    {{-- ================================================================ --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </x-guest-layout>

@@ -1,14 +1,19 @@
 <x-guest-layout>
+    {{-- ================================================================ --}}
+    {{-- STYLES --}}
+    {{-- ================================================================ --}}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+        /* ================================================================ */
+        /* BASE STYLES */
+        /* ================================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        /* Base Container */
         .auth-container {
             display: flex;
             min-height: 100vh;
@@ -21,36 +26,9 @@
             to { opacity: 1; }
         }
         
-        /* Desktop Layout */
-        .form-panel {
-            flex: 1;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 2rem;
-            min-height: 100vh;
-        }
-        
-        /* Background Logo for Form Panel */
-        .form-panel::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background-image: url('storage/assets/logo/PSS-LOGO.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.08;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
+        /* ================================================================ */
+        /* ILLUSTRATION PANEL */
+        /* ================================================================ */
         .illustration-panel {
             flex: 1;
             background: #0D1B2A;
@@ -62,161 +40,6 @@
             min-height: 100vh;
         }
         
-        .form-content {
-            width: 100%;
-            max-width: 550px;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        .form-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1B1B1B;
-            margin-bottom: 0.5rem;
-            text-align: right;
-        }
-        
-        .form-subtitle {
-            color: #5A5A5A;
-            font-weight: 400;
-            margin-bottom: 2rem;
-            text-align: right;
-            line-height: 1;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #1B1B1B;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #E5E5E5;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            background: rgba(250, 250, 250, 0.9);
-            backdrop-filter: blur(10px);
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #0D1B2A;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 0 0 4px rgba(13, 27, 42, 0.1);
-        }
-        
-        .password-field {
-            position: relative;
-        }
-        
-        .password-toggle {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #5A5A5A;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: color 0.2s ease;
-            z-index: 10;
-            padding: 0.5rem;
-        }
-        
-        .password-toggle:hover {
-            color: #0D1B2A;
-        }
-        
-        .account-type-toggle {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .toggle-option {
-            flex: 1;
-            padding: 0.75rem;
-            border: 2px solid #E5E5E5;
-            border-radius: 12px;
-            background: rgba(250, 250, 250, 0.9);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            font-size: 0.875rem;
-            backdrop-filter: blur(10px);
-        }
-        
-        .toggle-option.active {
-            background: #0D1B2A;
-            color: white;
-            border-color: #0D1B2A;
-        }
-        
-        .toggle-option:hover:not(.active) {
-            background: rgba(248, 249, 250, 0.95);
-            border-color: #0D1B2A;
-        }
-        
-        .btn-primary {
-            width: 100%;
-            background: #0D1B2A;
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 2rem;
-        }
-        
-        .btn-primary:hover {
-            background: #152C46;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(13, 27, 42, 0.3);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-        
-        .auth-link {
-            text-align: center;
-            color: #5A5A5A;
-            font-size: 0.9rem;
-        }
-        
-        .auth-link a {
-            color: #0D1B2A;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s ease;
-        }
-        
-        .auth-link a:hover {
-            color: #152C46;
-        }
-        
-        /* Illustration Panel */
         .illustration-image {
             width: 100%;
             height: 100%;
@@ -266,6 +89,232 @@
             line-height: 1.4;
         }
         
+        /* ================================================================ */
+        /* FORM PANEL */
+        /* ================================================================ */
+        .form-panel {
+            flex: 1;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .form-panel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background-image: url('storage/assets/logo/PSS-LOGO.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.08;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .form-content {
+            width: 100%;
+            max-width: 550px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .form-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1B1B1B;
+            margin-bottom: 0.5rem;
+            text-align: right;
+        }
+        
+        .form-subtitle {
+            color: #5A5A5A;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            text-align: right;
+            line-height: 1;
+        }
+        
+        /* ================================================================ */
+        /* FORM ELEMENTS */
+        /* ================================================================ */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1B1B1B;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: rgba(250, 250, 250, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #0D1B2A;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 4px rgba(13, 27, 42, 0.1);
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* ================================================================ */
+        /* ACCOUNT TYPE TOGGLE */
+        /* ================================================================ */
+        .account-type-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .toggle-option {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 12px;
+            background: rgba(250, 250, 250, 0.9);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .toggle-option.active {
+            background: #0D1B2A;
+            color: white;
+            border-color: #0D1B2A;
+        }
+        
+        .toggle-option:hover:not(.active) {
+            background: rgba(248, 249, 250, 0.95);
+            border-color: #0D1B2A;
+        }
+        
+        /* ================================================================ */
+        /* PASSWORD FIELD */
+        /* ================================================================ */
+        .password-field {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #5A5A5A;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+            z-index: 10;
+            padding: 0.5rem;
+        }
+        
+        .password-toggle:hover {
+            color: #0D1B2A;
+        }
+        
+        /* ================================================================ */
+        /* BUTTONS */
+        /* ================================================================ */
+        .btn-primary {
+            width: 100%;
+            background: #0D1B2A;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-primary:hover {
+            background: #152C46;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 27, 42, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #0D1B2A;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+        
+        /* ================================================================ */
+        /* AUTH LINKS */
+        /* ================================================================ */
+        .auth-link {
+            text-align: center;
+            color: #5A5A5A;
+            font-size: 0.9rem;
+        }
+        
+        .auth-link a {
+            color: #0D1B2A;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        
+        .auth-link a:hover {
+            color: #152C46;
+        }
+        
+        /* ================================================================ */
+        /* AUTH PROMPT */
+        /* ================================================================ */
         .auth-prompt {
             display: flex;
             align-items: center;
@@ -291,30 +340,9 @@
             opacity: 0.8;
         }
         
-        .btn-secondary {
-            background: white;
-            color: #0D1B2A;
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            display: inline-block;
-        }
-        
-        .btn-secondary:hover {
-            background: #f8f9fa;
-            transform: translateY(-1px);
-        }
-        
-        .error-message {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
-        
-        /* Mobile Bottom Navigation */
+        /* ================================================================ */
+        /* MOBILE BOTTOM NAVIGATION */
+        /* ================================================================ */
         .mobile-bottom-nav {
             display: none;
             position: fixed;
@@ -361,7 +389,9 @@
             transform: translateY(-2px);
         }
         
-        /* Mobile Responsive Design */
+        /* ================================================================ */
+        /* RESPONSIVE DESIGN - TABLET */
+        /* ================================================================ */
         @media (max-width: 1024px) {
             .auth-container {
                 flex-direction: column;
@@ -384,7 +414,6 @@
                 background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             }
             
-            /* Mobile Background Logo */
             .form-panel::before {
                 width: 280px;
                 height: 280px;
@@ -420,6 +449,9 @@
             }
         }
         
+        /* ================================================================ */
+        /* RESPONSIVE DESIGN - MOBILE */
+        /* ================================================================ */
         @media (max-width: 480px) {
             .form-panel {
                 padding: 1rem;
@@ -462,8 +494,14 @@
         }
     </style>
 
+    {{-- ================================================================ --}}
+    {{-- MAIN CONTAINER --}}
+    {{-- ================================================================ --}}
     <div class="auth-container">
-        <!-- Illustration Panel - Desktop Only -->
+        
+        {{-- ================================================================ --}}
+        {{-- ILLUSTRATION PANEL (DESKTOP ONLY) --}}
+        {{-- ================================================================ --}}
         <div class="illustration-panel">
             <div class="illustration-image">
                 <img src="storage/assets/images/tldm3.jpg" alt="Naval Training Academy" />
@@ -484,7 +522,9 @@
             </div>
         </div>
 
-        <!-- Form Panel -->
+        {{-- ================================================================ --}}
+        {{-- FORM PANEL --}}
+        {{-- ================================================================ --}}
         <div class="form-panel">
             <div class="form-content">
                 <h1 class="form-title">Join the Academy</h1>
@@ -493,7 +533,7 @@
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
 
-                    <!-- Account Type -->
+                    {{-- Account Type Selection --}}
                     <div class="form-group">
                         <label class="form-label">Account Type</label>
                         <div class="account-type-toggle">
@@ -507,27 +547,54 @@
                         <input type="hidden" name="role" id="role-input" value="cadet">
                     </div>
 
-                    <!-- Form Grid -->
+                    {{-- Form Grid --}}
                     <div class="form-grid">
-                        <!-- Full Name -->
+                        {{-- Full Name --}}
                         <div class="form-group">
                             <label for="name" class="form-label">{{ __('Full Name') }}</label>
-                            <input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Enter your full name" />
+                            <input 
+                                id="name" 
+                                class="form-input" 
+                                type="text" 
+                                name="name" 
+                                :value="old('name')" 
+                                required 
+                                autofocus 
+                                autocomplete="name" 
+                                placeholder="Enter your full name" 
+                            />
                             <x-input-error :messages="$errors->get('name')" class="error-message" />
                         </div>
 
-                        <!-- Email Address -->
+                        {{-- Email Address --}}
                         <div class="form-group">
                             <label for="email" class="form-label">{{ __('Email Address') }}</label>
-                            <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="Enter your email" />
+                            <input 
+                                id="email" 
+                                class="form-input" 
+                                type="email" 
+                                name="email" 
+                                :value="old('email')" 
+                                required 
+                                autocomplete="username" 
+                                placeholder="Enter your email" 
+                            />
                             <x-input-error :messages="$errors->get('email')" class="error-message" />
                         </div>
 
-                        <!-- Password -->
+                        {{-- Password --}}
                         <div class="form-group">
                             <label for="password" class="form-label">{{ __('Password') }}</label>
                             <div class="password-field">
-                                <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" placeholder="Create a password" />
+                                <input 
+                                    id="password" 
+                                    class="form-input" 
+                                    type="password" 
+                                    name="password" 
+                                    required 
+                                    autocomplete="new-password" 
+                                    placeholder="Create a password" 
+                                />
                                 <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                     <i class="fas fa-eye" id="password-eye"></i>
                                 </button>
@@ -535,11 +602,19 @@
                             <x-input-error :messages="$errors->get('password')" class="error-message" />
                         </div>
 
-                        <!-- Confirm Password -->
+                        {{-- Confirm Password --}}
                         <div class="form-group">
                             <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}</label>
                             <div class="password-field">
-                                <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm your password" />
+                                <input 
+                                    id="password_confirmation" 
+                                    class="form-input" 
+                                    type="password" 
+                                    name="password_confirmation" 
+                                    required 
+                                    autocomplete="new-password" 
+                                    placeholder="Confirm your password" 
+                                />
                                 <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation')">
                                     <i class="fas fa-eye" id="password_confirmation-eye"></i>
                                 </button>
@@ -548,10 +623,12 @@
                         </div>
                     </div>
 
+                    {{-- Submit Button --}}
                     <button type="submit" class="btn-primary">
                         {{ __('Create Account') }}
                     </button>
 
+                    {{-- Login Link --}}
                     <div class="auth-link">
                         Already have an account? <a href="{{ route('login') }}">Sign in</a>
                     </div>
@@ -560,7 +637,9 @@
         </div>
     </div>
 
-    <!-- Mobile Bottom Navigation -->
+    {{-- ================================================================ --}}
+    {{-- MOBILE BOTTOM NAVIGATION --}}
+    {{-- ================================================================ --}}
     <div class="mobile-bottom-nav">
         <div class="auth-text">
             <p class="auth-main">Already have an account?</p>
@@ -569,6 +648,9 @@
         <a href="{{ route('login') }}" class="btn-secondary">Sign In</a>
     </div>
 
+    {{-- ================================================================ --}}
+    {{-- SCRIPTS --}}
+    {{-- ================================================================ --}}
     <script>
         function selectRole(role) {
             document.getElementById('role-input').value = role;
@@ -600,6 +682,8 @@
         }
     </script>
 
-    <!-- Font Awesome for password toggle icons -->
+    {{-- ================================================================ --}}
+    {{-- EXTERNAL RESOURCES --}}
+    {{-- ================================================================ --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </x-guest-layout>

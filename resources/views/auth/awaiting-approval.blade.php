@@ -2,13 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Account Awaiting Approval</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Account Awaiting Approval</title>
+    
+    {{-- ================================================================ --}}
+    {{-- EXTERNAL RESOURCES --}}
+    {{-- ================================================================ --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link href="{{ asset('css/home.css') }}" rel="stylesheet">
+    
+    {{-- ================================================================ --}}
+    {{-- STYLES --}}
+    {{-- ================================================================ --}}
     <style>
+        /* ================================================================ */
+        /* CSS VARIABLES */
+        /* ================================================================ */
         :root {
             --primary-blue: #3c92d9;
             --secondary-blue: #2980b9;
@@ -25,6 +36,9 @@
             --shadow-hover: 0 20px 50px rgba(60, 146, 217, 0.4);
         }
 
+        /* ================================================================ */
+        /* BASE STYLES */
+        /* ================================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -40,7 +54,9 @@
             overflow-x: hidden;
         }
 
-        /* Custom Scrollbar */
+        /* ================================================================ */
+        /* SCROLLBAR */
+        /* ================================================================ */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -54,7 +70,9 @@
             border-radius: 4px;
         }
 
-        /* Enhanced Navigation */
+        /* ================================================================ */
+        /* NAVIGATION */
+        /* ================================================================ */
         .navbar {
             position: fixed;
             top: 0;
@@ -125,7 +143,9 @@
             line-height: 1;
         }
 
-        /* Enhanced Main Content */
+        /* ================================================================ */
+        /* HERO SECTION */
+        /* ================================================================ */
         .hero-section {
             min-height: 100vh;
             display: flex;
@@ -165,7 +185,52 @@
             margin-right: auto;
         }
 
-        /* Enhanced Button */
+        /* ================================================================ */
+        /* FLOATING ELEMENTS */
+        /* ================================================================ */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(60, 146, 217, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 30%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-icon:nth-child(3) {
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .floating-icon:nth-child(4) {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        /* ================================================================ */
+        /* BUTTONS */
+        /* ================================================================ */
         .btn-primary {
             background: var(--gradient-primary);
             padding: 16px 32px;
@@ -190,7 +255,9 @@
             background: var(--gradient-accent);
         }
 
-        /* Enhanced Footer */
+        /* ================================================================ */
+        /* FOOTER */
+        /* ================================================================ */
         .footer {
             background: rgba(16, 20, 28, 0.98);
             padding: 3rem 2rem 2rem;
@@ -215,31 +282,16 @@
             font-size: 0.95rem;
         }
 
-        /* Floating Elements */
-        .floating-elements {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            top: 0;
-            left: 0;
-        }
-
-        .floating-icon {
-            position: absolute;
-            font-size: 2rem;
-            color: rgba(60, 146, 217, 0.1);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .floating-icon:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
-        .floating-icon:nth-child(2) { top: 30%; right: 15%; animation-delay: 2s; }
-        .floating-icon:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; }
-        .floating-icon:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 1s; }
-
+        /* ================================================================ */
+        /* ANIMATIONS */
+        /* ================================================================ */
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
         }
 
         @keyframes fadeInUp {
@@ -253,7 +305,9 @@
             }
         }
 
-        /* Mobile Responsive */
+        /* ================================================================ */
+        /* RESPONSIVE DESIGN - MOBILE */
+        /* ================================================================ */
         @media (max-width: 768px) {
             .navbar {
                 padding: 1rem;
@@ -284,7 +338,9 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+    {{-- ================================================================ --}}
+    {{-- NAVIGATION --}}
+    {{-- ================================================================ --}}
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="{{ route('logout.and.landing') }}" class="nav-logo">
@@ -296,7 +352,10 @@
             </a>
         </div>
     </nav>
-    <!-- Hero Section -->
+
+    {{-- ================================================================ --}}
+    {{-- HERO SECTION --}}
+    {{-- ================================================================ --}}
     <section class="hero-section">
         <div class="floating-elements">
             <i class="fas fa-anchor floating-icon"></i>
@@ -319,14 +378,21 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    {{-- ================================================================ --}}
+    {{-- FOOTER --}}
+    {{-- ================================================================ --}}
     <footer class="footer">
         <p>&copy; {{ date('Y') }} PALAPES Laut UMS | Cadet Management & Learning Hub</p>
     </footer>
 
+    {{-- ================================================================ --}}
+    {{-- SCRIPTS --}}
+    {{-- ================================================================ --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Enhanced navbar scroll effects
+        // ================================================================
+        // NAVBAR SCROLL EFFECTS
+        // ================================================================
         let lastScrollY = window.scrollY;
         const navbar = document.getElementById('navbar');
 
@@ -342,7 +408,9 @@
             lastScrollY = currentScrollY;
         });
 
-        // Page loading animation
+        // ================================================================
+        // PAGE LOADING ANIMATION
+        // ================================================================
         window.addEventListener('load', function() {
             document.body.style.opacity = '0';
             document.body.style.transition = 'opacity 0.5s ease';
