@@ -38,13 +38,13 @@
 
 ## Cadet
 ### Controllers
-- [ ] app/Http/Controllers/Cadet/AllowanceController.php
-- [ ] app/Http/Controllers/Cadet/AttendanceController.php
-- [ ] app/Http/Controllers/Cadet/CadetDashboardController.php
-- [ ] app/Http/Controllers/Cadet/GalleryController.php
+- [X] app/Http/Controllers/Cadet/AllowanceController.php
+- [X] app/Http/Controllers/Cadet/AttendanceController.php
+- [X] app/Http/Controllers/Cadet/CadetDashboardController.php
+- [X] app/Http/Controllers/Cadet/GalleryController.php
 - [ ] app/Http/Controllers/Cadet/InventoryController.php
-- [ ] app/Http/Controllers/Cadet/LearningHubController.php
-- [ ] app/Http/Controllers/Cadet/TrainingController.php
+- [X] app/Http/Controllers/Cadet/LearningHubController.php
+- [X] app/Http/Controllers/Cadet/TrainingController.php
 
 ### Models
 - [ ] app/Models/Cadet.php
@@ -55,17 +55,17 @@
 - [ ] app/Models/UniformType.php
 
 ### Blades
-- [ ] resources/views/cadet/allowance.blade.php
-- [ ] resources/views/cadet/attendance.blade.php
-- [ ] resources/views/cadet/dashboard.blade.php
-- [ ] resources/views/cadet/gallery.blade.php
-- [ ] resources/views/cadet/inventory.blade.php
+- [X] resources/views/cadet/allowance.blade.php
+- [X] resources/views/cadet/attendance.blade.php
+- [X] resources/views/cadet/dashboard.blade.php
+- [X] resources/views/cadet/gallery.blade.php
+- [X] resources/views/cadet/inventory.blade.php
 - [ ] resources/views/cadet/learning_hub.blade.php
-- [ ] resources/views/cadet/training.blade.php
+- [X] resources/views/cadet/training.blade.php
 
 ## Guest (Public/General)
 ### Controllers
-- [ ] app/Http/Controllers/AlumniController.php
+- [X] app/Http/Controllers/AlumniController.php
 - [ ] app/Http/Controllers/ContentManagementController.php
 - [ ] app/Http/Controllers/Controller.php
 - [ ] app/Http/Controllers/PersonalInfoController.php
@@ -85,7 +85,7 @@
 
 ### Blades
 - [ ] resources/views/about-me.blade.php
-- [ ] resources/views/alumni.blade.php
+- [X] resources/views/alumni.blade.php
 - [ ] resources/views/landing.blade.php
 - [ ] resources/views/auth/awaiting-approval.blade.php
 - [ ] resources/views/auth/forgot-password.blade.php
