@@ -11,7 +11,7 @@ class LearningMaterial extends Model
     protected $fillable = [
         'title',
         'instructor_id',
-        'description', // Changed from 'content' to 'description' to match your form
+        'description',
         'learning_material_category_id',
         'file_url',
     ];

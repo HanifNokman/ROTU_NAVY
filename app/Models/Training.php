@@ -52,7 +52,6 @@ class Training extends Model
             'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 2) : 0
         ];
     }
-    // ...existing code...
 
     protected $fillable = [
         'title',
@@ -211,7 +210,6 @@ public function getIsMultiDayAttribute(): bool
     /**
      * Calculate duration in hours
      */
-    // Deprecated: use calculateRoundedDuration instead
     public function calculateDuration(): ?int
     {
         return $this->calculateRoundedDuration();
@@ -323,8 +321,4 @@ public function getIsMultiDayAttribute(): bool
               ->orWhereRaw('(start_datetime <= NOW() AND (end_datetime IS NULL OR end_datetime >= DATE_SUB(NOW(), INTERVAL 1 DAY)))');
         });
     }
-
-    // ...existing code...
-
-    // ...existing code...
 }
