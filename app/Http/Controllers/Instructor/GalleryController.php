@@ -23,7 +23,7 @@ class GalleryController extends Controller
         $categories = GalleryCategory::where('instructor_id', $instructorId)->get();
         
         $query = Gallery::where('instructor_id', $instructorId)
-                       ->with('category')
+                       ->with(['category', 'instructor'])
                        ->orderBy('created_at', 'desc');
         
         if ($request->filled('category')) {
