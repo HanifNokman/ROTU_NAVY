@@ -61,7 +61,7 @@ class Training extends Model
         'start_datetime',
         'end_datetime',
         'involvement',
-        // 'duration_hours', // duration is now auto-calculated
+        'duration_hours',
         'allowance_amount',
         'allowance_type',
         'status'
@@ -232,19 +232,19 @@ public function getIsMultiDayAttribute(): bool
         // Check if multi-day training
         $isMultiDay = $start->diffInDays($end) >= 1;
         
-        if ($isMultiDay) {
-            $days = $start->diffInDays($end) + 1; // Include both start and end days
-            return [
-                'amount' => $days * 50,
-                'type' => 'daily'
-            ];
-        } else {
-            $hours = $this->calculateDuration() ?? 2;
-            return [
-                'amount' => $hours * 8,
-                'type' => 'hourly'
-            ];
-        }
+    if ($isMultiDay) {
+        $days = $start->diffInDays($end) + 1; // Include both start and end days
+        return [
+            'amount' => (int)($days * 50),
+            'type' => 'daily'
+        ];
+    } else {
+        $hours = $this->calculateDuration() ?? 2;
+        return [
+            'amount' => $hours * 8,
+            'type' => 'hourly'
+        ];
+    }
     }
 
     /**

@@ -191,7 +191,15 @@
                                         <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $training->duration_hours ? $training->duration_hours . 'h' : 'TBD' }}
+                                        @if($training->duration_hours)
+                                            @if($training->allowance_type === 'daily')
+                                                {{ $training->duration_hours }} days
+                                            @else
+                                                {{ $training->duration_hours }}h
+                                            @endif
+                                        @else
+                                            TBD
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">

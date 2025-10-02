@@ -7,6 +7,10 @@ use App\Models\Cadet;
 
 class AlumniController extends Controller
 {
+    // ================================================================
+    // DISPLAY ALUMNI INDEX
+    // ================================================================
+    
     public function index()
     {
         $alumniByIntake = Cadet::where('cadet_status', 'completed')
@@ -19,9 +23,11 @@ class AlumniController extends Controller
                     $positionOrder = ['CO' => 1, 'Thana' => 2, 'Zayn' => 3];
                     $aPos = $positionOrder[$a->position] ?? 4;
                     $bPos = $positionOrder[$b->position] ?? 4;
+                    
                     if ($aPos !== $bPos) {
                         return $aPos <=> $bPos;
                     }
+                    
                     return $a->service_number <=> $b->service_number;
                 })->values();
             });

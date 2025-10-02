@@ -8,9 +8,14 @@ use App\Models\TrainingAttendance;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use DOMDocument;
 
 class AllowanceController extends Controller
 {
+    // ================================================================
+    // DISPLAY ALLOWANCE INDEX
+    // ================================================================
+    
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -23,32 +28,25 @@ class AllowanceController extends Controller
             return response()->view('cadet.allowance_missing', [], 403);
         }
 
-        // Validate intake year exists and is reasonable
         $intakeYear = $cadet->intake_year;
         if (!$intakeYear || $intakeYear < 2000 || $intakeYear > Carbon::now()->year + 1) {
-            // Handle invalid intake year - set to current year as fallback
             $intakeYear = Carbon::now()->year;
         }
 
         $currentYear = Carbon::now()->year;
-        
-        // Year filtering logic: max 3 years after intake or current year, whichever comes first
         $maxYear = min($intakeYear + 3, $currentYear);
         $years = range($intakeYear, $maxYear);
 
-        // Determine selected year - default to current year
         $selectedYear = (int) $request->get('year', $currentYear);
         if (!in_array($selectedYear, $years)) {
             $selectedYear = $currentYear;
         }
 
-        // Get all attended trainings for this cadet (all years)
         $allAttendances = TrainingAttendance::where('cadet_id', $cadet->id)
             ->where('present', true)
             ->with('training')
             ->get();
 
-        // Get months with attended trainings for selected year using DB query
         $monthsWithTrainings = TrainingAttendance::where('cadet_id', $cadet->id)
             ->where('present', true)
             ->whereHas('training', function($q) use ($selectedYear) {
@@ -60,14 +58,12 @@ class AllowanceController extends Controller
             ->pluck('month')
             ->toArray();
 
-        // Month names
         $allMonths = [
             1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
             5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
             9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
         ];
 
-        // Only show months with actual attendance
         $months = [];
         foreach ($monthsWithTrainings as $monthNum) {
             if (isset($allMonths[$monthNum])) {
@@ -75,24 +71,20 @@ class AllowanceController extends Controller
             }
         }
 
-        // Improved month selection logic
         $selectedMonth = (int) $request->get('month');
 
-        // If no month specified or month not available, select first available
         if (!$selectedMonth || !array_key_exists($selectedMonth, $months)) {
             $selectedMonth = !empty($months) ? array_key_first($months) : null;
         }
 
-        // Handle case where no months are available
         if (empty($months) || $selectedMonth === null) {
-            $trainings = collect(); // Empty collection
+            $trainings = collect();
             $totalHours = 0;
             $totalDays = 0;
             $hourlyAllowance = 0;
             $dailyAllowance = 0;
             $totalAllowance = 0;
         } else {
-            // Get attended trainings for this cadet in selected year/month
             $attendances = $allAttendances->filter(function($attendance) use ($selectedYear, $selectedMonth) {
                 $dt = Carbon::parse($attendance->training->start_datetime);
                 return $dt->year == $selectedYear && $dt->month == $selectedMonth;
@@ -120,15 +112,12 @@ class AllowanceController extends Controller
                     $duration = 'N/A';
                 }
 
-                // Format date to show range for multi-day training
                 $startDate = Carbon::parse($training->start_datetime);
                 $endDate = $training->end_datetime ? Carbon::parse($training->end_datetime) : null;
 
                 if ($endDate && $startDate->format('Y-m-d') !== $endDate->format('Y-m-d')) {
-                    // Multi-day training: show date range
                     $date = $startDate->format('d/m/Y') . ' - ' . $endDate->format('d/m/Y');
                 } else {
-                    // Single day training: show start date only
                     $date = $startDate->format('d/m/Y');
                 }
 
@@ -146,7 +135,6 @@ class AllowanceController extends Controller
                 ];
             });
 
-            // Calculate totals
             $totalHours = $trainings->where('type', 'hourly')->sum('hours');
             $totalDays = $trainings->where('type', 'daily')->sum('days');
             $hourlyAllowance = $totalHours * 8;
@@ -154,7 +142,6 @@ class AllowanceController extends Controller
             $totalAllowance = $hourlyAllowance + $dailyAllowance;
         }
 
-        // If AJAX request, return only the table and calculation section
         if ($request->ajax()) {
             $html = view('cadet.allowance', compact(
                 'trainings',
@@ -168,22 +155,20 @@ class AllowanceController extends Controller
                 'dailyAllowance',
                 'totalAllowance'
             ))->render();
-            
-            // Improved regex to extract allowance-content div with nested content
-            if (preg_match('/<div id="allowance-content">(.*?)<\/div>\s*<script/s', $html, $matches)) {
+
+            $dom = new DOMDocument();
+            @$dom->loadHTML($html);
+            $div = $dom->getElementById('allowance-content');
+            if ($div) {
+                $innerHTML = '';
+                foreach ($div->childNodes as $child) {
+                    $innerHTML .= $dom->saveHTML($child);
+                }
                 return response()->json([
-                    'html' => $matches[1]
+                    'html' => $innerHTML
                 ]);
             }
-            
-            // Fallback: try to find the div without script tag
-            if (preg_match('/<div id="allowance-content">(.*?)<\/div>(?:\s*<\/div>)*\s*$/s', $html, $matches)) {
-                return response()->json([
-                    'html' => $matches[1]
-                ]);
-            }
-            
-            // If regex fails, return error
+
             return response()->json([
                 'html' => '<div class="text-center py-8 text-red-600"><p>Error loading content. Please refresh the page.</p></div>'
             ], 500);

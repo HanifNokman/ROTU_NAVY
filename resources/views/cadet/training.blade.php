@@ -1,4 +1,7 @@
 <x-app-layout>
+    {{-- ================================================================ --}}
+    {{-- PAGE HEADER --}}
+    {{-- ================================================================ --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('My Training Schedule') }}
@@ -8,7 +11,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- PAGE TITLE SECTION --}}
+            {{-- ================================================================ --}}
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,13 +23,20 @@
                 </h1>
                 <p class="text-gray-600">View your upcoming training sessions and schedule</p>
             </div>
+
+            {{-- ================================================================ --}}
+            {{-- ERROR MESSAGE --}}
+            {{-- ================================================================ --}}
             @if(isset($error))
                 <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                     <strong class="font-bold">Error:</strong>
                     <span class="block sm:inline">{{ $error }}</span>
                 </div>
             @else
-                <!-- Calendar View -->
+
+                {{-- ================================================================ --}}
+                {{-- CALENDAR VIEW --}}
+                {{-- ================================================================ --}}
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -33,7 +45,9 @@
                             </svg>
                             Training Calendar
                         </h3>
+
                         <div id="calendar"></div>
+
                         @if(empty($calendarEvents))
                             <div class="mt-4 text-center py-8">
                                 <div class="text-gray-500">
@@ -48,7 +62,9 @@
                     </div>
                 </div>
 
-                <!-- Training List -->
+                {{-- ================================================================ --}}
+                {{-- TRAINING SESSIONS TABLE --}}
+                {{-- ================================================================ --}}
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -57,6 +73,7 @@
                             </svg>
                             Training Sessions
                         </h3>
+
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
                                 <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
@@ -136,10 +153,13 @@
                     </div>
                 </div>
             @endif
+
         </div>
     </div>
 
-    <!-- Unified View Training Modal -->
+    {{-- ================================================================ --}}
+    {{-- VIEW TRAINING DETAILS MODAL --}}
+    {{-- ================================================================ --}}
     <div id="viewTrainingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4">
@@ -156,16 +176,25 @@
         </div>
     </div>
 
+    {{-- ================================================================ --}}
+    {{-- EXTERNAL STYLESHEETS --}}
+    {{-- ================================================================ --}}
     @push('styles')
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/main.min.css" rel="stylesheet">
     @endpush
 
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT --}}
+    {{-- ================================================================ --}}
     @push('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
         <script>
             let calendar;
 
+            // ================================================================
+            // INITIALIZE CALENDAR ON PAGE LOAD
+            // ================================================================
             document.addEventListener('DOMContentLoaded', function() {
                 @if(!isset($error))
                     initializeCalendar();
@@ -192,13 +221,16 @@
                 calendar.render();
             }
 
+            // ================================================================
+            // VIEW TRAINING DETAILS
+            // ================================================================
             function viewTraining(trainingId) {
                 fetch(`/cadet/training/${trainingId}`, {
                     headers: { 'Accept': 'application/json' }
                 })
                 .then(async response => {
                     if (!response.ok) {
-                        const text = await response.text(); // capture server message
+                        const text = await response.text();
                         throw new Error(`HTTP ${response.status}: ${text}`);
                     }
                     return response.json();
@@ -247,10 +279,20 @@
                 });
             }
 
+            // ================================================================
+            // MODAL CONTROLS
+            // ================================================================
             function closeViewModal() {
                 document.getElementById('viewTrainingModal').classList.add('hidden');
             }
 
+            document.getElementById('viewTrainingModal').addEventListener('click', function(e) {
+                if (e.target === this) closeViewModal();
+            });
+
+            // ================================================================
+            // UTILITY FUNCTIONS
+            // ================================================================
             function formatDateTime(datetime) {
                 const date = new Date(datetime);
                 const day = date.toLocaleDateString('en-MY', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -267,10 +309,6 @@
                     default: return 'bg-blue-100 text-blue-800';
                 }
             }
-
-            document.getElementById('viewTrainingModal').addEventListener('click', function(e) {
-                if (e.target === this) closeViewModal();
-            });
         </script>
     @endpush
 </x-app-layout>

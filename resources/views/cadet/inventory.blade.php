@@ -10,7 +10,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
+            {{-- ================================================================ --}}
+            {{-- PAGE HEADER --}}
+            {{-- ================================================================ --}}
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,7 +23,9 @@
                 <p class="text-gray-600">Manage your uniform sizes and equipment loans</p>
             </div>
 
-            <!-- Active Equipment Loans Alert -->
+            {{-- ================================================================ --}}
+            {{-- ACTIVE LOANS ALERT --}}
+            {{-- ================================================================ --}}
             @if($activeLoans->isNotEmpty())
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
                     <div class="flex">
@@ -33,7 +37,9 @@
                         <div class="ml-3">
                             <p class="text-sm text-yellow-700">
                                 You have {{ $activeLoans->count() }} active equipment loan(s).
-                                @php $overdueCount = $activeLoans->filter(fn($loan) => $loan->isOverdue())->count(); @endphp
+                                @php
+                                    $overdueCount = $activeLoans->filter(fn($loan) => $loan->isOverdue())->count();
+                                @endphp
                                 @if($overdueCount > 0)
                                     <span class="font-semibold text-red-600">{{ $overdueCount }} overdue!</span>
                                 @endif
@@ -43,8 +49,12 @@
                 </div>
             @endif
 
-            <!-- Uniform Sizes Management -->
+            {{-- ================================================================ --}}
+            {{-- UNIFORM SIZES SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                
+                {{-- Section Header --}}
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
                         <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,10 +64,11 @@
                     </h3>
                     <p class="text-gray-600">Manage your uniform component sizes</p>
                 </div>
+
                 <div class="p-6">
                     <h4 class="text-lg font-semibold text-gray-900 mb-4">Size Guidelines</h4>
                     
-                    <!-- Size Guidelines -->
+                    {{-- Size Format Guidelines --}}
                     <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <h4 class="font-medium text-blue-800 mb-2">Size Format Guidelines</h4>
                         <div class="text-sm text-blue-700 space-y-1">
@@ -71,12 +82,16 @@
                         </div>
                     </div>
                     
+                    {{-- Uniform Type Filter --}}
                     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                         <h4 class="font-medium text-gray-800 mb-3 flex items-center justify-between">
                             Filter by Uniform Type
                             <div>
-                                <select id="uniform_type_filter" name="uniform_type" onchange="loadUniformComponents(this.value)"
-                                        class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <select 
+                                    id="uniform_type_filter" 
+                                    name="uniform_type" 
+                                    onchange="loadUniformComponents(this.value)"
+                                    class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">Select Uniform Type</option>
                                     @foreach($uniformTypes as $type)
                                         <option value="{{ $type->id }}" {{ $selectedUniformType == $type->id ? 'selected' : '' }}>
@@ -87,18 +102,27 @@
                             </div>
                         </h4>
 
+                        {{-- Components Container --}}
                         <div id="uniform-components-container">
                             @if($selectedUniformType && $uniformComponents->isNotEmpty())
-                                <form method="POST" action="{{ route('cadet.inventory.uniform-size.update') }}" id="uniformSizeForm">
+                                <form method="POST" action="{{ route('cadet.inventory.uniform-size.update') }}" id="uniformSizeForm" onsubmit="return validateForm()">
                                     @csrf
                                     <div class="overflow-x-auto">
                                         <table class="min-w-full divide-y divide-gray-200">
                                             <thead class="bg-gray-50">
                                                 <tr>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component</th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Component
+                                                    </th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Size
+                                                    </th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Status
+                                                    </th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Actions
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white divide-y divide-gray-200">
@@ -116,13 +140,16 @@
                                                                 <input type="hidden" name="size[]" value="{{ $sizeEntry->size }}">
                                                                 <input type="hidden" name="component_id[]" value="{{ $component->id }}">
                                                             @else
-                                                                <input type="text" name="size[]" value="{{ old('size.' . $loop->index, $sizeEntry ? $sizeEntry->size : '') }}"
-                                                                       class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 size-input"
-                                                                       placeholder="e.g., XS, S, M, L, 32, 7 1/2"
-                                                                       maxlength="10"
-                                                                       pattern="^[A-Za-z0-9\s\/-]{1,10}$"
-                                                                       title="Size must be 1-10 characters. Only letters, numbers, spaces, forward slashes (/) and hyphens (-) allowed."
-                                                                       data-component-name="{{ $component->component_name }}">
+                                                                <input 
+                                                                    type="text" 
+                                                                    name="size[]" 
+                                                                    value="{{ old('size.' . $loop->index, $sizeEntry ? $sizeEntry->size : '') }}"
+                                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 size-input"
+                                                                    placeholder="e.g., XS, S, M, L, 32, 7 1/2"
+                                                                    maxlength="10"
+                                                                    pattern="^[A-Za-z0-9\s\/-]{1,10}$"
+                                                                    title="Size must be 1-10 characters. Only letters, numbers, spaces, forward slashes (/) and hyphens (-) allowed."
+                                                                    data-component-name="{{ $component->component_name }}">
                                                                 <input type="hidden" name="component_id[]" value="{{ $component->id }}">
                                                                 <div class="text-xs text-red-600 mt-1 hidden validation-error"></div>
                                                             @endif
@@ -140,8 +167,10 @@
                                                         </td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                             @if($sizeEntry && !$sizeEntry->is_issued)
-                                                                <button type="button" onclick="removeUniformSize({{ $sizeEntry->id }}, '{{ $component->component_name }}')" 
-                                                                        class="text-red-600 hover:text-red-900">
+                                                                <button 
+                                                                    type="button" 
+                                                                    onclick="removeUniformSize({{ $sizeEntry->id }}, '{{ $component->component_name }}')" 
+                                                                    class="text-red-600 hover:text-red-900">
                                                                     Remove
                                                                 </button>
                                                             @endif
@@ -150,8 +179,12 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
+
                                         <div class="mt-4 flex justify-end">
-                                            <button type="submit" id="updateSizesBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
+                                            <button 
+                                                type="submit" 
+                                                id="updateSizesBtn" 
+                                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
                                                 Update Sizes
                                             </button>
                                         </div>
@@ -164,7 +197,7 @@
                             @endif
                         </div>
 
-                        <!-- Loading indicator -->
+                        {{-- Loading Indicator --}}
                         <div id="loading-indicator" class="hidden text-center py-8">
                             <div class="inline-flex items-center">
                                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -178,8 +211,12 @@
                 </div>
             </div>
 
-            <!-- Equipment Loans Management -->
+            {{-- ================================================================ --}}
+            {{-- EQUIPMENT LOANS SECTION --}}
+            {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                
+                {{-- Section Header --}}
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
                     <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
                         <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,14 +226,19 @@
                     </h3>
                     <p class="text-gray-600">Borrow equipment and uniform items</p>
                 </div>
+
                 <div class="p-6">
-                    <!-- Category Filter -->
+                    
+                    {{-- Category Filter --}}
                     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                         <h4 class="font-medium text-gray-800 mb-3 flex items-center justify-between">
                             Filter by Category
                             <div>
-                                <select id="category_filter" name="category_filter" onchange="filterItemsByCategory(this.value)"
-                                        class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <select 
+                                    id="category_filter" 
+                                    name="category_filter" 
+                                    onchange="filterItemsByCategory(this.value)"
+                                    class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">All Categories</option>
                                     <option value="equipment">Equipment</option>
                                     <option value="uniform">Uniform</option>
@@ -205,39 +247,48 @@
                         </h4>
                     </div>
 
-                    <!-- Items List with Checkboxes -->
+                    {{-- Items Selection List --}}
                     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                         <h4 class="font-medium text-gray-800 mb-3">Select Items to Borrow</h4>
                         
-                        <!-- Items Container -->
                         <div id="items-container" class="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">
                             @if($availableItems->count() > 0)
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-100">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available Quantity</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Select
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Item Name
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Category
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Available Quantity
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach($availableItems as $item)
                                             <tr class="item-row" data-category="{{ $item->category }}">
                                                 <td class="px-6 py-4 whitespace-nowrap">
-                                                    <input type="checkbox" name="selected_items[]" value="{{ $item->id }}" 
-                                                           class="item-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                                           data-item-id="{{ $item->id }}"
-                                                           data-item-name="{{ $item->name }}"
-                                                           data-available-quantity="{{ $item->available_quantity }}"
-                                                           data-category="{{ $item->category }}">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="selected_items[]" 
+                                                        value="{{ $item->id }}" 
+                                                        class="item-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                                        data-item-id="{{ $item->id }}"
+                                                        data-item-name="{{ $item->name }}"
+                                                        data-available-quantity="{{ $item->available_quantity }}"
+                                                        data-category="{{ $item->category }}">
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {{ $item->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $item->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $item->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
                                                         {{ $item->category }}
                                                     </span>
                                                 </td>
@@ -255,20 +306,26 @@
                             @endif
                         </div>
                         
-                        <!-- Select Items Button -->
                         <div class="mt-4 flex justify-end">
-                            <button type="button" id="selectItemsBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button 
+                                type="button" 
+                                id="selectItemsBtn" 
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" 
+                                disabled>
                                 Select Items
                             </button>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- Active Loans Section -->
+            {{-- ================================================================ --}}
+            {{-- ACTIVE LOANS SECTION --}}
+            {{-- ================================================================ --}}
             @if($activeLoans->isNotEmpty())
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                    
+                    {{-- Section Header --}}
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
                         <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
                             <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,18 +335,33 @@
                         </h3>
                         <p class="text-gray-600">Items currently borrowed</p>
                     </div>
+
                     <div class="p-6">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrow Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Borrowed</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Item
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Category
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Quantity
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Borrow Date
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Days Borrowed
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -299,8 +371,7 @@
                                                 {{ $loan->inventoryItem->name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
                                                     {{ $loan->inventoryItem->category }}
                                                 </span>
                                             </td>
@@ -322,8 +393,9 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button onclick="openReturnModal({{ $loan->id }}, '{{ $loan->inventoryItem->name }}', '{{ $loan->borrow_date->format('Y-m-d') }}')"
-                                                        class="text-green-600 hover:text-green-900">
+                                                <button 
+                                                    onclick="openReturnModal({{ $loan->id }}, '{{ $loan->inventoryItem->name }}', '{{ $loan->borrow_date->format('Y-m-d') }}')"
+                                                    class="text-green-600 hover:text-green-900">
                                                     Return
                                                 </button>
                                             </td>
@@ -336,9 +408,13 @@
                 </div>
             @endif
 
-            <!-- Past Loans Section -->
+            {{-- ================================================================ --}}
+            {{-- PAST LOANS SECTION --}}
+            {{-- ================================================================ --}}
             @if($pastLoans->isNotEmpty())
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                    
+                    {{-- Section Header --}}
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-green-100">
                         <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
                             <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -348,17 +424,30 @@
                         </h3>
                         <p class="text-gray-600">Completed loan history</p>
                     </div>
+
                     <div class="p-6">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrow Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Item
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Category
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Quantity
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Borrow Date
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Return Date
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Duration
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -368,8 +457,7 @@
                                                 {{ $loan->inventoryItem->name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
                                                     {{ $loan->inventoryItem->category }}
                                                 </span>
                                             </td>
@@ -391,7 +479,6 @@
                             </table>
                         </div>
 
-                        <!-- Pagination -->
                         <div class="mt-4">
                             {{ $pastLoans->links() }}
                         </div>
@@ -399,53 +486,74 @@
                 </div>
             @endif
 
-            <!-- Borrow Details Modal -->
-            <div id="borrowModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-                <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-3xl shadow-lg rounded-md bg-white">
-                    <div class="mt-3">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Borrow Selected Items</h3>
-                        <form id="borrowForm" method="POST" action="{{ route('cadet.inventory.loan.create') }}">
-                            @csrf
-                            <div class="overflow-y-auto max-h-96">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="borrowItemsContainer" class="bg-white divide-y divide-gray-200">
-                                        <!-- Selected items will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <div class="mt-6">
-                                <label for="borrow_date" class="block text-sm font-medium text-gray-700 mb-1">Borrow Date</label>
-                                <input type="date" name="borrow_date" id="borrow_date" required
-                                    value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}"
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                            
-                            <div class="mt-6 flex justify-end space-x-4">
-                                <button type="button" onclick="closeBorrowModal()" 
-                                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                                    Cancel
-                                </button>
-                                <button type="submit" id="confirmBorrowBtn" 
-                                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                                    Confirm Borrow
-                                </button>
-                            </div>
-                        </form>
+        </div>
+    </div>
+
+    {{-- ================================================================ --}}
+    {{-- BORROW DETAILS MODAL --}}
+    {{-- ================================================================ --}}
+    <div id="borrowModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-3xl shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Borrow Selected Items</h3>
+                <form id="borrowForm" method="POST" action="{{ route('cadet.inventory.loan.create') }}">
+                    @csrf
+                    <div class="overflow-y-auto max-h-96">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Item
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Available
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Quantity
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="borrowItemsContainer" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
                     </div>
-                </div>
+                    
+                    <div class="mt-6">
+                        <label for="borrow_date" class="block text-sm font-medium text-gray-700 mb-1">
+                            Borrow Date
+                        </label>
+                        <input 
+                            type="date" 
+                            name="borrow_date" 
+                            id="borrow_date" 
+                            required
+                            value="{{ date('Y-m-d') }}" 
+                            max="{{ date('Y-m-d') }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end space-x-4">
+                        <button 
+                            type="button" 
+                            onclick="closeBorrowModal()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Cancel
+                        </button>
+                        <button 
+                            type="submit" 
+                            id="confirmBorrowBtn" 
+                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                            Confirm Borrow
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Return Item Modal -->
+    {{-- ================================================================ --}}
+    {{-- RETURN ITEM MODAL --}}
+    {{-- ================================================================ --}}
     <div id="returnModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
@@ -459,18 +567,27 @@
                     @csrf
                     @method('PATCH')
                     <div class="mb-4">
-                        <label for="return_date" class="block text-sm font-medium text-gray-700 mb-2">Return Date</label>
-                        <input type="date" name="return_date" id="return_date" 
-                               value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}"
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <label for="return_date" class="block text-sm font-medium text-gray-700 mb-2">
+                            Return Date
+                        </label>
+                        <input 
+                            type="date" 
+                            name="return_date" 
+                            id="return_date" 
+                            value="{{ date('Y-m-d') }}" 
+                            max="{{ date('Y-m-d') }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     </div>
                     <div class="flex justify-center space-x-4">
-                        <button type="button" onclick="closeReturnModal()"
-                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        <button 
+                            type="button" 
+                            onclick="closeReturnModal()"
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                             Cancel
                         </button>
-                        <button type="submit"
-                                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        <button 
+                            type="submit"
+                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
                             Return Item
                         </button>
                     </div>
@@ -479,7 +596,9 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    {{-- ================================================================ --}}
+    {{-- DELETE CONFIRMATION MODAL --}}
+    {{-- ================================================================ --}}
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
@@ -493,12 +612,15 @@
                     @csrf
                     @method('DELETE')
                     <div class="flex justify-center space-x-4">
-                        <button type="button" onclick="closeDeleteModal()"
-                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        <button 
+                            type="button" 
+                            onclick="closeDeleteModal()"
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                             Cancel
                         </button>
-                        <button type="submit"
-                                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                        <button 
+                            type="submit"
+                            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
                             Remove
                         </button>
                     </div>
@@ -507,6 +629,9 @@
         </div>
     </div>
 
+    {{-- ================================================================ --}}
+    {{-- FLASH MESSAGES --}}
+    {{-- ================================================================ --}}
     @if(session('success'))
         <div class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
             {{ session('success') }}
@@ -543,36 +668,35 @@
         </script>
     @endif
 
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT - VALIDATION FUNCTIONS --}}
+    {{-- ================================================================ --}}
     <script>
-        // General size validation function
+        // ================================================================
+        // SIZE VALIDATION
+        // ================================================================
         function validateUniformSize(size, componentName) {
             const errors = [];
             
-            // Check if size is empty
             if (!size || size.trim() === '') {
                 return { isValid: false, errors: ['Size cannot be empty'] };
             }
 
-            // Trim the size
             size = size.trim();
             
-            // Check length (1-10 characters)
             if (size.length < 1 || size.length > 10) {
                 errors.push('Size must be between 1 and 10 characters');
             }
             
-            // Check allowed characters (letters, numbers, spaces, forward slashes, hyphens)
             const allowedPattern = /^[A-Za-z0-9\s\/-]+$/;
             if (!allowedPattern.test(size)) {
                 errors.push('Size can only contain letters, numbers, spaces, forward slashes (/) and hyphens (-)');
             }
             
-            // Check if it starts or ends with space
             if (size !== size.trim()) {
                 errors.push('Size cannot start or end with spaces');
             }
             
-            // Check for consecutive spaces
             if (/\s{2,}/.test(size)) {
                 errors.push('Size cannot contain consecutive spaces');
             }
@@ -584,7 +708,6 @@
             };
         }
 
-        // Real-time validation for size inputs
         function attachSizeValidation() {
             document.querySelectorAll('.size-input').forEach(input => {
                 const errorDiv = input.parentElement.querySelector('.validation-error');
@@ -601,25 +724,22 @@
                     } else {
                         input.classList.remove('border-gray-300');
                         input.classList.add('border-red-500');
-                        errorDiv.textContent = validation.errors[0]; // Show first error
+                        errorDiv.textContent = validation.errors[0];
                         errorDiv.classList.remove('hidden');
                     }
                     
-                    // Update submit button state
                     updateSubmitButtonState();
                 }
                 
                 input.addEventListener('input', validateInput);
                 input.addEventListener('blur', validateInput);
                 
-                // Initial validation if there's a value
                 if (input.value) {
                     validateInput();
                 }
             });
         }
 
-        // Update submit button state based on validation
         function updateSubmitButtonState() {
             const submitBtn = document.getElementById('updateSizesBtn');
             if (!submitBtn) return;
@@ -639,13 +759,12 @@
             }
         }
 
-        // Form submission validation
         function validateForm() {
             let isValid = true;
             const errors = [];
             
             document.querySelectorAll('.size-input').forEach(input => {
-                if (input.value.trim()) { // Only validate non-empty inputs
+                if (input.value.trim()) {
                     const componentName = input.dataset.componentName;
                     const validation = validateUniformSize(input.value, componentName);
                     
@@ -664,7 +783,9 @@
             return true;
         }
 
-        // AJAX function to load uniform components
+        // ================================================================
+        // UNIFORM COMPONENTS LOADING
+        // ================================================================
         function loadUniformComponents(uniformTypeId) {
             const container = document.getElementById('uniform-components-container');
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -678,7 +799,6 @@
                 return;
             }
 
-            // Show loading indicator
             container.innerHTML = '';
             loadingIndicator.classList.remove('hidden');
 
@@ -763,8 +883,6 @@
                         `;
 
                         container.innerHTML = formHtml;
-                        
-                        // Attach validation to new inputs
                         attachSizeValidation();
                     } else {
                         container.innerHTML = `
@@ -785,7 +903,9 @@
                 });
         }
 
-        // Return modal functions
+        // ================================================================
+        // MODAL FUNCTIONS
+        // ================================================================
         function openReturnModal(loanId, itemName, borrowDate) {
             document.getElementById('modalTitle').textContent = `Return ${itemName}`;
             document.getElementById('modalDescription').textContent = `Return ${itemName} borrowed on ${borrowDate}?`;
@@ -798,7 +918,6 @@
             document.getElementById('returnModal').classList.add('hidden');
         }
 
-        // Delete modal functions
         function removeUniformSize(sizeEntryId, componentName) {
             document.getElementById('deleteModalDescription').textContent = 
                 `Are you sure you want to remove the uniform size for ${componentName}?`;
@@ -810,7 +929,24 @@
             document.getElementById('deleteModal').classList.add('hidden');
         }
 
-        // Close modals when clicking outside
+        function closeBorrowModal() {
+            document.getElementById('borrowModal').classList.add('hidden');
+        }
+
+        function filterItemsByCategory(category) {
+            const rows = document.querySelectorAll('.item-row');
+            rows.forEach(row => {
+                if (category === '' || row.dataset.category === category) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // ================================================================
+        // EVENT LISTENERS
+        // ================================================================
         document.getElementById('returnModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeReturnModal();
@@ -823,29 +959,9 @@
             }
         });
 
-        // Auto-update quantity max based on selected item
-        document.getElementById('item_id').addEventListener('change', function() {
-            const quantityInput = document.getElementById('quantity');
-            const selectedOption = this.options[this.selectedIndex];
-            
-            if (selectedOption.value) {
-                const availableText = selectedOption.textContent;
-                const match = availableText.match(/\((\d+) available\)/);
-                if (match) {
-                    quantityInput.setAttribute('max', match[1]);
-                    quantityInput.setAttribute('placeholder', `Max: ${match[1]}`);
-                }
-            } else {
-                quantityInput.removeAttribute('max');
-                quantityInput.setAttribute('placeholder', '');
-            }
-        });
-
-        // Initialize validation on page load
         document.addEventListener('DOMContentLoaded', function() {
             attachSizeValidation();
             
-            // Add form validation to existing form if present
             const existingForm = document.getElementById('uniformSizeForm');
             if (existingForm) {
                 existingForm.addEventListener('submit', function(e) {
@@ -857,202 +973,119 @@
         });
     </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('loanForm');
-    const itemSelect = document.getElementById('item_id');
-    const quantityInput = document.getElementById('quantity');
-    const submitBtn = document.getElementById('submitBtn');
-
-    // Update max quantity based on selected item
-    itemSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.value) {
-            const maxQuantity = selectedOption.dataset.available;
-            quantityInput.max = maxQuantity;
-            quantityInput.placeholder = `Max: ${maxQuantity}`;
-            console.log('Item selected:', {
-                itemId: selectedOption.value,
-                itemName: selectedOption.text,
-                maxQuantity: maxQuantity
+    {{-- ================================================================ --}}
+    {{-- JAVASCRIPT - MULTIPLE ITEMS BORROWING --}}
+    {{-- ================================================================ --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectItemsBtn = document.getElementById('selectItemsBtn');
+            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+            const borrowModal = document.getElementById('borrowModal');
+            const borrowItemsContainer = document.getElementById('borrowItemsContainer');
+            const borrowForm = document.getElementById('borrowForm');
+            
+            // ================================================================
+            // UPDATE BUTTON STATE
+            // ================================================================
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+                    selectItemsBtn.disabled = checkedItems.length === 0;
+                });
             });
-        } else {
-            quantityInput.max = '';
-            quantityInput.placeholder = '';
-        }
-    });
-
-    // Form submission handler with debug
-    form.addEventListener('submit', function(e) {
-        console.log('=== FORM SUBMISSION DEBUG ===');
-        
-        const formData = new FormData(form);
-        const data = {};
-        
-        for (let [key, value] of formData.entries()) {
-            data[key] = value;
-            console.log(key + ':', value);
-        }
-        
-        // Basic validation
-        if (!data.item_id || !data.quantity || !data.borrow_date) {
-            console.error('Validation failed: Missing required fields');
-            alert('Please fill all required fields');
-            e.preventDefault();
-            return false;
-        }
-        
-        if (parseInt(data.quantity) <= 0) {
-            console.error('Validation failed: Invalid quantity');
-            alert('Quantity must be greater than 0');
-            e.preventDefault();
-            return false;
-        }
-        
-        // Check against available quantity
-        const selectedOption = itemSelect.options[itemSelect.selectedIndex];
-        const maxQuantity = parseInt(selectedOption.dataset.available);
-        if (parseInt(data.quantity) > maxQuantity) {
-            console.error('Validation failed: Quantity exceeds available');
-            alert(`Quantity cannot exceed ${maxQuantity}`);
-            e.preventDefault();
-            return false;
-        }
-        
-        console.log('Form validation passed, submitting...');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
-    });
-});
-</script>
-
-<script>
-// New JavaScript for borrowing multiple items
-document.addEventListener('DOMContentLoaded', function() {
-    const selectItemsBtn = document.getElementById('selectItemsBtn');
-    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-    const borrowModal = document.getElementById('borrowModal');
-    const borrowItemsContainer = document.getElementById('borrowItemsContainer');
-    const borrowForm = document.getElementById('borrowForm');
-    
-    // Update select items button state when checkboxes change
-    itemCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const checkedItems = document.querySelectorAll('.item-checkbox:checked');
-            selectItemsBtn.disabled = checkedItems.length === 0;
-        });
-    });
-    
-    // Filter items by category
-    window.filterItemsByCategory = function(category) {
-        const rows = document.querySelectorAll('.item-row');
-        rows.forEach(row => {
-            if (category === '' || row.dataset.category === category) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    };
-    
-    // Select items button click handler
-    selectItemsBtn.addEventListener('click', function() {
-        const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
-        
-        if (selectedCheckboxes.length === 0) {
-            alert('Please select at least one item to borrow.');
-            return;
-        }
-        
-        // Clear previous items in the modal
-        borrowItemsContainer.innerHTML = '';
-        
-        // Add selected items to the modal
-        selectedCheckboxes.forEach(checkbox => {
-            const itemId = checkbox.value;
-            const itemName = checkbox.dataset.itemName;
-            const availableQuantity = parseInt(checkbox.dataset.availableQuantity);
             
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ${itemName}
-                    <input type="hidden" name="item_ids[]" value="${itemId}">
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${availableQuantity}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <input type="number" name="quantities[${itemId}]" min="1" max="${availableQuantity}" value="1" 
-                           class="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 quantity-input"
-                           data-item-id="${itemId}" data-max-quantity="${availableQuantity}">
-                </td>
-            `;
-            
-            borrowItemsContainer.appendChild(row);
-            
-            // Add event listener to update max quantity
-            const quantityInput = row.querySelector('.quantity-input');
-            quantityInput.addEventListener('change', function() {
-                const value = parseInt(this.value);
-                const max = parseInt(this.dataset.maxQuantity);
+            // ================================================================
+            // SELECT ITEMS BUTTON HANDLER
+            // ================================================================
+            selectItemsBtn.addEventListener('click', function() {
+                const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
                 
-                if (value < 1) {
-                    this.value = 1;
-                } else if (value > max) {
-                    this.value = max;
+                if (selectedCheckboxes.length === 0) {
+                    alert('Please select at least one item to borrow.');
+                    return;
+                }
+                
+                borrowItemsContainer.innerHTML = '';
+                
+                selectedCheckboxes.forEach(checkbox => {
+                    const itemId = checkbox.value;
+                    const itemName = checkbox.dataset.itemName;
+                    const availableQuantity = parseInt(checkbox.dataset.availableQuantity);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            ${itemName}
+                            <input type="hidden" name="item_ids[]" value="${itemId}">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${availableQuantity}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <input type="number" name="quantities[${itemId}]" min="1" max="${availableQuantity}" value="1" 
+                                   class="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 quantity-input"
+                                   data-item-id="${itemId}" data-max-quantity="${availableQuantity}">
+                        </td>
+                    `;
+                    
+                    borrowItemsContainer.appendChild(row);
+                    
+                    const quantityInput = row.querySelector('.quantity-input');
+                    quantityInput.addEventListener('change', function() {
+                        const value = parseInt(this.value);
+                        const max = parseInt(this.dataset.maxQuantity);
+                        
+                        if (value < 1) {
+                            this.value = 1;
+                        } else if (value > max) {
+                            this.value = max;
+                        }
+                    });
+                });
+                
+                borrowModal.classList.remove('hidden');
+            });
+            
+            // ================================================================
+            // MODAL CLOSE HANDLER
+            // ================================================================
+            borrowModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeBorrowModal();
                 }
             });
-        });
-        
-        // Show the modal
-        borrowModal.classList.remove('hidden');
-    });
-    
-    // Close borrow modal
-    window.closeBorrowModal = function() {
-        borrowModal.classList.add('hidden');
-    };
-    
-    // Close modal when clicking outside
-    borrowModal.addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeBorrowModal();
-        }
-    });
-    
-    // Form submission handler
-    borrowForm.addEventListener('submit', function(e) {
-        const quantityInputs = document.querySelectorAll('.quantity-input');
-        let isValid = true;
-        let errorMessage = '';
-        
-        // Validate quantities
-        quantityInputs.forEach(input => {
-            const value = parseInt(input.value);
-            const max = parseInt(input.dataset.maxQuantity);
             
-            if (value < 1) {
-                isValid = false;
-                errorMessage = 'Quantity must be at least 1.';
-            } else if (value > max) {
-                isValid = false;
-                errorMessage = `Quantity cannot exceed ${max}.`;
-            }
+            // ================================================================
+            // FORM SUBMISSION HANDLER
+            // ================================================================
+            borrowForm.addEventListener('submit', function(e) {
+                const quantityInputs = document.querySelectorAll('.quantity-input');
+                let isValid = true;
+                let errorMessage = '';
+                
+                quantityInputs.forEach(input => {
+                    const value = parseInt(input.value);
+                    const max = parseInt(input.dataset.maxQuantity);
+                    
+                    if (value < 1) {
+                        isValid = false;
+                        errorMessage = 'Quantity must be at least 1.';
+                    } else if (value > max) {
+                        isValid = false;
+                        errorMessage = `Quantity cannot exceed ${max}.`;
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert(errorMessage);
+                    return false;
+                }
+                
+                const confirmBtn = document.getElementById('confirmBorrowBtn');
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Processing...';
+            });
         });
-        
-        if (!isValid) {
-            e.preventDefault();
-            alert(errorMessage);
-            return false;
-        }
-        
-        // Show loading state
-        const confirmBtn = document.getElementById('confirmBorrowBtn');
-        confirmBtn.disabled = true;
-        confirmBtn.textContent = 'Processing...';
-    });
-});
-</script>
-
+    </script>
 </x-app-layout>
