@@ -81,7 +81,7 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                     </svg>
                                                     <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                                                        {{ $training->start_datetime->diffInDays($training->end_datetime) + 1 }}-day training
+                                                        {{ floor($training->start_datetime->diffInDays($training->end_datetime)) + 1 }}-day training
                                                     </span>
                                                 </p>
                                             @endif

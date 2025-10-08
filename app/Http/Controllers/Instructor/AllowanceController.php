@@ -196,7 +196,7 @@ class AllowanceController extends Controller
         if ($allowanceType === 'daily') {
             $days = 1;
             if ($training->start_datetime && $training->end_datetime) {
-                $days = $training->start_datetime->diffInDays($training->end_datetime) + 1;
+                $days = floor($training->start_datetime->diffInDays($training->end_datetime)) + 1;
             }
 
             $baseRate = 50;
@@ -306,7 +306,7 @@ class AllowanceController extends Controller
         $isMultiDay = $start->toDateString() !== $end->toDateString();
         
         if ($isMultiDay) {
-            $days = $start->diffInDays($end) + 1;
+            $days = floor($start->diffInDays($end)) + 1;
             return $days . ' days';
         } else {
             $diffInMinutes = $start->diffInMinutes($end);
