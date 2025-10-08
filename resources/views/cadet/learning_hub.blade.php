@@ -104,18 +104,19 @@
                             </span>
                         </h4>
 
-                        <div id="materialsContainer">
+                        <div id="materialsContainer" x-data="{ openMaterialId: null }">
                             @forelse($materials->groupBy('learning_material_category_id') as $grouped)
                                 @foreach($grouped as $material)
-                                    <div id="material-{{ $material->id }}" x-data="{ open: false }" class="border border-gray-200 rounded-lg mb-4">
-                                        <button @click="open = !open"
-                                                class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
+                                    <div id="material-{{ $material->id }}" class="border border-gray-200 rounded-lg mb-4">
+                                        <button 
+                                            @click="openMaterialId = openMaterialId === {{ $material->id }} ? null : {{ $material->id }}"
+                                            class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
                                             {{ $material->title }}
-                                            <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg :class="{'rotate-180': openMaterialId === {{ $material->id }}}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                             </svg>
                                         </button>
-                                        <div x-show="open" x-transition class="p-4 bg-white rounded-b-lg border-t">
+                                        <div x-show="openMaterialId === {{ $material->id }}" x-transition class="p-4 bg-white rounded-b-lg border-t">
                                             <div class="flex flex-col md:flex-row gap-4">
                                                 @if($material->file_url && $material->description && Str::endsWith($material->file_url, ['jpg','jpeg','png','gif','mp4','webm','avi']))
                                                     <div class="md:w-[60%]">
@@ -1452,21 +1453,21 @@
                         }
 
                         materialsHTML += `
-                            <div id="material-${material.id}" x-data="{ open: false }" class="border border-gray-200 rounded-lg mb-4">
-                                <button @click="open = !open"
-                                        class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
-                                    ${material.title}
-                                    <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
-                                <div x-show="open" x-transition class="p-4 bg-white rounded-b-lg border-t">
-                                    <div class="flex flex-col md:flex-row gap-4">
-                                        ${contentHTML}
-                                    </div>
+                        <div id="material-${material.id}" class="border border-gray-200 rounded-lg mb-4">
+                            <button @click="openMaterialId = openMaterialId === ${material.id} ? null : ${material.id}"
+                                    class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
+                                ${material.title}
+                                <svg :class="{'rotate-180': openMaterialId === ${material.id}}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="openMaterialId === ${material.id}" x-transition class="p-4 bg-white rounded-b-lg border-t">
+                                <div class="flex flex-col md:flex-row gap-4">
+                                    ${contentHTML}
                                 </div>
                             </div>
-                        `;
+                        </div>
+                    `;
 
                         // Add to dropdown
                         materialDropdown.innerHTML += `<option value="material-${material.id}">${material.title}</option>`;
