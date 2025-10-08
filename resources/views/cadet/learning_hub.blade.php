@@ -104,18 +104,19 @@
                             </span>
                         </h4>
 
-                        <div id="materialsContainer">
+                        <div id="materialsContainer" x-data="{ openMaterialId: null }">
                             @forelse($materials->groupBy('learning_material_category_id') as $grouped)
                                 @foreach($grouped as $material)
-                                    <div id="material-{{ $material->id }}" x-data="{ open: false }" class="border border-gray-200 rounded-lg mb-4">
-                                        <button @click="open = !open"
-                                                class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
+                                    <div id="material-{{ $material->id }}" class="border border-gray-200 rounded-lg mb-4">
+                                        <button 
+                                            @click="openMaterialId = openMaterialId === {{ $material->id }} ? null : {{ $material->id }}"
+                                            class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
                                             {{ $material->title }}
-                                            <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg :class="{'rotate-180': openMaterialId === {{ $material->id }}}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                             </svg>
                                         </button>
-                                        <div x-show="open" x-transition class="p-4 bg-white rounded-b-lg border-t">
+                                        <div x-show="openMaterialId === {{ $material->id }}" x-transition class="p-4 bg-white rounded-b-lg border-t">
                                             <div class="flex flex-col md:flex-row gap-4">
                                                 @if($material->file_url && $material->description && Str::endsWith($material->file_url, ['jpg','jpeg','png','gif','mp4','webm','avi']))
                                                     <div class="md:w-[60%]">
@@ -1452,21 +1453,21 @@
                         }
 
                         materialsHTML += `
-                            <div id="material-${material.id}" x-data="{ open: false }" class="border border-gray-200 rounded-lg mb-4">
-                                <button @click="open = !open"
-                                        class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
-                                    ${material.title}
-                                    <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
-                                <div x-show="open" x-transition class="p-4 bg-white rounded-b-lg border-t">
-                                    <div class="flex flex-col md:flex-row gap-4">
-                                        ${contentHTML}
-                                    </div>
+                        <div id="material-${material.id}" class="border border-gray-200 rounded-lg mb-4">
+                            <button @click="openMaterialId = openMaterialId === ${material.id} ? null : ${material.id}"
+                                    class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
+                                ${material.title}
+                                <svg :class="{'rotate-180': openMaterialId === ${material.id}}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="openMaterialId === ${material.id}" x-transition class="p-4 bg-white rounded-b-lg border-t">
+                                <div class="flex flex-col md:flex-row gap-4">
+                                    ${contentHTML}
                                 </div>
                             </div>
-                        `;
+                        </div>
+                    `;
 
                         // Add to dropdown
                         materialDropdown.innerHTML += `<option value="material-${material.id}">${material.title}</option>`;
@@ -1551,25 +1552,40 @@
         function openInstructorModal(instructorId) {
             const modal = document.getElementById('instructorModal');
             const modalContent = document.getElementById('modalContent');
-            const loadingState = document.getElementById('loadingState');
-            const errorState = document.getElementById('errorState');
 
-            // Show modal and loading state
+            // Reset modal content to loading state
+            modalContent.innerHTML = `
+                <div id="loadingState" class="text-center py-10">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p class="text-gray-600 mt-4">Loading instructor profile...</p>
+                </div>
+                <div id="errorState" class="text-center py-10 hidden">
+                    <svg class="w-12 h-12 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-red-600">Error loading instructor profile.</p>
+                </div>
+            `;
+
+            // Show modal
             modal.classList.remove('hidden');
-            loadingState.classList.remove('hidden');
-            errorState.classList.add('hidden');
 
             // Fetch instructor data
             fetch(`/api/instructor/${instructorId}`)
                 .then(response => response.json())
                 .then(data => {
-                    loadingState.classList.add('hidden');
                     modalContent.innerHTML = generateInstructorProfileHTML(data);
                 })
                 .catch(error => {
                     console.error('Error fetching instructor data:', error);
-                    loadingState.classList.add('hidden');
-                    errorState.classList.remove('hidden');
+                    modalContent.innerHTML = `
+                        <div id="errorState" class="text-center py-10">
+                            <svg class="w-12 h-12 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p class="text-red-600">Error loading instructor profile.</p>
+                        </div>
+                    `;
                 });
         }
 

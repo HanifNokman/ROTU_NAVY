@@ -23,7 +23,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Drill Ground',
                 'start_datetime' => Carbon::now()->addDays(1)->setTime(8, 0),
                 'end_datetime' => Carbon::now()->addDays(1)->setTime(12, 0),
-                'involvement' => json_encode(['Intake-11', 'Intake-12', 'Intake-13']),
+                'involvement' => 'Intake - 11, Intake - 12, Intake - 13',
                 'status' => 'Active',
             ],
             [
@@ -32,7 +32,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Gymnasium',
                 'start_datetime' => Carbon::now()->addDays(3)->setTime(9, 0),
                 'end_datetime' => Carbon::now()->addDays(3)->setTime(11, 0),
-                'involvement' => json_encode(['Intake-11', 'Intake-12']),
+                'involvement' => 'Intake - 11, Intake - 12',
                 'status' => 'Active',
             ],
             [
@@ -41,7 +41,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Lecture Hall',
                 'start_datetime' => Carbon::now()->addDays(5)->setTime(14, 0),
                 'end_datetime' => Carbon::now()->addDays(5)->setTime(16, 0),
-                'involvement' => json_encode(['Intake-12', 'Intake-13']),
+                'involvement' => 'Intake - 12, Intake - 13',
                 'status' => 'Active',
             ],
             [
@@ -50,7 +50,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Medical Bay',
                 'start_datetime' => Carbon::now()->addDays(7)->setTime(10, 0),
                 'end_datetime' => Carbon::now()->addDays(7)->setTime(12, 0),
-                'involvement' => json_encode(['Intake-11']),
+                'involvement' => 'Intake - 11',
                 'status' => 'Active',
             ],
             [
@@ -59,7 +59,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Classroom',
                 'start_datetime' => Carbon::now()->addDays(9)->setTime(8, 0),
                 'end_datetime' => Carbon::now()->addDays(9)->setTime(10, 0),
-                'involvement' => json_encode(['Intake-13']),
+                'involvement' => 'Intake - 13',
                 'status' => 'Active',
             ],
             [
@@ -68,7 +68,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Armory',
                 'start_datetime' => Carbon::now()->addDays(11)->setTime(13, 0),
                 'end_datetime' => Carbon::now()->addDays(11)->setTime(15, 0),
-                'involvement' => json_encode(['Intake-11', 'Intake-12', 'Intake-13']),
+                'involvement' => 'Intake - 11, Intake - 12, Intake - 13',
                 'status' => 'Active',
             ],
             [
@@ -77,7 +77,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Outdoor Field',
                 'start_datetime' => Carbon::now()->addDays(13)->setTime(9, 0),
                 'end_datetime' => Carbon::now()->addDays(13)->setTime(11, 0),
-                'involvement' => json_encode(['Intake-12']),
+                'involvement' => 'Intake - 12',
                 'status' => 'Active',
             ],
 
@@ -88,7 +88,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Training Camp',
                 'start_datetime' => Carbon::now()->addDays(15)->setTime(8, 0),
                 'end_datetime' => Carbon::now()->addDays(17)->setTime(17, 0),
-                'involvement' => json_encode(['Intake-12', 'Intake-13']),
+                'involvement' => 'Intake - 12, Intake - 13',
                 'status' => 'Active',
             ],
             [
@@ -97,7 +97,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Forest Area',
                 'start_datetime' => Carbon::now()->addDays(20)->setTime(7, 0),
                 'end_datetime' => Carbon::now()->addDays(22)->setTime(18, 0),
-                'involvement' => json_encode(['Intake-11', 'Intake-12']),
+                'involvement' => 'Intake - 11, Intake - 12',
                 'status' => 'Active',
             ],
             [
@@ -106,7 +106,7 @@ class TrainingSeeder extends Seeder
                 'location' => 'Conference Room',
                 'start_datetime' => Carbon::now()->addDays(25)->setTime(9, 0),
                 'end_datetime' => Carbon::now()->addDays(27)->setTime(16, 0),
-                'involvement' => json_encode(['Intake-13']),
+                'involvement' => 'Intake - 13',
                 'status' => 'Active',
             ],
         ];

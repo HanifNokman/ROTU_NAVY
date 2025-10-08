@@ -118,7 +118,7 @@
                                                             $isMultiDay = $start->toDateString() !== $end->toDateString();
                                                             
                                                             if ($isMultiDay) {
-                                                                $days = $start->diffInDays($end) + 1;
+                                                                $days = floor($start->diffInDays($end)) + 1;
                                                                 $duration = $days . ' days';
                                                             } else {
                                                                 $diffInMinutes = $start->diffInMinutes($end);

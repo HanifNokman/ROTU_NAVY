@@ -48,6 +48,28 @@ class LearningHubController extends Controller
 
         $instructors = $instructorQuery->get();
 
+        $rankOrder = [
+            'Kpt',    // Highest
+            'Kdr',
+            'Lt.Kdr',
+            'Lt',
+            'Lt.Dya',
+            'Lt.M',
+            'PWII',
+            'PWI',
+            'BK',
+            'BM',
+            'LK',
+            'LKI',
+            'LKII'    // Lowest
+        ];
+
+        $instructors = $instructors->sortBy(function($instructor) use ($rankOrder) {
+            $rank = $instructor->rank ?? '';
+            $index = array_search($rank, $rankOrder);
+            return $index !== false ? $index : count($rankOrder);
+        });
+
         return view('cadet.learning_hub', [
             'categories' => $categories,
             'materials' => $materials,
@@ -103,6 +125,28 @@ class LearningHubController extends Controller
         }
 
         $instructors = $instructorQuery->get();
+
+        $rankOrder = [
+            'Kpt',    // Highest
+            'Kdr',
+            'Lt.Kdr',
+            'Lt',
+            'Lt.Dya',
+            'Lt.M',
+            'PWII',
+            'PWI',
+            'BK',
+            'BM',
+            'LK',
+            'LKI',
+            'LKII'    // Lowest
+        ];
+
+        $instructors = $instructors->sortBy(function($instructor) use ($rankOrder) {
+            $rank = $instructor->rank ?? '';
+            $index = array_search($rank, $rankOrder);
+            return $index !== false ? $index : count($rankOrder);
+        })->values();
 
         return response()->json($instructors);
     }
