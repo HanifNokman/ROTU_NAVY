@@ -175,7 +175,7 @@ class QuizQuestionSeeder extends Seeder
                         'option_c' => $questionData['option_c'] ?? null,
                         'option_d' => $questionData['option_d'] ?? null,
                         'correct_answer' => $questionData['correct_answer'] ?? null,
-                        'created_by' => $creator->id,
+                        'created_by' => 1,
                         'status' => $questionData['status'],
                     ]);
                 }
