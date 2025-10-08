@@ -1551,25 +1551,40 @@
         function openInstructorModal(instructorId) {
             const modal = document.getElementById('instructorModal');
             const modalContent = document.getElementById('modalContent');
-            const loadingState = document.getElementById('loadingState');
-            const errorState = document.getElementById('errorState');
 
-            // Show modal and loading state
+            // Reset modal content to loading state
+            modalContent.innerHTML = `
+                <div id="loadingState" class="text-center py-10">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p class="text-gray-600 mt-4">Loading instructor profile...</p>
+                </div>
+                <div id="errorState" class="text-center py-10 hidden">
+                    <svg class="w-12 h-12 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-red-600">Error loading instructor profile.</p>
+                </div>
+            `;
+
+            // Show modal
             modal.classList.remove('hidden');
-            loadingState.classList.remove('hidden');
-            errorState.classList.add('hidden');
 
             // Fetch instructor data
             fetch(`/api/instructor/${instructorId}`)
                 .then(response => response.json())
                 .then(data => {
-                    loadingState.classList.add('hidden');
                     modalContent.innerHTML = generateInstructorProfileHTML(data);
                 })
                 .catch(error => {
                     console.error('Error fetching instructor data:', error);
-                    loadingState.classList.add('hidden');
-                    errorState.classList.remove('hidden');
+                    modalContent.innerHTML = `
+                        <div id="errorState" class="text-center py-10">
+                            <svg class="w-12 h-12 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p class="text-red-600">Error loading instructor profile.</p>
+                        </div>
+                    `;
                 });
         }
 
