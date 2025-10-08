@@ -102,263 +102,258 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: LEARNING MATERIALS
-                                    =========================================================================== --}}
-                                    @if($selectedModel == 'learning_materials')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instructor</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File URL</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: UNIFORM TYPES
-                                    =========================================================================== --}}
-                                    @elseif($selectedModel == 'uniform_types')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: INVENTORY ITEMS
-                                    =========================================================================== --}}
-                                    @elseif($selectedModel == 'inventory_items')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Qty</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available Qty</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: UNIFORM COMPONENTS
-                                    =========================================================================== --}}
-                                    @elseif($selectedModel == 'uniform_components')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uniform Type</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: EQUIPMENT LOANS
-                                    =========================================================================== --}}
-                                    @elseif($selectedModel == 'equipment_loans')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cadet</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrow Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: GALLERIES
-                                    =========================================================================== --}}
-                                    @elseif($selectedModel == 'galleries')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instructor</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image Path</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: TRAININGS
-                                    =========================================================================== --}}
-                                    @elseif($selectedModel == 'trainings')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start DateTime</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End DateTime</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration (hrs)</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-
-                                    {{-- ============================================================================
-                                    TABLE HEADERS: QUIZ QUESTIONS
-                                    =========================================================================== --}}
-                                    @elseif($selectedModel == 'quiz_questions')
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Question Text</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Creator</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    @endif
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($data as $item)
+                        <div class="max-h-96 overflow-y-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
                                     <tr>
-                                        {{-- ============================================================================
-                                        TABLE ROWS: LEARNING MATERIALS
-                                        =========================================================================== --}}
+                                        {{-- Example for sticky headers: add these classes to all <th> --}}
                                         @if($selectedModel == 'learning_materials')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->instructor->user->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->category->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->file_url, 30) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
-
-                                        {{-- ============================================================================
-                                        TABLE ROWS: UNIFORM TYPES
-                                        =========================================================================== --}}
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Title</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Instructor</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Description</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">File URL</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
                                         @elseif($selectedModel == 'uniform_types')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->type_name }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->description }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->created_at->format('d/m/Y') }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
-
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Type Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Description</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Created At</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
                                         {{-- ============================================================================
-                                        TABLE ROWS: INVENTORY ITEMS
+                                        TABLE HEADERS: INVENTORY ITEMS
                                         =========================================================================== --}}
                                         @elseif($selectedModel == 'inventory_items')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->category }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->total_quantity }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->available_quantity }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Total Qty</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Available Qty</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Description</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
 
                                         {{-- ============================================================================
-                                        TABLE ROWS: UNIFORM COMPONENTS
+                                        TABLE HEADERS: UNIFORM COMPONENTS
                                         =========================================================================== --}}
                                         @elseif($selectedModel == 'uniform_components')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->component_name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->uniformType->type_name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->created_at->format('d/m/Y') }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Component Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Uniform Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Created At</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
 
                                         {{-- ============================================================================
-                                        TABLE ROWS: EQUIPMENT LOANS
+                                        TABLE HEADERS: EQUIPMENT LOANS
                                         =========================================================================== --}}
                                         @elseif($selectedModel == 'equipment_loans')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->cadet->user->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->inventoryItem->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->quantity }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->borrow_date ? \Carbon\Carbon::parse($item->borrow_date)->format('d/m/Y') : 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->return_date ? \Carbon\Carbon::parse($item->return_date)->format('d/m/Y') : 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Cadet</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Item</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Quantity</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Borrow Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Return Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
 
                                         {{-- ============================================================================
-                                        TABLE ROWS: GALLERIES
+                                        TABLE HEADERS: GALLERIES
                                         =========================================================================== --}}
                                         @elseif($selectedModel == 'galleries')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->category->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->instructor->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->image_path, 30) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Title</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Instructor</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Description</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Image Path</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
+
                                         {{-- ============================================================================
-                                        TABLE ROWS: TRAININGS
+                                        TABLE HEADERS: TRAININGS
                                         =========================================================================== --}}
                                         @elseif($selectedModel == 'trainings')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->location }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->start_datetime ? \Carbon\Carbon::parse($item->start_datetime)->format('d/m/Y H:i') : 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->end_datetime ? \Carbon\Carbon::parse($item->end_datetime)->format('d/m/Y H:i') : 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->duration_hours }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Title</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Location</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Start DateTime</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">End DateTime</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Duration (hrs)</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
 
                                         {{-- ============================================================================
-                                        TABLE ROWS: QUIZ QUESTIONS
+                                        TABLE HEADERS: QUIZ QUESTIONS
                                         =========================================================================== --}}
                                         @elseif($selectedModel == 'quiz_questions')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->question_text, 50) }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->category->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->question_type }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->creator->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
-
-                                        {{-- ============================================================================
-                                        TABLE ROWS: TRAINING ATTENDANCES
-                                        =========================================================================== --}}
-                                        @elseif($selectedModel == 'training_attendances')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->training->title ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->cadet->user->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->present ? 'Yes' : 'No' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->method }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->marked_at ? \Carbon\Carbon::parse($item->marked_at)->format('d/m/Y H:i') : 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
-
-                                        {{-- ============================================================================
-                                        TABLE ROWS: CONTENT SETTINGS
-                                        =========================================================================== --}}
-                                        @elseif($selectedModel == 'content_settings')
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $item->key }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->value, 50) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->type }}</td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
-                                                <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
-                                            </td>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Question Text</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Creator</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
                                         @endif
                                     </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @forelse($data as $item)
+                                        <tr>
+                                            {{-- ============================================================================
+                                            TABLE ROWS: LEARNING MATERIALS
+                                            =========================================================================== --}}
+                                            @if($selectedModel == 'learning_materials')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->instructor->user->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->category->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->file_url, 30) }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
 
-                                @empty
-                                    <tr>
-                                        <td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500">No records found</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                            {{-- ============================================================================
+                                            TABLE ROWS: UNIFORM TYPES
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'uniform_types')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->type_name }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->description }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->created_at->format('d/m/Y') }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+
+                                            {{-- ============================================================================
+                                            TABLE ROWS: INVENTORY ITEMS
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'inventory_items')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->name }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->category }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->total_quantity }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->available_quantity }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+
+                                            {{-- ============================================================================
+                                            TABLE ROWS: UNIFORM COMPONENTS
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'uniform_components')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->component_name }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->uniformType->type_name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->created_at->format('d/m/Y') }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+
+                                            {{-- ============================================================================
+                                            TABLE ROWS: EQUIPMENT LOANS
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'equipment_loans')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->cadet->user->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->inventoryItem->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->quantity }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->borrow_date ? \Carbon\Carbon::parse($item->borrow_date)->format('d/m/Y') : 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->return_date ? \Carbon\Carbon::parse($item->return_date)->format('d/m/Y') : 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+
+                                            {{-- ============================================================================
+                                            TABLE ROWS: GALLERIES
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'galleries')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->category->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->instructor->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->image_path, 30) }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+                                            {{-- ============================================================================
+                                            TABLE ROWS: TRAININGS
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'trainings')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->title }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->location }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->start_datetime ? \Carbon\Carbon::parse($item->start_datetime)->format('d/m/Y H:i') : 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->end_datetime ? \Carbon\Carbon::parse($item->end_datetime)->format('d/m/Y H:i') : 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->duration_hours }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+
+                                            {{-- ============================================================================
+                                            TABLE ROWS: QUIZ QUESTIONS
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'quiz_questions')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->question_text, 50) }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->category->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->question_type }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->creator->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->status }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+
+                                            {{-- ============================================================================
+                                            TABLE ROWS: TRAINING ATTENDANCES
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'training_attendances')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->training->title ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->cadet->user->name ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->present ? 'Yes' : 'No' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->method }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->marked_at ? \Carbon\Carbon::parse($item->marked_at)->format('d/m/Y H:i') : 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+
+                                            {{-- ============================================================================
+                                            TABLE ROWS: CONTENT SETTINGS
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'content_settings')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->key }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->value, 50) }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->type }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($item->description, 50) }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
+                                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="{{ $item->id }}">Delete</button>
+                                                </td>
+                                            @endif
+                                        </tr>
+
+                                    @empty
+                                        <tr>
+                                            <td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500">No records found</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -625,7 +620,7 @@
                 if (!response.ok) {
                     return response.json().then(err => { throw err; });
                 }
-                return response.json();
+                return response.json;
             })
             .then(data => {
                 if (data.success) {
