@@ -2184,6 +2184,8 @@
     </div>
 </section>
 
+<div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
+
 <!-- About Section -->
 <section id="about" class="section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
     <div class="section-container">
@@ -2270,6 +2272,8 @@
     </div>
 </section>
 
+<div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
+
 <!-- Requirements Section -->
 <section id="requirements" class="section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
     <div class="section-container">
@@ -2338,6 +2342,8 @@
     </div>
 </section>
 
+<div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
+
 <!-- Selection Process Section -->
 <section id="selection" class="section">
     <div class="section-container">
@@ -2388,6 +2394,8 @@
         </div>
     </div>
 </section>
+
+<div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
 
 <!-- Application Section -->
     <section id="application" class="section">
