@@ -187,7 +187,7 @@ class LearningHubController extends Controller
 
         switch ($difficulty) {
             case 'easy':
-                $timeLimit = 300;
+                $timeLimit = 60;
                 if ($mcqQuestions->count() >= 5) {
                     $questions = $mcqQuestions->shuffle()->take(5);
                 } elseif ($mcqQuestions->count() > 0) {
@@ -198,7 +198,7 @@ class LearningHubController extends Controller
                 break;
 
             case 'medium':
-                $timeLimit = 300;
+                $timeLimit = 120;
                 $targetMcq = 3;
                 $targetSubjective = 2;
                 
@@ -226,7 +226,7 @@ class LearningHubController extends Controller
                 break;
 
             case 'hard':
-                $timeLimit = 420;
+                $timeLimit = 180;
                 $targetMcq = 2;
                 $targetSubjective = 5;
                 

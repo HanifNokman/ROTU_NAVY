@@ -477,9 +477,9 @@
                     </label>
                     <select id="quizSelectionDifficulty" 
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
-                        <option value="easy">🟢 Easy - MCQ only (5 questions, 5 minutes)</option>
-                        <option value="medium">🟡 Medium - Mixed types (5 questions, 10 minutes)</option>
-                        <option value="hard">🔴 Hard - More subjective (7 questions, 15 minutes)</option>
+                        <option value="easy">🟢 Easy - MCQ only (5 questions, 1 minute)</option>
+                        <option value="medium">🟡 Medium - Mixed types (5 questions, 2 minutes)</option>
+                        <option value="hard">🔴 Hard - More subjective (7 questions, 3 minutes)</option>
                     </select>
                 </div>
 
