@@ -15,33 +15,75 @@ class TrainingController extends Controller
     // MAIN VIEW
     // ================================================================
 
-    public function index()
+    public function index(Request $request)
     {
         $this->updateExpiredTrainings();
         
-        $trainings = Training::with('trainingAttendances')
-            ->orderBy('start_datetime', 'asc')
-            ->get();
+        // Get filter parameters
+        $filterYear = $request->get('year');
+        $filterMonth = $request->get('month');
+        // Only default to Active on initial page load (no query parameters at all)
+        $filterStatus = $request->has('status') ? $request->get('status') : ($request->hasAny(['year', 'month']) ? null : 'Active');
+
+        // Build query for all trainings
+        $query = Training::with('trainingAttendances');
+
+        // Apply year filter
+        if ($filterYear) {
+            $query->whereYear('start_datetime', $filterYear);
+        }
+
+        // Apply month filter
+        if ($filterMonth) {
+            $query->whereMonth('start_datetime', $filterMonth);
+        }
+
+        // Apply status filter (only if not null and not empty string)
+        if ($filterStatus !== null && $filterStatus !== '') {
+            $query->where('status', $filterStatus);
+        }
+
+        $trainings = $query->orderBy('start_datetime', 'asc')
+            ->get()
+            ->map(function($training) {
+                // Format dates
+                $training->formatted_start_date = $training->start_datetime ? 
+                    $training->start_datetime->format('M d, Y') : 'N/A';
+                $training->formatted_start_time = $training->start_datetime ? 
+                    $training->start_datetime->format('h:i A') : 'N/A';
+                
+                // Add status badge color
+                $training->status_badge_color = match($training->status) {
+                    'Active' => 'bg-green-100 text-green-800',
+                    'Completed' => 'bg-gray-100 text-gray-800',
+                    'Cancelled' => 'bg-red-100 text-red-800',
+                    default => 'bg-blue-100 text-blue-800',
+                };
+                
+                return $training;
+            });
         
+        // Get today's trainings (unfiltered)
         $todaysTrainings = Training::where(function ($query) {
             $now = Carbon::now();
             $today = $now->toDateString();
             $yesterday = $now->copy()->subDay()->toDateString();
             
             $query->whereDate('start_datetime', $today)
-                  ->orWhere(function ($q) use ($today, $yesterday) {
-                      $q->whereDate('start_datetime', $yesterday)
+                ->orWhere(function ($q) use ($today, $yesterday) {
+                    $q->whereDate('start_datetime', $yesterday)
                         ->where('status', 'Active');
-                  })
-                  ->orWhere(function ($q) use ($now) {
-                      $q->where('start_datetime', '<=', $now)
+                })
+                ->orWhere(function ($q) use ($now) {
+                    $q->where('start_datetime', '<=', $now)
                         ->where(function ($subQ) use ($now) {
                             $subQ->whereNull('end_datetime')
-                                 ->orWhere('end_datetime', '>=', $now->copy()->subDay());
+                                ->orWhere('end_datetime', '>=', $now->copy()->subDay());
                         });
-                  });
+                });
         })->orderBy('start_datetime', 'asc')->get();
         
+        // Get calendar events (based on filtered trainings)
         $calendarEvents = $trainings->map(function ($training) {
             return [
                 'id' => $training->id,
@@ -53,7 +95,51 @@ class TrainingController extends Controller
             ];
         });
 
-        return view('instructor.training', compact('trainings', 'calendarEvents', 'todaysTrainings'));
+        // Get available years and months for filter dropdown (from all trainings)
+        $availableYearsMonths = Training::selectRaw('DISTINCT YEAR(start_datetime) as year, MONTH(start_datetime) as month')
+            ->whereNotNull('start_datetime')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'asc')
+            ->get()
+            ->groupBy('year')
+            ->map(function ($items) {
+                return $items->pluck('month')->unique()->values();
+            });
+
+        $availableYears = $availableYearsMonths->keys();
+
+        // If AJAX request, return JSON
+        if ($request->ajax() || $request->get('ajax')) {
+            return response()->json([
+                'trainings' => $trainings->map(function ($training) {
+                    return [
+                        'id' => $training->id,
+                        'title' => $training->title,
+                        'description' => $training->description,
+                        'location' => $training->location,
+                        'involvement' => $training->involvement,
+                        'formatted_start_date' => $training->formatted_start_date,
+                        'formatted_start_time' => $training->formatted_start_time,
+                        'status' => $training->status,
+                        'status_badge_color' => $training->status_badge_color,
+                        'duration_hours' => $training->duration_hours,
+                        'allowance_type' => $training->allowance_type,
+                    ];
+                }),
+                'calendarEvents' => $calendarEvents
+            ]);
+        }
+
+        return view('instructor.training', compact(
+            'trainings', 
+            'calendarEvents', 
+            'todaysTrainings',
+            'availableYears',
+            'availableYearsMonths',
+            'filterYear',
+            'filterMonth',
+            'filterStatus'
+        ));
     }
 
     public function show(Training $training): JsonResponse
