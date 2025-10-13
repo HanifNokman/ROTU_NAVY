@@ -30,7 +30,7 @@
             @endif
 
             {{-- ================================================================ --}}
-            {{-- LEARNING MATERIALS SECTION --}}
+            {{-- LEARNING MATERIALS SECTION (COMPLETE) --}}
             {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
@@ -82,8 +82,8 @@
                     {{-- MATERIALS TABLE WITH ALPINE.JS --}}
                     {{-- ================================================================ --}}
                     <div x-data="materialManagement()">
-                        <div class="border border-gray-200 rounded-lg">
-                            <div class="bg-gray-50 border-b border-gray-200">
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <div class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                                 <div class="px-6 py-3">
                                     <div class="grid grid-cols-4 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <div>Title & Description</div>
@@ -94,7 +94,7 @@
                                 </div>
                             </div>
                             
-                            <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="materialsContainer">
+                            <div class="overflow-y-auto bg-white" style="max-height: 400px;" id="materialsContainer">
                                 @forelse($materials as $material)
                                 <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4" data-material-id="{{ $material->id }}">
                                     <div class="grid grid-cols-4 gap-4 items-center">
@@ -112,7 +112,7 @@
                                         <div class="text-sm text-gray-900">
                                             @if($material->file_url)
                                                 <a href="{{ asset($material->file_url) }}" target="_blank" 
-                                                   class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                                class="text-indigo-600 hover:text-indigo-900 font-medium">
                                                     View File
                                                 </a>
                                             @else 
@@ -222,8 +222,9 @@
                     </div>
                 </div>
             </div>
+
             {{-- ================================================================ --}}
-            {{-- QUIZ MANAGEMENT SECTION --}}
+            {{-- QUIZ MANAGEMENT SECTION (COMPLETE) --}}
             {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
@@ -269,8 +270,8 @@
                     {{-- ================================================================ --}}
                     {{-- QUIZ QUESTIONS TABLE --}}
                     {{-- ================================================================ --}}
-                    <div class="border border-gray-200 rounded-lg" x-data="quizManagement()">
-                        <div class="bg-gray-50 border-b border-gray-200">
+                    <div class="border border-gray-200 rounded-lg overflow-hidden" x-data="quizManagement()">
+                        <div class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                             <div class="px-6 py-3">
                                 <div class="grid grid-cols-6 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <div class="col-span-2">Question</div>
@@ -282,7 +283,7 @@
                             </div>
                         </div>
                         
-                        <div class="overflow-y-auto bg-white" style="max-height: 600px;" id="quizQuestionsContainer">
+                        <div class="overflow-y-auto bg-white" style="max-height: 350px;" id="quizQuestionsContainer">
                             <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
                                 <div class="text-sm text-gray-500">
                                     @if(request()->filled('quiz_category'))
@@ -308,7 +309,7 @@
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Question Text</label>
                                         <textarea name="question_text" rows="3" required x-text="editingQuestion.question_text" @input="editingQuestion.question_text = $event.target.value"
-                                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
                                     </div>
 
                                     <div class="mb-4">
@@ -357,7 +358,7 @@
                                         </div>
                                         <div id="editSubjectiveAnswerInput" x-show="editingQuestion.question_type === 'Subjective'">
                                             <textarea name="correct_answer" rows="2" placeholder="Enter the correct answer for subjective questions" x-model="editingQuestion.correct_answer"
-                                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
                                             <p class="text-xs text-gray-500 mt-1">Note: Subjective answers are checked case-insensitively</p>
                                         </div>
                                     </div>
@@ -374,8 +375,8 @@
                                     <div class="mb-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Replace Supporting File (optional)</label>
                                         <input type="file" name="file"
-                                               accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                                         <p class="text-xs text-gray-500 mt-1">Current file will be replaced if new file is uploaded</p>
                                     </div>
 
