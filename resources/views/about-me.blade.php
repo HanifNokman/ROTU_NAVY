@@ -32,7 +32,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--dark-navy);
+            background-color: var(--darker-navy);
             color: var(--text-primary);
             line-height: 1.7;
             min-height: 100vh;
