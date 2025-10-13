@@ -220,11 +220,11 @@
     </div>
 
     {{-- ================================================================ --}}
-    {{-- EDIT MODAL --}}
+    {{-- EDIT MODAL - UPDATED WITH HIGHER Z-INDEX --}}
     {{-- ================================================================ --}}
-    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-10 mx-auto p-5 border w-5/6 max-w-7xl shadow-lg rounded-md bg-white">
-            <button onclick="closeEditModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[100]">
+        <div class="relative top-10 mx-auto p-5 border w-5/6 max-w-7xl shadow-lg rounded-md bg-white mb-10 z-[110]">
+            <button onclick="closeEditModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl z-[120]">&times;</button>
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
                 <form id="editForm" method="POST">
@@ -241,10 +241,10 @@
     </div>
 
     {{-- ================================================================ --}}
-    {{-- DELETE MODAL --}}
+    {{-- DELETE MODAL - UPDATED WITH HIGHER Z-INDEX --}}
     {{-- ================================================================ --}}
-    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[100]">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white z-[110]">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Deletion</h3>
                 <p class="text-sm text-gray-500 mb-4">To delete this user, please type the full name: <strong id="deleteUserName"></strong></p>
@@ -475,11 +475,18 @@
         }
 
         {{-- ================================================================ --}}
-        {{-- FORM SUBMISSIONS --}}
+        {{-- FORM SUBMISSIONS - FIXED VERSION --}}
         {{-- ================================================================ --}}
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+            
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -492,17 +499,22 @@
                 if (!response.ok) {
                     return response.json().then(err => { throw err; });
                 }
-                return response.json;
+                return response.json(); // FIXED: Added parentheses
             })
             .then(data => {
                 if (data.success) {
                     alert('User updated successfully!');
                     location.reload();
                 } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                     alert('Error updating user: ' + (data.error || 'Unknown error'));
                 }
             })
             .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                
                 if (error.errors) {
                     let errorMsg = 'Validation errors:\n';
                     for (let field in error.errors) {
@@ -518,6 +530,7 @@
         document.getElementById('deleteForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            
             fetch(this.action, {
                 method: 'POST',
                 body: formData,

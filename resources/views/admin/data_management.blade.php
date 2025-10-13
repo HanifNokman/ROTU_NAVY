@@ -417,255 +417,267 @@
         </div>
     </div>
     <script>
-    {{-- ============================================================================
-    CONSTANTS
-    =========================================================================== --}}
-        const selectedModel = '{{ $selectedModel }}';
+    // CONSTANTS
+    const selectedModel = '{{ $selectedModel }}';
 
-        // ============================================================================
-        // EVENT LISTENERS INITIALIZATION
-        // ============================================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    openEditModal(id);
-                });
-            });
-
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    openDeleteModal(id);
-                });
+    // ============================================================================
+    // EVENT LISTENERS INITIALIZATION
+    // ============================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                openEditModal(id);
             });
         });
 
-        // ============================================================================
-        // MODAL FUNCTIONS
-        // ============================================================================
-        function openEditModal(id) {
-            fetch(`/admin/data/${selectedModel}/${id}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    populateEditForm(data);
-                    document.getElementById('editModal').classList.remove('hidden');
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    alert('Error loading data: ' + error.message);
-                });
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.add('hidden');
-        }
-
-        function openDeleteModal(id) {
-            document.getElementById('deleteForm').action = `/admin/data/${selectedModel}/${id}`;
-            document.getElementById('deleteModal').classList.remove('hidden');
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-        }
-        // ============================================================================
-        // FORM POPULATION FUNCTION
-        // ============================================================================
-        function populateEditForm(data) {
-            let fields = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-            
-            switch(selectedModel) {
-                case 'learning_materials':
-                    fields += generateField('Instructor ID', 'instructor_id', data.instructor_id, 'number', true);
-                    fields += generateField('Title', 'title', data.title, 'text', true);
-                    fields += generateField('Category ID', 'learning_material_category_id', data.learning_material_category_id, 'number', true);
-                    fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
-                    fields += generateField('File URL', 'file_url', data.file_url, 'text', false, 'col-span-2');
-                    break;
-                
-                case 'uniform_types':
-                    fields += generateField('Type Name', 'type_name', data.type_name, 'text', true);
-                    fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
-                    break;
-                
-                case 'inventory_items':
-                    fields += generateField('Name', 'name', data.name, 'text', true);
-                    fields += generateSelectField('Category', 'category', data.category, ['equipment', 'uniform'], true);
-                    fields += generateField('Total Quantity', 'total_quantity', data.total_quantity, 'number', true);
-                    fields += generateField('Available Quantity', 'available_quantity', data.available_quantity, 'number', true);
-                    fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
-                    break;
-                
-                case 'uniform_components':
-                    fields += generateField('Uniform Type ID', 'uniform_type_id', data.uniform_type_id, 'number', true);
-                    fields += generateField('Component Name', 'component_name', data.component_name, 'text', true);
-                    break;
-                
-                case 'equipment_loans':
-                    fields += generateField('Cadet ID', 'cadet_id', data.cadet_id, 'number', true);
-                    fields += generateField('Item ID', 'item_id', data.item_id, 'number', true);
-                    fields += generateField('Quantity', 'quantity', data.quantity, 'number', true);
-                    fields += generateField('Borrow Date', 'borrow_date', data.borrow_date, 'date', true);
-                    fields += generateField('Return Date', 'return_date', data.return_date, 'date', false);
-                    fields += generateSelectField('Status', 'status', data.status, ['Borrowed', 'Returned'], true);
-                    break;
-                
-                case 'galleries':
-                    fields += generateField('Title', 'title', data.title, 'text', true);
-                    fields += generateField('Category ID', 'gallery_category_id', data.gallery_category_id, 'number', true);
-                    fields += generateField('Instructor ID', 'instructor_id', data.instructor_id, 'number', true);
-                    fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
-                    fields += generateField('Image Path', 'image_path', data.image_path, 'text', false, 'col-span-2');
-                    break;
-                
-                case 'trainings':
-                    fields += generateField('Title', 'title', data.title, 'text', true, 'col-span-2');
-                    fields += generateField('Location', 'location', data.location, 'text', true);
-                    fields += generateSelectField('Status', 'status', data.status, ['Active', 'Completed', 'Cancelled'], true);
-                    fields += generateField('Start DateTime', 'start_datetime', data.start_datetime, 'datetime-local', true);
-                    fields += generateField('End DateTime', 'end_datetime', data.end_datetime, 'datetime-local', false);
-                    fields += generateField('Duration Hours', 'duration_hours', data.duration_hours, 'number', false);
-                    fields += generateField('Allowance Amount', 'allowance_amount', data.allowance_amount, 'number', false);
-                    fields += generateSelectField('Allowance Type', 'allowance_type', data.allowance_type, ['hourly', 'daily'], false);
-                    fields += generateField('Involvement', 'involvement', data.involvement, 'text', false);
-                    fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
-                    break;
-                
-                case 'quiz_questions':
-                    fields += generateField('Category ID', 'category_id', data.category_id, 'number', true);
-                    fields += generateSelectField('Question Type', 'question_type', data.question_type, ['MCQ', 'Subjective'], true);
-                    fields += generateField('Question Text', 'question_text', data.question_text, 'textarea', true, 'col-span-2');
-                    fields += generateField('File URL', 'file_url', data.file_url, 'text', false, 'col-span-2');
-                    fields += generateField('Option A', 'option_a', data.option_a, 'text', false);
-                    fields += generateField('Option B', 'option_b', data.option_b, 'text', false);
-                    fields += generateField('Option C', 'option_c', data.option_c, 'text', false);
-                    fields += generateField('Option D', 'option_d', data.option_d, 'text', false);
-                    fields += generateField('Correct Answer', 'correct_answer', data.correct_answer, 'text', true, 'col-span-2');
-                    fields += generateField('Created By', 'created_by', data.created_by, 'number', true);
-                    fields += generateSelectField('Status', 'status', data.status, ['active', 'inactive'], true);
-                    break;
-            }
-            
-            fields += '</div>';
-            document.getElementById('formFields').innerHTML = fields;
-            document.getElementById('editForm').action = `/admin/data/${selectedModel}/${data.id}`;
-        }
-        // ============================================================================
-        // FIELD GENERATOR FUNCTIONS
-        // ============================================================================
-        function generateField(label, name, value, type = 'text', required = false, colSpan = '') {
-            const reqAttr = required ? 'required' : '';
-            const val = value || '';
-            const colClass = colSpan || '';
-            
-            if (type === 'textarea') {
-                return `
-                    <div class="mb-4 ${colClass}">
-                        <label class="block text-sm font-medium text-gray-700">${label}</label>
-                        <textarea name="${name}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${reqAttr}>${val}</textarea>
-                    </div>
-                `;
-            }
-            
-            return `
-                <div class="mb-4 ${colClass}">
-                    <label class="block text-sm font-medium text-gray-700">${label}</label>
-                    <input type="${type}" name="${name}" value="${val}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${reqAttr}>
-                </div>
-            `;
-        }
-
-        function generateSelectField(label, name, value, options, required = false, colSpan = '', optionLabels = null) {
-            const reqAttr = required ? 'required' : '';
-            const colClass = colSpan || '';
-            let optionsHtml = '';
-            
-            options.forEach((option, index) => {
-                const optionLabel = optionLabels ? optionLabels[index] : option;
-                const selected = value == option ? 'selected' : '';
-                optionsHtml += `<option value="${option}" ${selected}>${optionLabel}</option>`;
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                openDeleteModal(id);
             });
-            
-            return `
-                <div class="mb-4 ${colClass}">
-                    <label class="block text-sm font-medium text-gray-700">${label}</label>
-                    <select name="${name}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${reqAttr}>
-                        ${optionsHtml}
-                    </select>
-                </div>
-            `;
-        }
-        // ============================================================================
-        // FORM SUBMISSION HANDLERS
-        // ============================================================================
-        document.getElementById('editForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                }
-            })
+        });
+    });
+
+    // ============================================================================
+    // MODAL FUNCTIONS
+    // ============================================================================
+    function openEditModal(id) {
+        fetch(`/admin/data/${selectedModel}/${id}`)
             .then(response => {
                 if (!response.ok) {
-                    return response.json().then(err => { throw err; });
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json;
+                return response.json();
             })
             .then(data => {
-                if (data.success) {
-                    alert('Record updated successfully!');
-                    location.reload();
-                } else {
-                    alert('Error updating record: ' + (data.error || 'Unknown error'));
-                }
+                populateEditForm(data);
+                document.getElementById('editModal').classList.remove('hidden');
             })
             .catch(error => {
-                if (error.errors) {
-                    let errorMsg = 'Validation errors:\n';
-                    for (let field in error.errors) {
-                        errorMsg += field + ': ' + error.errors[field].join(', ') + '\n';
-                    }
-                    alert(errorMsg);
-                } else {
-                    alert('Error updating record: ' + (error.message || 'Unknown error'));
-                }
+                console.error('Error fetching data:', error);
+                alert('Error loading data: ' + error.message);
             });
-        });
+    }
 
-        document.getElementById('deleteForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
+    function closeEditModal() {
+        document.getElementById('editModal').classList.add('hidden');
+    }
+
+    function openDeleteModal(id) {
+        document.getElementById('deleteForm').action = `/admin/data/${selectedModel}/${id}`;
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    // ============================================================================
+    // FORM POPULATION FUNCTION
+    // ============================================================================
+    function populateEditForm(data) {
+        let fields = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+        
+        switch(selectedModel) {
+            case 'learning_materials':
+                fields += generateField('Instructor ID', 'instructor_id', data.instructor_id, 'number', true);
+                fields += generateField('Title', 'title', data.title, 'text', true);
+                fields += generateField('Category ID', 'learning_material_category_id', data.learning_material_category_id, 'number', true);
+                fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
+                fields += generateField('File URL', 'file_url', data.file_url, 'text', false, 'col-span-2');
+                break;
             
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Record deleted successfully!');
-                    location.reload();
-                } else {
-                    alert('Error deleting record: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                alert('Error deleting record: ' + error.message);
-            });
+            case 'uniform_types':
+                fields += generateField('Type Name', 'type_name', data.type_name, 'text', true);
+                fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
+                break;
+            
+            case 'inventory_items':
+                fields += generateField('Name', 'name', data.name, 'text', true);
+                fields += generateSelectField('Category', 'category', data.category, ['equipment', 'uniform'], true);
+                fields += generateField('Total Quantity', 'total_quantity', data.total_quantity, 'number', true);
+                fields += generateField('Available Quantity', 'available_quantity', data.available_quantity, 'number', true);
+                fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
+                break;
+            
+            case 'uniform_components':
+                fields += generateField('Uniform Type ID', 'uniform_type_id', data.uniform_type_id, 'number', true);
+                fields += generateField('Component Name', 'component_name', data.component_name, 'text', true);
+                break;
+            
+            case 'equipment_loans':
+                fields += generateField('Cadet ID', 'cadet_id', data.cadet_id, 'number', true);
+                fields += generateField('Item ID', 'item_id', data.item_id, 'number', true);
+                fields += generateField('Quantity', 'quantity', data.quantity, 'number', true);
+                fields += generateField('Borrow Date', 'borrow_date', data.borrow_date, 'date', true);
+                fields += generateField('Return Date', 'return_date', data.return_date, 'date', false);
+                fields += generateSelectField('Status', 'status', data.status, ['Borrowed', 'Returned'], true);
+                break;
+            
+            case 'galleries':
+                fields += generateField('Title', 'title', data.title, 'text', true);
+                fields += generateField('Category ID', 'gallery_category_id', data.gallery_category_id, 'number', true);
+                fields += generateField('Instructor ID', 'instructor_id', data.instructor_id, 'number', true);
+                fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
+                fields += generateField('Image Path', 'image_path', data.image_path, 'text', false, 'col-span-2');
+                break;
+            
+            case 'trainings':
+                fields += generateField('Title', 'title', data.title, 'text', true, 'col-span-2');
+                fields += generateField('Location', 'location', data.location, 'text', true);
+                fields += generateSelectField('Status', 'status', data.status, ['Active', 'Completed', 'Cancelled'], true);
+                fields += generateField('Start DateTime', 'start_datetime', data.start_datetime, 'datetime-local', true);
+                fields += generateField('End DateTime', 'end_datetime', data.end_datetime, 'datetime-local', false);
+                fields += generateField('Duration Hours', 'duration_hours', data.duration_hours, 'number', false);
+                fields += generateField('Allowance Amount', 'allowance_amount', data.allowance_amount, 'number', false);
+                fields += generateSelectField('Allowance Type', 'allowance_type', data.allowance_type, ['hourly', 'daily'], false);
+                fields += generateField('Involvement', 'involvement', data.involvement, 'text', false);
+                fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
+                break;
+            
+            case 'quiz_questions':
+                fields += generateField('Category ID', 'category_id', data.category_id, 'number', true);
+                fields += generateSelectField('Question Type', 'question_type', data.question_type, ['MCQ', 'Subjective'], true);
+                fields += generateField('Question Text', 'question_text', data.question_text, 'textarea', true, 'col-span-2');
+                fields += generateField('File URL', 'file_url', data.file_url, 'text', false, 'col-span-2');
+                fields += generateField('Option A', 'option_a', data.option_a, 'text', false);
+                fields += generateField('Option B', 'option_b', data.option_b, 'text', false);
+                fields += generateField('Option C', 'option_c', data.option_c, 'text', false);
+                fields += generateField('Option D', 'option_d', data.option_d, 'text', false);
+                fields += generateField('Correct Answer', 'correct_answer', data.correct_answer, 'text', true, 'col-span-2');
+                fields += generateField('Created By', 'created_by', data.created_by, 'number', true);
+                fields += generateSelectField('Status', 'status', data.status, ['active', 'inactive'], true);
+                break;
+        }
+        
+        fields += '</div>';
+        document.getElementById('formFields').innerHTML = fields;
+        document.getElementById('editForm').action = `/admin/data/${selectedModel}/${data.id}`;
+    }
+
+    // ============================================================================
+    // FIELD GENERATOR FUNCTIONS
+    // ============================================================================
+    function generateField(label, name, value, type = 'text', required = false, colSpan = '') {
+        const reqAttr = required ? 'required' : '';
+        const val = value || '';
+        const colClass = colSpan || '';
+        
+        if (type === 'textarea') {
+            return `
+                <div class="mb-4 ${colClass}">
+                    <label class="block text-sm font-medium text-gray-700">${label}</label>
+                    <textarea name="${name}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${reqAttr}>${val}</textarea>
+                </div>
+            `;
+        }
+        
+        return `
+            <div class="mb-4 ${colClass}">
+                <label class="block text-sm font-medium text-gray-700">${label}</label>
+                <input type="${type}" name="${name}" value="${val}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${reqAttr}>
+            </div>
+        `;
+    }
+
+    function generateSelectField(label, name, value, options, required = false, colSpan = '', optionLabels = null) {
+        const reqAttr = required ? 'required' : '';
+        const colClass = colSpan || '';
+        let optionsHtml = '';
+        
+        options.forEach((option, index) => {
+            const optionLabel = optionLabels ? optionLabels[index] : option;
+            const selected = value == option ? 'selected' : '';
+            optionsHtml += `<option value="${option}" ${selected}>${optionLabel}</option>`;
         });
+        
+        return `
+            <div class="mb-4 ${colClass}">
+                <label class="block text-sm font-medium text-gray-700">${label}</label>
+                <select name="${name}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${reqAttr}>
+                    ${optionsHtml}
+                </select>
+            </div>
+        `;
+    }
+
+    // ============================================================================
+    // FORM SUBMISSION HANDLERS - FIXED VERSION
+    // ============================================================================
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Updating...';
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json(); // FIXED: Added parentheses
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Record updated successfully!');
+                location.reload();
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                alert('Error updating record: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            
+            if (error.errors) {
+                let errorMsg = 'Validation errors:\n';
+                for (let field in error.errors) {
+                    errorMsg += field + ': ' + error.errors[field].join(', ') + '\n';
+                }
+                alert(errorMsg);
+            } else {
+                alert('Error updating record: ' + (error.message || 'Unknown error'));
+            }
+        });
+    });
+
+    document.getElementById('deleteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Record deleted successfully!');
+                location.reload();
+            } else {
+                alert('Error deleting record: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            alert('Error deleting record: ' + error.message);
+        });
+    });
     </script>
 </x-app-layout>
