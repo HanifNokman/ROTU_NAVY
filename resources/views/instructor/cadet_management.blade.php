@@ -193,10 +193,10 @@
                     {{-- ================================================================ --}}
                     {{-- CADET TABLE SECTION --}}
                     {{-- ================================================================ --}}
-                    <div class="border border-gray-200 rounded-lg">
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
                         
                         {{-- Table Header (Fixed) --}}
-                        <div class="bg-gray-50 border-b border-gray-200">
+                        <div class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                             <div class="px-6 py-3">
                                 <div class="grid grid-cols-5 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <div>No.</div>
@@ -240,13 +240,12 @@
                             </div>
                         </div>
                         
-                        {{-- Table Body (Scrollable) --}}
-                        <div class="overflow-y-auto" style="max-height: 600px;">
-                            <div class="bg-white">
-                                @forelse($cadets as $index => $cadet)
-                                    <div class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer cadet-row px-6 py-4" 
-                                         data-cadet-id="{{ $cadet->id }}">
-                                        <div class="grid grid-cols-5 gap-4 items-center">
+                        {{-- Table Body (Scrollable - Max 6 rows visible) --}}
+                        <div class="overflow-y-auto bg-white" style="max-height: calc(5 * 72px);">
+                            @forelse($cadets as $index => $cadet)
+                                <div class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer cadet-row px-6 py-4" 
+                                     data-cadet-id="{{ $cadet->id }}">
+                                    <div class="grid grid-cols-5 gap-4 items-center">
                                             
                                             {{-- Column 1: Number --}}
                                             <div class="text-sm text-gray-900">
