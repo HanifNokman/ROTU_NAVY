@@ -33,7 +33,7 @@
         body {
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            background-color: var(--dark-navy);
+            background-color: var(--darker-navy);
             color: var(--text-primary);
             line-height: 1.7;
             scroll-behavior: smooth;
@@ -1973,7 +1973,7 @@
         </section>
 
     <!-- Statistics Section -->
-    <section class="stats-section">
+    <section class="stats-section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
         <div class="stats-container">
             <div class="stat-item animate-on-scroll">
                 <span class="stat-number" data-count="500">0</span>
@@ -2052,7 +2052,7 @@
         </div>
     </section>
 
-    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);" ></div>
 
     <!-- Cadet Timeline Section -->
     <section id="timeline" class="section">
