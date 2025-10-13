@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Training;
 use App\Models\Cadet;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class TrainingController extends Controller
 {
@@ -13,7 +14,7 @@ class TrainingController extends Controller
     // DISPLAY TRAINING INDEX
     // ================================================================
     
-    public function index()
+    public function index(Request $request)
     {
         $cadet = Cadet::where('user_id', auth()->id())->first();
         
@@ -22,6 +23,11 @@ class TrainingController extends Controller
                 'trainings' => collect([]),
                 'calendarEvents' => [],
                 'cadetIntake' => null,
+                'availableYears' => collect([]),
+                'availableYearsMonths' => [],
+                'filterYear' => null,
+                'filterMonth' => null,
+                'filterStatus' => null,
                 'error' => 'Cadet profile not found. Please contact your administrator.'
             ]);
         }
@@ -31,13 +37,35 @@ class TrainingController extends Controller
 
         $this->updateExpiredTrainings();
 
-        $trainings = Training::where(function ($query) use ($cadetIntake) {
+        // Get filter parameters
+        $filterYear = $request->get('year');
+        $filterMonth = $request->get('month');
+        // Only default to Active on initial page load (no query parameters at all)
+        $filterStatus = $request->has('status') ? $request->get('status') : ($request->hasAny(['year', 'month']) ? null : 'Active');
+
+        // Build query
+        $query = Training::where(function ($query) use ($cadetIntake) {
                 $query->where('involvement', 'like', "%{$cadetIntake}%")
                       ->orWhereNull('involvement')
                       ->orWhere('involvement', '');
-            })
-            ->orderBy('start_datetime', 'asc')
-            ->get();
+            });
+
+        // Apply year filter
+        if ($filterYear) {
+            $query->whereYear('start_datetime', $filterYear);
+        }
+
+        // Apply month filter
+        if ($filterMonth) {
+            $query->whereMonth('start_datetime', $filterMonth);
+        }
+
+        // Apply status filter (only if not null and not empty string)
+        if ($filterStatus !== null && $filterStatus !== '') {
+            $query->where('status', $filterStatus);
+        }
+
+        $trainings = $query->orderBy('start_datetime', 'asc')->get();
 
         $calendarEvents = $trainings->map(function ($training) {
             return [
@@ -51,7 +79,55 @@ class TrainingController extends Controller
             ];
         });
 
-        return view('cadet.training', compact('trainings', 'calendarEvents', 'cadetIntake'));
+        // Get available years and months for filter dropdown (from cadet's intake trainings only)
+        $availableYearsMonths = Training::selectRaw('DISTINCT YEAR(start_datetime) as year, MONTH(start_datetime) as month')
+            ->whereNotNull('start_datetime')
+            ->where(function ($query) use ($cadetIntake) {
+                $query->where('involvement', 'like', "%{$cadetIntake}%")
+                      ->orWhereNull('involvement')
+                      ->orWhere('involvement', '');
+            })
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'asc')
+            ->get()
+            ->groupBy('year')
+            ->map(function ($items) {
+                return $items->pluck('month')->unique()->values();
+            });
+
+        $availableYears = $availableYearsMonths->keys();
+
+        // If AJAX request, return JSON
+        if ($request->ajax() || $request->get('ajax')) {
+            return response()->json([
+                'trainings' => $trainings->map(function ($training) {
+                    return [
+                        'id' => $training->id,
+                        'title' => $training->title,
+                        'description' => $training->description,
+                        'location' => $training->location,
+                        'formatted_start_date' => $training->formatted_start_date,
+                        'formatted_start_time' => $training->formatted_start_time,
+                        'status' => $training->status,
+                        'duration' => $training->end_datetime 
+                            ? $training->start_datetime->diffForHumans($training->end_datetime, true)
+                            : null,
+                    ];
+                }),
+                'calendarEvents' => $calendarEvents
+            ]);
+        }
+
+        return view('cadet.training', compact(
+            'trainings', 
+            'calendarEvents', 
+            'cadetIntake',
+            'availableYears',
+            'availableYearsMonths',
+            'filterYear',
+            'filterMonth',
+            'filterStatus'
+        ));
     }
 
     // ================================================================
