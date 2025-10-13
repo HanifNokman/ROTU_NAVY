@@ -50,6 +50,18 @@
                         </div>
                     @endif
 
+                    {{-- Error Message --}}
+                    @if(session('error'))
+                        <div class="mb-4 text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                {{ session('error') }}
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- ================================================================ --}}
                     {{-- TAB NAVIGATION --}}
                     {{-- ================================================================ --}}
@@ -74,14 +86,38 @@
                     {{-- ================================================================ --}}
                     <div id="cadets-content" class="tab-content {{ $pendingCadets->count() > 0 ? 'block' : 'hidden' }}">
                         @if($pendingCadets->count() > 0)
-                            <div class="mb-4">
-                                <h3 class="text-lg font-medium text-gray-900 mb-2 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-                                    </svg>
-                                    Pending Cadet Registrations
-                                </h3>
-                                <p class="text-sm text-gray-600">Review and approve cadet account requests</p>
+                            <div class="mb-4 flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2 flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                                        </svg>
+                                        Pending Cadet Registrations
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Review and approve cadet account requests</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <form method="POST" action="{{ route('pending.verification.accept-all') }}" onsubmit="return confirm('Are you sure you want to accept all pending cadets?')">
+                                        @csrf
+                                        <input type="hidden" name="role" value="cadet">
+                                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Accept All
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('pending.verification.reject-all') }}" onsubmit="return confirm('Are you sure you want to reject all pending cadets? This action cannot be undone.')">
+                                        @csrf
+                                        <input type="hidden" name="role" value="cadet">
+                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold shadow-md transition-colors duration-200 flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                            Reject All
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
 
                             <table class="min-w-full divide-y divide-gray-200">
@@ -139,14 +175,38 @@
                     {{-- ================================================================ --}}
                     <div id="instructors-content" class="tab-content {{ $pendingCadets->count() == 0 ? 'block' : 'hidden' }}">
                         @if($pendingInstructors->count() > 0)
-                            <div class="mb-4">
-                                <h3 class="text-lg font-medium text-gray-900 mb-2 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                    Pending Instructor Registrations
-                                </h3>
-                                <p class="text-sm text-gray-600">Review and approve instructor account requests</p>
+                            <div class="mb-4 flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2 flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                        Pending Instructor Registrations
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Review and approve instructor account requests</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <form method="POST" action="{{ route('pending.verification.accept-all') }}" onsubmit="return confirm('Are you sure you want to accept all pending instructors?')">
+                                        @csrf
+                                        <input type="hidden" name="role" value="instructor">
+                                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Accept All
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('pending.verification.reject-all') }}" onsubmit="return confirm('Are you sure you want to reject all pending instructors? This action cannot be undone.')">
+                                        @csrf
+                                        <input type="hidden" name="role" value="instructor">
+                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold shadow-md transition-colors duration-200 flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                            Reject All
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
 
                             <table class="min-w-full divide-y divide-gray-200">

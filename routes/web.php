@@ -77,6 +77,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/instructor/pending-verification/{user}/accept', [PendingVerificationController::class, 'accept'])->name('pending.verification.accept');
     Route::post('/instructor/pending-verification/{user}/reject', [PendingVerificationController::class, 'reject'])->name('pending.verification.reject');
 
+    // Bulk actions
+    Route::post('/instructor/pending-verification/accept-all', [PendingVerificationController::class, 'acceptAll'])->name('pending.verification.accept-all');
+    Route::post('/instructor/pending-verification/reject-all', [PendingVerificationController::class, 'rejectAll'])->name('pending.verification.reject-all');
+
     // ------------------------------------------------------------------------
     // Dashboard Routes
     // ------------------------------------------------------------------------
