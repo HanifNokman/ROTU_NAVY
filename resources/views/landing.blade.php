@@ -2714,22 +2714,35 @@
         // Enhanced navbar scroll effects with hide/show functionality
         let lastScrollY = window.scrollY;
         const navbar = document.getElementById('navbar');
+        const notificationBanner = document.getElementById('notificationBanner');
 
         window.addEventListener('scroll', () => {
             const currentScrollY = window.scrollY;
-            
+
             if (currentScrollY > 100) {
                 navbar.classList.add('scrolled');
                 if (currentScrollY > lastScrollY && currentScrollY > 200) {
                     navbar.style.transform = 'translateY(-100%)';
+                    // Move notification banner to top when navbar is hidden
+                    if (notificationBanner && !notificationBanner.classList.contains('hidden')) {
+                        notificationBanner.style.top = '0';
+                    }
                 } else {
                     navbar.style.transform = 'translateY(0)';
+                    // Move notification banner back to below navbar
+                    if (notificationBanner && !notificationBanner.classList.contains('hidden')) {
+                        notificationBanner.style.top = '81px';
+                    }
                 }
             } else {
                 navbar.classList.remove('scrolled');
                 navbar.style.transform = 'translateY(0)';
+                // Ensure notification banner is in correct position
+                if (notificationBanner && !notificationBanner.classList.contains('hidden')) {
+                    notificationBanner.style.top = '81px';
+                }
             }
-            
+
             lastScrollY = currentScrollY;
         });
 
