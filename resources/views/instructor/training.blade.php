@@ -146,7 +146,7 @@
                 </div>
             </div>
 
-            <!-- Activity Time Table Section -->
+            <!-- Activity Time Table Section with Dynamic Filters -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
                     <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
@@ -158,81 +158,66 @@
                     <p class="text-gray-600">Detailed list of all training sessions and their status</p>
                 </div>
                 <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
-                            <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                    <!-- Filter Form -->
+                    <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Year Filter -->
+                            <div>
+                                <label for="activityYear" class="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                                <select name="activityYear" id="activityYear" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    <option value="">All Years</option>
+                                    @foreach($availableYears as $year)
+                                        <option value="{{ $year }}" {{ $filterYear == $year ? 'selected' : '' }}>
+                                            {{ $year }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Month Filter -->
+                            <div>
+                                <label for="activityMonth" class="block text-sm font-medium text-gray-700 mb-2">Month</label>
+                                <select name="activityMonth" id="activityMonth" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    <option value="">All Months</option>
+                                </select>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div>
+                                <label for="activityStatus" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                <select name="activityStatus" id="activityStatus" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    <option value="">All Statuses</option>
+                                    <option value="Active" {{ $filterStatus == 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="Completed" {{ $filterStatus == 'Completed' ? 'selected' : '' }}>Completed</option>
+                                    <option value="Cancelled" {{ $filterStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="activityLoadingSpinner" class="hidden text-center py-8">
+                        <svg class="animate-spin h-8 w-8 mx-auto text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-gray-600 mt-2">Loading...</p>
+                    </div>
+
+                    <div id="activityTableContainer" class="overflow-x-auto" style="max-height: 350px; overflow-y: auto;">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100 sticky top-0 z-20">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Title</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Involvement</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Duration</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-100 sticky top-0">Title</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-100 sticky top-0">Involvement</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-100 sticky top-0">Location</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-100 sticky top-0">Date</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-100 sticky top-0">Duration</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-100 sticky top-0">Status</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-100 sticky top-0">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($trainings as $training)
-                                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $training->title }}</div>
-                                        @if($training->description)
-                                        <div class="text-sm text-gray-500">{{ Str::limit($training->description, 50) }}</div>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $training->involvement ?? 'Not specified' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $training->location }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <div>{{ $training->formatted_start_date }}</div>
-                                        <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        @if($training->duration_hours)
-                                            @if($training->allowance_type === 'daily')
-                                                {{ $training->duration_hours }} days
-                                            @else
-                                                {{ $training->duration_hours }}h
-                                            @endif
-                                        @else
-                                            TBD
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full {{ $training->status_badge_color }}">
-                                            {{ $training->status }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="editTraining({{ $training->id }})" class="text-indigo-600 hover:text-indigo-900 mr-4 transition-colors duration-150">
-                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                            Edit
-                                        </button>
-                                        <button onclick="deleteTraining({{ $training->id }})" class="text-red-600 hover:text-red-900 transition-colors duration-150">
-                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="7" class="px-6 py-8 text-center">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <svg class="w-12 h-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                            </svg>
-                                            <p class="text-gray-500 text-sm">No training sessions scheduled</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
+                            <tbody class="bg-white divide-y divide-gray-200" id="activityTableBody">
+                                <!-- Table content will be rendered here -->
                             </tbody>
                         </table>
                     </div>
@@ -243,131 +228,138 @@
 
     <!-- ===== ALL MODALS SECTION ===== -->
     <!-- Create/Edit Training Modal -->
-<div id="trainingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <!-- Header -->
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <h3 id="modalTitle" class="text-xl font-semibold text-gray-900">Create Training Session</h3>
-            </div>
-            
-            <!-- Form -->
-            <form id="trainingForm" class="p-6 space-y-6">
-                <input type="hidden" id="trainingId" name="training_id">
+    <div id="trainingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <!-- Header with Close Button -->
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex justify-between items-center">
+                        <h3 id="modalTitle" class="text-xl font-semibold text-gray-900">Create Training Session</h3>
+                        <button onclick="closeModal()" type="button" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 
-                <!-- Basic Information -->
-                <div class="space-y-4">
-                    <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Basic Information</h4>
+                <!-- Form -->
+                <form id="trainingForm" class="p-6 space-y-6">
+                    <input type="hidden" id="trainingId" name="training_id">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Training Title *</label>
-                            <input type="text" id="title" name="title" required 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Enter training title">
-                        </div>
-                        <div>
-                            <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location *</label>
-                            <input type="text" id="location" name="location" required 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Training location">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                        <textarea id="description" name="description" rows="3" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Optional training description"></textarea>
-                    </div>
-                </div>
-
-                <!-- Participants -->
-                <div class="space-y-4">
-                    <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Participants</h4>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-3">Select Cadet Intakes *</label>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg" id="dynamicIntakeCheckboxes">
-                            <!-- Dynamic intake checkboxes will be rendered here -->
-                        </div>
-                        <p class="text-xs text-gray-500 mt-2">Select which cadet intakes will participate in this training</p>
-                    </div>
-                </div>
-
-                <!-- Schedule -->
-                <div class="space-y-4">
-                    <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Schedule</h4>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Start Date/Time -->
-                        <div class="space-y-3">
-                            <h5 class="text-sm font-medium text-gray-700">Start Date & Time *</h5>
-                            <div class="space-y-2">
-                                <input type="date" id="start_date" name="start_date" required 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <select id="start_time" name="start_time" required 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select start time</option>
-                                    @foreach(\App\Models\Training::getHourOptions() as $hour)
-                                        <option value="{{ $hour }}">{{ substr($hour, 0, 2) }}:00</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                    <!-- Basic Information -->
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Basic Information</h4>
                         
-                        <!-- End Date/Time -->
-                        <div class="space-y-3">
-                            <h5 class="text-sm font-medium text-gray-700">End Date & Time</h5>
-                            <div class="space-y-2">
-                                <input type="date" id="end_date" name="end_date" 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <select id="end_time" name="end_time" 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select end time</option>
-                                    @foreach(\App\Models\Training::getHourOptions() as $hour)
-                                        <option value="{{ $hour }}">{{ substr($hour, 0, 2) }}:00</option>
-                                    @endforeach
-                                </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Training Title *</label>
+                                <input type="text" id="title" name="title" required 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Enter training title">
                             </div>
-                            <p class="text-xs text-gray-500">Leave empty if training duration is unknown</p>
+                            <div>
+                                <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location *</label>
+                                <input type="text" id="location" name="location" required 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Training location">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea id="description" name="description" rows="3" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Optional training description"></textarea>
                         </div>
                     </div>
-                </div>
 
-                <!-- Status -->
-                <div class="space-y-4">
-                    <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Status</h4>
-                    
-                    <div class="w-full md:w-1/2">
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Training Status *</label>
-                        <select id="status" name="status" required 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="Active">Active</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
+                    <!-- Participants -->
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Participants</h4>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Select Cadet Intakes *</label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg" id="dynamicIntakeCheckboxes">
+                                <!-- Dynamic intake checkboxes will be rendered here -->
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Select which cadet intakes will participate in this training</p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Form Actions -->
-                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                    <button type="button" onclick="closeModal()" 
-                        class="px-6 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors duration-200">
-                        Cancel
-                    </button>
-                    <button type="submit" 
-                        class="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200 flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        <span id="submitText">Create Training</span>
-                    </button>
-                </div>
-            </form>
+                    <!-- Schedule -->
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Schedule</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Start Date/Time -->
+                            <div class="space-y-3">
+                                <h5 class="text-sm font-medium text-gray-700">Start Date & Time *</h5>
+                                <div class="space-y-2">
+                                    <input type="date" id="start_date" name="start_date" required 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <select id="start_time" name="start_time" required 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Select start time</option>
+                                        @foreach(\App\Models\Training::getHourOptions() as $hour)
+                                            <option value="{{ $hour }}">{{ substr($hour, 0, 2) }}:00</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- End Date/Time -->
+                            <div class="space-y-3">
+                                <h5 class="text-sm font-medium text-gray-700">End Date & Time</h5>
+                                <div class="space-y-2">
+                                    <input type="date" id="end_date" name="end_date" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <select id="end_time" name="end_time" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Select end time</option>
+                                        @foreach(\App\Models\Training::getHourOptions() as $hour)
+                                            <option value="{{ $hour }}">{{ substr($hour, 0, 2) }}:00</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <p class="text-xs text-gray-500">Leave empty if training duration is unknown</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Status</h4>
+                        
+                        <div class="w-full md:w-1/2">
+                            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Training Status *</label>
+                            <select id="status" name="status" required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="Active">Active</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                        <button type="button" onclick="closeModal()" 
+                            class="px-6 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors duration-200">
+                            Cancel
+                        </button>
+                        <button type="submit" 
+                            class="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span id="submitText">Create Training</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
@@ -2118,6 +2110,226 @@ function showAttendanceListError(message) {
     document.getElementById('attendanceListContent').classList.add('hidden');
     document.getElementById('attendanceListError').classList.remove('hidden');
     document.getElementById('attendanceListErrorMessage').textContent = message;
+}
+
+// Activity Time Table Filter Variables
+let activityAvailableYearsMonths = @json($availableYearsMonths ?? []);
+let activityCurrentFilterYear = "{{ $filterYear ?? '' }}";
+let activityCurrentFilterMonth = "{{ $filterMonth ?? '' }}";
+
+// Month names mapping
+const activityMonthNames = {
+    1: 'January', 2: 'February', 3: 'March', 4: 'April',
+    5: 'May', 6: 'June', 7: 'July', 8: 'August',
+    9: 'September', 10: 'October', 11: 'November', 12: 'December'
+};
+
+// Initialize Activity Time Table
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize month filter
+    updateActivityMonthFilter();
+    
+    // Add event listener to year filter
+    document.getElementById('activityYear').addEventListener('change', function() {
+        updateActivityMonthFilter();
+        applyActivityFilters();
+    });
+    
+    // Add event listeners to all filters for auto-apply
+    document.getElementById('activityMonth').addEventListener('change', applyActivityFilters);
+    document.getElementById('activityStatus').addEventListener('change', applyActivityFilters);
+    
+    // Initial table render
+    renderActivityTable(@json($trainings));
+});
+
+// ================================================================
+// UPDATE MONTH FILTER BASED ON SELECTED YEAR
+// ================================================================
+function updateActivityMonthFilter() {
+    const yearSelect = document.getElementById('activityYear');
+    const monthSelect = document.getElementById('activityMonth');
+    const selectedYear = yearSelect.value;
+    
+    // Clear current options except "All Months"
+    monthSelect.innerHTML = '<option value="">All Months</option>';
+    
+    if (selectedYear && activityAvailableYearsMonths[selectedYear]) {
+        // Add months available for the selected year
+        activityAvailableYearsMonths[selectedYear].forEach(month => {
+            const option = document.createElement('option');
+            option.value = month;
+            option.textContent = activityMonthNames[month];
+            
+            // Preserve selected month if it exists in the new year
+            if (activityCurrentFilterMonth == month && activityCurrentFilterYear == selectedYear) {
+                option.selected = true;
+            }
+            
+            monthSelect.appendChild(option);
+        });
+    } else {
+        // If no year selected, show all unique months across all years
+        const allMonths = new Set();
+        Object.values(activityAvailableYearsMonths).forEach(months => {
+            months.forEach(month => allMonths.add(month));
+        });
+        
+        // Sort and add all months
+        Array.from(allMonths).sort((a, b) => a - b).forEach(month => {
+            const option = document.createElement('option');
+            option.value = month;
+            option.textContent = activityMonthNames[month];
+            
+            if (activityCurrentFilterMonth == month && !activityCurrentFilterYear) {
+                option.selected = true;
+            }
+            
+            monthSelect.appendChild(option);
+        });
+    }
+}
+
+// ================================================================
+// APPLY FILTERS VIA AJAX
+// ================================================================
+function applyActivityFilters() {
+    const year = document.getElementById('activityYear').value;
+    const month = document.getElementById('activityMonth').value;
+    const status = document.getElementById('activityStatus').value;
+    
+    // Show loading spinner
+    document.getElementById('activityLoadingSpinner').classList.remove('hidden');
+    document.getElementById('activityTableContainer').classList.add('opacity-50');
+    
+    // Build query string
+    const params = new URLSearchParams();
+    if (year) params.append('year', year);
+    if (month) params.append('month', month);
+    if (status) params.append('status', status);
+    params.append('ajax', '1');
+    
+    // Fetch filtered data
+    fetch(`{{ route('instructor.training') }}?${params.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Update table
+        renderActivityTable(data.trainings);
+        
+        // Update calendar
+        if (calendar) {
+            calendar.removeAllEvents();
+            calendar.addEventSource(data.calendarEvents);
+        }
+        
+        // Update URL without reload
+        const newUrl = `{{ route('instructor.training') }}?${params.toString().replace('ajax=1', '').replace(/&$/, '')}`;
+        window.history.pushState({}, '', newUrl || '{{ route('instructor.training') }}');
+        
+        // Hide loading spinner
+        document.getElementById('activityLoadingSpinner').classList.add('hidden');
+        document.getElementById('activityTableContainer').classList.remove('opacity-50');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to load training data');
+        document.getElementById('activityLoadingSpinner').classList.add('hidden');
+        document.getElementById('activityTableContainer').classList.remove('opacity-50');
+    });
+}
+
+// ================================================================
+// RENDER TABLE WITH TRAINING DATA
+// ================================================================
+function renderActivityTable(trainings) {
+    const tbody = document.getElementById('activityTableBody');
+    tbody.innerHTML = '';
+    
+    if (!trainings || trainings.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-8 text-center">
+                    <div class="flex flex-col items-center justify-center">
+                        <svg class="w-12 h-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <p class="text-gray-500 text-sm">No training sessions found with the current filters</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    trainings.forEach(training => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50 transition-colors duration-150';
+        
+        let durationText = 'TBD';
+        if (training.duration_hours) {
+            if (training.allowance_type === 'daily') {
+                durationText = training.duration_hours + ' days';
+            } else {
+                durationText = training.duration_hours + 'h';
+            }
+        }
+        
+        const description = training.description ? 
+            `<div class="text-sm text-gray-500">${truncateActivityText(training.description, 50)}</div>` : '';
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">${training.title}</div>
+                ${description}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${training.involvement || 'Not specified'}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${training.location}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <div>${training.formatted_start_date}</div>
+                <div class="text-gray-500">${training.formatted_start_time}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${durationText}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full ${training.status_badge_color}">
+                    ${training.status}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="editTraining(${training.id})" class="text-indigo-600 hover:text-indigo-900 mr-4 transition-colors duration-150">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Edit
+                </button>
+                <button onclick="deleteTraining(${training.id})" class="text-red-600 hover:text-red-900 transition-colors duration-150">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Delete
+                </button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// ================================================================
+// UTILITY: TRUNCATE STRING
+// ================================================================
+function truncateActivityText(text, length) {
+    return text.length > length ? text.substring(0, length) + '...' : text;
 }
 </script>
     @endpush
