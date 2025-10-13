@@ -345,7 +345,250 @@ class LearningHubController extends Controller
     }
 
     // ================================================================
-    // SUBMIT QUIZ ANSWERS
+    // IMPROVED ANSWER COMPARISON METHOD
+    // ================================================================
+    
+    /**
+     * Compare answers with fuzzy matching for subjective questions
+     * 
+     * @param string $correctAnswer The correct answer
+     * @param string $userAnswer The user's answer
+     * @param string $questionType The type of question (MCQ or Subjective)
+     * @return bool Whether the answer is correct
+     */
+    private function compareAnswers($correctAnswer, $userAnswer, $questionType)
+    {
+        // Handle empty answers
+        if (empty($userAnswer)) {
+            return false;
+        }
+
+        // For MCQ, use exact comparison (case-insensitive)
+        if ($questionType === 'MCQ') {
+            return strtolower(trim($correctAnswer)) === strtolower(trim($userAnswer));
+        }
+
+        // For Subjective questions, use fuzzy matching
+        return $this->fuzzyCompare($correctAnswer, $userAnswer);
+    }
+
+    /**
+     * Fuzzy comparison for subjective answers
+     * 
+     * @param string $correctAnswer
+     * @param string $userAnswer
+     * @return bool
+     */
+    private function fuzzyCompare($correctAnswer, $userAnswer)
+    {
+        // Normalize both answers
+        $normalized_correct = $this->normalizeAnswer($correctAnswer);
+        $normalized_user = $this->normalizeAnswer($userAnswer);
+
+        // 1. Exact match after normalization
+        if ($normalized_correct === $normalized_user) {
+            return true;
+        }
+
+        // 2. Check if user answer contains all key numbers from correct answer
+        if ($this->numbersMatch($correctAnswer, $userAnswer)) {
+            // If numbers match, check for partial text match
+            if ($this->partialTextMatch($normalized_correct, $normalized_user)) {
+                return true;
+            }
+        }
+
+        // 3. Calculate similarity percentage using Levenshtein distance
+        $similarity = $this->calculateSimilarity($normalized_correct, $normalized_user);
+        
+        // Accept if similarity is >= 85%
+        if ($similarity >= 85) {
+            return true;
+        }
+
+        // 4. Check for common abbreviations and variations
+        if ($this->checkCommonVariations($normalized_correct, $normalized_user)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Normalize answer for comparison
+     */
+    private function normalizeAnswer($answer)
+    {
+        $answer = strtolower(trim($answer));
+        
+        // Remove extra whitespace
+        $answer = preg_replace('/\s+/', ' ', $answer);
+        
+        // Remove common punctuation
+        $answer = preg_replace('/[.,;:!?\'"]/', '', $answer);
+        
+        return $answer;
+    }
+
+    /**
+     * Check if all numbers in correct answer appear in user answer
+     */
+    private function numbersMatch($correctAnswer, $userAnswer)
+    {
+        // Extract all numbers from both answers
+        preg_match_all('/\d+\.?\d*/', $correctAnswer, $correctNumbers);
+        preg_match_all('/\d+\.?\d*/', $userAnswer, $userNumbers);
+
+        if (empty($correctNumbers[0])) {
+            return true; // No numbers to match
+        }
+
+        if (empty($userNumbers[0])) {
+            return false; // User answer has no numbers but correct answer does
+        }
+
+        // Check if all correct numbers are in user answer
+        foreach ($correctNumbers[0] as $num) {
+            if (!in_array($num, $userNumbers[0])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check for partial text match (for cases like "7 minutes" vs "7 min")
+     */
+    private function partialTextMatch($correctAnswer, $userAnswer)
+    {
+        // Remove numbers for text comparison
+        $correctText = preg_replace('/\d+\.?\d*/', '', $correctAnswer);
+        $userText = preg_replace('/\d+\.?\d*/', '', $userAnswer);
+        
+        $correctText = trim($correctText);
+        $userText = trim($userText);
+
+        if (empty($correctText) || empty($userText)) {
+            return true;
+        }
+
+        // Check if one is contained in the other
+        if (strpos($correctText, $userText) !== false || strpos($userText, $correctText) !== false) {
+            return true;
+        }
+
+        // Check for common word stems (e.g., "minute" and "min")
+        $correctWords = explode(' ', $correctText);
+        $userWords = explode(' ', $userText);
+
+        foreach ($correctWords as $correctWord) {
+            foreach ($userWords as $userWord) {
+                if ($this->wordsAreSimilar($correctWord, $userWord)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Calculate similarity percentage between two strings
+     */
+    private function calculateSimilarity($str1, $str2)
+    {
+        $maxLength = max(strlen($str1), strlen($str2));
+        
+        if ($maxLength === 0) {
+            return 100;
+        }
+
+        $distance = levenshtein($str1, $str2);
+        $similarity = (1 - ($distance / $maxLength)) * 100;
+
+        return $similarity;
+    }
+
+    /**
+     * Check if two words are similar (handles abbreviations)
+     */
+    private function wordsAreSimilar($word1, $word2)
+    {
+        // Direct match
+        if ($word1 === $word2) {
+            return true;
+        }
+
+        // Check if one is abbreviation of the other (min length 3)
+        if (strlen($word1) >= 3 && strlen($word2) >= 3) {
+            if (strpos($word1, $word2) === 0 || strpos($word2, $word1) === 0) {
+                return true;
+            }
+        }
+
+        // Calculate similarity for individual words
+        $similarity = $this->calculateSimilarity($word1, $word2);
+        return $similarity >= 80;
+    }
+
+    /**
+     * Check for common variations and abbreviations
+     */
+    private function checkCommonVariations($correctAnswer, $userAnswer)
+    {
+        $variations = [
+            // Time units
+            'minutes' => ['minute', 'min', 'mins'],
+            'seconds' => ['second', 'sec', 'secs'],
+            'hours' => ['hour', 'hr', 'hrs'],
+            'days' => ['day'],
+            
+            // Distance units
+            'kilometers' => ['kilometer', 'km', 'kms'],
+            'meters' => ['meter', 'metre', 'm'],
+            'miles' => ['mile', 'mi'],
+            
+            // Weight units
+            'kilograms' => ['kilogram', 'kg', 'kgs'],
+            'grams' => ['gram', 'g', 'gms'],
+            'pounds' => ['pound', 'lb', 'lbs'],
+            
+            // Common words
+            'approximately' => ['approx', 'around', 'about'],
+            'percentage' => ['percent', '%'],
+        ];
+
+        foreach ($variations as $full => $abbrevs) {
+            // Check if full form is in correct answer and any abbreviation is in user answer
+            if (strpos($correctAnswer, $full) !== false) {
+                foreach ($abbrevs as $abbrev) {
+                    if (strpos($userAnswer, $abbrev) !== false) {
+                        // Found a matching variation, check the rest
+                        $tempCorrect = str_replace($full, $abbrev, $correctAnswer);
+                        if ($this->calculateSimilarity($tempCorrect, $userAnswer) >= 85) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            // Check reverse (abbreviation in correct, full form in user)
+            foreach ($abbrevs as $abbrev) {
+                if (strpos($correctAnswer, $abbrev) !== false && strpos($userAnswer, $full) !== false) {
+                    $tempCorrect = str_replace($abbrev, $full, $correctAnswer);
+                    if ($this->calculateSimilarity($tempCorrect, $userAnswer) >= 85) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // ================================================================
+    // SUBMIT QUIZ ANSWERS (UPDATED)
     // ================================================================
     
     public function submitQuiz(Request $request)
@@ -378,12 +621,12 @@ class LearningHubController extends Controller
             $userAnswer = $userAnswers[$questionId] ?? null;
             $correctAnswer = $question['correct_answer'];
 
-            $isCorrect = false;
-            if ($question['question_type'] === 'MCQ') {
-                $isCorrect = strtolower(trim($correctAnswer)) === strtolower(trim($userAnswer ?? ''));
-            } elseif ($question['question_type'] === 'Subjective') {
-                $isCorrect = strtolower(trim($correctAnswer)) === strtolower(trim($userAnswer ?? ''));
-            }
+            // Use improved comparison method
+            $isCorrect = $this->compareAnswers(
+                $correctAnswer,
+                $userAnswer,
+                $question['question_type']
+            );
 
             if ($isCorrect) {
                 $correctAnswers++;

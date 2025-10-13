@@ -30,7 +30,7 @@
             @endif
 
             {{-- ================================================================ --}}
-            {{-- LEARNING MATERIALS SECTION (COMPLETE) --}}
+            {{-- LEARNING MATERIALS SECTION --}}
             {{-- ================================================================ --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
