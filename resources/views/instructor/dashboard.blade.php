@@ -5,6 +5,58 @@
         </h2>
     </x-slot>
 
+    <style>
+    #duty-ranking-content {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #cgpa-content {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar,
+    #cgpa-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar-track,
+    #cgpa-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar-thumb,
+    #cgpa-content::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar-thumb:hover,
+    #cgpa-content::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    #duty-ranking-content,
+    #cgpa-content {
+        scrollbar-width: thin;
+        scrollbar-color: #888 #f1f1f1;
+    }
+
+    #duty-ranking-content,
+    #cgpa-content {
+        scroll-behavior: smooth;
+    }
+
+    .duty-ranking-wrapper,
+    .cgpa-wrapper {
+        position: relative;
+    }
+    </style>
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
@@ -203,52 +255,54 @@
                             </div>
                         </div>
 
-                        <div id="duty-ranking-content" class="space-y-4 max-h-[600px] overflow-y-auto">
-                            @php
-                                $maxCount = $cadets->max('daily_duty_count') ?: 1;
-                            @endphp
-
-                            @forelse ($cadets as $index => $cadet)
+                        <div class="duty-ranking-wrapper">
+                            <div id="duty-ranking-content" class="space-y-4">
                                 @php
-                                    $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
-                                    if ($percentage < 50) {
-                                        $ratio = $percentage / 50;
-                                        $r = 255;
-                                        $g = (int)(180 * $ratio);
-                                    } else {
-                                        $ratio = ($percentage - 50) / 50;
-                                        $r = (int)(255 * (1 - $ratio));
-                                        $g = 180;
-                                    }
-                                    $bgColor = "rgb($r, $g, 0)";
+                                    $maxCount = $cadets->max('daily_duty_count') ?: 1;
                                 @endphp
 
-                                <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
-                                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                            </svg>
-                                        </div>
-                                    </div>
+                                @forelse ($cadets as $index => $cadet)
+                                    @php
+                                        $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
+                                        if ($percentage < 50) {
+                                            $ratio = $percentage / 50;
+                                            $r = 255;
+                                            $g = (int)(180 * $ratio);
+                                        } else {
+                                            $ratio = ($percentage - 50) / 50;
+                                            $r = (int)(255 * (1 - $ratio));
+                                            $g = 180;
+                                        }
+                                        $bgColor = "rgb($r, $g, 0)";
+                                    @endphp
 
-                                    <div class="flex-1 w-full">
-                                        <div class="text-sm font-medium mb-1 text-center sm:text-left">
-                                            #{{ $index + 1 }} - {{ $cadet->name }}
+                                    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                </svg>
+                                            </div>
                                         </div>
 
-                                        <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                            <div class="absolute top-0 left-0 h-full rounded-full flex items-center" style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
-                                                <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
-                                                    {{ $cadet->daily_duty_count }} {{ Str::plural('Day', $cadet->daily_duty_count) }}
-                                                </span>
+                                        <div class="flex-1 w-full">
+                                            <div class="text-sm font-medium mb-1 text-center sm:text-left">
+                                                #{{ $index + 1 }} - {{ $cadet->name }}
+                                            </div>
+
+                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
+                                                <div class="absolute top-0 left-0 h-full rounded-full flex items-center" style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
+                                                    <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
+                                                        {{ $cadet->daily_duty_count }} {{ Str::plural('Day', $cadet->daily_duty_count) }}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @empty
-                                <div class="text-center text-gray-500">No cadets available.</div>
-                            @endforelse
+                                @empty
+                                    <div class="text-center text-gray-500">No cadets available.</div>
+                                @endforelse
+                            </div>
                         </div>
 
                         {{-- ================================================================ --}}
@@ -269,7 +323,7 @@
                                     <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
                                     <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
 
-                                    <div id="modal-cadet-list" class="space-y-2 max-h-[400px] overflow-y-auto border p-2 rounded mb-4">
+                                    <div id="modal-cadet-list" class="space-y-2 max-h-[315px] overflow-y-auto border p-2 rounded mb-4">
                                         <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
                                             <div class="flex items-center justify-between border p-2 rounded">
                                                 <span x-text="cadet.name + ' (' + cadet.service_number + ')'"></span>
@@ -335,55 +389,57 @@
                             </div>
                         </div>
 
-                        <div id="cgpa-content" class="space-y-4 max-h-[600px] overflow-y-auto">
-                            @php
-                                $maxCgpa = max($cgpaCadets->max('current_cgpa'), $cgpaCadets->max('past_cgpa')) ?: 4.0;
-                            @endphp
-
-                            @forelse ($cgpaCadets as $index => $cadet)
+                        <div class="cgpa-wrapper">
+                            <div id="cgpa-content" class="space-y-4">
                                 @php
-                                    $pastPercentage = ($cadet->past_cgpa / $maxCgpa) * 100;
-                                    $currentPercentage = ($cadet->current_cgpa / $maxCgpa) * 100;
-                                    $cgpaChange = $cadet->current_cgpa - $cadet->past_cgpa;
-                                    $currentColor = $cgpaChange >= 0 ? '#10b981' : '#ef4444';
-                                    $pastColor = '#3b82f6';
+                                    $maxCgpa = max($cgpaCadets->max('current_cgpa'), $cgpaCadets->max('past_cgpa')) ?: 4.0;
                                 @endphp
 
-                                <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
-                                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                            </svg>
+                                @forelse ($cgpaCadets as $index => $cadet)
+                                    @php
+                                        $pastPercentage = ($cadet->past_cgpa / $maxCgpa) * 100;
+                                        $currentPercentage = ($cadet->current_cgpa / $maxCgpa) * 100;
+                                        $cgpaChange = $cadet->current_cgpa - $cadet->past_cgpa;
+                                        $currentColor = $cgpaChange >= 0 ? '#10b981' : '#ef4444';
+                                        $pastColor = '#3b82f6';
+                                    @endphp
+
+                                    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex-1 w-full">
+                                            <div class="text-sm font-medium mb-1 text-center sm:text-left flex justify-between items-center">
+                                                <span>#{{ $index + 1 }} - {{ $cadet->name }}</span>
+                                                <span class="text-xs {{ $cgpaChange >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                                    {{ $cgpaChange >= 0 ? '+' : '' }}{{ number_format($cgpaChange, 2) }}
+                                                </span>
+                                            </div>
+
+                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
+                                                <div class="absolute top-0 left-0 h-full rounded-full" style="width: {{ $currentPercentage }}%; background-color: {{ $currentColor }};"></div>
+                                                <span class="absolute inset-0 flex items-center justify-start pl-2 text-white font-semibold text-xs">
+                                                    Current: {{ number_format($cadet->current_cgpa, 2) }}
+                                                </span>
+                                            </div>
+
+                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden mb-1">
+                                                <div class="absolute top-0 left-0 h-full rounded-full" style="width: {{ $pastPercentage }}%; background-color: {{ $pastColor }};"></div>
+                                                <span class="absolute inset-0 flex items-center justify-start pl-2 text-white font-semibold text-xs">
+                                                    Past: {{ number_format($cadet->past_cgpa, 2) }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="flex-1 w-full">
-                                        <div class="text-sm font-medium mb-1 text-center sm:text-left flex justify-between items-center">
-                                            <span>#{{ $index + 1 }} - {{ $cadet->name }}</span>
-                                            <span class="text-xs {{ $cgpaChange >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                                {{ $cgpaChange >= 0 ? '+' : '' }}{{ number_format($cgpaChange, 2) }}
-                                            </span>
-                                        </div>
-
-                                        <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                            <div class="absolute top-0 left-0 h-full rounded-full" style="width: {{ $currentPercentage }}%; background-color: {{ $currentColor }};"></div>
-                                            <span class="absolute inset-0 flex items-center justify-start pl-2 text-white font-semibold text-xs">
-                                                Current: {{ number_format($cadet->current_cgpa, 2) }}
-                                            </span>
-                                        </div>
-
-                                        <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden mb-1">
-                                            <div class="absolute top-0 left-0 h-full rounded-full" style="width: {{ $pastPercentage }}%; background-color: {{ $pastColor }};"></div>
-                                            <span class="absolute inset-0 flex items-center justify-start pl-2 text-white font-semibold text-xs">
-                                                Past: {{ number_format($cadet->past_cgpa, 2) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center text-gray-500">No CGPA data available for this intake.</div>
-                            @endforelse
+                                @empty
+                                    <div class="text-center text-gray-500">No CGPA data available for this intake.</div>
+                                @endforelse
+                            </div>
                         </div>
 
                         <div class="flex justify-center gap-4 text-sm mt-4">
@@ -728,12 +784,45 @@
     {{-- JAVASCRIPT --}}
     {{-- ================================================================ --}}
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
         let currentAbsenceView = 'pending';
         
-        {{-- ================================================================ --}}
-        {{-- ABSENCE VIEW TOGGLE FUNCTION --}}
-        {{-- ================================================================ --}}
+        // ================================================================
+        // SCROLL DETECTION FOR DUTY RANKING AND CGPA ANALYTICS
+        // ================================================================
+        function checkScrollableContent() {
+            // Check Duty Ranking
+            const dutyContainer = document.getElementById('duty-ranking-content');
+            const dutyWrapper = dutyContainer?.closest('.duty-ranking-wrapper');
+            
+            if (dutyContainer && dutyWrapper) {
+                if (dutyContainer.scrollHeight > dutyContainer.clientHeight) {
+                    dutyWrapper.classList.add('has-scroll');
+                } else {
+                    dutyWrapper.classList.remove('has-scroll');
+                }
+            }
+            
+            // Check CGPA Analytics
+            const cgpaContainer = document.getElementById('cgpa-content');
+            const cgpaWrapper = cgpaContainer?.closest('.cgpa-wrapper');
+            
+            if (cgpaContainer && cgpaWrapper) {
+                if (cgpaContainer.scrollHeight > cgpaContainer.clientHeight) {
+                    cgpaWrapper.classList.add('has-scroll');
+                } else {
+                    cgpaWrapper.classList.remove('has-scroll');
+                }
+            }
+        }
+
+        // Check on load and after updates
+        checkScrollableContent();
+        window.addEventListener('resize', checkScrollableContent);
+        
+        // ================================================================
+        // ABSENCE VIEW TOGGLE FUNCTION
+        // ================================================================
         function toggleAbsenceView(view) {
             const pendingBtn = document.getElementById('pending-view-btn');
             const leaderboardBtn = document.getElementById('leaderboard-view-btn');
@@ -786,9 +875,9 @@
 
         window.toggleAbsenceView = toggleAbsenceView;
 
-        {{-- ================================================================ --}}
-        {{-- CGPA ANALYTICS AJAX LOADER --}}
-        {{-- ================================================================ --}}
+        // ================================================================
+        // CGPA ANALYTICS AJAX LOADER
+        // ================================================================
         function loadCgpaAnalytics() {
             const intakeYear = document.getElementById('cgpa-intake-year').value;
             const sortOrder = document.getElementById('cgpa-sort-order').value;
@@ -816,6 +905,8 @@
                 if (data.cgpa_html) {
                     document.getElementById('cgpa-content').innerHTML = data.cgpa_html;
                 }
+                // Check scroll after content update
+                setTimeout(checkScrollableContent, 100);
             })
             .catch(error => {
                 console.error('Error loading CGPA analytics:', error);
@@ -826,9 +917,9 @@
             });
         }
 
-        {{-- ================================================================ --}}
-        {{-- ABSENCE DATA AJAX LOADER --}}
-        {{-- ================================================================ --}}
+        // ================================================================
+        // ABSENCE DATA AJAX LOADER
+        // ================================================================
         function loadAbsenceData() {
             const intakeFilter = document.getElementById('absence-intake-filter').value;
 
@@ -886,33 +977,51 @@
             });
         }
 
-        {{-- ================================================================ --}}
-        {{-- EVENT LISTENERS --}}
-        {{-- ================================================================ --}}
+        // ================================================================
+        // EVENT LISTENERS
+        // ================================================================
         document.getElementById('cgpa-intake-year').addEventListener('change', loadCgpaAnalytics);
         document.getElementById('cgpa-sort-order').addEventListener('change', loadCgpaAnalytics);
         document.getElementById('absence-intake-filter').addEventListener('change', loadAbsenceData);
 
-        {{-- ================================================================ --}}
-        {{-- ABSENCE DROPDOWN TOGGLE --}}
-        {{-- ================================================================ --}}
+        // Check scroll after duty ranking updates
+        const dutyIntakeYear = document.getElementById('duty-intake-year');
+        const dutySortOrder = document.getElementById('duty-sort-order');
+
+        if (dutyIntakeYear) {
+            dutyIntakeYear.addEventListener('change', function() {
+                setTimeout(checkScrollableContent, 500);
+            });
+        }
+
+        if (dutySortOrder) {
+            dutySortOrder.addEventListener('change', function() {
+                setTimeout(checkScrollableContent, 500);
+            });
+        }
+
+        // ================================================================
+        // ABSENCE DROPDOWN TOGGLE
+        // ================================================================
         window.toggleAbsenceDropdown = function(cadetId) {
             const dropdown = document.getElementById('absence-dropdown-' + cadetId);
             const icon = document.getElementById('absence-icon-' + cadetId);
             
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden');
-                icon.style.transform = 'rotate(180deg)';
-            } else {
-                dropdown.classList.add('hidden');
-                icon.style.transform = 'rotate(0deg)';
+            if (dropdown && icon) {
+                if (dropdown.classList.contains('hidden')) {
+                    dropdown.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    dropdown.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
             }
         };
     });
 
-    {{-- ================================================================ --}}
-    {{-- ALPINE.JS MODAL STORE --}}
-    {{-- ================================================================ --}}
+    // ================================================================
+    // ALPINE.JS MODAL STORE
+    // ================================================================
     document.addEventListener('alpine:init', () => {
         Alpine.store('modal', {
             open: false,
