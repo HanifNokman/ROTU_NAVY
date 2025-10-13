@@ -110,8 +110,8 @@
         }
 
         .bio-image img {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid var(--primary-blue);
@@ -188,11 +188,11 @@
         <div class="bio-card">
             <div class="bio-content">
                 <div class="bio-image">
-                    <img src="{{ asset('images/default.png') }}" alt="Developer Photo" onerror="this.src='{{ asset('images/default.png') }}';">
+                    <img src="{{ asset('storage/assets/images/dev.png') }}" alt="Developer Photo" onerror="this.src='{{ asset('images/default.png') }}';">
                 </div>
                 <div class="bio-text">
                     <h2>Lt. M Hanif bin Nokman PSSTLDM</h2>
-                    <p><strong>Full Stack Developer & Naval Technology Enthusiast</strong></p>
+                    <p><strong>Software Engineering Student & Naval Technology Enthusiast</strong></p>
                     <p>With a background in software engineering and a deep appreciation for maritime excellence, I developed this platform to streamline the Reserve Officer Training Unit's operations at Universiti Malaysia Sabah.</p>
                     <p>This system combines modern web technologies with the discipline and precision required for naval training, ensuring cadets receive the best possible preparation for their service.</p>
 
@@ -203,15 +203,11 @@
                         </div>
                         <div class="skill-item">
                             <i class="fab fa-js"></i>
-                            <strong>JavaScript & Vue.js</strong>
+                            <strong>JavaScript</strong>
                         </div>
                         <div class="skill-item">
                             <i class="fas fa-database"></i>
                             <strong>Database Design</strong>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fas fa-anchor"></i>
-                            <strong>Naval Systems</strong>
                         </div>
                     </div>
                 </div>
