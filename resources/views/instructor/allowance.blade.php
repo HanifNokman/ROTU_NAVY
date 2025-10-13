@@ -173,22 +173,25 @@
                                         <div class="p-3 sm:p-6 bg-white">
                                             <div class="overflow-x-auto -mx-3 sm:mx-0">
                                                 <div class="inline-block min-w-full align-middle px-3 sm:px-0">
-                                                    <table class="min-w-full divide-y divide-gray-200" id="cadets-table-{{ $training->id }}">
-                                                        <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
-                                                            <tr>
-                                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">No</th>
-                                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">Service No</th>
-                                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase hidden lg:table-cell">Rank</th>
-                                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">Name</th>
-                                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase hidden md:table-cell">Bank Account</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="bg-white divide-y divide-gray-200">
-                                                        </tbody>
-                                                    </table>
+                                                    <!-- Scrollable container with max height for 10 rows -->
+                                                    <div class="overflow-y-auto" style="max-height: 520px;">
+                                                        <table class="min-w-full divide-y divide-gray-200" id="cadets-table-{{ $training->id }}">
+                                                            <thead class="bg-gradient-to-r from-gray-50 to-blue-50 sticky top-0 z-10">
+                                                                <tr>
+                                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">No</th>
+                                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">Service No</th>
+                                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase hidden lg:table-cell">Rank</th>
+                                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">Name</th>
+                                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase hidden md:table-cell">Bank Account</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="bg-white divide-y divide-gray-200">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        
+
                                             {{-- Allowance Summary --}}
                                             <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200" id="summary-{{ $training->id }}">
                                             </div>
@@ -363,12 +366,14 @@
                 .then(data => {
                     trainingData[trainingId] = data;
 
+                    // Populate intake dropdown WITHOUT "All Intakes" option
                     if (intakeSelect) {
-                        intakeSelect.innerHTML = '<option value="">All Intakes</option>';
+                        intakeSelect.innerHTML = '';
                         data.available_intakes.forEach(intake => {
                             const option = document.createElement('option');
                             option.value = intake;
                             option.textContent = intake;
+                            // Select the most senior intake (default_intake) by default
                             if (data.default_intake && intake === data.default_intake) {
                                 option.selected = true;
                             }
@@ -376,12 +381,17 @@
                         });
                     }
 
+                    // Filter cadets by the most senior intake (default_intake)
                     let cadetsToShow = data.cadets;
                     if (data.default_intake) {
                         cadetsToShow = data.cadets.filter(cadet => cadet.intake === data.default_intake);
                     }
+                    
                     displayCadets(trainingId, cadetsToShow);
-                    displaySummary(trainingId, data.summary);
+                    
+                    // Calculate and display summary for filtered cadets only
+                    const filteredSummary = calculateFilteredSummary(data.summary, cadetsToShow.length);
+                    displaySummary(trainingId, filteredSummary);
 
                     loadedTrainings.add(trainingId);
                 })
@@ -402,6 +412,18 @@
                         `;
                     }
                 });
+        }
+
+        function calculateFilteredSummary(originalSummary, filteredCadetsCount) {
+            const baseRate = originalSummary.base_rate || 0;
+            const durationValue = originalSummary.duration_value || 0;
+            const newTotalAllowance = filteredCadetsCount * baseRate * durationValue;
+            
+            return {
+                ...originalSummary,
+                total_cadets: filteredCadetsCount,
+                total_allowance: newTotalAllowance
+            };
         }
 
         function displayCadets(trainingId, cadets) {
@@ -543,24 +565,13 @@
             
             if (!originalData) return;
             
-            let filteredCadets = originalData.cadets;
-            
-            if (selectedIntake) {
-                filteredCadets = originalData.cadets.filter(cadet => cadet.intake === selectedIntake);
-            }
+            // Filter cadets by selected intake
+            let filteredCadets = originalData.cadets.filter(cadet => cadet.intake === selectedIntake);
             
             displayCadets(trainingId, filteredCadets);
             
-            const baseRate = originalData.summary.base_rate || 0;
-            const durationValue = originalData.summary.duration_value || 0;
-            const newTotalAllowance = filteredCadets.length * baseRate * durationValue;
-            
-            const filteredSummary = {
-                ...originalData.summary,
-                total_cadets: filteredCadets.length,
-                total_allowance: newTotalAllowance
-            };
-            
+            // Recalculate summary based on filtered cadets count
+            const filteredSummary = calculateFilteredSummary(originalData.summary, filteredCadets.length);
             displaySummary(trainingId, filteredSummary);
         }
     </script>
