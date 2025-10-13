@@ -538,25 +538,272 @@ class LearningHubController extends Controller
     private function checkCommonVariations($correctAnswer, $userAnswer)
     {
         $variations = [
-            // Time units
+            // Time units (basic - commonly used in military context)
             'minutes' => ['minute', 'min', 'mins'],
             'seconds' => ['second', 'sec', 'secs'],
             'hours' => ['hour', 'hr', 'hrs'],
-            'days' => ['day'],
             
-            // Distance units
-            'kilometers' => ['kilometer', 'km', 'kms'],
-            'meters' => ['meter', 'metre', 'm'],
-            'miles' => ['mile', 'mi'],
+            // Naval distance units
+            'nautical miles' => ['nautical mile', 'nm', 'nmi', 'nmile', 'n mile', 'n miles'],
+            'kilometers' => ['kilometer', 'kilometre', 'km', 'kms'],
+            'meters' => ['meter', 'metre', 'm', 'mtr'],
+            'feet' => ['foot', 'ft'],
             
-            // Weight units
-            'kilograms' => ['kilogram', 'kg', 'kgs'],
-            'grams' => ['gram', 'g', 'gms'],
-            'pounds' => ['pound', 'lb', 'lbs'],
+            // Naval speed units
+            'knots' => ['knot', 'kn', 'kt', 'kts', 'nautical miles per hour'],
+            'kilometers per hour' => ['kilometer per hour', 'kmh', 'km/h', 'kph', 'kmph'],
             
-            // Common words
-            'approximately' => ['approx', 'around', 'about'],
-            'percentage' => ['percent', '%'],
+            // Common phrases
+            'approximately' => ['approx', 'around', 'about', 'roughly'],
+            'percentage' => ['percent', '%', 'pct'],
+            
+            // ============================================
+            // MALAYSIAN NAVY RANKS (OFFICER)
+            // ============================================
+            'laksamana' => ['laksamana', 'laks', 'admiral'],
+            'laksamana madya' => ['laksamana madya', 'laks madya', 'vice admiral'],
+            'laksamana muda' => ['laksamana muda', 'laks muda', 'rear admiral'],
+            'laksamana pertama' => ['laksamana pertama', 'laks pertama', 'first admiral'],
+            'kapten' => ['kapten', 'kpt', 'captain'],
+            'komander' => ['komander', 'kdr', 'commander'],
+            'leftenant komander' => ['leftenant komander', 'lt kdr', 'lt cdr', 'lieutenant commander'],
+            'leftenant' => ['leftenant', 'lt', 'lieutenant'],
+            'leftenant madya' => ['leftenant madya', 'lt dya', 'sub lieutenant'],
+            'leftenant muda' => ['leftenant muda', 'lt m', 'acting sub lieutenant'],
+            
+            // MALAYSIAN NAVY RANKS (ENLISTED)
+            'pegawai waran satu' => ['pegawai waran satu', 'pw1', 'pwi', 'warrant officer 1'],
+            'pegawai waran dua' => ['pegawai waran dua', 'pw2', 'pwii', 'warrant officer 2'],
+            'bintara kanan' => ['bk', 'cpo', 'chief petty officer'],
+            'bintara muda' => ['bm', 'po', 'petty officer'],
+            'laskar kanan' => ['lk', 'leading', 'leading rate'],
+            'laskar kelas pertama' => ['laskar kelas satu', 'lk1', 'lki',  'able rate'],
+            'laskar kanan kedua' => ['lascar kanan dua', 'lk2', 'lkii', 'ordinary rate'],
+
+            // ============================================
+            // MALAYSIAN ARMY RANKS (OFFICER)
+            // ============================================
+            'jeneral' => ['jeneral', 'jen', 'general'],
+            'leftenan jeneral' => ['leftenan jeneral', 'lt jen', 'lieutenant general'],
+            'mejar jeneral' => ['mejar jeneral', 'mej jen', 'major general'],
+            'brigedier jeneral' => ['brigedier jeneral', 'brig jen', 'brigadier general'],
+            'kolonel' => ['kolonel', 'kol', 'colonel'],
+            'leftenan kolonel' => ['leftenan kolonel', 'lt kol', 'lieutenant colonel'],
+            'mejar' => ['mejar', 'mej', 'major'],
+            'kapten (army)' => ['kapten tentera darat', 'capt', 'captain army'],
+            'leftenan (army)' => ['leftenan tentera darat', 'lt tentera darat', 'lieutenant army'],
+            'leftenan muda (army)' => ['leftenan muda tentera darat', 'lt muda', 'second lieutenant'],
+
+            // MALAYSIAN ARMY RANKS (ENLISTED)
+            'sarjan mejar' => ['sarjan mejar', 'sj mej', 'sergeant major'],
+            'staf sarjan' => ['staff sarjan', 'sj kanan', 'staff sergeant'],
+            'sarjan' => ['sarjan', 'sj', 'sergeant'],
+            'koporal' => ['koporal', 'kpl', 'corporal'],
+            'lans koporal' => ['lans koporal', 'l/kpl', 'lance corporal'],
+            'prebet' => ['prebet', 'pbt', 'private'],
+
+            // ============================================
+            // MALAYSIAN AIR FORCE RANKS (OFFICER)
+            // ============================================
+            'jeneral (air force)' => ['jeneral tudm', 'jen tudm', 'air chief marshal'],
+            'leftenan jeneral (air force)' => ['leftenan jeneral tudm', 'lt jen tudm', 'air marshal'],
+            'mejar jeneral (air force)' => ['mejar jeneral tudm', 'mej jen tudm', 'air vice marshal'],
+            'brigedier jeneral (air force)' => ['brigedier jeneral tudm', 'brig jen tudm', 'air commodore'],
+            'kolonel (air force)' => ['kolonel tudm', 'kol tudm', 'group captain'],
+            'leftenan kolonel (air force)' => ['leftenan kolonel tudm', 'lt kol tudm', 'wing commander'],
+            'mejar (air force)' => ['mejar tudm', 'mej tudm', 'squadron leader'],
+            'kapten (air force)' => ['kapten tudm', 'flight lieutenant'],
+            'leftenan (air force)' => ['leftenan tudm', 'flying officer'],
+            'leftenan muda (air force)' => ['leftenan muda tudm', 'lt muda tudm', 'pilot officer'],
+
+            // MALAYSIAN AIR FORCE RANKS (ENLISTED)
+            'pegawai waran (air force)' => ['pegawai waran tudm', 'pw tudm', 'warrant officer tudm'],
+            'sarjan mejar (air force)' => ['sarjan mejar tudm', 'sj mej tudm', 'flight sergeant major'],
+            'sarjan kanan (air force)' => ['sarjan kanan tudm', 'sj kanan tudm', 'flight sergeant'],
+            'sarjan (air force)' => ['sarjan tudm', 'sj tudm', 'sergeant tudm'],
+            'koporal (air force)' => ['koporal tudm', 'kpl tudm', 'corporal tudm'],
+            'lans koporal (air force)' => ['lans koporal tudm', 'l/kpl tudm', 'lance corporal tudm'],
+
+            // ============================================
+            // EXPERTISE BRANCHES
+            // ============================================
+
+            // Cawangan Bekalan & Urusetia (Supply & Administrative Branches)
+            'juruteknik taktikal peperangan' => ['jtp', 'tactical warfare technician'],
+            'komunikasi' => ['kom', 'communications specialist'],
+            'hidrografi' => ['hd', 'hydrography', 'hydrographic'],
+            'pusat latihan tentera laut' => ['pltl', 'navy training center'],
+            'peluru dan ranjau' => ['plm', 'ammunition and mines'],
+            'kesihatan jasmani' => ['kjm', 'physical fitness', 'physical training'],
+            'perbekalan bawah permukaan senjata' => ['pbs', 'underwater weapons supply'],
+            'perbekalan bawah permukaan kawalan' => ['pbk', 'underwater control supply'],
+            'perbekalan atas permukaan' => ['pap', 'surface supply'],
+
+            // Cawangan Kejuruteraan (Engineering Branches)
+            'teknikal logistik' => ['tnl', 'technical logistics'],
+            'pentadbiran dan kewangan' => ['pnk', 'administration and finance'],
+            'pancaragam' => ['pgm', 'ceremonial drill', 'marching band'],
+            'bendari' => ['bdt', 'supply technician'],
+            'petugas wisma pegawai' => ['pwp', 'officers mess attendant'],
+
+            // Cawangan Kejuruteraan (Engineering Technical Branches)
+            'teknikal sistem elektrik radio dan radar' => ['tlr', 'electrical radio and radar systems'],
+            'teknikal sistem marin srimala' => ['tms', 'marine systems srimala'],
+            'teknikal sistem marin kuasa gerak' => ['tmk', 'marine propulsion systems'],
+            'teknikal sistem elektrik kuasa dan senjata' => ['tls', 'electrical weapons and power systems'],
+            
+            // ============================================
+            // NAVAL VESSEL TYPES
+            // ============================================
+            'kapal angkatan tentera laut' => ['kld', 'kd', 'ka', 'royal malaysian ship'],
+            'frigate' => ['frig', 'ffg'],
+            'corvette' => ['corv', 'fs'],
+            'patrol vessel' => ['pv', 'patrol boat', 'pb', 'ngpv'],
+            'fast attack craft' => ['fac', 'missile boat'],
+            'mine countermeasure vessel' => ['mcmv', 'mine hunter', 'minesweeper'],
+            'submarine' => ['sub', 'ss', 'ssk'],
+            'auxiliary ship' => ['aux', 'support vessel', 'ka'],
+            'landing craft' => ['lc', 'landing ship'],
+            
+            // ============================================
+            // SHIP DIRECTIONS & POSITIONS
+            // ============================================
+            'starboard' => ['stbd', 'stb', 'right side'],
+            'port' => ['port side', 'ps', 'left side'],
+            'bow' => ['forward', 'fwd', 'fore', 'front'],
+            'stern' => ['aft', 'rear', 'back'],
+            'amidships' => ['midship', 'amid', 'center'],
+            'forward' => ['fwd', 'fore'],
+            'aft' => ['rear', 'astern'],
+            
+            // ============================================
+            // SHIP COMPARTMENTS & AREAS
+            // ============================================
+            'bridge' => ['brdg', 'command bridge', 'wheelhouse'],
+            'engine room' => ['er', 'machinery space'],
+            'operations room' => ['ops room', 'or', 'combat information center', 'cic'],
+            'mess deck' => ['mess', 'galley area'],
+            'quarterdeck' => ['qd', 'quarter deck'],
+            'weather deck' => ['upper deck', 'open deck'],
+            
+            // ============================================
+            // NAVAL OPERATIONS & TACTICS
+            // ============================================
+            'anti-submarine warfare' => ['asw', 'submarine warfare'],
+            'anti-air warfare' => ['aaw', 'air defense'],
+            'anti-surface warfare' => ['asuw', 'surface warfare'],
+            'electronic warfare' => ['ew', 'electronic countermeasures', 'ecm'],
+            'mine warfare' => ['mw', 'mine operations'],
+            'amphibious warfare' => ['amph ops', 'amphibious operations'],
+            'naval gunfire support' => ['ngs', 'ngfs', 'gunfire support'],
+            'search and rescue' => ['sar', 'search rescue'],
+            'maritime security operations' => ['mso', 'maritime security'],
+            'freedom of navigation' => ['fonops', 'fon', 'navigation operations'],
+            
+            // ============================================
+            // NAVIGATION & SEAMANSHIP
+            // ============================================
+            'navigation' => ['nav', 'navig'],
+            'heading' => ['hdg', 'course'],
+            'bearing' => ['brg', 'azimuth'],
+            'distance' => ['dist', 'range'],
+            'latitude' => ['lat'],
+            'longitude' => ['long', 'lon'],
+            'position' => ['pos', 'location'],
+            'chart' => ['nautical chart', 'sea chart'],
+            'dead reckoning' => ['dr', 'ded reckoning'],
+            'estimated position' => ['ep', 'est pos'],
+            
+            // ============================================
+            // COMMUNICATIONS
+            // ============================================
+            'communications' => ['comms', 'comm', 'coms'],
+            'radio' => ['r/t', 'wireless'],
+            'signal' => ['sig', 'sigs'],
+            'message' => ['msg', 'mssg'],
+            'transmission' => ['xmit', 'tx'],
+            'reception' => ['rx', 'receive'],
+            'frequency' => ['freq', 'channel', 'ch'],
+            
+            // ============================================
+            // WEAPONS & ARMAMENT
+            // ============================================
+            'surface-to-air missile' => ['sam', 'surface to air'],
+            'surface-to-surface missile' => ['ssm', 'anti-ship missile', 'ashm'],
+            'torpedo' => ['torp', 'fish'],
+            'depth charge' => ['dc', 'ash can'],
+            'naval gun' => ['gun', 'deck gun', 'main gun'],
+            'close-in weapon system' => ['ciws', 'point defense'],
+            'vertical launch system' => ['vls', 'vertical launcher'],
+            
+            // ============================================
+            // SENSORS & DETECTION
+            // ============================================
+            'radar' => ['radio detection and ranging'],
+            'sonar' => ['sound navigation and ranging', 'asdic'],
+            'electronic support measures' => ['esm', 'radar warning receiver', 'rwr'],
+            'infrared' => ['ir', 'thermal'],
+            'identification friend or foe' => ['iff', 'transponder'],
+            
+            // ============================================
+            // COMMAND & CONTROL
+            // ============================================
+            'commanding officer' => ['co', 'captain', 'skipper'],
+            'executive officer' => ['xo', 'exec', 'first officer'],
+            'officer of the watch' => ['oow', 'officer of watch', 'deck officer'],
+            'operations' => ['ops', 'oper'],
+            'headquarters' => ['hq', 'hdqtrs', 'command center'],
+            'chain of command' => ['coc', 'command structure'],
+            
+            // ============================================
+            // PROCEDURES & PROTOCOLS
+            // ============================================
+            'standard operating procedure' => ['sop', 'standard procedure'],
+            'rules of engagement' => ['roe', 'engagement rules'],
+            'general quarters' => ['gq', 'action stations', 'battle stations'],
+            'damage control' => ['dc', 'damage con'],
+            'man overboard' => ['mob', 'person overboard', 'pob'],
+            'emergency' => ['emerg', 'emer'],
+            
+            // ============================================
+            // MALAYSIAN MILITARY ORGANIZATIONS
+            // ============================================
+            'royal malaysian navy' => ['rmn', 'tldm', 'tentera laut diraja malaysia'],
+            'royal malaysian air force' => ['rmaf', 'tudm', 'tentera udara diraja malaysia'],
+            'malaysian army' => ['tentera darat malaysia', 'army'],
+            'malaysian armed forces' => ['maf', 'atm', 'angkatan tentera malaysia'],
+            'ministry of defence' => ['mindef', 'mod', 'kementerian pertahanan'],
+            'naval base' => ['pangkalan tldm', 'base'],
+            'fleet' => ['armada', 'flotilla'],
+            
+            // ============================================
+            // CARDINAL DIRECTIONS (Navigation)
+            // ============================================
+            'north' => ['n'],
+            'south' => ['s'],
+            'east' => ['e'],
+            'west' => ['w'],
+            'northeast' => ['ne', 'north-east'],
+            'northwest' => ['nw', 'north-west'],
+            'southeast' => ['se', 'south-east'],
+            'southwest' => ['sw', 'south-west'],
+            
+            // ============================================
+            // WATCH & TIME SYSTEMS
+            // ============================================
+            'coordinated universal time' => ['utc', 'zulu time', 'z time', 'gmt'],
+            'local time' => ['lt', 'local'],
+            'watch' => ['duty period', 'shift'],
+            
+            // ============================================
+            // MARITIME TERMS
+            // ============================================
+            'alongside' => ['berth', 'pier side', 'docked'],
+            'underway' => ['under way', 'at sea', 'steaming'],
+            'anchored' => ['at anchor', 'moored'],
+            'port call' => ['visit', 'port visit'],
+            'deployment' => ['deploy', 'deployment period'],
+            'exercise' => ['ex', 'drill', 'training exercise'],
         ];
 
         foreach ($variations as $full => $abbrevs) {
