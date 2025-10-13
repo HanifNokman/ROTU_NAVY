@@ -79,27 +79,26 @@ class AllowanceController extends Controller
     public function getTrainingDetails(Request $request, $trainingId)
     {
         $training = Training::with(['attendances.cadet.user'])->findOrFail($trainingId);
-        $selectedIntake = $request->get('intake');
 
         $allPresentAttendances = $training->attendances()
             ->where('present', true)
             ->with(['cadet.user'])
             ->get();
 
-        $filteredAttendances = $this->filterAttendancesByIntake($allPresentAttendances, $selectedIntake);
-
         $availableIntakes = $this->getAvailableIntakes($allPresentAttendances);
-        $defaultIntake = $this->getDefaultIntake($allPresentAttendances);
+        $mostSeniorIntake = $this->getMostSeniorIntake($allPresentAttendances);
 
-        $allowanceData = $this->calculateAllowance($training, $filteredAttendances->count());
+        // Format ALL cadets data - don't filter here
+        $allCadetsData = $this->formatCadetsData($allPresentAttendances);
 
-        $cadetsData = $this->formatCadetsData($filteredAttendances);
+        // Calculate base summary data (will be recalculated on frontend based on filtered count)
+        $allowanceData = $this->calculateAllowance($training, $allPresentAttendances->count());
 
         return response()->json([
-            'cadets' => $cadetsData,
+            'cadets' => $allCadetsData,  // Return ALL cadets
             'summary' => $allowanceData,
             'available_intakes' => $availableIntakes,
-            'default_intake' => $defaultIntake,
+            'default_intake' => $mostSeniorIntake,
             'training' => [
                 'title' => $training->title,
                 'date' => $training->start_datetime->format('M d, Y'),
@@ -149,7 +148,7 @@ class AllowanceController extends Controller
             ->toArray();
     }
 
-    private function getDefaultIntake($attendances)
+    private function getMostSeniorIntake($attendances)
     {
         $intakeData = $attendances->map(function($attendance) {
             if (!$attendance->cadet || !$attendance->cadet->intake_year) {
@@ -163,8 +162,15 @@ class AllowanceController extends Controller
             ];
         })->filter();
 
-        $defaultIntake = $intakeData->sortBy('year')->first();
-        return $defaultIntake ? $defaultIntake['label'] : null;
+        // Sort by year ascending to get the most senior (oldest/lowest year)
+        $mostSeniorIntake = $intakeData->sortBy('year')->first();
+        return $mostSeniorIntake ? $mostSeniorIntake['label'] : null;
+    }
+
+    private function getDefaultIntake($attendances)
+    {
+        // This method is now replaced by getMostSeniorIntake
+        return $this->getMostSeniorIntake($attendances);
     }
 
     private function parseIntakeToYear($intakeLabel)
@@ -377,7 +383,6 @@ class AllowanceController extends Controller
                                 <select id="intake-' . $training->id . '" 
                                         class="bg-white border border-gray-300 rounded-md pl-3 pr-8 py-1.5 text-sm text-gray-700 shadow-sm hover:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 min-w-[140px]"
                                         onchange="filterByIntake(' . $training->id . ')">
-                                    <option value="">All Intakes</option>
                                 </select>
                             </div>
                         </div>
