@@ -127,6 +127,7 @@ class AdminController extends Controller
                 'BMI' => 'nullable|numeric',
                 'BMI_update_date' => 'nullable|date',
                 'swimming_qualification' => 'nullable|string',
+                'swimming_pass_date' => 'nullable|date',
                 'service_number' => 'nullable|string|max:10',
             ]);
             
