@@ -1977,7 +1977,7 @@
         <div class="stats-container">
             <div class="stat-item animate-on-scroll">
                 <span class="stat-number" data-count="500">0</span>
-                <span class="stat-label">Graduan</span>
+                <span class="stat-label">Jumlah Keseluruhan Kadet Palapes</span>
             </div>
             <div class="stat-item animate-on-scroll">
                 <span class="stat-number" data-count="11">0</span>
@@ -1985,7 +1985,7 @@
             </div>
             <div class="stat-item animate-on-scroll">
                 <span class="stat-number" data-count="95">0</span>
-                <span class="stat-label">% Kadar Kejayaan</span>
+                <span class="stat-label">% Kadet Ditauliahkan</span>
             </div>
             <div class="stat-item animate-on-scroll">
                 <span class="stat-number" data-count="120">0</span>
@@ -2248,7 +2248,7 @@
                     <div class="feature-icon">
                         <i class="fas fa-utensils"></i>
                     </div>
-                    <h3 class="feature-title">Makanan Sewaktu Latihan</h3>
+                    <h3 class="feature-title">Sajian Latihan</h3>
                     <p class="feature-description">Makanan disediakan sepanjang tempoh latihan untuk memastikan keperluan asas kadet terpenuhi dengan sempurna.</p>
                 </div>
 
@@ -2256,15 +2256,15 @@
                     <div class="feature-icon">
                         <i class="fas fa-home"></i>
                     </div>
-                    <h3 class="feature-title">Jaminan Kolej 3 Tahun</h3>
-                    <p class="feature-description">Jaminan penginapan kolej kediaman selama 3 tahun dengan kemudahan lengkap yang kondusif untuk pembelajaran dan latihan.</p>
+                    <h3 class="feature-title">Jaminan Kolej Kediaman</h3>
+                    <p class="feature-description">Jaminan penginapan di Kolej Kediaman Tun Mustapha selama 3 tahun dengan kemudahan lengkap yang kondusif untuk pembelajaran dan latihan.</p>
                 </div>
 
                 <div class="feature-card animate-on-scroll">
                     <div class="feature-icon">
                         <i class="fas fa-tshirt"></i>
                     </div>
-                    <h3 class="feature-title">Uniform & Kelengkapan Tentera</h3>
+                    <h3 class="feature-title">Uniform & Aksesori</h3>
                     <p class="feature-description">Pembekalan lengkap uniform ketenteraan, kelengkapan tentera, dan semua peralatan yang diperlukan untuk latihan dan aktiviti rasmi.</p>
                 </div>
 
@@ -2272,15 +2272,15 @@
                     <div class="feature-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <h3 class="feature-title">Tambahan 12 Jam Kredit</h3>
-                    <p class="feature-description">Tambahan 12 jam kredit untuk membantu dalam pengijazahan dan meningkatkan pencapaian akademik pelajar.</p>
+                    <h3 class="feature-title">Tambahan 6 Jam Kredit</h3>
+                    <p class="feature-description">Tambahan 6 jam kredit untuk membantu dalam pengijazahan dan meningkatkan pencapaian akademik pelajar.</p>
                 </div>
 
                 <div class="feature-card animate-on-scroll">
                     <div class="feature-icon">
                         <i class="fas fa-crown"></i>
                     </div>
-                    <h3 class="feature-title">Pentauliahan oleh YDPA</h3>
+                    <h3 class="feature-title">Pentauliahan</h3>
                     <p class="feature-description">Ditauliahkan oleh Yang di-Pertuan Agong sebagai Leftenan Muda dalam pasukan tentera laut simpanan dengan pengiktirafan rasmi.</p>
                 </div>
             </div>
@@ -2379,8 +2379,8 @@
                 
                 <div class="enhanced-card animate-on-scroll" style="position: relative;">
                     <div style="position: absolute; top: 15px; left: 30px; width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 3px solid var(--dark-navy);">2</div>
-                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Peperiksaan Bertulis</h3>
-                    <p style="color: var(--text-secondary);">Ujian bertulis komprehensif merangkumi pengetahuan am, hal ehwal semasa, matematik, penaakulan logik, dan kesedaran maritim.</p>
+                    <h3 style="color: var(--primary-blue); margin: 2rem 0 1rem;">Ujian Kawad</h3>
+                    <p style="color: var(--text-secondary);">Ujian kawad asas memberi penekanan kepada kemahiran kawad kaki asas termasuk pergerakan di tempat, perubahan arah, pergerakan maju ke hadapan, serta disiplin dalam barisan.</p>
                 </div>
                 
                 <div class="enhanced-card animate-on-scroll" style="position: relative;">
@@ -2519,7 +2519,7 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                     <i class="fas fa-phone" style="color: var(--primary-blue);"></i>
-                    <p>+60 88-320-000 ext. 5001</p>
+                    <p>+60 12-3456789</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <i class="fas fa-envelope" style="color: var(--primary-blue);"></i>
@@ -2535,7 +2535,7 @@
                 <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
                     <i class="fas fa-map-marker-alt" style="color: var(--primary-blue); margin-top: 0.25rem;"></i>
                     <div>
-                        <p style="margin-bottom: 0.25rem; font-weight: 600; color: var(--text-primary);">Lawati Kampus Kami</p>
+                        <p style="margin-bottom: 0.25rem; font-weight: 600; color: var(--text-primary);">Lawati Markas Kami</p>
                         <p style="margin: 0; font-size: 0.9rem;">Blok B, Universiti Malaysia Sabah<br>Jalan UMS, 88400 Kota Kinabalu<br>Sabah, Malaysia</p>
                     </div>
                 </div>
@@ -2545,7 +2545,7 @@
         <div class="footer-bottom">
             <p>&copy; 2025 PALAPES Laut UMS - Pasukan Latihan Pegawai Simpanan, Universiti Malaysia Sabah. Hak cipta terpelihara.</p>
             <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
-                Membangunkan Pemimpin Maritim | Membina Peribadi | Berkhidmat untuk Malaysia
+                Berkhidmat untuk Malaysia | Membina Peribadi | Sedia Berkorban
             </p>
         </div>
     </footer>

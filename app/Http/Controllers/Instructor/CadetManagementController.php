@@ -72,7 +72,7 @@ class CadetManagementController extends Controller
                     $query->where('intake_year', $intakeYear);
                 }
 
-                $this->applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy);
+                $this->applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy, $request);
 
                 $cadets = $query->paginate(20);
             }
@@ -82,13 +82,30 @@ class CadetManagementController extends Controller
             $cadets = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20, 1);
         }
 
+        // Get swimming pass dates for the selected intake if swimming is selected
+        $swimmingPassDates = [];
+        if ($infoType === 'swimming' && $intakeYear) {
+            $swimmingPassDates = Cadet::where('intake_year', $intakeYear)
+                ->whereNotNull('swimming_pass_date')
+                ->where('swimming_qualification', 'Pass')
+                ->selectRaw('DATE(swimming_pass_date) as pass_date')
+                ->distinct()
+                ->orderBy('pass_date', 'desc')
+                ->pluck('pass_date')
+                ->map(function ($date) {
+                    return \Carbon\Carbon::parse($date)->format('d/m/Y');
+                })
+                ->toArray();
+        }
+
         $viewData = [
             'cadets' => $cadets,
             'infoType' => $infoType,
             'intakeYear' => $intakeYear,
             'sortBy' => $sortBy,
             'filterBy' => $filterBy,
-            'recentIntakes' => $recentIntakes
+            'recentIntakes' => $recentIntakes,
+            'swimmingPassDates' => $swimmingPassDates
         ];
 
         Log::info('Sending to view', array_keys($viewData));
@@ -99,7 +116,7 @@ class CadetManagementController extends Controller
     // ================================================================
     // FILTERS AND SORTING: Apply query filters based on info type
     // ================================================================
-    private function applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy)
+    private function applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy, $request = null)
     {
         switch ($infoType) {
             case 'seniority':
@@ -170,7 +187,18 @@ class CadetManagementController extends Controller
                     ];
                     $query->where('swimming_qualification', $statusMap[$filterBy]);
                 }
-                
+
+                // Filter by swimming pass date if provided
+                $swimmingPassDate = $request->get('swimming_pass_date');
+                if ($swimmingPassDate && $swimmingPassDate !== 'all' && Schema::hasColumn('cadets', 'swimming_pass_date')) {
+                    try {
+                        $date = \Carbon\Carbon::createFromFormat('d/m/Y', $swimmingPassDate)->format('Y-m-d');
+                        $query->whereDate('swimming_pass_date', $date);
+                    } catch (\Exception $e) {
+                        // Invalid date format, ignore filter
+                    }
+                }
+
                 if (Schema::hasColumn('cadets', 'swimming_qualification') && Schema::hasColumn('cadets', 'service_number')) {
                     $query->orderByRaw("
                         CASE swimming_qualification
@@ -227,7 +255,10 @@ class CadetManagementController extends Controller
             $updatedCount = Cadet::whereIn('id', $request->cadet_ids)
                 ->where('intake_year', $request->intake_year)
                 ->where('swimming_qualification', '!=', 'Pass')
-                ->update(['swimming_qualification' => 'Pass']);
+                ->update([
+                    'swimming_qualification' => 'Pass',
+                    'swimming_pass_date' => now()
+                ]);
 
             return response()->json([
                 'success' => true,
