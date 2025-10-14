@@ -77,7 +77,7 @@
                             {{-- Dynamic Sorting/Filter Controls --}}
                             @if($infoType !== 'seniority')
                                 <div class="flex flex-col space-y-2">
-                                    
+
                                     {{-- Standard Filter Dropdown (BMI, Position, Gender, Swimming) --}}
                                     @if($infoType != 'cgpa')
                                         <div class="flex flex-col">
@@ -122,6 +122,23 @@
                                                 @endswitch
                                             </select>
                                         </div>
+
+                                        {{-- Swimming Pass Date Filter --}}
+                                        @if($infoType == 'swimming')
+                                            <div class="flex flex-col">
+                                                <label class="text-sm font-medium text-gray-700 mb-1">Pass Date</label>
+                                                <select id="swimmingPassDateFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                    <option value="all" {{ request('swimming_pass_date', 'all') == 'all' ? 'selected' : '' }}>All Dates</option>
+                                                    @if(!empty($swimmingPassDates))
+                                                        @foreach($swimmingPassDates as $date)
+                                                            <option value="{{ $date }}" {{ request('swimming_pass_date') == $date ? 'selected' : '' }}>
+                                                                {{ $date }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                            </div>
+                                        @endif
                                     @endif
 
                                     {{-- CGPA Range Filter --}}
@@ -282,17 +299,22 @@
                                                         @break
                                                         
                                                     @case('swimming')
-                                                        @if($cadet->swimming_qualification)
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                {{ $cadet->swimming_qualification == 'Pass' ? 'bg-green-100 text-green-800' : 
-                                                                   ($cadet->swimming_qualification == 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                                                {{ $cadet->swimming_qualification }}
-                                                            </span>
-                                                        @else
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                                N/A
-                                                            </span>
-                                                        @endif
+                                                        <div>
+                                                            @if($cadet->swimming_qualification)
+                                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                                    {{ $cadet->swimming_qualification == 'Pass' ? 'bg-green-100 text-green-800' :
+                                                                       ($cadet->swimming_qualification == 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                                                    {{ $cadet->swimming_qualification }}
+                                                                </span>
+                                                            @else
+                                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                                    N/A
+                                                                </span>
+                                                            @endif
+                                                            <div class="text-xs text-gray-500 mt-1">
+                                                                {{ $cadet->swimming_pass_date ? $cadet->swimming_pass_date->format('d/m/Y') : 'Not passed' }}
+                                                            </div>
+                                                        </div>
                                                         @break
                                                         
                                                     @case('bmi')
@@ -454,7 +476,13 @@
                     updateFilters();
                 });
             }
-            
+
+            if(document.getElementById('swimmingPassDateFilter')) {
+                document.getElementById('swimmingPassDateFilter').addEventListener('change', function() {
+                    updateFilters();
+                });
+            }
+
             if(document.getElementById('cgpaRangeFilter')) {
                 document.getElementById('cgpaRangeFilter').addEventListener('change', function() {
                     updateFilters();
@@ -608,18 +636,19 @@
         // ============================================================
         function updateFilters(infoType = null) {
             const url = new URL(window.location);
-            
+
             if (infoType) {
                 url.searchParams.set('info_type', infoType);
             }
-            
+
             url.searchParams.set('intake_year', document.getElementById('intakeFilter').value);
-            
+
             const currentInfoType = infoType || url.searchParams.get('info_type') || 'seniority';
 
             if (currentInfoType === 'seniority') {
                 url.searchParams.set('sort_by', 'asc');
                 url.searchParams.delete('filter_by');
+                url.searchParams.delete('swimming_pass_date');
             } else {
                 if (currentInfoType === 'cgpa') {
                     const cgpaRangeFilter = document.getElementById('cgpaRangeFilter');
@@ -629,6 +658,7 @@
                         url.searchParams.delete('filter_by');
                     }
                     url.searchParams.delete('sort_by');
+                    url.searchParams.delete('swimming_pass_date');
                 } else if (currentInfoType === 'bmi') {
                     const bmiFilter = document.getElementById('sortFilter');
                     if (bmiFilter) {
@@ -637,13 +667,26 @@
                         url.searchParams.delete('filter_by');
                     }
                     url.searchParams.delete('sort_by');
+                    url.searchParams.delete('swimming_pass_date');
+                } else if (currentInfoType === 'swimming') {
+                    const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'asc';
+                    url.searchParams.set('filter_by', sortValue);
+                    url.searchParams.delete('sort_by');
+
+                    const swimmingPassDateFilter = document.getElementById('swimmingPassDateFilter');
+                    if (swimmingPassDateFilter && swimmingPassDateFilter.value !== 'all') {
+                        url.searchParams.set('swimming_pass_date', swimmingPassDateFilter.value);
+                    } else {
+                        url.searchParams.delete('swimming_pass_date');
+                    }
                 } else {
                     const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'asc';
                     url.searchParams.set('filter_by', sortValue);
                     url.searchParams.delete('sort_by');
+                    url.searchParams.delete('swimming_pass_date');
                 }
             }
-            
+
             window.location.href = url.toString();
         }
 

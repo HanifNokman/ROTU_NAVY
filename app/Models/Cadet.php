@@ -26,6 +26,7 @@ class Cadet extends Model
         'BMI',
         'BMI_update_date',
         'swimming_qualification',
+        'swimming_pass_date',
         'service_number',
     ];
 
@@ -37,6 +38,7 @@ class Cadet extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'BMI_update_date' => 'datetime',
+        'swimming_pass_date' => 'datetime',
         'current_cgpa' => 'decimal:2',
         'BMI' => 'decimal:2',
     ];
