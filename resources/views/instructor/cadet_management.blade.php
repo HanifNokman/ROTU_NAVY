@@ -76,11 +76,11 @@
 
                             {{-- Dynamic Sorting/Filter Controls --}}
                             @if($infoType !== 'seniority')
-                                <div class="flex flex-col space-y-2">
+                                <div class="flex flex-row space-x-2 sm:space-x-4 overflow-x-auto">
 
                                     {{-- Standard Filter Dropdown (BMI, Position, Gender, Swimming) --}}
                                     @if($infoType != 'cgpa')
-                                        <div class="flex flex-col">
+                                        <div class="flex flex-col flex-1">
                                             <label class="text-sm font-medium text-gray-700 mb-1">
                                                 @switch($infoType)
                                                     @case('bmi')
@@ -97,7 +97,7 @@
                                                         @break
                                                 @endswitch
                                             </label>
-                                            <select id="sortFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            <select id="sortFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full">
                                                 @switch($infoType)
                                                     @case('bmi')
                                                         <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
@@ -125,9 +125,9 @@
 
                                         {{-- Swimming Pass Date Filter --}}
                                         @if($infoType == 'swimming')
-                                            <div class="flex flex-col">
+                                            <div class="flex flex-col flex-1">
                                                 <label class="text-sm font-medium text-gray-700 mb-1">Pass Date</label>
-                                                <select id="swimmingPassDateFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                <select id="swimmingPassDateFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full">
                                                     <option value="all" {{ request('swimming_pass_date', 'all') == 'all' ? 'selected' : '' }}>All Dates</option>
                                                     @if(!empty($swimmingPassDates))
                                                         @foreach($swimmingPassDates as $date)
@@ -160,11 +160,11 @@
                         </div>
 
                         {{-- Right Side: Information Type Buttons --}}
-                        <div class="flex flex-wrap gap-2 items-center">
+                        <div class="flex flex-nowrap gap-1 items-center overflow-x-auto">
                             @php
                                 $infoTypes = [
                                     'seniority' => 'Seniority',
-                                    'position' => 'Position', 
+                                    'position' => 'Position',
                                     'gender' => 'Gender',
                                     'cgpa' => 'CGPA',
                                     'swimming' => 'Swimming',
@@ -172,8 +172,8 @@
                                 ];
                             @endphp
                             @foreach($infoTypes as $type => $label)
-                                <button 
-                                    class="info-type-btn px-4 py-2 rounded-md text-sm font-medium transition-colors
+                                <button
+                                    class="info-type-btn px-3 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap
                                            {{ $infoType == $type ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
                                     data-type="{{ $type }}">
                                     {{ $label }}
