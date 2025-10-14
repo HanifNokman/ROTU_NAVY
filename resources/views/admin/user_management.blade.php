@@ -99,6 +99,7 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">BMI</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">BMI Update Date</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Swimming Qualification</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Swimming Pass Date</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Bank Account</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Profile Pic</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Action</th>
@@ -122,6 +123,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cadet->BMI }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cadet->BMI_update_date ? $cadet->BMI_update_date->format('d/m/Y') : 'N/A' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cadet->swimming_qualification }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cadet->swimming_pass_date ? $cadet->swimming_pass_date->format('d/m/Y') : 'N/A' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cadet->bank_account_number }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cadet->profile_pic }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -131,7 +133,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="18" class="px-6 py-12 text-center text-gray-500">
+                                            <td colspan="19" class="px-6 py-12 text-center text-gray-500">
                                                 <p>No cadets found for the selected filter.</p>
                                             </td>
                                         </tr>
@@ -376,6 +378,7 @@
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">BMI</label><input type="number" step="0.01" name="BMI" value="${cadet.BMI || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">BMI Update Date</label><input type="date" name="BMI_update_date" value="${cadet.BMI_update_date ? cadet.BMI_update_date.split(' ')[0] : ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Swimming Qualification</label><select name="swimming_qualification" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"><option value="Pass" ${cadet.swimming_qualification === 'Pass' ? 'selected' : ''}>Pass</option><option value="In Progress" ${cadet.swimming_qualification === 'In Progress' ? 'selected' : ''}>In Progress</option><option value="Fail" ${cadet.swimming_qualification === 'Fail' ? 'selected' : ''}>Fail</option></select></div>`;
+                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Swimming Pass Date</label><input type="date" name="swimming_pass_date" value="${cadet.swimming_pass_date ? cadet.swimming_pass_date.split(' ')[0] : ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Bank Account Number</label><input type="text" name="bank_account_number" value="${cadet.bank_account_number || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Service Number</label><input type="text" name="service_number" value="${cadet.service_number || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
             }
