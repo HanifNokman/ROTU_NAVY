@@ -354,7 +354,7 @@
                                             Borrow Date
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Days Borrowed
+                                            Return Date
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status
@@ -382,15 +382,22 @@
                                                 {{ $loan->borrow_date->format('M d, Y') }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $loan->borrow_date->diffInDays(now()) }} days
-                                                @if($loan->isOverdue())
-                                                    <span class="text-red-600 font-semibold">(Overdue)</span>
+                                                @if($loan->return_date)
+                                                    {{ $loan->return_date->format('M d, Y') }}
+                                                @else
+                                                    <span class="text-gray-400 italic">Not returned yet</span>
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                    {{ $loan->status }}
-                                                </span>
+                                                @if($loan->isOverdue())
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                        Overdue
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        {{ $loan->status }}
+                                                    </span>
+                                                @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <button 

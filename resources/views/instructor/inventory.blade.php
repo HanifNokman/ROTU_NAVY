@@ -167,7 +167,7 @@
                                 <label for="loan_intake_year" class="text-sm font-medium text-gray-700 mb-1">Intake</label>
                                 <select name="loan_intake_year" id="loan_intake_year"
                                         class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                                    <option value="">Select Intake</option>
+                                    <option value="">All Intake</option>
                                     @foreach($intakeYears as $intake)
                                         <option value="{{ $intake['year'] }}" {{ $selectedLoanIntakeYear == $intake['year'] ? 'selected' : '' }}>
                                             {{ $intake['label'] }}
@@ -227,9 +227,10 @@
                             <p class="text-gray-500 text-lg">No equipment loan records found.</p>
                         </div>
                     @else
-                        <div class="overflow-x-auto">
+                        <!-- Scrollable container with max 6 rows visible -->
+                        <div class="overflow-x-auto max-h-[480px] overflow-y-auto border border-gray-200 rounded-lg">
                             <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                                <thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cadet</th>
                                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Item</th>
@@ -642,22 +643,9 @@
         }
 
         function updateEquipmentLoans() {
-            // Only show data if intake year is selected
-            if (!currentFilters.loanIntakeYear) {
-                document.getElementById('equipmentLoansContent').innerHTML = `
-                    <div class="text-center py-12">
-                        <div class="text-gray-400 text-6xl mb-4">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <p class="text-gray-500 text-lg">Please select an Intake to view equipment loan records.</p>
-                    </div>
-                `;
-                return;
-            }
-
             const data = new URLSearchParams({
                 action: 'equipment_loans',
-                loan_intake_year: currentFilters.loanIntakeYear,
+                loan_intake_year: currentFilters.loanIntakeYear || '',
                 equipment_category: currentFilters.equipmentCategory || '',
                 loan_status: currentFilters.loanStatus
             });
