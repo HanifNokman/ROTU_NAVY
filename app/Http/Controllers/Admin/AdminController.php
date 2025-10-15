@@ -131,7 +131,16 @@ class AdminController extends Controller
                 'service_number' => 'nullable|string|max:10',
             ]);
             
+            // Convert empty strings to null for date fields
+            $dateFields = ['BMI_update_date', 'swimming_pass_date'];
+            foreach ($dateFields as $field) {
+                if (isset($cadetValidated[$field]) && trim($cadetValidated[$field]) === '') {
+                    $cadetValidated[$field] = null;
+                }
+            }
+            
             $user->cadet->update($cadetValidated);
+    
         } elseif ($user->role === 'instructor' && $user->instructor) {
             $instructorValidated = $request->validate([
                 'phone_number' => 'nullable|string|max:13',
