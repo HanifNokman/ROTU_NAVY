@@ -36,7 +36,7 @@ class InventoryController extends Controller
         // For uniform section, default to lowest intake if not provided
         $selectedUniformIntakeYear = $request->get('intake_year', $defaultIntakeYear);
         // For loan section, default to lowest intake if not provided
-        $selectedLoanIntakeYear = $request->get('loan_intake_year', $defaultIntakeYear);
+        $selectedLoanIntakeYear = $request->get('loan_intake_year', '');
         
         $selectedUniformType = $request->get('uniform_type');
         $selectedUniformComponent = $request->get('uniform_component');
@@ -206,7 +206,6 @@ class InventoryController extends Controller
         if ($category) {
             $query->where('inventory_items.category', $category);
         }
-
         if ($status) {
             if ($status === 'active') {
                 $query->where('equipment_loans.status', 'Borrowed');
@@ -221,9 +220,9 @@ class InventoryController extends Controller
         if ($equipmentLoans->isEmpty()) {
             $html = '<div class="text-center py-12"><div class="text-gray-400 text-6xl mb-4"><i class="fas fa-tools"></i></div><p class="text-gray-500 text-lg">No equipment loan records found.</p></div>';
         } else {
-            $html .= '<div class="overflow-x-auto">';
+            $html .= '<div class="overflow-x-auto max-h-[480px] overflow-y-auto border border-gray-200 rounded-lg">';
             $html .= '<table class="min-w-full divide-y divide-gray-200">';
-            $html .= '<thead class="bg-gradient-to-r from-gray-50 to-gray-100">';
+            $html .= '<thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">';
             $html .= '<tr>';
             $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cadet</th>';
             $html .= '<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Item</th>';
@@ -332,7 +331,7 @@ class InventoryController extends Controller
             
             $html .= '</tbody>';
             $html .= '</table>';
-            $html .= '</div>';
+            $html .= '</div>'; // Close scrollable container
         }
         
         return $html;
