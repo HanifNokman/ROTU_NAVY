@@ -22,8 +22,18 @@ class TrainingController extends Controller
         // Get filter parameters
         $filterYear = $request->get('year');
         $filterMonth = $request->get('month');
-        // Only default to Active on initial page load (no query parameters at all)
-        $filterStatus = $request->has('status') ? $request->get('status') : ($request->hasAny(['year', 'month']) ? null : 'Active');
+
+        // Get status filter - handle empty string as "show all"
+        if ($request->has('status')) {
+            $filterStatus = $request->get('status');
+            // If status is empty string, treat it as null (show all)
+            if ($filterStatus === '') {
+                $filterStatus = null;
+            }
+        } else {
+            // Only default to Active on initial page load with no filters
+            $filterStatus = $request->hasAny(['year', 'month', 'ajax']) ? null : 'Active';
+        }
 
         // Build query for all trainings
         $query = Training::with('trainingAttendances');
