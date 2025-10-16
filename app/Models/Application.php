@@ -19,10 +19,12 @@ class Application extends Model
         'faculty',
         'course',
         'profile_pic',
+        'attendance',
         'drill_test',
         'physical_test',
         'medical_test',
         'interview',
+        'final_evaluation',
     ];
 
     protected $casts = [

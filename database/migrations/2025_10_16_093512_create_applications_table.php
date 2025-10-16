@@ -22,10 +22,12 @@ return new class extends Migration
             $table->string('faculty');
             $table->string('course');
             $table->string('profile_pic')->nullable();
+            $table->enum('attendance', ['pending', 'passed', 'failed'])->default('pending');
             $table->enum('drill_test', ['pending', 'passed', 'failed'])->default('pending');
             $table->enum('physical_test', ['pending', 'passed', 'failed'])->default('pending');
             $table->enum('medical_test', ['pending', 'passed', 'failed'])->default('pending');
             $table->enum('interview', ['pending', 'passed', 'failed'])->default('pending');
+            $table->enum('final_evaluation', ['pending', 'passed', 'failed'])->default('pending');
             $table->timestamps();
         });
     }

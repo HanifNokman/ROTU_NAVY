@@ -73,17 +73,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/update-personal-info', [PersonalInfoController::class, 'update'])->name('personal.update');
 
     // ------------------------------------------------------------------------
-    // Pending Verification
+    // Pending Verification (moved to instructor section below)
     // ------------------------------------------------------------------------
-
-    // Pending Verification routes
-    Route::get('/instructor/pending-verification', [PendingVerificationController::class, 'index'])->name('pending.verification');
-    Route::post('/instructor/pending-verification/{user}/accept', [PendingVerificationController::class, 'accept'])->name('pending.verification.accept');
-    Route::post('/instructor/pending-verification/{user}/reject', [PendingVerificationController::class, 'reject'])->name('pending.verification.reject');
-
-    // Bulk actions
-    Route::post('/instructor/pending-verification/accept-all', [PendingVerificationController::class, 'acceptAll'])->name('pending.verification.accept-all');
-    Route::post('/instructor/pending-verification/reject-all', [PendingVerificationController::class, 'rejectAll'])->name('pending.verification.reject-all');
 
     // ------------------------------------------------------------------------
     // Application Management
@@ -148,9 +139,35 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     // ------------------------------------------------------------------------
     // Instructor Dashboard
     // ------------------------------------------------------------------------
-    
+
     Route::match(['get', 'post'], '/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
     Route::post('/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('incrementDuty');
+
+    // ------------------------------------------------------------------------
+    // Pending Verification
+    // ------------------------------------------------------------------------
+
+    Route::get('/pending-verification', [PendingVerificationController::class, 'index'])
+        ->name('pending.verification');
+
+    Route::post('/pending-verification/accept/{user}', [PendingVerificationController::class, 'accept'])
+        ->name('pending.verification.accept');
+
+    Route::post('/pending-verification/reject/{user}', [PendingVerificationController::class, 'reject'])
+        ->name('pending.verification.reject');
+
+    Route::post('/pending-verification/accept-all', [PendingVerificationController::class, 'acceptAll'])
+        ->name('pending.verification.accept-all');
+
+    Route::post('/pending-verification/reject-all', [PendingVerificationController::class, 'rejectAll'])
+        ->name('pending.verification.reject-all');
+
+    // NEW ROUTES FOR SELECTION MODE
+    Route::post('/pending-verification/update-step', [PendingVerificationController::class, 'updateApplicationStep'])
+        ->name('pending.verification.update-step');
+
+    Route::post('/pending-verification/end-selection', [PendingVerificationController::class, 'endSelection'])
+        ->name('pending.verification.end-selection');
 
     // ------------------------------------------------------------------------
     // Cadet Management
