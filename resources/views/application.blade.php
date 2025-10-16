@@ -534,26 +534,40 @@
                 </p>
             </div>
 
-            @if(session('success'))
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
-                    {{ session('success') }}
+            @if($applicationDeadline && now() > $applicationDeadline)
+                <div class="alert alert-error" style="text-align: center; padding: 3rem;">
+                    <i class="fas fa-clock" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.7;"></i>
+                    <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Permohonan Ditutup</h2>
+                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;">
+                        Tarikh akhir permohonan telah berlalu pada <strong>{{ $applicationDeadline->format('d F Y') }}</strong>.
+                        Sila tunggu pengumuman sesi permohonan seterusnya.
+                    </p>
+                    <a href="/" class="btn-primary" style="display: inline-block;">
+                        <i class="fas fa-home" style="margin-right: 0.5rem;"></i>
+                        Kembali ke Laman Utama
+                    </a>
                 </div>
-            @endif
+            @else
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-            @if($errors->any())
-                <div class="alert alert-error">
-                    <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
-                    Sila betulkan ralat berikut:
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+                @if($errors->any())
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                        Sila betulkan ralat berikut:
+                        <ul>
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-            <form action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data" class="application-form">
+                <form action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data" class="application-form">
                 @csrf
 
                 <!-- Name and Email Row -->
@@ -675,6 +689,7 @@
                     Hantar Permohonan
                 </button>
             </form>
+            @endif
         </div>
     </main>
 
