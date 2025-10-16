@@ -265,7 +265,20 @@ class PendingVerificationController extends Controller
                     // Create cadet record
                     \App\Models\Cadet::create([
                         'user_id' => $user->id,
+                        'phone_number' => $application->phone_number,
+                        'gender' => $application->gender,
+                        'ic_number' => $application->ic_number,
+                        'matric_no' => $application->matric_no,
+                        'faculty' => $application->faculty,
+                        'course' => $application->course,
+                        'profile_pic' => $application->profile_pic,
+                        'BMI' => $application->bmi,
+                        'rank' => 'PK',
+                        'position' => 'Normal',
+                        'cadet_status' => 'Active',
+                        'intake_year' => now()->year,
                         'daily_duty_count' => 0,
+                        'swimming_qualification' => 'In Progress',
                     ]);
 
                     // Send acceptance email

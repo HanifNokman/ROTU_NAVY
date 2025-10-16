@@ -669,6 +669,49 @@
                     </div>
                 </div>
 
+                <!-- Height, Weight, BMI Row -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="height" class="form-label">
+                            <i class="fas fa-ruler-vertical" style="margin-right: 0.5rem;"></i>
+                            Tinggi (cm)
+                        </label>
+                        <input type="number" id="height" name="height" value="{{ old('height') }}" step="0.01" min="100" max="250"
+                               class="form-input" placeholder="Contoh: 170.5">
+                        <span class="form-help">
+                            <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                            Masukkan tinggi dalam sentimeter (cm)
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight" class="form-label">
+                            <i class="fas fa-weight" style="margin-right: 0.5rem;"></i>
+                            Berat (kg)
+                        </label>
+                        <input type="number" id="weight" name="weight" value="{{ old('weight') }}" step="0.01" min="30" max="200"
+                               class="form-input" placeholder="Contoh: 65.5">
+                        <span class="form-help">
+                            <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                            Masukkan berat dalam kilogram (kg)
+                        </span>
+                    </div>
+                </div>
+
+                <!-- BMI Display -->
+                <div class="form-group">
+                    <label for="bmi" class="form-label">
+                        <i class="fas fa-calculator" style="margin-right: 0.5rem;"></i>
+                        BMI (Kiraan Automatik)
+                    </label>
+                    <input type="number" id="bmi" name="bmi" value="{{ old('bmi') }}" step="0.01" readonly
+                           class="form-input bg-gray-100" placeholder="BMI akan dikira secara automatik">
+                    <span class="form-help">
+                        <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                        BMI akan dikira secara automatik berdasarkan tinggi dan berat yang dimasukkan
+                    </span>
+                </div>
+
                 <!-- Profile Picture -->
                 <div class="form-group">
                     <label for="profile_pic" class="form-label">
@@ -717,6 +760,25 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
+        // BMI Calculator
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const bmiField = document.getElementById('bmi');
+
+            if (height > 0 && weight > 0) {
+                const heightInMeters = height / 100;
+                const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+                bmiField.value = bmi;
+            } else {
+                bmiField.value = '';
+            }
+        }
+
+        // Add event listeners for height and weight inputs
+        document.getElementById('height').addEventListener('input', calculateBMI);
+        document.getElementById('weight').addEventListener('input', calculateBMI);
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
