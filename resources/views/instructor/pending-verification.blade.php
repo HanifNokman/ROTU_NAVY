@@ -249,9 +249,12 @@
 
                         {{-- End Selection Button --}}
                         <div id="endSelectionContainer" class="hidden mt-6">
-                            <button class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200">
-                                Complete Selection Process
-                            </button>
+                            <form method="POST" action="{{ route('instructor.pending.verification.end-selection') }}" onsubmit="return confirm('Are you sure you want to complete the selection process? This will create cadet accounts for all passed candidates and delete all application records.')">
+                                @csrf
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200">
+                                    Complete Selection Process
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

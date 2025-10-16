@@ -262,7 +262,7 @@ class PendingVerificationController extends Controller
                         'status' => 'accepted',
                     ]);
 
-                    // Create cadet record
+                    // Create cadet record - profile pic is already in profile_pics folder
                     \App\Models\Cadet::create([
                         'user_id' => $user->id,
                         'phone_number' => $application->phone_number,

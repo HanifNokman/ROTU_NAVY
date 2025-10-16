@@ -37,7 +37,7 @@ class ApplicationController extends Controller
         $data = $request->all();
 
         if ($request->hasFile('profile_pic')) {
-            $data['profile_pic'] = $request->file('profile_pic')->store('applications', 'public');
+            $data['profile_pic'] = $request->file('profile_pic')->store('profile_pics', 'public');
         }
 
         // Set default statuses for evaluation fields
