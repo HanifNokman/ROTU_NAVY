@@ -631,18 +631,17 @@
                         </label>
                         <select id="faculty" name="faculty" required class="form-select">
                             <option value="">Pilih Fakulti</option>
-                            <option value="Fakulti Kejuruteraan" {{ old('faculty') == 'Fakulti Kejuruteraan' ? 'selected' : '' }}>Fakulti Kejuruteraan (FKJ)</option>
-                            <option value="Fakulti Sains Makanan & Pemakanan" {{ old('faculty') == 'Fakulti Sains Makanan & Pemakanan' ? 'selected' : '' }}>Fakulti Sains Makanan & Pemakanan (FSMP)</option>
-                            <option value="Fakulti Perniagaan, Ekonomi & Perakaunan" {{ old('faculty') == 'Fakulti Perniagaan, Ekonomi & Perakaunan' ? 'selected' : '' }}>Fakulti Perniagaan, Ekonomi & Perakaunan (FPEP)</option>
-                            <option value="Fakulti Komputeran & Informatik" {{ old('faculty') == 'Fakulti Komputeran & Informatik' ? 'selected' : '' }}>Fakulti Komputeran & Informatik (FKI)</option>
-                            <option value="Fakulti Sains Sosial & Kemanusiaan" {{ old('faculty') == 'Fakulti Sains Sosial & Kemanusiaan' ? 'selected' : '' }}>Fakulti Sains Sosial & Kemanusiaan (FSSK)</option>
-                            <option value="Fakulti Psikologi & Kerja Sosial" {{ old('faculty') == 'Fakulti Psikologi & Kerja Sosial' ? 'selected' : '' }}>Fakulti Psikologi & Kerja Sosial (FPKS)</option>
-                            <option value="Fakulti Pendidikan & Pengurusan Sukan" {{ old('faculty') == 'Fakulti Pendidikan & Pengurusan Sukan' ? 'selected' : '' }}>Fakulti Pendidikan & Pengurusan Sukan (FPPS)</option>
-                            <option value="Fakulti Sains & Teknologi" {{ old('faculty') == 'Fakulti Sains & Teknologi' ? 'selected' : '' }}>Fakulti Sains & Teknologi (FST)</option>
-                            <option value="Fakulti Perhutanan Tropika" {{ old('faculty') == 'Fakulti Perhutanan Tropika' ? 'selected' : '' }}>Fakulti Perhutanan Tropika (FPT)</option>
-                            <option value="Fakulti Pengajian Islam" {{ old('faculty') == 'Fakulti Pengajian Islam' ? 'selected' : '' }}>Fakulti Pengajian Islam (FPI)</option>
-                            <option value="Akademi Seni & Teknologi Kreatif" {{ old('faculty') == 'Akademi Seni & Teknologi Kreatif' ? 'selected' : '' }}>Akademi Seni & Teknologi Kreatif (ASTiF)</option>
-                            <option value="Other" {{ old('faculty') == 'Other' ? 'selected' : '' }}>Other</option>
+                            <option value="FKJ" {{ old('faculty') == 'FKJ' ? 'selected' : '' }}>Fakulti Kejuruteraan (FKJ)</option>
+                            <option value="FSMP" {{ old('faculty') == 'FSMP' ? 'selected' : '' }}>Fakulti Sains Makanan & Pemakanan (FSMP)</option>
+                            <option value="FPEP" {{ old('faculty') == 'FPEP' ? 'selected' : '' }}>Fakulti Perniagaan, Ekonomi & Perakaunan (FPEP)</option>
+                            <option value="FKI" {{ old('faculty') == 'FKI' ? 'selected' : '' }}>Fakulti Komputeran & Informatik (FKI)</option>
+                            <option value="FSSK" {{ old('faculty') == 'FSSK' ? 'selected' : '' }}>Fakulti Sains Sosial & Kemanusiaan (FSSK)</option>
+                            <option value="FPKS" {{ old('faculty') == 'FPKS' ? 'selected' : '' }}>Fakulti Psikologi & Kerja Sosial (FPKS)</option>
+                            <option value="FPPS" {{ old('faculty') == 'FPPS' ? 'selected' : '' }}>Fakulti Pendidikan & Pengurusan Sukan (FPPS)</option>
+                            <option value="FST" {{ old('faculty') == 'FST' ? 'selected' : '' }}>Fakulti Sains & Teknologi (FST)</option>
+                            <option value="FPT" {{ old('faculty') == 'FPT' ? 'selected' : '' }}>Fakulti Perhutanan Tropika (FPT)</option>
+                            <option value="FPI" {{ old('faculty') == 'FPI' ? 'selected' : '' }}>Fakulti Pengajian Islam (FPI)</option>
+                            <option value="ASTiF" {{ old('faculty') == 'ASTiF' ? 'selected' : '' }}>Akademi Seni & Teknologi Kreatif (ASTiF)</option>
                         </select>
                     </div>
 
