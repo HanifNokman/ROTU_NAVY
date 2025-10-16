@@ -13,7 +13,8 @@ class ApplicationController extends Controller
 {
     public function create()
     {
-        return view('application');
+        $applicationDeadline = \App\Models\ContentSetting::getFormattedDeadline();
+        return view('application', compact('applicationDeadline'));
     }
 
     public function store(Request $request)
