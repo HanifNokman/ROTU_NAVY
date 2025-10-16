@@ -38,7 +38,11 @@ class ApplicationController extends Controller
 
         Application::create($data);
 
-        return redirect()->back()->with('success', 'Application submitted successfully!');
+        $qrCodeImage = \App\Models\ContentSetting::get('qr_code_image');
+        $whatsappUrl = \App\Models\ContentSetting::get('application_portal_url');
+        $applicationDeadline = \App\Models\ContentSetting::getFormattedDeadline();
+
+        return view('application_success', compact('qrCodeImage', 'whatsappUrl', 'applicationDeadline'));
     }
 
     public function index()
