@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Instructor;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserAcceptedMail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class PendingVerificationController extends Controller
 {
@@ -25,7 +27,9 @@ class PendingVerificationController extends Controller
             ->where('role', 'instructor')
             ->get();
 
-        return view('instructor.pending-verification', compact('pendingCadets', 'pendingInstructors'));
+        $applications = Application::all();
+
+        return view('instructor.pending-verification', compact('pendingCadets', 'pendingInstructors', 'applications'));
     }
 
     /* ================================================================ */
@@ -183,6 +187,108 @@ class PendingVerificationController extends Controller
         } catch (\Exception $e) {
             \Log::error('Failed to reject all users: ' . $e->getMessage());
             return back()->with('error', 'Failed to reject users. Please try again.');
+        }
+    }
+
+    /* ================================================================ */
+    /* UPDATE APPLICATION STEP */
+    /* ================================================================ */
+
+    public function updateApplicationStep(Request $request)
+    {
+        $request->validate([
+            'application_id' => 'required|exists:applications,id',
+            'step' => 'required|in:attendance,marching_test,physical_test,medical_test,interview,final_evaluation',
+            'status' => 'required|in:passed,failed'
+        ]);
+
+        try {
+            $application = Application::findOrFail($request->application_id);
+
+            // Map step names to database columns
+            $columnMap = [
+                'attendance' => 'attendance',
+                'marching_test' => 'drill_test',
+                'physical_test' => 'physical_test',
+                'medical_test' => 'medical_test',
+                'interview' => 'interview',
+                'final_evaluation' => 'final_evaluation'
+            ];
+
+            $column = $columnMap[$request->step];
+            $application->$column = $request->status;
+            $application->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Application updated successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to update application: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update application'
+            ], 500);
+        }
+    }
+
+    /* ================================================================ */
+    /* END SELECTION PROCESS */
+    /* ================================================================ */
+
+    public function endSelection(Request $request)
+    {
+        try {
+            DB::transaction(function () {
+                // Get all applications that passed all steps
+                $passedApplications = Application::where('attendance', 'passed')
+                    ->where('drill_test', 'passed')
+                    ->where('physical_test', 'passed')
+                    ->where('medical_test', 'passed')
+                    ->where('interview', 'passed')
+                    ->where('final_evaluation', 'passed')
+                    ->get();
+
+                $createdCount = 0;
+
+                foreach ($passedApplications as $application) {
+                    // Create user account
+                    $user = User::create([
+                        'name' => $application->name,
+                        'email' => $application->email,
+                        'password' => Hash::make('password123'), // Default password
+                        'role' => 'cadet',
+                        'status' => 'accepted',
+                    ]);
+
+                    // Create cadet record
+                    \App\Models\Cadet::create([
+                        'user_id' => $user->id,
+                        'daily_duty_count' => 0,
+                    ]);
+
+                    // Send acceptance email
+                    try {
+                        Mail::to($user->email)->send(new UserAcceptedMail($user));
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to send acceptance email to ' . $user->email . ': ' . $e->getMessage());
+                    }
+
+                    $createdCount++;
+                }
+
+                // Delete all applications
+                Application::truncate();
+
+                \Log::info("Selection process completed. Created {$createdCount} cadet accounts.");
+            });
+
+            return back()->with('success', 'Selection process completed successfully. All passed candidates have been registered as cadets.');
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to complete selection process: ' . $e->getMessage());
+            return back()->with('error', 'Failed to complete selection process. Please try again.');
         }
     }
 }

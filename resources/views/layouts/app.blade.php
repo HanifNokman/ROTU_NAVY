@@ -403,7 +403,7 @@
                             <div class="p-2 flex flex-col space-y-0">
                                 @if(Auth::user()->role === 'instructor')
                                     <div class="relative">
-                                        <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
+                                        <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
                                             @if($hasNotifications)
                                                 <div class="notification-badge"></div>
                                             @endif
@@ -650,7 +650,7 @@
                                 <div class="p-4 flex flex-col justify-between h-full">
                                     @if(Auth::user()->role === 'instructor')
                                         <div class="relative">
-                                            <a href="{{ route('pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
+                                            <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
                                                 @if($hasNotifications)
                                                     <div class="notification-badge"></div>
                                                 @endif
