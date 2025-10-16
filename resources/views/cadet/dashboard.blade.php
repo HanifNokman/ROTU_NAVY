@@ -168,6 +168,14 @@
                                     <span class="text-sm"><strong>Matric Number:</strong> {{ $cadet->matric_no ?? '-' }}</span>
                                 </div>
                                 <div class="flex items-center">
+                                    <i class="fas fa-university w-4 text-blue-500 mr-2"></i>
+                                    <span class="text-sm"><strong>Faculty:</strong> {{ $cadet->faculty ?? '-' }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-book w-4 text-green-500 mr-2"></i>
+                                    <span class="text-sm"><strong>Course:</strong> {{ $cadet->course ?? '-' }}</span>
+                                </div>
+                                <div class="flex items-center">
                                     <i class="fas fa-calendar-alt w-4 text-orange-500 mr-2"></i>
                                     <span class="text-sm">
                                         <strong>Intake Year:</strong>

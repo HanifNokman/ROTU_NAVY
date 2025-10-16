@@ -798,6 +798,14 @@
                                 <h5 class="font-medium text-gray-900 border-b pb-2">Academic Information</h5>
                                 <div class="space-y-2 text-sm">
                                     <div class="flex justify-between">
+                                        <span class="text-gray-600">Faculty:</span>
+                                        <span class="font-medium">${data.cadet.faculty || 'N/A'}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Course:</span>
+                                        <span class="font-medium">${data.cadet.course || 'N/A'}</span>
+                                    </div>
+                                    <div class="flex justify-between">
                                         <span class="text-gray-600">Current CGPA:</span>
                                         <span class="font-medium">${data.cadet.current_cgpa ? parseFloat(data.cadet.current_cgpa).toFixed(2) : 'N/A'}</span>
                                     </div>
