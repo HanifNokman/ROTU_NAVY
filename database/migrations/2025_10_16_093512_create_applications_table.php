@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('faculty');
             $table->string('course');
             $table->string('profile_pic')->nullable();
+            $table->decimal('height', 5, 2)->nullable();
+            $table->decimal('weight', 5, 2)->nullable(); 
+            $table->decimal('bmi', 4, 2)->nullable(); 
             $table->enum('attendance', ['pending', 'passed', 'failed'])->default('pending');
             $table->enum('drill_test', ['pending', 'passed', 'failed'])->default('pending');
             $table->enum('physical_test', ['pending', 'passed', 'failed'])->default('pending');

@@ -28,6 +28,9 @@ class ApplicationController extends Controller
             'matric_no' => 'required|string|unique:applications,matric_no',
             'faculty' => 'required|string|max:255',
             'course' => 'required|string|max:255',
+            'height' => 'required|numeric|min:100|max:250',
+            'weight' => 'required|numeric|min:30|max:200',
+            'bmi' => 'required|numeric|min:10|max:50',
             'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -36,6 +39,14 @@ class ApplicationController extends Controller
         if ($request->hasFile('profile_pic')) {
             $data['profile_pic'] = $request->file('profile_pic')->store('applications', 'public');
         }
+
+        // Set default statuses for evaluation fields
+        $data['attendance'] = 'pending';
+        $data['drill_test'] = 'pending';
+        $data['physical_test'] = 'pending';
+        $data['medical_test'] = 'pending';
+        $data['interview'] = 'pending';
+        $data['final_evaluation'] = 'pending';
 
         Application::create($data);
 
@@ -55,19 +66,23 @@ class ApplicationController extends Controller
     public function updateStatus(Request $request, Application $application)
     {
         $request->validate([
+            'attendance' => 'nullable|in:pending,passed,failed',
             'drill_test' => 'nullable|in:pending,passed,failed',
             'physical_test' => 'nullable|in:pending,passed,failed',
             'medical_test' => 'nullable|in:pending,passed,failed',
             'interview' => 'nullable|in:pending,passed,failed',
+            'final_evaluation' => 'nullable|in:pending,passed,failed',
         ]);
 
-        $application->update($request->only(['drill_test', 'physical_test', 'medical_test', 'interview']));
+        $application->update($request->only(['attendance','drill_test', 'physical_test', 'medical_test', 'interview','final_evaluation']));
 
         // Check if all tests are passed
-        if ($application->drill_test === 'passed' &&
+        if ($application->attendance === 'passed' &&
+            $application->drill_test === 'passed' &&
             $application->physical_test === 'passed' &&
             $application->medical_test === 'passed' &&
-            $application->interview === 'passed') {
+            $application->interview === 'passed' &&
+            $application->final_evaluation === 'passed') {
             $this->approveApplication($application);
         }
 
@@ -94,6 +109,8 @@ class ApplicationController extends Controller
             'faculty' => $application->faculty,
             'course' => $application->course,
             'profile_pic' => $application->profile_pic,
+            'BMI' => $application->bmi,
+            'BMI_update_date' => now(),
             'rank' => 'PK',
             'position' => 'Normal',
             'cadet_status' => 'Active',
