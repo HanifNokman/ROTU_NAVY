@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join PALAPES - Application Form</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #3c92d9;
+            --secondary-blue: #2980b9;
+            --accent-pink: #ec6c6c;
+            --dark-navy: #2e313c;
+            --darker-navy: #10141c;
+            --light-gray: #f8fafc;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --gradient-primary: linear-gradient(135deg, #3c92d9, #2980b9);
+            --gradient-accent: linear-gradient(90deg, #3c92d9, #ec6c6c);
+            --shadow-primary: 0 10px 30px rgba(60, 146, 217, 0.3);
+            --shadow-hover: 0 20px 50px rgba(60, 146, 217, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--darker-navy);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-navy);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: 4px;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(16, 20, 28, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            z-index: 2000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .navbar.scrolled {
+            background: rgba(16, 20, 28, 0.98);
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+            padding: 0.75rem 2rem;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 0.5rem;
+            padding-right: 1rem;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.02);
+        }
+
+        .nav-logo img {
+            width: auto;
+            height: 70px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .nav-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-logo-text .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-logo-text .sub-title {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-blue);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-primary);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(60, 146, 217, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .application-container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(60, 146, 217, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 60px rgba(60, 146, 217, 0.2);
+        }
+
+        .application-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .application-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .application-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Form Styles */
+        .application-form {
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            border: 2px solid rgba(60, 146, 217, 0.3);
+            background: rgba(60, 146, 217, 0.1);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-select option {
+            background: var(--darker-navy);
+            color: var(--text-primary);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(60, 146, 217, 0.1);
+            background: rgba(60, 146, 217, 0.05);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-file {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            border: 2px solid rgba(60, 146, 217, 0.3);
+            background: rgba(60, 146, 217, 0.1);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-file:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(60, 146, 217, 0.1);
+        }
+
+        .form-file::-webkit-file-upload-button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-file::-webkit-file-upload-button:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-1px);
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(46, 125, 50, 0.1);
+            border-color: rgba(46, 125, 50, 0.3);
+            color: #81c784;
+        }
+
+        .alert-error {
+            background: rgba(211, 47, 47, 0.1);
+            border-color: rgba(211, 47, 47, 0.3);
+            color: #ef5350;
+        }
+
+        .alert ul {
+            margin: 0.5rem 0 0 1.5rem;
+            padding: 0;
+        }
+
+        .alert li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(60, 146, 217, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 1px;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Form Row for Side-by-Side Fields */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(16, 20, 28, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .main-content {
+                margin-top: 80px;
+                padding: 1rem;
+            }
+
+            .application-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .application-title {
+                font-size: 2rem;
+            }
+
+            .nav-container {
+                padding-right: 0;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-row .form-group {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .application-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .application-title {
+                font-size: 1.75rem;
+            }
+
+            .form-input,
+            .form-select,
+            .form-textarea,
+            .form-file {
+                padding: 0.75rem;
+                font-size: 0.95rem;
+            }
+
+            .submit-btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="storage/assets/logo/PSS-LOGO.png" alt="Logo ROTU">
+                <div class="nav-logo-text">
+                    <span class="main-title">PALAPES</span>
+                    <span class="sub-title">LAUT UMS</span>
+                </div>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Laman Utama</a></li>
+                <li><a href="/#introduction">Pengenalan</a></li>
+                <li><a href="/#timeline">Perjalanan</a></li>
+                <li><a href="/#about">Mengenai</a></li>
+                <li><a href="/#benefits">Faedah</a></li>
+                <li><a href="/#requirements">Syarat</a></li>
+                <li><a href="/#selection">Pemilihan</a></li>
+                <li><a href="/#application">Mohon</a></li>
+            </ul>
+
+            <div class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="application-container">
+            <div class="application-header">
+                <h1 class="application-title">Mohon Sertai PALAPES Laut UMS</h1>
+                <p class="application-subtitle">
+                    Ambil langkah pertama ke arah menjadi pegawai tentera laut yang ditauliahkan. Isi borang permohonan di bawah dengan maklumat yang tepat.
+                </p>
+            </div>
+
+            @if(session('success'))
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                    Sila betulkan ralat berikut:
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data" class="application-form">
+                @csrf
+
+                <!-- Name and Email Row -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user" style="margin-right: 0.5rem;"></i>
+                            Nama Penuh
+                        </label>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" required
+                               class="form-input" placeholder="Masukkan nama penuh anda">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i>
+                            Alamat Emel
+                        </label>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                               class="form-input" placeholder="contoh@email.com">
+                    </div>
+                </div>
+
+                <!-- Phone and Gender Row -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone_number" class="form-label">
+                            <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>
+                            Nombor Telefon
+                        </label>
+                        <input type="text" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" required
+                               class="form-input" placeholder="012-3456789">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender" class="form-label">
+                            <i class="fas fa-venus-mars" style="margin-right: 0.5rem;"></i>
+                            Jantina
+                        </label>
+                        <select id="gender" name="gender" required class="form-select">
+                            <option value="">Pilih Jantina</option>
+                            <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Lelaki</option>
+                            <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- IC Number and Matric Number Row -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ic_number" class="form-label">
+                            <i class="fas fa-id-card" style="margin-right: 0.5rem;"></i>
+                            Nombor Kad Pengenalan
+                        </label>
+                        <input type="text" id="ic_number" name="ic_number" value="{{ old('ic_number') }}" required
+                               class="form-input" placeholder="000000-00-0000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="matric_no" class="form-label">
+                            <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i>
+                            Nombor Matrik
+                        </label>
+                        <input type="text" id="matric_no" name="matric_no" value="{{ old('matric_no') }}" required
+                               class="form-input" placeholder="Masukkan nombor matrik UMS">
+                    </div>
+                </div>
+
+                <!-- Faculty and Course Row -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="faculty" class="form-label">
+                            <i class="fas fa-university" style="margin-right: 0.5rem;"></i>
+                            Fakulti
+                        </label>
+                        <select id="faculty" name="faculty" required class="form-select">
+                            <option value="">Pilih Fakulti</option>
+                            <option value="Fakulti Kejuruteraan" {{ old('faculty') == 'Fakulti Kejuruteraan' ? 'selected' : '' }}>Fakulti Kejuruteraan (FKJ)</option>
+                            <option value="Fakulti Sains Makanan & Pemakanan" {{ old('faculty') == 'Fakulti Sains Makanan & Pemakanan' ? 'selected' : '' }}>Fakulti Sains Makanan & Pemakanan (FSMP)</option>
+                            <option value="Fakulti Perniagaan, Ekonomi & Perakaunan" {{ old('faculty') == 'Fakulti Perniagaan, Ekonomi & Perakaunan' ? 'selected' : '' }}>Fakulti Perniagaan, Ekonomi & Perakaunan (FPEP)</option>
+                            <option value="Fakulti Komputeran & Informatik" {{ old('faculty') == 'Fakulti Komputeran & Informatik' ? 'selected' : '' }}>Fakulti Komputeran & Informatik (FKI)</option>
+                            <option value="Fakulti Sains Sosial & Kemanusiaan" {{ old('faculty') == 'Fakulti Sains Sosial & Kemanusiaan' ? 'selected' : '' }}>Fakulti Sains Sosial & Kemanusiaan (FSSK)</option>
+                            <option value="Fakulti Psikologi & Kerja Sosial" {{ old('faculty') == 'Fakulti Psikologi & Kerja Sosial' ? 'selected' : '' }}>Fakulti Psikologi & Kerja Sosial (FPKS)</option>
+                            <option value="Fakulti Pendidikan & Pengurusan Sukan" {{ old('faculty') == 'Fakulti Pendidikan & Pengurusan Sukan' ? 'selected' : '' }}>Fakulti Pendidikan & Pengurusan Sukan (FPPS)</option>
+                            <option value="Fakulti Sains & Teknologi" {{ old('faculty') == 'Fakulti Sains & Teknologi' ? 'selected' : '' }}>Fakulti Sains & Teknologi (FST)</option>
+                            <option value="Fakulti Perhutanan Tropika" {{ old('faculty') == 'Fakulti Perhutanan Tropika' ? 'selected' : '' }}>Fakulti Perhutanan Tropika (FPT)</option>
+                            <option value="Fakulti Pengajian Islam" {{ old('faculty') == 'Fakulti Pengajian Islam' ? 'selected' : '' }}>Fakulti Pengajian Islam (FPI)</option>
+                            <option value="Akademi Seni & Teknologi Kreatif" {{ old('faculty') == 'Akademi Seni & Teknologi Kreatif' ? 'selected' : '' }}>Akademi Seni & Teknologi Kreatif (ASTiF)</option>
+                            <option value="Other" {{ old('faculty') == 'Other' ? 'selected' : '' }}>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="course" class="form-label">
+                            <i class="fas fa-book" style="margin-right: 0.5rem;"></i>
+                            Kursus
+                        </label>
+                        <input type="text" id="course" name="course" value="{{ old('course') }}" required
+                               class="form-input" placeholder="Masukkan nama kursus">
+                    </div>
+                </div>
+
+                <!-- Profile Picture -->
+                <div class="form-group">
+                    <label for="profile_pic" class="form-label">
+                        <i class="fas fa-camera" style="margin-right: 0.5rem;"></i>
+                        Gambar Profil
+                    </label>
+                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*"
+                           class="form-file">
+                    <span class="form-help">
+                        <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                        Muat naik gambar passport terkini (JPEG, PNG, JPG, GIF - Maksimum 2MB)
+                    </span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
+                    Hantar Permohonan
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 ROTU NAVY UMS. Built with passion for maritime excellence.</p>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 100;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu if open
+                    navLinks.classList.remove('active');
+                    mobileToggle.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
