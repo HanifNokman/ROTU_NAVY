@@ -240,7 +240,9 @@ class PendingVerificationController extends Controller
     public function endSelection(Request $request)
     {
         try {
-            DB::transaction(function () {
+            $createdCount = 0;
+
+            DB::transaction(function () use (&$createdCount) {
                 // Get all applications that passed all steps
                 $passedApplications = Application::where('attendance', 'passed')
                     ->where('drill_test', 'passed')
@@ -249,8 +251,6 @@ class PendingVerificationController extends Controller
                     ->where('interview', 'passed')
                     ->where('final_evaluation', 'passed')
                     ->get();
-
-                $createdCount = 0;
 
                 foreach ($passedApplications as $application) {
                     // Create user account
@@ -262,7 +262,7 @@ class PendingVerificationController extends Controller
                         'status' => 'accepted',
                     ]);
 
-                    // Create cadet record - profile pic is already in profile_pics folder
+                    // Create cadet record
                     \App\Models\Cadet::create([
                         'user_id' => $user->id,
                         'phone_number' => $application->phone_number,
