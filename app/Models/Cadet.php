@@ -20,6 +20,8 @@ class Cadet extends Model
         'profile_pic',
         'intake_year',
         'matric_no',
+        'faculty',
+        'course',
         'current_cgpa',
         'past_cgpa',
         'ic_number',

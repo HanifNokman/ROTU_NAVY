@@ -2448,7 +2448,7 @@
                         </div>
 
                         <div style="text-align: center;">
-                            <a href="{{ \App\Models\ContentSetting::get('application_portal_url', '#') }}" id="applicationPortalLink" class="btn-primary" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
+                            <a href="{{ route('application.create') }}" id="applicationPortalLink" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
                                 <i class="fas fa-external-link-alt"></i>
                                 Akses Portal Permohonan
                             </a>

@@ -17,6 +17,7 @@ use App\Http\Controllers\Instructor\TrainingController as InstructorTrainingCont
 use App\Http\Controllers\Cadet\TrainingController as CadetTrainingController;
 use App\Http\Controllers\Instructor\AllowanceController;
 use App\Http\Controllers\Cadet\AttendanceController;
+use App\Http\Controllers\ApplicationController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
+
+Route::get('/application', [ApplicationController::class, 'create'])->name('application.create');
+Route::post('/application', [ApplicationController::class, 'store'])->name('application.store');
 
 Route::get('/about-me', function () {
     return view('about-me');
@@ -80,6 +84,13 @@ Route::middleware(['auth'])->group(function () {
     // Bulk actions
     Route::post('/instructor/pending-verification/accept-all', [PendingVerificationController::class, 'acceptAll'])->name('pending.verification.accept-all');
     Route::post('/instructor/pending-verification/reject-all', [PendingVerificationController::class, 'rejectAll'])->name('pending.verification.reject-all');
+
+    // ------------------------------------------------------------------------
+    // Application Management
+    // ------------------------------------------------------------------------
+
+    Route::get('/instructor/applications', [ApplicationController::class, 'index'])->name('applications.index');
+    Route::post('/instructor/applications/{application}/update-status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status');
 
     // ------------------------------------------------------------------------
     // Dashboard Routes

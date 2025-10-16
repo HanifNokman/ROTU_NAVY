@@ -66,9 +66,11 @@
 ## Guest (Public/General)
 ### Controllers
 - [X] app/Http/Controllers/AlumniController.php
+- [X] app/Http/Controllers/ApplicationController.php
 - [ ] app/Http/Controllers/ContentManagementController.php
 
 ### Models
+- [X] app/Models/Application.php
 - [X] app/Models/ContentSetting.php
 - [X] app/Models/Gallery.php
 - [X] app/Models/GalleryCategory.php
@@ -83,6 +85,7 @@
 ### Blades
 - [ ] resources/views/about-me.blade.php
 - [ ] resources/views/alumni.blade.php
+- [X] resources/views/application.blade.php
 - [ ] resources/views/landing.blade.php
 - [X] resources/views/auth/awaiting-approval.blade.php
 - [X] resources/views/auth/forgot-password.blade.php

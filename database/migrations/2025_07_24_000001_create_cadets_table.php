@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('intake_year')->nullable();
             $table->string('matric_no', 20)->nullable();
+            $table->string('faculty')->nullable();
+            $table->string('course')->nullable();
             $table->decimal('current_cgpa', 4, 2)->nullable();
             $table->decimal('past_cgpa', 4, 2)->nullable();
             $table->string('phone_number', 15)->nullable();
