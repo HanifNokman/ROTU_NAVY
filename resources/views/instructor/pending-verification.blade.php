@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pending Verification (Instructor)') }}
+            {{ __('Pending Application') }}
         </h2>
     </x-slot>
 
@@ -16,9 +16,9 @@
                     <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Account Verification
+                    Account & New Cadet Intake Verification
                 </h1>
-                <p class="text-gray-600">Review and approve pending account registrations</p>
+                <p class="text-gray-600">Review and approve pending account registrations and cadet applications</p>
             </div>
 
             {{-- ================================================================ --}}
