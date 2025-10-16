@@ -257,7 +257,7 @@ class PendingVerificationController extends Controller
                     $user = User::create([
                         'name' => $application->name,
                         'email' => $application->email,
-                        'password' => Hash::make('password123'), // Default password
+                        'password' => Hash::make($application->matric_no),
                         'role' => 'cadet',
                         'status' => 'accepted',
                     ]);
