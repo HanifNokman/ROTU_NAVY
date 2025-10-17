@@ -54,6 +54,14 @@ class Cadet extends Model
     }
 
     /**
+     * Performance rating relationship
+     */
+    public function performanceRating()
+    {
+        return $this->hasOne(PerformanceRating::class);
+    }
+
+    /**
      * Training attendance relationship
      */
     public function trainingAttendances()
@@ -258,5 +266,28 @@ class Cadet extends Model
             'In Progress' => 'In Progress',
             'Fail' => 'Fail'
         ];
+    }
+
+    /**
+     * Boot the model
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($cadet) {
+            // Create performance rating entry when cadet is created
+            PerformanceRating::create([
+                'cadet_id' => $cadet->id,
+                'attendance_points' => 0,
+                'quiz_points' => 0,
+                'learning_progress_points' => 0,
+                'duty_points' => 0,
+                'academic_points' => 0,
+                'total_points' => 0,
+                'rating' => '⭐☆☆☆☆',
+                'updated_at' => now()
+            ]);
+        });
     }
 }

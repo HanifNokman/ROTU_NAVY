@@ -9,6 +9,8 @@ use App\Models\LearningMaterialCategory;
 use App\Models\Instructor;
 use App\Models\User;
 use App\Models\QuizQuestion;
+use App\Models\CadetQuizScore;
+use App\Models\PerformanceRating;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -535,7 +537,7 @@ class LearningHubController extends Controller
     /**
      * Check for common variations and abbreviations
      */
-    private function checkCommonVariations($correctAnswer, $userAnswer)
+private function checkCommonVariations($correctAnswer, $userAnswer)
     {
         $variations = [
             // Time units (basic - commonly used in military context)
@@ -835,6 +837,37 @@ class LearningHubController extends Controller
     }
 
     // ================================================================
+    // CALCULATE POINTS BASED ON DIFFICULTY
+    // ================================================================
+    
+    /**
+     * Calculate points based on difficulty and score
+     * 
+     * @param string $difficulty
+     * @param float $scorePercentage
+     * @return int
+     */
+    private function calculatePoints($difficulty, $scorePercentage)
+    {
+        // Only award points if the cadet passed (score >= 60%)
+        if ($scorePercentage < 60) {
+            return 0;
+        }
+
+        // Points based on difficulty
+        switch ($difficulty) {
+            case 'easy':
+                return 10;
+            case 'medium':
+                return 20;
+            case 'hard':
+                return 30;
+            default:
+                return 0;
+        }
+    }
+
+    // ================================================================
     // SUBMIT QUIZ ANSWERS (UPDATED)
     // ================================================================
     
@@ -889,16 +922,75 @@ class LearningHubController extends Controller
             ];
         }
 
-        $score = round(($correctAnswers / $totalQuestions) * 100, 2);
+        $scorePercentage = round(($correctAnswers / $totalQuestions) * 100, 2);
+        $categoryId = $quizSession['category_id'];
+        $difficulty = $quizSession['difficulty'];
 
+        // Get the cadet_id from the authenticated user
+        $cadet = auth()->user()->cadet;
+        
+        if (!$cadet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cadet profile not found.'
+            ], 404);
+        }
+
+        $cadetId = $cadet->id;
+
+        // Calculate points based on difficulty
+        $newPoints = $this->calculatePoints($difficulty, $scorePercentage);
+
+        // Check if a score entry already exists for this cadet, category, and difficulty
+        $existingScore = CadetQuizScore::where('cadet_id', $cadetId)
+            ->byCategory($categoryId)
+            ->byDifficulty($difficulty)
+            ->first();
+
+        $wasUpdated = false;
+
+        if ($existingScore) {
+            // Compare score percentages - update if new score is higher
+            if ($scorePercentage > $existingScore->score_percentage) {
+                $existingScore->update([
+                    'score_percentage' => $scorePercentage,
+                    'total_questions' => $totalQuestions,
+                    'correct_answers' => $correctAnswers,
+                    'completed_at' => now()
+                ]);
+                $wasUpdated = true;
+            }
+        } else {
+            // Create new score entry
+            CadetQuizScore::create([
+                'cadet_id' => $cadetId,
+                'learning_material_category_id' => $categoryId,
+                'score_percentage' => $scorePercentage,
+                'difficulty' => $difficulty,
+                'total_questions' => $totalQuestions,
+                'correct_answers' => $correctAnswers,
+                'completed_at' => now()
+            ]);
+            $wasUpdated = true;
+        }
+
+        // Update the cadet's performance rating quiz points only if score was updated
+        if ($wasUpdated) {
+            $performanceRating = PerformanceRating::getOrCreateForCadet($cadetId);
+            $performanceRating->updateQuizPoints();
+        }
+
+        // Store results in cache for viewing
         $resultKey = 'quiz_result_' . auth()->id() . '_' . time();
         Cache::put($resultKey, [
-            'score' => $score,
+            'score' => $scorePercentage,
             'total_questions' => $totalQuestions,
             'correct_answers' => $correctAnswers,
             'results' => $results,
-            'category_id' => $quizSession['category_id'],
-            'difficulty' => $quizSession['difficulty'],
+            'category_id' => $categoryId,
+            'difficulty' => $difficulty,
+            'points_awarded' => $newPoints,
+            'was_updated' => $wasUpdated,
             'completed_at' => now()
         ], now()->addHours(24));
 
@@ -907,9 +999,11 @@ class LearningHubController extends Controller
         return response()->json([
             'success' => true,
             'result_key' => $resultKey,
-            'score' => $score,
+            'score' => $scorePercentage,
             'total_questions' => $totalQuestions,
-            'correct_answers' => $correctAnswers
+            'correct_answers' => $correctAnswers,
+            'points_awarded' => $newPoints,
+            'was_updated' => $wasUpdated
         ]);
     }
 
