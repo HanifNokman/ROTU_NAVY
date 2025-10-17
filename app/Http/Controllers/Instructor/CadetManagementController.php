@@ -678,6 +678,41 @@ class CadetManagementController extends Controller
     }
 
     // ================================================================
+    // REACTIVATE: Change cadet status back to Active
+    // ================================================================
+    public function reactivate(Request $request, $cadetId)
+    {
+        try {
+            $cadet = Cadet::findOrFail($cadetId);
+
+            if ($cadet->cadet_status !== 'Suspended') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cadet is not suspended'
+                ], 400);
+            }
+
+            $cadet->cadet_status = 'Active';
+            $cadet->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cadet reactivated successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error reactivating cadet: ' . $e->getMessage(), [
+                'cadet_id' => $cadetId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reactivate cadet: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ================================================================
     // DESTROY: Remove cadet and associated user
     // ================================================================
     public function destroy(Request $request, $cadetId)
@@ -688,17 +723,17 @@ class CadetManagementController extends Controller
 
             DB::transaction(function () use ($cadet, $user) {
                 $cadet->delete();
-                
+
                 if ($user) {
                     $this->deleteUserCompletely($user);
                 }
             });
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Cadet and associated user records removed successfully'
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Error removing cadet and user: ' . $e->getMessage(), [
                 'cadet_id' => $cadetId,
