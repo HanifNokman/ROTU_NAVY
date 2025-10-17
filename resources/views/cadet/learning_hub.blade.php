@@ -85,6 +85,21 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <!-- Material Selector -->
+                            <div class="space-y-2">
+                                <label for="materialDropdown" class="block text-sm font-medium text-gray-700">
+                                    Select Material to Open
+                                </label>
+                                <select id="materialDropdown"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                                        onchange="openMaterial(this.value)">
+                                    <option value="">Choose a material...</option>
+                                    @foreach ($materials as $material)
+                                        <option value="material-{{ $material->id }}">{{ $material->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -1666,6 +1681,9 @@
 
             // Show loading state
             materialsContainer.innerHTML = '<div class="text-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading materials...</p></div>';
+
+            // Update material dropdown
+            materialDropdown.innerHTML = '<option value="">Choose a material...</option>';
 
             // Fetch materials via AJAX
             fetch(`/api/materials?category=${categoryId}`, {
