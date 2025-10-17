@@ -381,6 +381,7 @@ class TrainingController extends Controller
 
         try {
             $presentCount = 0;
+            $affectedCadetIds = [];
 
             foreach ($validated['attendance'] as $record) {
                 $updateData = [
@@ -404,6 +405,14 @@ class TrainingController extends Controller
                 if ($record['present']) {
                     $presentCount++;
                 }
+
+                $affectedCadetIds[] = $record['cadet_id'];
+            }
+
+            // Update performance ratings for affected cadets
+            $service = new \App\Services\PerformanceCalculationService();
+            foreach (array_unique($affectedCadetIds) as $cadetId) {
+                $service->handleTrainingAttendanceChange($cadetId);
             }
 
             return response()->json([
