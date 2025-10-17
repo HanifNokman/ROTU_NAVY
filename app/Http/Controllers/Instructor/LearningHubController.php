@@ -112,7 +112,8 @@ class LearningHubController extends Controller
 
     public function update(Request $request, LearningMaterial $material)
     {
-        if ($material->instructor_id && $material->instructor_id !== auth()->id()) {
+        // Allow instructors with Admin expertise to edit any material, others can only edit their own
+        if (auth()->user()->instructor->expertise !== 'Admin' && $material->instructor_id && $material->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -151,7 +152,8 @@ class LearningHubController extends Controller
 
     public function destroy(LearningMaterial $material)
     {
-        if ($material->instructor_id && $material->instructor_id !== auth()->id()) {
+        // Allow instructors with Admin expertise to delete any material, others can only delete their own
+        if (auth()->user()->instructor->expertise !== 'Admin' && $material->instructor_id && $material->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
 
