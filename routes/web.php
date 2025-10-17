@@ -330,6 +330,9 @@ Route::middleware(['auth', 'verified'])->prefix('cadet')->name('cadet.')->group(
     // ------------------------------------------------------------------------
     
     Route::get('/learning_hub', [CadetLearningHubController::class, 'index'])->name('learning_hub');
+    Route::post('/learning/start', [CadetLearningHubController::class, 'startMaterial'])->name('learning.start');
+    Route::post('/learning/complete', [CadetLearningHubController::class, 'completeMaterial'])->name('learning.complete');
+    Route::get('/learning/progress', [CadetLearningHubController::class, 'getProgress'])->name('learning.progress');
 
     // ------------------------------------------------------------------------
     // Inventory
