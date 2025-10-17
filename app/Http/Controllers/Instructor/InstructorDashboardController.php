@@ -611,6 +611,10 @@ class InstructorDashboardController extends Controller
 
         foreach ($request->cadet_ids as $cadetId) {
             \App\Models\Cadet::where('id', $cadetId)->increment('daily_duty_count');
+
+            // Update performance rating after duty count change
+            $service = new \App\Services\PerformanceCalculationService();
+            $service->handleDutyCountChange($cadetId);
         }
 
         if ($request->ajax() || $request->wantsJson()) {
