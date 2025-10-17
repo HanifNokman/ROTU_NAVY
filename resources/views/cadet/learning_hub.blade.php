@@ -24,70 +24,6 @@
                 </h1>
                 <p class="text-gray-600">Access educational materials and resources</p>
             </div>
-
-<!-- TEMPORARY TEST BUTTON - Remove after debugging -->
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
-    <button onclick="testLearningAPI()" class="bg-red-600 text-white px-4 py-2 rounded">
-        🧪 Test Learning API
-    </button>
-    <div id="test-results" class="mt-2 p-4 bg-gray-100 rounded hidden"></div>
-</div>
-
-<script>
-function testLearningAPI() {
-    const resultsDiv = document.getElementById('test-results');
-    resultsDiv.classList.remove('hidden');
-    resultsDiv.innerHTML = '<p class="text-blue-600">Testing API...</p>';
-    
-    console.log('🧪 Testing Learning API');
-    
-    // Use an actual material ID from your database
-    const materialId = 4; // "Basic Marching Drills"
-    
-    console.log('🧪 Material ID:', materialId);
-    
-    fetch('/cadet/learning/start', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            material_id: materialId
-        })
-    })
-    .then(response => {
-        console.log('🧪 Response Status:', response.status);
-        return response.json();
-    })
-    .then(data => {
-        console.log('🧪 Response Data:', data);
-        
-        if (data.success) {
-            resultsDiv.innerHTML = `
-                <p class="text-green-600 font-bold">✅ SUCCESS!</p>
-                <p class="text-sm mt-2">Material tracking started successfully!</p>
-                <pre class="mt-2 text-xs bg-white p-2 rounded">${JSON.stringify(data, null, 2)}</pre>
-                <p class="text-sm mt-2 text-blue-600">✓ Check completed! Now verify in database:</p>
-                <code class="text-xs">SELECT * FROM cadet_learning_material_progress;</code>
-            `;
-        } else {
-            resultsDiv.innerHTML = `
-                <p class="text-red-600 font-bold">❌ FAILED</p>
-                <pre class="mt-2 text-xs bg-white p-2 rounded">${JSON.stringify(data, null, 2)}</pre>
-            `;
-        }
-    })
-    .catch(error => {
-        console.error('🧪 Error:', error);
-        resultsDiv.innerHTML = `
-            <p class="text-red-600 font-bold">❌ ERROR</p>
-            <p class="text-sm mt-2">${error.message}</p>
-        `;
-    });
-}
-</script>
             
             <!-- Learning Hub Content -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
@@ -149,25 +85,10 @@ function testLearningAPI() {
                                     @endforeach
                                 </select>
                             </div>
-
-                            <!-- Material Selector -->
-                            <div class="space-y-2">
-                                <label for="materialDropdown" class="block text-sm font-medium text-gray-700">
-                                    Select Material to Open
-                                </label>
-                                <select id="materialDropdown"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
-                                        onchange="openMaterial(this.value)">
-                                    <option value="">Choose a material...</option>
-                                    @foreach ($materials as $material)
-                                        <option value="material-{{ $material->id }}">{{ $material->title }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Material List Accordion -->
+                   <!-- Material List Accordion -->
                     <div class="mt-6 pt-6 border-t border-gray-200">
                         <h4 class="font-medium text-gray-800 mb-4">
                             <span class="flex items-center">
@@ -178,14 +99,11 @@ function testLearningAPI() {
                             </span>
                         </h4>
 
-                        <div id="materialsContainer" x-data="{ openMaterialId: null }">
+                        <div id="materialsContainer">
                             @forelse($materials->groupBy('learning_material_category_id') as $grouped)
                                 @foreach($grouped as $material)
                                     @php
-                                        // Use the model accessor to get material type automatically
                                         $materialType = $material->material_type;
-                                        
-                                        // Check if cadet exists and get completion status
                                         $cadetId = auth()->user()->cadet->id ?? null;
                                         $isCompleted = $cadetId ? $material->isCompletedBy($cadetId) : false;
                                         $isStarted = $cadetId ? $material->isStartedBy($cadetId) : false;
@@ -196,30 +114,12 @@ function testLearningAPI() {
                                         data-material-id="{{ $material->id }}"
                                         data-material-type="{{ $materialType }}"
                                         data-material-url="{{ $material->file_url }}">
+                                        
                                         <button 
                                             id="material-button-{{ $material->id }}"
-                                            @click="
-                                                console.log('🔵 Button clicked for material:', {{ $material->id }});
-                                                if (openMaterialId === {{ $material->id }}) {
-                                                    console.log('🔵 Closing material');
-                                                    openMaterialId = null;
-                                                    LearningProgressTracker.cleanup({{ $material->id }});
-                                                } else {
-                                                    console.log('🔵 Opening material');
-                                                    openMaterialId = {{ $material->id }};
-                                                    setTimeout(() => {
-                                                        console.log('🔵 Calling LearningProgressTracker.init with:', {{ $material->id }}, '{{ $materialType }}', '{{ $material->file_url }}');
-                                                        LearningProgressTracker.init(
-                                                            {{ $material->id }}, 
-                                                            '{{ $materialType }}', 
-                                                            '{{ $material->file_url }}'
-                                                        );
-                                                    }, 100);
-                                                }
-                                            "
+                                            onclick="toggleMaterial({{ $material->id }}, '{{ $materialType }}', '{{ addslashes($material->file_url ?? '') }}')"
                                             class="w-full flex justify-between items-center px-6 py-2 {{ $isCompleted ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-blue-100 hover:bg-blue-200 text-blue-800' }} text-left font-medium text-lg rounded-t-lg transition-colors duration-300">
                                             <span class="flex items-center gap-2">
-                                                <!-- Checkmark icon for completed materials -->
                                                 <svg id="checkmark-{{ $material->id }}" 
                                                     class="w-5 h-5 text-green-600 {{ $isCompleted ? '' : 'hidden' }}" 
                                                     fill="currentColor" 
@@ -229,21 +129,20 @@ function testLearningAPI() {
                                                 {{ $material->title }}
                                             </span>
                                             <div class="flex items-center gap-2">
-                                                <!-- Completion Badge -->
                                                 <span id="completion-badge-{{ $material->id }}" 
                                                     class="{{ $isCompleted ? '' : 'hidden' }} text-green-700 text-sm font-semibold bg-green-100 px-2 py-1 rounded-full">
                                                     ✓ Completed
                                                 </span>
-                                                <!-- Chevron -->
-                                                <svg :class="{'rotate-180': openMaterialId === {{ $material->id }}}" 
+                                                <svg id="chevron-{{ $material->id }}"
                                                     class="w-5 h-5 transform transition-transform" 
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                                 </svg>
                                             </div>
                                         </button>
-                                        <div x-show="openMaterialId === {{ $material->id }}" 
-                                            x-transition 
+                                        
+                                        <div id="material-content-{{ $material->id }}" 
+                                            style="display: none;" 
                                             class="p-4 bg-white rounded-b-lg border-t">
                                             <div class="flex flex-col md:flex-row gap-4">
                                                 @if($material->file_url && $material->description && in_array($materialType, ['video', 'audio', 'image']))
@@ -314,10 +213,8 @@ function testLearningAPI() {
                                                 @endif
                                             </div>
                                             
-                                            <!-- Progress Indicator for Videos/Audio -->
                                             @if(in_array($materialType, ['video', 'audio']))
-                                                <div id="progress-indicator-{{ $material->id }}" 
-                                                    class="mt-4 hidden">
+                                                <div id="progress-indicator-{{ $material->id }}" class="mt-4 hidden">
                                                     <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
                                                         <span>Viewing Progress</span>
                                                         <span id="progress-percentage-{{ $material->id }}">0%</span>
@@ -330,7 +227,6 @@ function testLearningAPI() {
                                                 </div>
                                             @endif
 
-                                            <!-- Show started/completed status -->
                                             @if($isStarted || $isCompleted)
                                                 <div class="mt-4 pt-4 border-t border-gray-200">
                                                     <div class="flex items-center justify-between text-sm">
@@ -438,6 +334,198 @@ function testLearningAPI() {
                                 No instructors available at the moment.
                             </div>
                         @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal - Fixed Visibility -->
+    <div id="quizModal" 
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" 
+        x-data="quizData()" 
+        :class="{ 'hidden': !window.modalVisible }"
+        x-show="window.modalVisible"
+        style="display: none;">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <!-- Quiz Header -->
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200 sticky top-0">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-900">Quiz in Progress</h2>
+                            <p class="text-gray-600" x-show="questions.length > 0" x-text="`Question ${currentQuestion + 1} of ${questions.length}`"></p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <div class="text-lg font-semibold text-red-600" x-text="formatTime(timeRemaining)"></div>
+                                <div class="text-sm text-gray-500">Time Remaining</div>
+                            </div>
+                            <button @click="closeQuiz()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                                ×
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mt-4 bg-gray-200 rounded-full h-2" x-show="questions.length > 0">
+                        <div class="bg-green-600 h-2 rounded-full transition-all duration-300" 
+                            :style="`width: ${questions.length > 0 ? ((currentQuestion + 1) / questions.length) * 100 : 0}%`"></div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div x-show="!isActive && !showResults" class="p-6 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                    <p class="text-gray-600">Loading quiz questions...</p>
+                </div>
+
+                <!-- Quiz Content -->
+                <div class="p-6" x-show="isActive && !showResults && questions.length > 0">
+                    <div x-show="currentQuestion < questions.length">
+                        <!-- Question -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4" x-text="questions[currentQuestion]?.question_text"></h3>
+                            
+                            <!-- Supporting File -->
+                            <div x-show="questions[currentQuestion]?.file_url" class="mb-4">
+                                <div x-show="isImage(questions[currentQuestion]?.file_url)">
+                                    <img :src="`/${questions[currentQuestion]?.file_url}`" alt="Question Image" class="max-w-md rounded-lg">
+                                </div>
+                                <div x-show="isVideo(questions[currentQuestion]?.file_url)">
+                                    <video controls class="max-w-md rounded-lg">
+                                        <source :src="`/${questions[currentQuestion]?.file_url}`" type="video/mp4">
+                                    </video>
+                                </div>
+                                <div x-show="isDocument(questions[currentQuestion]?.file_url)">
+                                    <a :href="`/${questions[currentQuestion]?.file_url}`" target="_blank" 
+                                    class="inline-flex items-center px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        View Document
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MCQ Options -->
+                        <div x-show="questions[currentQuestion]?.question_type === 'MCQ'" class="space-y-3 mb-6">
+                            <template x-for="[key, value] in Object.entries(questions[currentQuestion]?.shuffled_options || {})" :key="key">
+                                <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="radio" 
+                                        :name="`question_${questions[currentQuestion]?.id}`" 
+                                        :value="key" 
+                                        @change="updateAnswer(questions[currentQuestion]?.id, key)"
+                                        :checked="answers[questions[currentQuestion]?.id] === key"
+                                        class="mr-3 text-green-600 focus:ring-green-500">
+                                    <span x-text="`${key}. ${value}`" class="text-gray-800"></span>
+                                </label>
+                            </template>
+                        </div>
+
+                        <!-- Subjective Answer -->
+                        <div x-show="questions[currentQuestion]?.question_type === 'Subjective'" class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Answer:</label>
+                            <textarea :value="answers[questions[currentQuestion]?.id] || ''"
+                                    @input="updateAnswer(questions[currentQuestion]?.id, $event.target.value)"
+                                    rows="4" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                    placeholder="Type your answer here..."></textarea>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex justify-between items-center">
+                            <button @click="previousQuestion()" 
+                                    :disabled="currentQuestion === 0"
+                                    :class="currentQuestion === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
+                                    class="px-4 py-2 text-white rounded-lg transition duration-200">
+                                Previous
+                            </button>
+
+                            <div class="flex gap-2">
+                                <button @click="nextQuestion()" 
+                                        x-show="currentQuestion < questions.length - 1"
+                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
+                                    Next
+                                </button>
+                                
+                                <button @click="submitQuiz()" 
+                                        x-show="currentQuestion === questions.length - 1"
+                                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition duration-200 font-medium">
+                                    Submit Quiz
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Questions State -->
+                <div x-show="isActive && questions.length === 0" class="p-6 text-center">
+                    <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-gray-600 mb-4">No questions available for this category.</p>
+                    <button @click="closeQuiz()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                        Close
+                    </button>
+                </div>
+
+                <!-- Results Screen -->
+                <div x-show="showResults" class="p-6">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Quiz Completed!</h2>
+                        <p class="text-gray-600 mt-2">Here are your results</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-3xl font-bold text-green-600" x-text="results.score + '%'"></div>
+                                <div class="text-sm text-gray-600">Score</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-blue-600" x-text="results.correct_answers"></div>
+                                <div class="text-sm text-gray-600">Correct</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-gray-600" x-text="results.total_questions"></div>
+                                <div class="text-sm text-gray-600">Total</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Answers -->
+                    <div class="space-y-4 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Review Your Answers</h3>
+                        <template x-for="(result, index) in results.results" :key="index">
+                            <div class="border rounded-lg p-4" :class="result.is_correct ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-gray-900" x-text="`Question ${index + 1}`"></h4>
+                                    <span :class="result.is_correct ? 'text-green-600' : 'text-red-600'" 
+                                        class="text-sm font-medium">
+                                        <span x-text="result.is_correct ? 'Correct' : 'Incorrect'"></span>
+                                    </span>
+                                </div>
+                                <p class="text-gray-700 mb-2" x-text="result.question_text"></p>
+                                <div class="text-sm">
+                                    <p><strong>Your answer:</strong> <span x-text="result.user_answer || 'No answer'"></span></p>
+                                    <p><strong>Correct answer:</strong> <span x-text="result.correct_answer" class="text-green-600"></span></p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="text-center">
+                        <button @click="closeQuiz()" 
+                                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
+                            Close Quiz
+                        </button>
                     </div>
                 </div>
             </div>
@@ -751,7 +839,7 @@ function testLearningAPI() {
             </div>
         </div>
     </div>
-<script>
+    <script>
         // Global quiz state management without relying on Alpine timing
         window.quizState = {
             isActive: false,
@@ -997,15 +1085,15 @@ function testLearningAPI() {
                                             font-size: clamp(0.75rem, 3.5vw, 0.875rem);
                                             touch-action: manipulation;
                                         " onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">Submit Quiz</button>`
-                                    }
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
 
-                modal.innerHTML = quizHTML;
-            },
+                    modal.innerHTML = quizHTML;
+                },
 
             renderFile(fileUrl) {
                 const url = fileUrl.startsWith('/') ? fileUrl : `/${fileUrl}`;
@@ -1571,16 +1659,13 @@ function testLearningAPI() {
             }
         }
 
-        // AJAX function to filter materials by category
+        // Function to filter materials by category
         function filterMaterials(categoryId) {
             const materialsContainer = document.getElementById('materialsContainer');
             const materialDropdown = document.getElementById('materialDropdown');
 
             // Show loading state
             materialsContainer.innerHTML = '<div class="text-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading materials...</p></div>';
-
-            // Update material dropdown
-            materialDropdown.innerHTML = '<option value="">Choose a material...</option>';
 
             // Fetch materials via AJAX
             fetch(`/api/materials?category=${categoryId}`, {
@@ -1596,76 +1681,119 @@ function testLearningAPI() {
                     return;
                 }
 
-                // Group materials by category for display
-                const groupedMaterials = data.reduce((acc, material) => {
-                    if (!acc[material.learning_material_category_id]) {
-                        acc[material.learning_material_category_id] = [];
-                    }
-                    acc[material.learning_material_category_id].push(material);
-                    return acc;
-                }, {});
-
                 let materialsHTML = '';
-                for (const [categoryId, materials] of Object.entries(groupedMaterials)) {
-                    materials.forEach(material => {
-                        const isMedia = material.file_url && ['jpg','jpeg','png','gif','mp4','webm','avi'].some(ext => material.file_url.toLowerCase().includes(ext));
-                        const hasDescription = material.description && material.description.trim() !== '';
-                        let contentHTML = '';
+                data.forEach(material => {
+                    // Determine material type
+                    let materialType = 'text';
+                    if (material.file_url) {
+                        const ext = material.file_url.split('.').pop().toLowerCase();
+                        if (['mp4', 'webm', 'avi', 'mov'].includes(ext)) materialType = 'video';
+                        else if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) materialType = 'audio';
+                        else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) materialType = 'image';
+                        else if (['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext)) materialType = 'document';
+                    }
 
-                        if (isMedia && hasDescription) {
+                    const isMedia = ['video', 'audio', 'image'].includes(materialType);
+                    const hasDescription = material.description && material.description.trim() !== '';
+                    const fileUrl = material.file_url ? material.file_url.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
+                    
+                    let contentHTML = '';
+
+                    if (material.file_url && hasDescription && isMedia) {
+                        if (materialType === 'video') {
                             contentHTML = `
                                 <div class="md:w-[60%]">
-                                    ${material.file_url.toLowerCase().includes('.mp4') || material.file_url.toLowerCase().includes('.webm') || material.file_url.toLowerCase().includes('.avi') ?
-                                        `<video controls class="w-full rounded">
-                                            <source src="/${material.file_url}" type="video/mp4">
-                                        </video>` :
-                                        `<img src="/${material.file_url}" alt="Material Image" class="w-full h-auto rounded">`
-                                    }
+                                    <video id="video-${material.id}" controls class="w-full rounded" data-material-id="${material.id}">
+                                        <source src="/${material.file_url}" type="video/mp4">
+                                    </video>
                                 </div>
-                                <div class="md:w-[40%] text-gray-700">
-                                    <p>${material.description}</p>
-                                </div>
+                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
                             `;
-                        } else if (isMedia) {
+                        } else if (materialType === 'audio') {
+                            contentHTML = `
+                                <div class="md:w-[60%]">
+                                    <audio id="audio-${material.id}" controls class="w-full" data-material-id="${material.id}">
+                                        <source src="/${material.file_url}" type="audio/mpeg">
+                                    </audio>
+                                </div>
+                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
+                            `;
+                        } else if (materialType === 'image') {
+                            contentHTML = `
+                                <div class="md:w-[60%]">
+                                    <img src="/${material.file_url}" alt="Material Image" class="w-full h-auto rounded">
+                                </div>
+                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
+                            `;
+                        }
+                    } else if (material.file_url && isMedia) {
+                        if (materialType === 'video') {
                             contentHTML = `
                                 <div class="w-full flex justify-center">
-                                    ${material.file_url.toLowerCase().includes('.mp4') || material.file_url.toLowerCase().includes('.webm') || material.file_url.toLowerCase().includes('.avi') ?
-                                        `<video controls class="max-w-lg w-full rounded">
-                                            <source src="/${material.file_url}" type="video/mp4">
-                                        </video>` :
-                                        `<img src="/${material.file_url}" alt="Material Image" class="max-w-lg w-full h-auto rounded">`
-                                    }
+                                    <video id="video-${material.id}" controls class="max-w-lg w-full rounded" data-material-id="${material.id}">
+                                        <source src="/${material.file_url}" type="video/mp4">
+                                    </video>
                                 </div>
                             `;
-                        } else {
+                        } else if (materialType === 'audio') {
                             contentHTML = `
-                                <div class="w-full text-gray-700">
-                                    <p>${material.description || 'No description available'}</p>
+                                <div class="w-full flex justify-center">
+                                    <audio id="audio-${material.id}" controls class="w-full max-w-lg" data-material-id="${material.id}">
+                                        <source src="/${material.file_url}" type="audio/mpeg">
+                                    </audio>
+                                </div>
+                            `;
+                        } else if (materialType === 'image') {
+                            contentHTML = `
+                                <div class="w-full flex justify-center">
+                                    <img src="/${material.file_url}" alt="Material Image" class="max-w-lg w-full h-auto rounded">
                                 </div>
                             `;
                         }
+                    } else {
+                        contentHTML = `
+                            <div class="w-full text-gray-700">
+                                <p>${material.description || 'No description available'}</p>
+                            </div>
+                        `;
+                    }
 
-                        materialsHTML += `
+                    // Generate progress indicator for video/audio
+                    const progressHTML = (materialType === 'video' || materialType === 'audio') ? `
+                        <div id="progress-indicator-${material.id}" class="mt-4 hidden">
+                            <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
+                                <span>Viewing Progress</span>
+                                <span id="progress-percentage-${material.id}">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="progress-bar-${material.id}" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    ` : '';
+
+                    // Build material HTML WITHOUT Alpine.js
+                    materialsHTML += `
                         <div id="material-${material.id}" class="border border-gray-200 rounded-lg mb-4">
-                            <button @click="openMaterialId = openMaterialId === ${material.id} ? null : ${material.id}"
+                            <button onclick="toggleMaterial(${material.id}, '${materialType}', '${fileUrl}')"
+                                    id="material-button-${material.id}"
                                     class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
-                                ${material.title}
-                                <svg :class="{'rotate-180': openMaterialId === ${material.id}}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span>${material.title}</span>
+                                <svg id="chevron-${material.id}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <div x-show="openMaterialId === ${material.id}" x-transition class="p-4 bg-white rounded-b-lg border-t">
+                            <div id="material-content-${material.id}" style="display: none;" class="p-4 bg-white rounded-b-lg border-t">
                                 <div class="flex flex-col md:flex-row gap-4">
                                     ${contentHTML}
                                 </div>
+                                ${progressHTML}
                             </div>
                         </div>
                     `;
 
-                        // Add to dropdown
-                        materialDropdown.innerHTML += `<option value="material-${material.id}">${material.title}</option>`;
-                    });
-                }
+                    // Add to dropdown
+                    materialDropdown.innerHTML += `<option value="material-${material.id}">${material.title}</option>`;
+                });
 
                 materialsContainer.innerHTML = materialsHTML;
             })
@@ -1953,7 +2081,7 @@ function testLearningAPI() {
             }
         }
 
-        // Learning Material Progress Tracking - ENHANCED VERSION with Green Highlighting
+        // Learning Material Progress Tracking - DEBUG VERSION
         const LearningProgressTracker = {
             materialTimers: {},
             videoPlayers: {},
@@ -1963,50 +2091,52 @@ function testLearningAPI() {
              * Initialize progress tracking for a material
              */
             init(materialId, materialType, fileUrl) {
-                console.log('Initializing progress tracker for material:', materialId, 'Type:', materialType);
-                
                 // Check if already completed
                 if (this.completedMaterials.has(materialId)) {
+                    console.log('✅ Already completed - showing badge');
                     this.showCompletionBadge(materialId);
                     return;
                 }
                 
+                console.log('📝 Starting tracking for type:', materialType);
+                
                 if (materialType === 'text' || materialType === 'image') {
+                    console.log('→ Calling trackTextMaterial');
                     this.trackTextMaterial(materialId);
                 } else if (materialType === 'video' || materialType === 'audio') {
+                    console.log('→ Calling trackMediaMaterial');
                     this.trackMediaMaterial(materialId, materialType);
+                } else {
+                    console.warn('⚠️ Unknown material type:', materialType);
                 }
             },
             
-            /**
-             * Track text/image materials (10 second rule)
-             */
             trackTextMaterial(materialId) {
-                // Mark as started
+                console.log('📄 trackTextMaterial called for ID:', materialId);
                 this.markMaterialStarted(materialId);
                 
-                // Set 10-second timer
                 if (this.materialTimers[materialId]) {
+                    console.log('⏱️ Clearing existing timer');
                     clearTimeout(this.materialTimers[materialId]);
                 }
                 
+                console.log('⏱️ Setting 10 second timer');
                 this.materialTimers[materialId] = setTimeout(() => {
+                    console.log('⏰ 10 seconds elapsed! Marking as complete');
                     this.completeMaterial(materialId, 10);
-                }, 10000); // 10 seconds
+                }, 10000);
             },
             
-            /**
-             * Track video/audio materials (full duration rule)
-             */
             trackMediaMaterial(materialId, mediaType) {
-                // Mark as started
+                console.log('🎥 trackMediaMaterial called');
                 this.markMaterialStarted(materialId);
                 
-                // Find the media element
                 const mediaElement = document.getElementById(`${mediaType}-${materialId}`);
+                console.log('   Looking for element:', `${mediaType}-${materialId}`);
+                console.log('   Element found:', mediaElement ? 'YES ✓' : 'NO ✗');
                 
                 if (!mediaElement) {
-                    console.error('Media element not found for:', materialId);
+                    console.error('❌ Media element not found');
                     return;
                 }
                 
@@ -2016,12 +2146,10 @@ function testLearningAPI() {
                 const progressBar = document.getElementById(`progress-bar-${materialId}`);
                 const progressPercentage = document.getElementById(`progress-percentage-${materialId}`);
                 
-                // Show progress indicator
                 if (progressIndicator) {
                     progressIndicator.classList.remove('hidden');
                 }
                 
-                // Track playback progress
                 mediaElement.addEventListener('timeupdate', () => {
                     if (mediaElement.currentTime > lastTime) {
                         watchedTime += (mediaElement.currentTime - lastTime);
@@ -2030,72 +2158,53 @@ function testLearningAPI() {
                         lastTime = mediaElement.currentTime;
                     }
                     
-                    // Update progress bar
                     if (mediaElement.duration > 0) {
                         const percentage = (watchedTime / mediaElement.duration) * 100;
-                        if (progressBar) {
-                            progressBar.style.width = `${Math.min(percentage, 100)}%`;
-                        }
-                        if (progressPercentage) {
-                            progressPercentage.textContent = `${Math.min(Math.round(percentage), 100)}%`;
-                        }
+                        if (progressBar) progressBar.style.width = `${Math.min(percentage, 100)}%`;
+                        if (progressPercentage) progressPercentage.textContent = `${Math.min(Math.round(percentage), 100)}%`;
                     }
                 });
                 
-                // Check if completed when ended
                 mediaElement.addEventListener('ended', () => {
-                    const duration = mediaElement.duration;
-                    const watchedPercentage = (watchedTime / duration) * 100;
-                    
-                    // Consider complete if watched at least 90%
+                    const watchedPercentage = (watchedTime / mediaElement.duration) * 100;
+                    console.log('🎬 Video ended - watched:', Math.round(watchedPercentage) + '%');
                     if (watchedPercentage >= 90) {
                         this.completeMaterial(materialId, Math.floor(watchedTime));
                     }
                 });
                 
-                // Also track manual completion check on pause
                 mediaElement.addEventListener('pause', () => {
                     if (mediaElement.currentTime >= mediaElement.duration * 0.9) {
                         this.completeMaterial(materialId, Math.floor(watchedTime));
                     }
                 });
-                
-                // Track when seeking happens
-                mediaElement.addEventListener('seeking', () => {
-                    lastTime = mediaElement.currentTime;
-                });
             },
             
-            /**
-             * Mark material as started
-             */
             markMaterialStarted(materialId) {
+                console.log('🔵 markMaterialStarted called with ID:', materialId);
                 fetch("{{ route('cadet.learning.start') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    body: JSON.stringify({
-                        material_id: materialId
-                    })
+                    body: JSON.stringify({ material_id: materialId })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Material started:', data);
+                    console.log('✅ Material started:', data);
                 })
                 .catch(error => {
-                    console.error('Error marking material as started:', error);
+                    console.error('❌ Error:', error);
                 });
             },
             
-            /**
-             * Mark material as completed
-             */
             completeMaterial(materialId, timeSpent) {
-                // Prevent duplicate completions
+                console.log('🎉 COMPLETE MATERIAL CALLED');
+                console.log('   Material ID:', materialId);
+                
                 if (this.completedMaterials.has(materialId)) {
-                    console.log('Material already completed:', materialId);
+                    console.log('⚠️ Already completed - skipping');
                     return;
                 }
                 
@@ -2112,8 +2221,9 @@ function testLearningAPI() {
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('📥 Complete response:', data);
                     if (data.success) {
-                        console.log('Material completed:', data);
+                        console.log('✅ Material marked as complete!');
                         this.completedMaterials.add(materialId);
                         this.showCompletionNotification();
                         this.showCompletionBadge(materialId);
@@ -2122,113 +2232,63 @@ function testLearningAPI() {
                     }
                 })
                 .catch(error => {
-                    console.error('Error marking material as completed:', error);
+                    console.error('❌ Error:', error);
                 });
             },
             
-            /**
-             * Show completion badge on material
-             */
             showCompletionBadge(materialId) {
                 const badge = document.getElementById(`completion-badge-${materialId}`);
                 const checkmark = document.getElementById(`checkmark-${materialId}`);
-                
-                if (badge) {
-                    badge.classList.remove('hidden');
-                }
-                if (checkmark) {
-                    checkmark.classList.remove('hidden');
-                }
+                if (badge) badge.classList.remove('hidden');
+                if (checkmark) checkmark.classList.remove('hidden');
             },
             
-            /**
-             * Highlight completed material with green color
-             */
             highlightCompletedMaterial(materialId) {
-                const materialButton = document.getElementById(`material-button-${materialId}`);
-                const materialContainer = document.getElementById(`material-${materialId}`);
+                const button = document.getElementById(`material-button-${materialId}`);
+                const container = document.getElementById(`material-${materialId}`);
                 
-                if (materialButton) {
-                    // Change to light green with smooth transition
-                    materialButton.classList.remove('bg-blue-100', 'hover:bg-blue-200', 'text-blue-800');
-                    materialButton.classList.add('bg-green-100', 'hover:bg-green-200', 'text-green-800');
+                if (button) {
+                    button.classList.remove('bg-blue-100', 'hover:bg-blue-200', 'text-blue-800');
+                    button.classList.add('bg-green-100', 'hover:bg-green-200', 'text-green-800');
                 }
-                
-                if (materialContainer) {
-                    // Add a subtle green border
-                    materialContainer.classList.remove('border-gray-200');
-                    materialContainer.classList.add('border-green-300');
+                if (container) {
+                    container.classList.remove('border-gray-200');
+                    container.classList.add('border-green-300');
                 }
-                
-                // Show checkmark and badge
-                this.showCompletionBadge(materialId);
             },
             
-            /**
-             * Show completion notification
-             */
             showCompletionNotification() {
-                // Create a simple toast notification
                 const notification = document.createElement('div');
                 notification.innerHTML = `
-                    <div style="
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background: linear-gradient(to right, #10b981, #059669);
-                        color: white;
-                        padding: 1rem 1.5rem;
-                        border-radius: 0.5rem;
-                        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-                        z-index: 9999;
-                        animation: slideIn 0.3s ease-out;
-                    ">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span style="font-weight: 600;">Learning material completed! 🎉</span>
+                    <div style="position:fixed;top:20px;right:20px;background:linear-gradient(to right,#10b981,#059669);color:white;padding:1rem 1.5rem;border-radius:0.5rem;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);z-index:9999;animation:slideIn 0.3s">
+                        <div style="display:flex;align-items:center;gap:0.5rem">
+                            <svg style="width:1.5rem;height:1.5rem" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span style="font-weight:600">Learning material completed! 🎉</span>
                         </div>
                     </div>
                 `;
-                
                 document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.3s ease-in';
-                    setTimeout(() => notification.remove(), 300);
-                }, 3000);
+                setTimeout(() => notification.remove(), 3000);
             },
             
-            /**
-             * Update progress display
-             */
             updateProgressDisplay() {
                 fetch("{{ route('cadet.learning.progress') }}")
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            console.log('Progress updated:', data);
-                            // Store completed materials
-                            if (data.material_progress) {
-                                Object.entries(data.material_progress).forEach(([id, isCompleted]) => {
-                                    if (isCompleted) {
-                                        const materialId = parseInt(id);
-                                        this.completedMaterials.add(materialId);
-                                        this.highlightCompletedMaterial(materialId);
-                                    }
-                                });
-                            }
+                        console.log('Progress updated:', data);
+                        if (data.success && data.material_progress) {
+                            Object.entries(data.material_progress).forEach(([id, isCompleted]) => {
+                                if (isCompleted) {
+                                    const materialId = parseInt(id);
+                                    this.completedMaterials.add(materialId);
+                                    this.highlightCompletedMaterial(materialId);
+                                }
+                            });
                         }
                     })
-                    .catch(error => {
-                        console.error('Error fetching progress:', error);
-                    });
+                    .catch(error => console.error('Error:', error));
             },
             
-            /**
-             * Clean up when material is closed
-             */
             cleanup(materialId) {
                 if (this.materialTimers[materialId]) {
                     clearTimeout(this.materialTimers[materialId]);
@@ -2236,15 +2296,16 @@ function testLearningAPI() {
                 }
             },
             
-            /**
-             * Load initial progress on page load
-             */
             loadInitialProgress() {
+                console.log('📊 Loading initial progress...');
                 this.updateProgressDisplay();
             }
         };
 
-        // Add CSS animation (if not already added)
+        console.log('✅ LearningProgressTracker defined');
+        console.log('   Type:', typeof LearningProgressTracker);
+
+        // Add CSS animation 
         if (!document.getElementById('learning-progress-styles')) {
             const style = document.createElement('style');
             style.id = 'learning-progress-styles';
@@ -2279,35 +2340,59 @@ function testLearningAPI() {
             LearningProgressTracker.loadInitialProgress();
         });
 
-        let openMaterialId = null;
+       // Material accordion toggle (CORRECTED VERSION)
+        let currentOpenMaterial = null;
 
-        function toggleMaterial(materialId, materialType, fileUrl) {
-            console.log('🔵 toggleMaterial called:', materialId);
+        function toggleMaterial(materialId, materialType, fileUrl) {    
+            const contentDiv = document.getElementById(`material-content-${materialId}`);
+            const chevron = document.getElementById(`chevron-${materialId}`);
             
-            const container = document.getElementById(`material-${materialId}`).querySelector('[x-show]');
+            console.log('   Content div found:', contentDiv ? 'YES ✓' : 'NO ✗');
+            console.log('   Chevron found:', chevron ? 'YES ✓' : 'NO ✗');
             
-            if (openMaterialId === materialId) {
-                // Close the material
-                container.style.display = 'none';
-                openMaterialId = null;
+            if (!contentDiv) {
+                console.error('❌ Content div not found for material:', materialId);
+                console.error('   Looking for ID:', `material-content-${materialId}`);
+                return;
+            }
+            
+            // Check if this material is already open
+            const isCurrentlyOpen = contentDiv.style.display === 'block';
+            
+            if (isCurrentlyOpen) {
+                console.log('🔽 Closing material');
+                // Close it
+                contentDiv.style.display = 'none';
+                if (chevron) chevron.classList.remove('rotate-180');
+                currentOpenMaterial = null;
                 LearningProgressTracker.cleanup(materialId);
             } else {
+                console.log('🔼 Opening material');
+                
                 // Close previously open material
-                if (openMaterialId !== null) {
-                    const prevContainer = document.getElementById(`material-${openMaterialId}`).querySelector('[x-show]');
-                    if (prevContainer) prevContainer.style.display = 'none';
-                    LearningProgressTracker.cleanup(openMaterialId);
+                if (currentOpenMaterial !== null && currentOpenMaterial !== materialId) {
+                    console.log('   Closing previous material:', currentOpenMaterial);
+                    const prevContent = document.getElementById(`material-content-${currentOpenMaterial}`);
+                    const prevChevron = document.getElementById(`chevron-${currentOpenMaterial}`);
+                    if (prevContent) prevContent.style.display = 'none';
+                    if (prevChevron) prevChevron.classList.remove('rotate-180');
+                    LearningProgressTracker.cleanup(currentOpenMaterial);
                 }
                 
                 // Open new material
-                container.style.display = 'block';
-                openMaterialId = materialId;
+                contentDiv.style.display = 'block';
+                if (chevron) chevron.classList.add('rotate-180');
+                currentOpenMaterial = materialId;
                 
-                console.log('🔵 Initializing tracker...');
+                // Initialize tracking after a short delay
+                console.log('⏱️ Scheduling tracker initialization...');
                 setTimeout(() => {
+                    console.log('▶️ Calling LearningProgressTracker.init');
                     LearningProgressTracker.init(materialId, materialType, fileUrl);
                 }, 100);
             }
         }
-        </script>
+
+        console.log('✅ toggleMaterial function defined');
+    </script>
 </x-app-layout>
