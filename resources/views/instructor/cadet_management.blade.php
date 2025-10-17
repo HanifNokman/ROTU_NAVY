@@ -407,8 +407,13 @@
                                                 Suspended
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button class="text-red-600 hover:text-red-900 delete-suspended-btn" 
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                            <button class="text-green-600 hover:text-green-900 reactivate-cadet-btn"
+                                                    data-cadet-id="{{ $cadet->id }}"
+                                                    data-cadet-name="{{ $cadet->user->name }}">
+                                                Reactivate
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900 delete-suspended-btn"
                                                     data-cadet-id="{{ $cadet->id }}"
                                                     data-cadet-name="{{ $cadet->user->name }}">
                                                 Delete Permanently
@@ -484,6 +489,32 @@
     </div>
 
     {{-- ================================================================ --}}
+    {{-- REACTIVATE CADET CONFIRMATION MODAL --}}
+    {{-- ================================================================ --}}
+    <div id="reactivateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Cadet Reactivation</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Are you sure you want to reactivate <strong id="cadetNameToReactivate"></strong>?
+                    </p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="cancelReactivate"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <button id="confirmReactivate"
+                                class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+                            Reactivate Cadet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================================================================ --}}
     {{-- DELETE SUSPENDED CADET CONFIRMATION MODAL --}}
     {{-- ================================================================ --}}
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
@@ -495,11 +526,11 @@
                         Are you sure you want to permanently delete <strong id="cadetNameToDelete"></strong>? This action cannot be undone.
                     </p>
                     <div class="flex justify-end space-x-3">
-                        <button id="cancelDelete" 
+                        <button id="cancelDelete"
                                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
                             Cancel
                         </button>
-                        <button id="confirmDelete" 
+                        <button id="confirmDelete"
                                 class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
                             Delete Permanently
                         </button>
@@ -673,9 +704,38 @@
                 confirmDeletion();
             });
 
+            document.getElementById('cancelReactivate')?.addEventListener('click', function() {
+                document.getElementById('reactivateModal').classList.add('hidden');
+            });
+
+            document.getElementById('confirmReactivate')?.addEventListener('click', function() {
+                confirmReactivation();
+            });
+
             // ============================================================
             // EVENT LISTENERS: Action Buttons
             // ============================================================
+
+            // Attach event listeners to reactivate buttons
+            document.querySelectorAll('.reactivate-cadet-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cadetId = this.dataset.cadetId;
+                    const cadetName = this.dataset.cadetName;
+                    showReactivateModal(cadetId, cadetName);
+                });
+            });
+
+            // Attach event listeners to delete buttons
+            document.querySelectorAll('.delete-suspended-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cadetId = this.dataset.cadetId;
+                    const cadetName = this.dataset.cadetName;
+                    showDeleteModal(cadetId, cadetName);
+                });
+            });
+
             document.getElementById('savePositionsBtn')?.addEventListener('click', function() {
                 savePositions();
             });
@@ -1058,8 +1118,6 @@ function getActionsColumnContent(cadet) {
     }
 }
 
-// Continue to next part...
-
 // ============================================================
 // FUNCTION: Validate Position Selection
 // ============================================================
@@ -1376,11 +1434,69 @@ function showDeleteModal(cadetId, cadetName) {
 }
 
 // ============================================================
+// FUNCTION: Show Reactivate Modal
+// ============================================================
+function showReactivateModal(cadetId, cadetName) {
+    document.getElementById('cadetNameToReactivate').textContent = cadetName;
+    document.getElementById('confirmReactivate').dataset.cadetId = cadetId;
+    document.getElementById('reactivateModal').classList.remove('hidden');
+}
+
+// ============================================================
+// FUNCTION: Confirm Reactivation
+// ============================================================
+function confirmReactivation() {
+    const cadetId = document.getElementById('confirmReactivate').dataset.cadetId;
+
+    fetch(`/instructor/cadets/${cadetId}/reactivate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('reactivateModal').classList.add('hidden');
+            alert('Cadet reactivated successfully');
+            loadSuspendedCadets(document.getElementById('suspendedIntakeFilter').value);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to reactivate cadet');
+    });
+}
+
+// ============================================================
+// FUNCTION: Handle Reactivate Button Click
+// ============================================================
+function handleReactivateClick(e) {
+    e.stopPropagation();
+    const cadetId = this.dataset.cadetId;
+    const cadetName = this.dataset.cadetName;
+    showReactivateModal(cadetId, cadetName);
+}
+
+// ============================================================
+// FUNCTION: Handle Delete Button Click
+// ============================================================
+function handleDeleteClick(e) {
+    e.stopPropagation();
+    const cadetId = this.dataset.cadetId;
+    const cadetName = this.dataset.cadetName;
+    showDeleteModal(cadetId, cadetName);
+}
+
+// ============================================================
 // FUNCTION: Confirm Deletion
 // ============================================================
 function confirmDeletion() {
     const cadetId = document.getElementById('confirmDelete').dataset.cadetId;
-    
+
     fetch(`/instructor/cadets/${cadetId}`, {
         method: 'DELETE',
         headers: {
@@ -1602,8 +1718,13 @@ function renderSuspendedCadets(cadets) {
                         Suspended
                     </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button class="text-red-600 hover:text-red-900 delete-suspended-btn" 
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                    <button class="text-green-600 hover:text-green-900 reactivate-cadet-btn"
+                            data-cadet-id="${cadet.id}"
+                            data-cadet-name="${cadet.user_name}">
+                        Reactivate
+                    </button>
+                    <button class="text-red-600 hover:text-red-900 delete-suspended-btn"
                             data-cadet-id="${cadet.id}"
                             data-cadet-name="${cadet.user_name}">
                         Delete Permanently
@@ -1613,15 +1734,9 @@ function renderSuspendedCadets(cadets) {
             tableBody.appendChild(row);
         });
 
-        // Attach event listeners to delete buttons
-        document.querySelectorAll('.delete-suspended-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const cadetId = this.dataset.cadetId;
-                const cadetName = this.dataset.cadetName;
-                showDeleteModal(cadetId, cadetName);
-            });
-        });
+        // Attach event listeners for dynamically created buttons
+        attachSuspendedCadetEventListeners();
+
     } else {
         tableBody.innerHTML = `
             <tr>
@@ -1802,6 +1917,31 @@ function updateMarkAsPassedButton() {
 
     const checkedBoxes = document.querySelectorAll('.cadet-checkbox:checked');
     markAsPassedBtn.disabled = checkedBoxes.length === 0;
+}
+
+// ============================================================
+// FUNCTION: Attach Event Listeners for Suspended Cadet Buttons
+// ============================================================
+function attachSuspendedCadetEventListeners() {
+    // Attach event listeners to reactivate buttons
+    document.querySelectorAll('.reactivate-cadet-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cadetId = this.dataset.cadetId;
+            const cadetName = this.dataset.cadetName;
+            showReactivateModal(cadetId, cadetName);
+        });
+    });
+
+    // Attach event listeners to delete buttons
+    document.querySelectorAll('.delete-suspended-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cadetId = this.dataset.cadetId;
+            const cadetName = this.dataset.cadetName;
+            showDeleteModal(cadetId, cadetName);
+        });
+    });
 }
     </script>
     @endpush

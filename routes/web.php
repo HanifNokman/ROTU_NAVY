@@ -197,6 +197,9 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     // Delete Cadet
     Route::delete('/cadets/{cadet}', [CadetManagementController::class, 'destroy'])->name('cadets.destroy');
 
+    // Reactivate Cadet
+    Route::post('/cadets/{cadet}/reactivate', [CadetManagementController::class, 'reactivate'])->name('cadets.reactivate');
+
     // ------------------------------------------------------------------------
     // Training Management
     // ------------------------------------------------------------------------
