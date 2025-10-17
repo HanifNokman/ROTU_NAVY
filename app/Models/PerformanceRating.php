@@ -63,7 +63,7 @@ class PerformanceRating extends Model
     {
         $points = $this->total_points;
 
-        if ($points >= 800) {
+        if ($points >= 700) {
             return '⭐⭐⭐⭐⭐';
         } elseif ($points >= 500) {
             return '⭐⭐⭐⭐☆';
@@ -88,8 +88,8 @@ class PerformanceRating extends Model
         if ($totalTrainings > 0) {
             $attendancePercentage = ($attendedCount / $totalTrainings) * 100;
 
-            // Full points (100) if perfect attendance, scaled down otherwise
-            $this->attendance_points = ($attendancePercentage / 100) * 100;
+            // Full points (480) if perfect attendance, scaled down otherwise (60% weight)
+            $this->attendance_points = ($attendancePercentage / 100) * 480;
         } else {
             $this->attendance_points = 0;
         }
@@ -100,23 +100,39 @@ class PerformanceRating extends Model
     /**
      * Update quiz points based on quiz performance
      */
-    public function updateQuizPoints()
+   public function updateQuizPoints()
     {
-        // This would need to be implemented based on quiz results
-        // For now, placeholder - assuming quiz results are stored elsewhere
-        $this->quiz_points = 0; // To be implemented
+        // Get the best score for each difficulty level across all categories
+        $easyScore = CadetQuizScore::getBestScore($this->cadet_id, null, 'easy');
+        $mediumScore = CadetQuizScore::getBestScore($this->cadet_id, null, 'medium');
+        $hardScore = CadetQuizScore::getBestScore($this->cadet_id, null, 'hard');
+
+        $totalQuizPoints = 0;
+
+        // Award points based on best scores and difficulty level (5% weight total)
+        // Easy: 8 points, Medium: 16 points, Hard: 24 points (only if score >= 60%)
+        if ($easyScore && $easyScore->score_percentage >= 60) {
+            $totalQuizPoints += 8;
+        }
+        if ($mediumScore && $mediumScore->score_percentage >= 60) {
+            $totalQuizPoints += 16;
+        }
+        if ($hardScore && $hardScore->score_percentage >= 60) {
+            $totalQuizPoints += 24;
+        }
+
+        $this->quiz_points = $totalQuizPoints;
         $this->calculateAndUpdateTotal();
     }
-
+    
     /**
      * Update learning progress points based on completed materials
      */
     public function updateLearningProgressPoints()
     {
         // This would need to be implemented based on learning material completion
-        // For now, placeholder
+        // For now, placeholder with 5% weight (40 points max)
         $this->learning_progress_points = 0; // To be implemented
-        $this->calculateAndUpdateTotal();
     }
 
     /**
@@ -125,7 +141,7 @@ class PerformanceRating extends Model
     public function updateDutyPoints()
     {
         $dutyCount = $this->cadet->daily_duty_count ?? 0;
-        $this->duty_points = $dutyCount * 5; // +5 per duty
+        $this->duty_points = min($dutyCount * 5, 160); // +5 per duty, max 20% of 800 (160 points)
         $this->calculateAndUpdateTotal();
     }
 
@@ -135,7 +151,19 @@ class PerformanceRating extends Model
     public function updateAcademicPoints()
     {
         $cgpa = $this->cadet->current_cgpa ?? 0;
-        $this->academic_points = ($cgpa >= 3.50) ? 10 : 0; // +10 for CGPA >= 3.50
+
+        if ($cgpa >= 3.50) {
+            $this->academic_points = 80; // 10% weight for excellent CGPA
+        } elseif ($cgpa >= 3.00) {
+            $this->academic_points = 60; // Good CGPA
+        } elseif ($cgpa >= 2.50) {
+            $this->academic_points = 40; // Satisfactory CGPA
+        } elseif ($cgpa >= 2.00) {
+            $this->academic_points = 20; // Minimum passing CGPA
+        } else {
+            $this->academic_points = 0; // Below minimum
+        }
+
         $this->calculateAndUpdateTotal();
     }
 
