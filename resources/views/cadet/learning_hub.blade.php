@@ -25,6 +25,70 @@
                 <p class="text-gray-600">Access educational materials and resources</p>
             </div>
 
+<!-- TEMPORARY TEST BUTTON - Remove after debugging -->
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
+    <button onclick="testLearningAPI()" class="bg-red-600 text-white px-4 py-2 rounded">
+        🧪 Test Learning API
+    </button>
+    <div id="test-results" class="mt-2 p-4 bg-gray-100 rounded hidden"></div>
+</div>
+
+<script>
+function testLearningAPI() {
+    const resultsDiv = document.getElementById('test-results');
+    resultsDiv.classList.remove('hidden');
+    resultsDiv.innerHTML = '<p class="text-blue-600">Testing API...</p>';
+    
+    console.log('🧪 Testing Learning API');
+    
+    // Use an actual material ID from your database
+    const materialId = 4; // "Basic Marching Drills"
+    
+    console.log('🧪 Material ID:', materialId);
+    
+    fetch('/cadet/learning/start', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            material_id: materialId
+        })
+    })
+    .then(response => {
+        console.log('🧪 Response Status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('🧪 Response Data:', data);
+        
+        if (data.success) {
+            resultsDiv.innerHTML = `
+                <p class="text-green-600 font-bold">✅ SUCCESS!</p>
+                <p class="text-sm mt-2">Material tracking started successfully!</p>
+                <pre class="mt-2 text-xs bg-white p-2 rounded">${JSON.stringify(data, null, 2)}</pre>
+                <p class="text-sm mt-2 text-blue-600">✓ Check completed! Now verify in database:</p>
+                <code class="text-xs">SELECT * FROM cadet_learning_material_progress;</code>
+            `;
+        } else {
+            resultsDiv.innerHTML = `
+                <p class="text-red-600 font-bold">❌ FAILED</p>
+                <pre class="mt-2 text-xs bg-white p-2 rounded">${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('🧪 Error:', error);
+        resultsDiv.innerHTML = `
+            <p class="text-red-600 font-bold">❌ ERROR</p>
+            <p class="text-sm mt-2">${error.message}</p>
+        `;
+    });
+}
+</script>
+            
             <!-- Learning Hub Content -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
@@ -117,46 +181,187 @@
                         <div id="materialsContainer" x-data="{ openMaterialId: null }">
                             @forelse($materials->groupBy('learning_material_category_id') as $grouped)
                                 @foreach($grouped as $material)
-                                    <div id="material-{{ $material->id }}" class="border border-gray-200 rounded-lg mb-4">
+                                    @php
+                                        // Use the model accessor to get material type automatically
+                                        $materialType = $material->material_type;
+                                        
+                                        // Check if cadet exists and get completion status
+                                        $cadetId = auth()->user()->cadet->id ?? null;
+                                        $isCompleted = $cadetId ? $material->isCompletedBy($cadetId) : false;
+                                        $isStarted = $cadetId ? $material->isStartedBy($cadetId) : false;
+                                    @endphp
+                                    
+                                    <div id="material-{{ $material->id }}" 
+                                        class="border {{ $isCompleted ? 'border-green-300' : 'border-gray-200' }} rounded-lg mb-4 transition-all duration-300"
+                                        data-material-id="{{ $material->id }}"
+                                        data-material-type="{{ $materialType }}"
+                                        data-material-url="{{ $material->file_url }}">
                                         <button 
-                                            @click="openMaterialId = openMaterialId === {{ $material->id }} ? null : {{ $material->id }}"
-                                            class="w-full flex justify-between items-center px-6 py-2 bg-blue-100 hover:bg-blue-200 text-left text-blue-800 font-medium text-lg rounded-t-lg">
-                                            {{ $material->title }}
-                                            <svg :class="{'rotate-180': openMaterialId === {{ $material->id }}}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                            </svg>
+                                            id="material-button-{{ $material->id }}"
+                                            @click="
+                                                console.log('🔵 Button clicked for material:', {{ $material->id }});
+                                                if (openMaterialId === {{ $material->id }}) {
+                                                    console.log('🔵 Closing material');
+                                                    openMaterialId = null;
+                                                    LearningProgressTracker.cleanup({{ $material->id }});
+                                                } else {
+                                                    console.log('🔵 Opening material');
+                                                    openMaterialId = {{ $material->id }};
+                                                    setTimeout(() => {
+                                                        console.log('🔵 Calling LearningProgressTracker.init with:', {{ $material->id }}, '{{ $materialType }}', '{{ $material->file_url }}');
+                                                        LearningProgressTracker.init(
+                                                            {{ $material->id }}, 
+                                                            '{{ $materialType }}', 
+                                                            '{{ $material->file_url }}'
+                                                        );
+                                                    }, 100);
+                                                }
+                                            "
+                                            class="w-full flex justify-between items-center px-6 py-2 {{ $isCompleted ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-blue-100 hover:bg-blue-200 text-blue-800' }} text-left font-medium text-lg rounded-t-lg transition-colors duration-300">
+                                            <span class="flex items-center gap-2">
+                                                <!-- Checkmark icon for completed materials -->
+                                                <svg id="checkmark-{{ $material->id }}" 
+                                                    class="w-5 h-5 text-green-600 {{ $isCompleted ? '' : 'hidden' }}" 
+                                                    fill="currentColor" 
+                                                    viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                </svg>
+                                                {{ $material->title }}
+                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <!-- Completion Badge -->
+                                                <span id="completion-badge-{{ $material->id }}" 
+                                                    class="{{ $isCompleted ? '' : 'hidden' }} text-green-700 text-sm font-semibold bg-green-100 px-2 py-1 rounded-full">
+                                                    ✓ Completed
+                                                </span>
+                                                <!-- Chevron -->
+                                                <svg :class="{'rotate-180': openMaterialId === {{ $material->id }}}" 
+                                                    class="w-5 h-5 transform transition-transform" 
+                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
                                         </button>
-                                        <div x-show="openMaterialId === {{ $material->id }}" x-transition class="p-4 bg-white rounded-b-lg border-t">
+                                        <div x-show="openMaterialId === {{ $material->id }}" 
+                                            x-transition 
+                                            class="p-4 bg-white rounded-b-lg border-t">
                                             <div class="flex flex-col md:flex-row gap-4">
-                                                @if($material->file_url && $material->description && Str::endsWith($material->file_url, ['jpg','jpeg','png','gif','mp4','webm','avi']))
+                                                @if($material->file_url && $material->description && in_array($materialType, ['video', 'audio', 'image']))
                                                     <div class="md:w-[60%]">
-                                                        @if(preg_match('/\.(mp4|webm|avi)$/i', $material->file_url))
-                                                            <video controls class="w-full rounded">
+                                                        @if($materialType === 'video')
+                                                            <video id="video-{{ $material->id }}" 
+                                                                controls 
+                                                                class="w-full rounded"
+                                                                data-material-id="{{ $material->id }}">
                                                                 <source src="{{ asset($material->file_url) }}" type="video/mp4">
                                                             </video>
-                                                        @else
-                                                            <img src="{{ asset($material->file_url) }}" alt="Material Image" class="w-full h-auto rounded">
+                                                        @elseif($materialType === 'audio')
+                                                            <audio id="audio-{{ $material->id }}" 
+                                                                controls 
+                                                                class="w-full"
+                                                                data-material-id="{{ $material->id }}">
+                                                                <source src="{{ asset($material->file_url) }}" type="audio/mpeg">
+                                                            </audio>
+                                                        @elseif($materialType === 'image')
+                                                            <img src="{{ asset($material->file_url) }}" 
+                                                                alt="Material Image" 
+                                                                class="w-full h-auto rounded">
                                                         @endif
                                                     </div>
                                                     <div class="md:w-[40%] text-gray-700">
                                                         <p>{{ $material->description }}</p>
                                                     </div>
-                                                @elseif($material->file_url && Str::endsWith($material->file_url, ['jpg','jpeg','png','gif','mp4','webm','avi']))
+                                                @elseif($material->file_url && in_array($materialType, ['video', 'audio', 'image']))
                                                     <div class="w-full flex justify-center">
-                                                        @if(preg_match('/\.(mp4|webm|avi)$/i', $material->file_url))
-                                                            <video controls class="max-w-lg w-full rounded">
+                                                        @if($materialType === 'video')
+                                                            <video id="video-{{ $material->id }}" 
+                                                                controls 
+                                                                class="max-w-lg w-full rounded"
+                                                                data-material-id="{{ $material->id }}">
                                                                 <source src="{{ asset($material->file_url) }}" type="video/mp4">
                                                             </video>
-                                                        @else
-                                                            <img src="{{ asset($material->file_url) }}" alt="Material Image" class="max-w-lg w-full h-auto rounded">
+                                                        @elseif($materialType === 'audio')
+                                                            <audio id="audio-{{ $material->id }}" 
+                                                                controls 
+                                                                class="w-full max-w-lg"
+                                                                data-material-id="{{ $material->id }}">
+                                                                <source src="{{ asset($material->file_url) }}" type="audio/mpeg">
+                                                            </audio>
+                                                        @elseif($materialType === 'image')
+                                                            <img src="{{ asset($material->file_url) }}" 
+                                                                alt="Material Image" 
+                                                                class="max-w-lg w-full h-auto rounded">
+                                                        @endif
+                                                    </div>
+                                                @elseif($materialType === 'document' && $material->file_url)
+                                                    <div class="w-full">
+                                                        <a href="{{ asset($material->file_url) }}" 
+                                                        target="_blank"
+                                                        class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors">
+                                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                            </svg>
+                                                            View Document
+                                                        </a>
+                                                        @if($material->description)
+                                                            <p class="mt-4 text-gray-700">{{ $material->description }}</p>
                                                         @endif
                                                     </div>
                                                 @else
                                                     <div class="w-full text-gray-700">
-                                                        <p>{{ $material->description }}</p>
+                                                        <p>{{ $material->description ?? 'No description available' }}</p>
                                                     </div>
                                                 @endif
                                             </div>
+                                            
+                                            <!-- Progress Indicator for Videos/Audio -->
+                                            @if(in_array($materialType, ['video', 'audio']))
+                                                <div id="progress-indicator-{{ $material->id }}" 
+                                                    class="mt-4 hidden">
+                                                    <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
+                                                        <span>Viewing Progress</span>
+                                                        <span id="progress-percentage-{{ $material->id }}">0%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                                        <div id="progress-bar-{{ $material->id }}" 
+                                                            class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                                                            style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <!-- Show started/completed status -->
+                                            @if($isStarted || $isCompleted)
+                                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                                    <div class="flex items-center justify-between text-sm">
+                                                        <span class="text-gray-600">
+                                                            @if($isCompleted)
+                                                                <span class="flex items-center text-green-600">
+                                                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                                    </svg>
+                                                                    Completed
+                                                                </span>
+                                                            @else
+                                                                <span class="flex items-center text-blue-600">
+                                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                    </svg>
+                                                                    In Progress
+                                                                </span>
+                                                            @endif
+                                                        </span>
+                                                        @php
+                                                            $progress = $material->getProgressFor($cadetId);
+                                                        @endphp
+                                                        @if($progress)
+                                                            <span class="text-gray-500 text-xs">
+                                                                Started: {{ $progress->started_at->diffForHumans() }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
@@ -239,468 +444,276 @@
         </div>
     </div>
 
-<!-- Quiz Modal --->
-<div id="quizModal" 
-     class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" 
-     x-data="quizData()" 
-     :class="{ 'hidden': !window.modalVisible }"
-     x-show="window.modalVisible"
-     style="display: none;">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <!-- Quiz Header -->
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200 sticky top-0">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h2 class="text-2xl font-semibold text-gray-900">Quiz in Progress</h2>
-                        <p class="text-gray-600" x-show="questions.length > 0" x-text="`Question ${currentQuestion + 1} of ${questions.length}`"></p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="text-right">
-                            <div class="text-lg font-semibold text-red-600" x-text="formatTime(timeRemaining)"></div>
-                            <div class="text-sm text-gray-500">Time Remaining</div>
-                        </div>
-                        <button @click="closeQuiz()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
-                            ×
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Progress Bar -->
-                <div class="mt-4 bg-gray-200 rounded-full h-2" x-show="questions.length > 0">
-                    <div class="bg-green-600 h-2 rounded-full transition-all duration-300" 
-                         :style="`width: ${questions.length > 0 ? ((currentQuestion + 1) / questions.length) * 100 : 0}%`"></div>
-                </div>
-            </div>
-
-            <!-- Loading State -->
-            <div x-show="!isActive && !showResults" class="p-6 text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-                <p class="text-gray-600">Loading quiz questions...</p>
-            </div>
-
-            <!-- Quiz Content -->
-            <div class="p-6" x-show="isActive && !showResults && questions.length > 0">
-                <div x-show="currentQuestion < questions.length">
-                    <!-- Question -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4" x-text="questions[currentQuestion]?.question_text"></h3>
-                        
-                        <!-- Supporting File -->
-                        <div x-show="questions[currentQuestion]?.file_url" class="mb-4">
-                            <div x-show="isImage(questions[currentQuestion]?.file_url)">
-                                <img :src="`/${questions[currentQuestion]?.file_url}`" alt="Question Image" class="max-w-md rounded-lg">
-                            </div>
-                            <div x-show="isVideo(questions[currentQuestion]?.file_url)">
-                                <video controls class="max-w-md rounded-lg">
-                                    <source :src="`/${questions[currentQuestion]?.file_url}`" type="video/mp4">
-                                </video>
-                            </div>
-                            <div x-show="isDocument(questions[currentQuestion]?.file_url)">
-                                <a :href="`/${questions[currentQuestion]?.file_url}`" target="_blank" 
-                                   class="inline-flex items-center px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    View Document
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- MCQ Options -->
-                    <div x-show="questions[currentQuestion]?.question_type === 'MCQ'" class="space-y-3 mb-6">
-                        <template x-for="[key, value] in Object.entries(questions[currentQuestion]?.shuffled_options || {})" :key="key">
-                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" 
-                                       :name="`question_${questions[currentQuestion]?.id}`" 
-                                       :value="key" 
-                                       @change="updateAnswer(questions[currentQuestion]?.id, key)"
-                                       :checked="answers[questions[currentQuestion]?.id] === key"
-                                       class="mr-3 text-green-600 focus:ring-green-500">
-                                <span x-text="`${key}. ${value}`" class="text-gray-800"></span>
-                            </label>
-                        </template>
-                    </div>
-
-                    <!-- Subjective Answer -->
-                    <div x-show="questions[currentQuestion]?.question_type === 'Subjective'" class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Your Answer:</label>
-                        <textarea :value="answers[questions[currentQuestion]?.id] || ''"
-                                  @input="updateAnswer(questions[currentQuestion]?.id, $event.target.value)"
-                                  rows="4" 
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                  placeholder="Type your answer here..."></textarea>
-                    </div>
-
-                    <!-- Navigation Buttons -->
-                    <div class="flex justify-between items-center">
-                        <button @click="previousQuestion()" 
-                                :disabled="currentQuestion === 0"
-                                :class="currentQuestion === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
-                                class="px-4 py-2 text-white rounded-lg transition duration-200">
-                            Previous
-                        </button>
-
-                        <div class="flex gap-2">
-                            <button @click="nextQuestion()" 
-                                    x-show="currentQuestion < questions.length - 1"
-                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
-                                Next
-                            </button>
-                            
-                            <button @click="submitQuiz()" 
-                                    x-show="currentQuestion === questions.length - 1"
-                                    class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition duration-200 font-medium">
-                                Submit Quiz
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- No Questions State -->
-            <div x-show="isActive && questions.length === 0" class="p-6 text-center">
-                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-gray-600 mb-4">No questions available for this category.</p>
-                <button @click="closeQuiz()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-                    Close
-                </button>
-            </div>
-
-            <!-- Results Screen -->
-            <div x-show="showResults" class="p-6">
-                <div class="text-center mb-6">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900">Quiz Completed!</h2>
-                    <p class="text-gray-600 mt-2">Here are your results</p>
-                </div>
-
-                <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                        <div>
-                            <div class="text-3xl font-bold text-green-600" x-text="results.score + '%'"></div>
-                            <div class="text-sm text-gray-600">Score</div>
-                        </div>
-                        <div>
-                            <div class="text-3xl font-bold text-blue-600" x-text="results.correct_answers"></div>
-                            <div class="text-sm text-gray-600">Correct</div>
-                        </div>
-                        <div>
-                            <div class="text-3xl font-bold text-gray-600" x-text="results.total_questions"></div>
-                            <div class="text-sm text-gray-600">Total</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Review Answers -->
-                <div class="space-y-4 mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900">Review Your Answers</h3>
-                    <template x-for="(result, index) in results.results" :key="index">
-                        <div class="border rounded-lg p-4" :class="result.is_correct ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
-                            <div class="flex items-start justify-between mb-2">
-                                <h4 class="font-medium text-gray-900" x-text="`Question ${index + 1}`"></h4>
-                                <span :class="result.is_correct ? 'text-green-600' : 'text-red-600'" 
-                                      class="text-sm font-medium">
-                                    <span x-text="result.is_correct ? 'Correct' : 'Incorrect'"></span>
-                                </span>
-                            </div>
-                            <p class="text-gray-700 mb-2" x-text="result.question_text"></p>
-                            <div class="text-sm">
-                                <p><strong>Your answer:</strong> <span x-text="result.user_answer || 'No answer'"></span></p>
-                                <p><strong>Correct answer:</strong> <span x-text="result.correct_answer" class="text-green-600"></span></p>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-
-                <div class="text-center">
-                    <button @click="closeQuiz()" 
-                            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
-                        Close Quiz
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
     <!-- Quiz Selection Modal -->
-<div id="quizSelectionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full transform transition-all">
-            <!-- Header with gradient background -->
-            <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-3">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    <div id="quizSelectionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full transform transition-all">
+                <!-- Header with gradient background -->
+                <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-white">Test Your Knowledge</h2>
+                                <p class="text-purple-100 text-sm">Choose your quiz preferences</p>
+                            </div>
+                        </div>
+                        <button onclick="closeQuizSelectionModal()" 
+                                class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-white">Test Your Knowledge</h2>
-                            <p class="text-purple-100 text-sm">Choose your quiz preferences</p>
-                        </div>
-                    </div>
-                    <button onclick="closeQuizSelectionModal()" 
-                            class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Content -->
-            <div class="p-6 space-y-6">
-                <!-- Category Selection -->
-                <div class="space-y-3">
-                    <label for="quizSelectionCategory" class="flex items-center text-sm font-semibold text-gray-700">
-                        <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                        </svg>
-                        Select Topic
-                    </label>
-                    <select id="quizSelectionCategory" 
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
-                        <option value="">Practice Mode (All Topics)</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Difficulty Selection -->
-                <div class="space-y-3">
-                    <label for="quizSelectionDifficulty" class="flex items-center text-sm font-semibold text-gray-700">
-                        <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                        Select Difficulty
-                    </label>
-                    <select id="quizSelectionDifficulty" 
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
-                        <option value="easy">🟢 Easy - MCQ only (5 questions, 1 minute)</option>
-                        <option value="medium">🟡 Medium - Mixed types (5 questions, 2 minutes)</option>
-                        <option value="hard">🔴 Hard - More subjective (7 questions, 3 minutes)</option>
-                    </select>
-                </div>
-
-                <!-- Info Box -->
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <h4 class="text-sm font-semibold text-blue-900 mb-1">Quiz Guidelines</h4>
-                            <ul class="text-xs text-blue-800 space-y-1">
-                                <li>• Timer starts immediately when quiz begins</li>
-                                <li>• Questions are randomly selected from the chosen topic</li>
-                                <li>• Navigate freely between questions before submitting</li>
-                                <li>• Quiz auto-submits when time expires</li>
-                            </ul>
-                        </div>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="flex gap-3 pt-2">
-                    <button onclick="closeQuizSelectionModal()" 
-                            class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition duration-200 border border-gray-300">
-                        Cancel
-                    </button>
-                    <button onclick="startQuiz()" 
-                            class="flex-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition duration-200 flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Start Quiz
-                    </button>
+                <!-- Content -->
+                <div class="p-6 space-y-6">
+                    <!-- Category Selection -->
+                    <div class="space-y-3">
+                        <label for="quizSelectionCategory" class="flex items-center text-sm font-semibold text-gray-700">
+                            <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                            </svg>
+                            Select Topic
+                        </label>
+                        <select id="quizSelectionCategory" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
+                            <option value="">Practice Mode (All Topics)</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Difficulty Selection -->
+                    <div class="space-y-3">
+                        <label for="quizSelectionDifficulty" class="flex items-center text-sm font-semibold text-gray-700">
+                            <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Select Difficulty
+                        </label>
+                        <select id="quizSelectionDifficulty" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
+                            <option value="easy">🟢 Easy - MCQ only (5 questions, 1 minute)</option>
+                            <option value="medium">🟡 Medium - Mixed types (5 questions, 2 minutes)</option>
+                            <option value="hard">🔴 Hard - More subjective (7 questions, 3 minutes)</option>
+                        </select>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h4 class="text-sm font-semibold text-blue-900 mb-1">Quiz Guidelines</h4>
+                                <ul class="text-xs text-blue-800 space-y-1">
+                                    <li>• Timer starts immediately when quiz begins</li>
+                                    <li>• Questions are randomly selected from the chosen topic</li>
+                                    <li>• Navigate freely between questions before submitting</li>
+                                    <li>• Quiz auto-submits when time expires</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="closeQuizSelectionModal()" 
+                                class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition duration-200 border border-gray-300">
+                            Cancel
+                        </button>
+                        <button onclick="startQuiz()" 
+                                class="flex-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Start Quiz
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- My Scores Modal -->
-<div id="myScoresModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
-            <!-- Header -->
-            <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl sticky top-0 z-10">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-3">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+    <!-- My Scores Modal -->
+    <div id="myScoresModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+                <!-- Header -->
+                <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl sticky top-0 z-10">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-white">My Quiz Performance</h2>
+                                <p class="text-purple-100 text-sm">Top scores by category</p>
+                            </div>
+                        </div>
+                        <button onclick="closeMyScoresModal()" 
+                                class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-white">My Quiz Performance</h2>
-                            <p class="text-purple-100 text-sm">Top scores by category</p>
-                        </div>
-                    </div>
-                    <button onclick="closeMyScoresModal()" 
-                            class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Content -->
-            <div class="p-6">
-                @if($topScores->isEmpty())
-                    <div class="text-center py-12">
-                        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No Quiz Scores Yet</h3>
-                        <p class="text-gray-500 mb-4">Start taking quizzes to see your performance here!</p>
-                        <button onclick="closeMyScoresModal(); openQuizSelectionModal();" 
-                                class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition duration-200">
-                            Take Your First Quiz
                         </button>
                     </div>
-                @else
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach($topScores as $score)
-                            <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-5 border-2 border-gray-200 hover:border-purple-400 hover:shadow-lg transition-all duration-200">
-                                <!-- Category Header -->
-                                <div class="flex justify-between items-start mb-3">
-                                    <div class="flex-1">
-                                        <h4 class="font-bold text-gray-800 text-lg mb-1">
-                                            {{ $score->category->name ?? 'General Quiz' }}
-                                        </h4>
-                                        <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold
-                                                @if($score->difficulty === 'easy') bg-green-100 text-green-800
-                                                @elseif($score->difficulty === 'medium') bg-yellow-100 text-yellow-800
-                                                @else bg-red-100 text-red-800
-                                                @endif">
-                                                @if($score->difficulty === 'easy') 🟢
-                                                @elseif($score->difficulty === 'medium') 🟡
-                                                @else 🔴
-                                                @endif
-                                                {{ ucfirst($score->difficulty) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Score Circle -->
-                                    <div class="flex flex-col items-center">
-                                        <div class="relative w-20 h-20">
-                                            <svg class="w-20 h-20 transform -rotate-90">
-                                                <circle cx="40" cy="40" r="32" stroke="#e5e7eb" stroke-width="6" fill="none"/>
-                                                <circle cx="40" cy="40" r="32" 
-                                                        stroke="{{ $score->score_percentage >= 80 ? '#10b981' : ($score->score_percentage >= 60 ? '#f59e0b' : '#ef4444') }}" 
-                                                        stroke-width="6" 
-                                                        fill="none"
-                                                        stroke-dasharray="{{ 2 * 3.14159 * 32 }}"
-                                                        stroke-dashoffset="{{ 2 * 3.14159 * 32 * (1 - $score->score_percentage / 100) }}"
-                                                        stroke-linecap="round"/>
-                                            </svg>
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <span class="text-xl font-bold 
-                                                    @if($score->score_percentage >= 80) text-green-600
-                                                    @elseif($score->score_percentage >= 60) text-yellow-600
-                                                    @else text-red-600
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                    @if($topScores->isEmpty())
+                        <div class="text-center py-12">
+                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No Quiz Scores Yet</h3>
+                            <p class="text-gray-500 mb-4">Start taking quizzes to see your performance here!</p>
+                            <button onclick="closeMyScoresModal(); openQuizSelectionModal();" 
+                                    class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition duration-200">
+                                Take Your First Quiz
+                            </button>
+                        </div>
+                    @else
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($topScores as $score)
+                                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-5 border-2 border-gray-200 hover:border-purple-400 hover:shadow-lg transition-all duration-200">
+                                    <!-- Category Header -->
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 text-lg mb-1">
+                                                {{ $score->category->name ?? 'General Quiz' }}
+                                            </h4>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold
+                                                    @if($score->difficulty === 'easy') bg-green-100 text-green-800
+                                                    @elseif($score->difficulty === 'medium') bg-yellow-100 text-yellow-800
+                                                    @else bg-red-100 text-red-800
                                                     @endif">
-                                                    {{ number_format($score->score_percentage, 0) }}%
+                                                    @if($score->difficulty === 'easy') 🟢
+                                                    @elseif($score->difficulty === 'medium') 🟡
+                                                    @else 🔴
+                                                    @endif
+                                                    {{ ucfirst($score->difficulty) }}
                                                 </span>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Score Circle -->
+                                        <div class="flex flex-col items-center">
+                                            <div class="relative w-20 h-20">
+                                                <svg class="w-20 h-20 transform -rotate-90">
+                                                    <circle cx="40" cy="40" r="32" stroke="#e5e7eb" stroke-width="6" fill="none"/>
+                                                    <circle cx="40" cy="40" r="32" 
+                                                            stroke="{{ $score->score_percentage >= 80 ? '#10b981' : ($score->score_percentage >= 60 ? '#f59e0b' : '#ef4444') }}" 
+                                                            stroke-width="6" 
+                                                            fill="none"
+                                                            stroke-dasharray="{{ 2 * 3.14159 * 32 }}"
+                                                            stroke-dashoffset="{{ 2 * 3.14159 * 32 * (1 - $score->score_percentage / 100) }}"
+                                                            stroke-linecap="round"/>
+                                                </svg>
+                                                <div class="absolute inset-0 flex items-center justify-center">
+                                                    <span class="text-xl font-bold 
+                                                        @if($score->score_percentage >= 80) text-green-600
+                                                        @elseif($score->score_percentage >= 60) text-yellow-600
+                                                        @else text-red-600
+                                                        @endif">
+                                                        {{ number_format($score->score_percentage, 0) }}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Stats -->
+                                    <div class="grid grid-cols-2 gap-3 mb-3">
+                                        <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                            <div class="text-2xl font-bold text-blue-600">{{ $score->correct_answers }}</div>
+                                            <div class="text-xs text-gray-600">Correct</div>
+                                        </div>
+                                        <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                            <div class="text-2xl font-bold text-gray-600">{{ $score->total_questions }}</div>
+                                            <div class="text-xs text-gray-600">Total</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Date -->
+                                    <div class="flex items-center text-xs text-gray-500 pt-2 border-t border-gray-300">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        Completed: {{ $score->completed_at->format('M d, Y') }}
+                                    </div>
+
+                                    <!-- Performance Badge -->
+                                    @if($score->score_percentage >= 80)
+                                        <div class="mt-2 text-center">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                ⭐ Excellent Performance
+                                            </span>
+                                        </div>
+                                    @elseif($score->score_percentage >= 60)
+                                        <div class="mt-2 text-center">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                                ✓ Passed
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
+                            @endforeach
+                        </div>
 
-                                <!-- Stats -->
-                                <div class="grid grid-cols-2 gap-3 mb-3">
-                                    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                                        <div class="text-2xl font-bold text-blue-600">{{ $score->correct_answers }}</div>
-                                        <div class="text-xs text-gray-600">Correct</div>
-                                    </div>
-                                    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                                        <div class="text-2xl font-bold text-gray-600">{{ $score->total_questions }}</div>
-                                        <div class="text-xs text-gray-600">Total</div>
-                                    </div>
+                        <!-- Summary Stats -->
+                        <div class="mt-6 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4 border border-purple-200">
+                            <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                Overall Statistics
+                            </h4>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-2xl font-bold text-purple-600">{{ $topScores->count() }}</div>
+                                    <div class="text-sm text-gray-600">Categories Completed</div>
                                 </div>
-
-                                <!-- Date -->
-                                <div class="flex items-center text-xs text-gray-500 pt-2 border-t border-gray-300">
-                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    Completed: {{ $score->completed_at->format('M d, Y') }}
+                                <div>
+                                    <div class="text-2xl font-bold text-purple-600">{{ number_format($topScores->avg('score_percentage'), 1) }}%</div>
+                                    <div class="text-sm text-gray-600">Average Score</div>
                                 </div>
-
-                                <!-- Performance Badge -->
-                                @if($score->score_percentage >= 80)
-                                    <div class="mt-2 text-center">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                                            ⭐ Excellent Performance
-                                        </span>
-                                    </div>
-                                @elseif($score->score_percentage >= 60)
-                                    <div class="mt-2 text-center">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
-                                            ✓ Passed
-                                        </span>
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Summary Stats -->
-                    <div class="mt-6 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4 border border-purple-200">
-                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            Overall Statistics
-                        </h4>
-                        <div class="grid grid-cols-3 gap-4 text-center">
-                            <div>
-                                <div class="text-2xl font-bold text-purple-600">{{ $topScores->count() }}</div>
-                                <div class="text-sm text-gray-600">Categories Completed</div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold text-purple-600">{{ number_format($topScores->avg('score_percentage'), 1) }}%</div>
-                                <div class="text-sm text-gray-600">Average Score</div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold text-purple-600">{{ $topScores->where('score_percentage', '>=', 80)->count() }}</div>
-                                <div class="text-sm text-gray-600">Excellent Scores</div>
+                                <div>
+                                    <div class="text-2xl font-bold text-purple-600">{{ $topScores->where('score_percentage', '>=', 80)->count() }}</div>
+                                    <div class="text-sm text-gray-600">Excellent Scores</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
 
-                <!-- Action Button -->
-                <div class="mt-6 text-center">
-                    <button onclick="closeMyScoresModal(); openQuizSelectionModal();" 
-                            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition duration-200 flex items-center justify-center gap-2 mx-auto">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
-                        Take Another Quiz
-                    </button>
+                    <!-- Action Button -->
+                    <div class="mt-6 text-center">
+                        <button onclick="closeMyScoresModal(); openQuizSelectionModal();" 
+                                class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition duration-200 flex items-center justify-center gap-2 mx-auto">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            Take Another Quiz
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Instructor Profile Modal -->
     <div id="instructorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
@@ -1939,5 +1952,362 @@
                 modal.classList.add('hidden');
             }
         }
-            </script>
+
+        // Learning Material Progress Tracking - ENHANCED VERSION with Green Highlighting
+        const LearningProgressTracker = {
+            materialTimers: {},
+            videoPlayers: {},
+            completedMaterials: new Set(),
+            
+            /**
+             * Initialize progress tracking for a material
+             */
+            init(materialId, materialType, fileUrl) {
+                console.log('Initializing progress tracker for material:', materialId, 'Type:', materialType);
+                
+                // Check if already completed
+                if (this.completedMaterials.has(materialId)) {
+                    this.showCompletionBadge(materialId);
+                    return;
+                }
+                
+                if (materialType === 'text' || materialType === 'image') {
+                    this.trackTextMaterial(materialId);
+                } else if (materialType === 'video' || materialType === 'audio') {
+                    this.trackMediaMaterial(materialId, materialType);
+                }
+            },
+            
+            /**
+             * Track text/image materials (10 second rule)
+             */
+            trackTextMaterial(materialId) {
+                // Mark as started
+                this.markMaterialStarted(materialId);
+                
+                // Set 10-second timer
+                if (this.materialTimers[materialId]) {
+                    clearTimeout(this.materialTimers[materialId]);
+                }
+                
+                this.materialTimers[materialId] = setTimeout(() => {
+                    this.completeMaterial(materialId, 10);
+                }, 10000); // 10 seconds
+            },
+            
+            /**
+             * Track video/audio materials (full duration rule)
+             */
+            trackMediaMaterial(materialId, mediaType) {
+                // Mark as started
+                this.markMaterialStarted(materialId);
+                
+                // Find the media element
+                const mediaElement = document.getElementById(`${mediaType}-${materialId}`);
+                
+                if (!mediaElement) {
+                    console.error('Media element not found for:', materialId);
+                    return;
+                }
+                
+                let watchedTime = 0;
+                let lastTime = 0;
+                const progressIndicator = document.getElementById(`progress-indicator-${materialId}`);
+                const progressBar = document.getElementById(`progress-bar-${materialId}`);
+                const progressPercentage = document.getElementById(`progress-percentage-${materialId}`);
+                
+                // Show progress indicator
+                if (progressIndicator) {
+                    progressIndicator.classList.remove('hidden');
+                }
+                
+                // Track playback progress
+                mediaElement.addEventListener('timeupdate', () => {
+                    if (mediaElement.currentTime > lastTime) {
+                        watchedTime += (mediaElement.currentTime - lastTime);
+                        lastTime = mediaElement.currentTime;
+                    } else {
+                        lastTime = mediaElement.currentTime;
+                    }
+                    
+                    // Update progress bar
+                    if (mediaElement.duration > 0) {
+                        const percentage = (watchedTime / mediaElement.duration) * 100;
+                        if (progressBar) {
+                            progressBar.style.width = `${Math.min(percentage, 100)}%`;
+                        }
+                        if (progressPercentage) {
+                            progressPercentage.textContent = `${Math.min(Math.round(percentage), 100)}%`;
+                        }
+                    }
+                });
+                
+                // Check if completed when ended
+                mediaElement.addEventListener('ended', () => {
+                    const duration = mediaElement.duration;
+                    const watchedPercentage = (watchedTime / duration) * 100;
+                    
+                    // Consider complete if watched at least 90%
+                    if (watchedPercentage >= 90) {
+                        this.completeMaterial(materialId, Math.floor(watchedTime));
+                    }
+                });
+                
+                // Also track manual completion check on pause
+                mediaElement.addEventListener('pause', () => {
+                    if (mediaElement.currentTime >= mediaElement.duration * 0.9) {
+                        this.completeMaterial(materialId, Math.floor(watchedTime));
+                    }
+                });
+                
+                // Track when seeking happens
+                mediaElement.addEventListener('seeking', () => {
+                    lastTime = mediaElement.currentTime;
+                });
+            },
+            
+            /**
+             * Mark material as started
+             */
+            markMaterialStarted(materialId) {
+                fetch("{{ route('cadet.learning.start') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        material_id: materialId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Material started:', data);
+                })
+                .catch(error => {
+                    console.error('Error marking material as started:', error);
+                });
+            },
+            
+            /**
+             * Mark material as completed
+             */
+            completeMaterial(materialId, timeSpent) {
+                // Prevent duplicate completions
+                if (this.completedMaterials.has(materialId)) {
+                    console.log('Material already completed:', materialId);
+                    return;
+                }
+                
+                fetch("{{ route('cadet.learning.complete') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        material_id: materialId,
+                        time_spent: timeSpent
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Material completed:', data);
+                        this.completedMaterials.add(materialId);
+                        this.showCompletionNotification();
+                        this.showCompletionBadge(materialId);
+                        this.highlightCompletedMaterial(materialId);
+                        this.updateProgressDisplay();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking material as completed:', error);
+                });
+            },
+            
+            /**
+             * Show completion badge on material
+             */
+            showCompletionBadge(materialId) {
+                const badge = document.getElementById(`completion-badge-${materialId}`);
+                const checkmark = document.getElementById(`checkmark-${materialId}`);
+                
+                if (badge) {
+                    badge.classList.remove('hidden');
+                }
+                if (checkmark) {
+                    checkmark.classList.remove('hidden');
+                }
+            },
+            
+            /**
+             * Highlight completed material with green color
+             */
+            highlightCompletedMaterial(materialId) {
+                const materialButton = document.getElementById(`material-button-${materialId}`);
+                const materialContainer = document.getElementById(`material-${materialId}`);
+                
+                if (materialButton) {
+                    // Change to light green with smooth transition
+                    materialButton.classList.remove('bg-blue-100', 'hover:bg-blue-200', 'text-blue-800');
+                    materialButton.classList.add('bg-green-100', 'hover:bg-green-200', 'text-green-800');
+                }
+                
+                if (materialContainer) {
+                    // Add a subtle green border
+                    materialContainer.classList.remove('border-gray-200');
+                    materialContainer.classList.add('border-green-300');
+                }
+                
+                // Show checkmark and badge
+                this.showCompletionBadge(materialId);
+            },
+            
+            /**
+             * Show completion notification
+             */
+            showCompletionNotification() {
+                // Create a simple toast notification
+                const notification = document.createElement('div');
+                notification.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: linear-gradient(to right, #10b981, #059669);
+                        color: white;
+                        padding: 1rem 1.5rem;
+                        border-radius: 0.5rem;
+                        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                        z-index: 9999;
+                        animation: slideIn 0.3s ease-out;
+                    ">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span style="font-weight: 600;">Learning material completed! 🎉</span>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            },
+            
+            /**
+             * Update progress display
+             */
+            updateProgressDisplay() {
+                fetch("{{ route('cadet.learning.progress') }}")
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Progress updated:', data);
+                            // Store completed materials
+                            if (data.material_progress) {
+                                Object.entries(data.material_progress).forEach(([id, isCompleted]) => {
+                                    if (isCompleted) {
+                                        const materialId = parseInt(id);
+                                        this.completedMaterials.add(materialId);
+                                        this.highlightCompletedMaterial(materialId);
+                                    }
+                                });
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching progress:', error);
+                    });
+            },
+            
+            /**
+             * Clean up when material is closed
+             */
+            cleanup(materialId) {
+                if (this.materialTimers[materialId]) {
+                    clearTimeout(this.materialTimers[materialId]);
+                    delete this.materialTimers[materialId];
+                }
+            },
+            
+            /**
+             * Load initial progress on page load
+             */
+            loadInitialProgress() {
+                this.updateProgressDisplay();
+            }
+        };
+
+        // Add CSS animation (if not already added)
+        if (!document.getElementById('learning-progress-styles')) {
+            const style = document.createElement('style');
+            style.id = 'learning-progress-styles';
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                @keyframes slideOut {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Load initial progress when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            LearningProgressTracker.loadInitialProgress();
+        });
+
+        let openMaterialId = null;
+
+        function toggleMaterial(materialId, materialType, fileUrl) {
+            console.log('🔵 toggleMaterial called:', materialId);
+            
+            const container = document.getElementById(`material-${materialId}`).querySelector('[x-show]');
+            
+            if (openMaterialId === materialId) {
+                // Close the material
+                container.style.display = 'none';
+                openMaterialId = null;
+                LearningProgressTracker.cleanup(materialId);
+            } else {
+                // Close previously open material
+                if (openMaterialId !== null) {
+                    const prevContainer = document.getElementById(`material-${openMaterialId}`).querySelector('[x-show]');
+                    if (prevContainer) prevContainer.style.display = 'none';
+                    LearningProgressTracker.cleanup(openMaterialId);
+                }
+                
+                // Open new material
+                container.style.display = 'block';
+                openMaterialId = materialId;
+                
+                console.log('🔵 Initializing tracker...');
+                setTimeout(() => {
+                    LearningProgressTracker.init(materialId, materialType, fileUrl);
+                }, 100);
+            }
+        }
+        </script>
 </x-app-layout>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Cadet;
 
+namespace App\Http\Controllers\Cadet;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LearningMaterial;
@@ -11,9 +13,12 @@ use App\Models\User;
 use App\Models\QuizQuestion;
 use App\Models\CadetQuizScore;
 use App\Models\PerformanceRating;
+use App\Models\CadetLearningMaterialProgress; 
+use App\Models\CadetCategoryProgress; 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; 
 
 class LearningHubController extends Controller
 {
@@ -1059,5 +1064,115 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
             'success' => true,
             'results' => $results
         ]);
+    }
+
+    /**
+     * Track when a material is started
+     */
+        public function startMaterial(Request $request)
+    {
+        $request->validate([
+            'material_id' => 'required|exists:learning_materials,id'
+        ]);
+
+        $cadet = auth()->user()->cadet;
+        if (!$cadet) {
+            return response()->json(['success' => false, 'message' => 'Cadet profile not found'], 404);
+        }
+
+        $progress = \App\Models\CadetLearningMaterialProgress::firstOrCreate(
+            [
+                'cadet_id' => $cadet->id,
+                'learning_material_id' => $request->material_id
+            ],
+            [
+                'is_completed' => false,
+                'time_spent_seconds' => 0
+            ]
+        );
+
+        $progress->markAsStarted();
+
+        return response()->json([
+            'success' => true,
+            'progress' => $progress
+        ]);
+    }
+
+    /**
+     * Mark material as completed
+     */
+    public function completeMaterial(Request $request)
+    {
+        $request->validate([
+            'material_id' => 'required|exists:learning_materials,id',
+            'time_spent' => 'nullable|integer|min:0'
+        ]);
+
+        $cadet = auth()->user()->cadet;
+        if (!$cadet) {
+            return response()->json(['success' => false, 'message' => 'Cadet profile not found'], 404);
+        }
+
+        $progress = \App\Models\CadetLearningMaterialProgress::where('cadet_id', $cadet->id)
+            ->where('learning_material_id', $request->material_id)
+            ->first();
+
+        if (!$progress) {
+            // Create if doesn't exist
+            $progress = \App\Models\CadetLearningMaterialProgress::create([
+                'cadet_id' => $cadet->id,
+                'learning_material_id' => $request->material_id,
+                'is_completed' => false,
+                'time_spent_seconds' => 0
+            ]);
+        }
+
+        if ($request->filled('time_spent')) {
+            $progress->updateTimeSpent($request->time_spent);
+        }
+
+        $progress->markAsCompleted();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Material marked as completed',
+            'progress' => $progress
+        ]);
+    }
+
+    /**
+     * Get cadet's progress for all categories
+     */
+    public function getProgress()
+    {
+        try {
+            $cadet = auth()->user()->cadet;
+            if (!$cadet) {
+                return response()->json(['success' => false, 'message' => 'Cadet profile not found'], 404);
+            }
+
+            $categoryProgress = \App\Models\CadetCategoryProgress::where('cadet_id', $cadet->id)
+                ->with('category')
+                ->get();
+
+            $materialProgress = \App\Models\CadetLearningMaterialProgress::where('cadet_id', $cadet->id)
+                ->get()
+                ->pluck('is_completed', 'learning_material_id')
+                ->toArray();
+
+            return response()->json([
+                'success' => true,
+                'category_progress' => $categoryProgress,
+                'material_progress' => $materialProgress
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching learning progress: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching progress',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

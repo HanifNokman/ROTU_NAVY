@@ -85,6 +85,39 @@ class Cadet extends Model
         return $this->hasMany(TrainingAttendance::class)->where('present', false);
     }
 
+    /**
+     * Learning material progress relationship
+     */
+    public function learningMaterialProgress()
+    {
+        return $this->hasMany(CadetLearningMaterialProgress::class);
+    }
+
+    /**
+     * Completed learning materials
+     */
+    public function completedLearningMaterials()
+    {
+        return $this->hasMany(CadetLearningMaterialProgress::class)
+            ->where('is_completed', true);
+    }
+
+    /**
+     * Category progress relationship
+     */
+    public function categoryProgress()
+    {
+        return $this->hasMany(CadetCategoryProgress::class);
+    }
+
+    /**
+     * Quiz scores relationship
+     */
+    public function quizScores()
+    {
+        return $this->hasMany(CadetQuizScore::class);
+    }
+
     public function cadetSizes()
     {
         return $this->hasMany(CadetSize::class);
@@ -159,6 +192,18 @@ class Cadet extends Model
         return $query;
     }
 
+    /**
+     * Scope to get cadets with learning progress stats
+     */
+    public function scopeWithLearningProgressStats($query)
+    {
+        return $query->withCount([
+            'learningMaterialProgress',
+            'completedLearningMaterials',
+            'categoryProgress'
+        ]);
+    }
+
     // Accessors
     public function getIntakeNameAttribute()
     {
@@ -202,6 +247,39 @@ class Cadet extends Model
         $present = $this->presentAttendances()->count();
         
         return $total > 0 ? round(($present / $total) * 100, 1) : 0;
+    }
+
+    /**
+     * Get overall learning progress percentage
+     */
+    public function getLearningProgressPercentage()
+    {
+        $categoryProgresses = $this->categoryProgress;
+        
+        if ($categoryProgresses->isEmpty()) {
+            return 0;
+        }
+
+        $totalProgress = $categoryProgresses->sum('progress_percentage');
+        $averageProgress = $totalProgress / $categoryProgresses->count();
+        
+        return round($averageProgress, 1);
+    }
+
+    /**
+     * Get completed materials count
+     */
+    public function getCompletedMaterialsCount()
+    {
+        return $this->completedLearningMaterials()->count();
+    }
+
+    /**
+     * Get total materials count across all categories
+     */
+    public function getTotalAvailableMaterialsCount()
+    {
+        return \App\Models\LearningMaterial::count();
     }
 
     // Static methods

@@ -185,12 +185,29 @@ class PerformanceRating extends Model
     
     /**
      * Update learning progress points based on completed materials
+     * Maximum 40 points (5% weight)
      */
     public function updateLearningProgressPoints()
     {
-        // This would need to be implemented based on learning material completion
-        // For now, placeholder with 5% weight (40 points max)
-        $this->learning_progress_points = 0; // To be implemented
+        $totalCategories = \App\Models\LearningMaterialCategory::count();
+        
+        if ($totalCategories === 0) {
+            $this->learning_progress_points = 0;
+            $this->calculateAndUpdateTotal();
+            return;
+        }
+
+        // Get all category progress for this cadet
+        $categoryProgresses = CadetCategoryProgress::where('cadet_id', $this->cadet_id)->get();
+        
+        // Calculate average progress across all categories
+        $totalProgress = $categoryProgresses->sum('progress_percentage');
+        $averageProgress = $totalProgress / $totalCategories;
+        
+        // Scale to 40 points max (5% of 800)
+        $this->learning_progress_points = ($averageProgress / 100) * 40;
+        
+        $this->calculateAndUpdateTotal();
     }
 
     /**
