@@ -30,17 +30,19 @@ class LearningHubController extends Controller
     {
         $categories = LearningMaterialCategory::whereExists(function ($query) {
             $query->select(DB::raw(1))
-                  ->from('quiz_questions')
-                  ->whereColumn('quiz_questions.category_id', 'learning_material_categories.id')
-                  ->where('status', 'active');
+                ->from('quiz_questions')
+                ->whereColumn('quiz_questions.category_id', 'learning_material_categories.id')
+                ->where('status', 'active');
         })->get();
 
-        $materials = collect();
+        // FIXED: Always fetch materials, filtered by category if provided
+        $materialsQuery = LearningMaterial::with('category');
+        
         if ($request->filled('category')) {
-            $materials = LearningMaterial::where('learning_material_category_id', $request->category)
-                ->latest()
-                ->get();
+            $materialsQuery->where('learning_material_category_id', $request->category);
         }
+        
+        $materials = $materialsQuery->latest()->get();
 
         $cadet = auth()->user()->cadet;
         $topScores = [];
@@ -71,19 +73,8 @@ class LearningHubController extends Controller
         $instructors = $instructorQuery->get();
 
         $rankOrder = [
-            'Kpt',    // Highest
-            'Kdr',
-            'Lt.Kdr',
-            'Lt',
-            'Lt.Dya',
-            'Lt.M',
-            'PWII',
-            'PWI',
-            'BK',
-            'BM',
-            'LK',
-            'LKI',
-            'LKII'    // Lowest
+            'Kpt', 'Kdr', 'Lt.Kdr', 'Lt', 'Lt.Dya', 'Lt.M',
+            'PWII', 'PWI', 'BK', 'BM', 'LK', 'LKI', 'LKII'
         ];
 
         $instructors = $instructors->sortBy(function($instructor) use ($rankOrder) {
@@ -98,7 +89,7 @@ class LearningHubController extends Controller
             'instructors' => $instructors,
             'selectedCategory' => $request->get('category'),
             'selectedInstructorStatus' => $request->get('instructor_status'),
-            'topScores' => $topScores // ADD THIS LINE
+            'topScores' => $topScores
         ]);
     }
 
