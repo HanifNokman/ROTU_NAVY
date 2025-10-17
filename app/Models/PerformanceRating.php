@@ -77,18 +77,30 @@ class PerformanceRating extends Model
     }
 
     /**
-     * Update attendance points based on training attendance percentage
-     * Full points if they attended all their trainings, regardless of intake
+     * Update attendance points based on training attendance
+     * Full points if present, half points if absent with reasoning and supporting file (only if they attended at least one training)
      */
     public function updateAttendancePoints()
     {
-        $totalTrainings = $this->cadet->trainingAttendances()->count();
-        $attendedCount = $this->cadet->presentAttendances()->count();
+        $attendances = $this->cadet->trainingAttendances;
+        $totalTrainings = $attendances->count();
+        $hasAttendedAny = $attendances->where('present', true)->count() > 0;
 
         if ($totalTrainings > 0) {
-            $attendancePercentage = ($attendedCount / $totalTrainings) * 100;
+            $effectiveAttendancePoints = 0;
 
-            // Full points (480) if perfect attendance, scaled down otherwise (60% weight)
+            foreach ($attendances as $attendance) {
+                if ($attendance->present) {
+                    $effectiveAttendancePoints += 1; // Full points for present
+                } elseif ($attendance->absence_reason && $attendance->file_url && $hasAttendedAny) {
+                    $effectiveAttendancePoints += 0.5; // Half points for excused absence (only if attended at least one training)
+                }
+                // No points for unexcused absences or excused absences without any attendance
+            }
+
+            $attendancePercentage = ($effectiveAttendancePoints / $totalTrainings) * 100;
+
+            // Full points (480) if perfect effective attendance, scaled down otherwise (60% weight)
             $this->attendance_points = ($attendancePercentage / 100) * 480;
         } else {
             $this->attendance_points = 0;
@@ -96,33 +108,79 @@ class PerformanceRating extends Model
 
         $this->calculateAndUpdateTotal();
     }
-
+    
     /**
      * Update quiz points based on quiz performance
+     * Points awarded for each difficulty level, but full 40 points only if 
+     * ALL categories are passed at hard difficulty with 80%+
      */
-   public function updateQuizPoints()
+    public function updateQuizPoints()
     {
-        // Get the best score for each difficulty level across all categories
-        $easyScore = CadetQuizScore::getBestScore($this->cadet_id, null, 'easy');
-        $mediumScore = CadetQuizScore::getBestScore($this->cadet_id, null, 'medium');
-        $hardScore = CadetQuizScore::getBestScore($this->cadet_id, null, 'hard');
+        // Get total number of categories in the system
+        $totalCategories = \App\Models\LearningMaterialCategory::count();
+        
+        if ($totalCategories === 0) {
+            $this->quiz_points = 0;
+            $this->calculateAndUpdateTotal();
+            return;
+        }
+
+        // Get all quiz scores for this cadet with passing grade (60%+)
+        $quizScores = CadetQuizScore::where('cadet_id', $this->cadet_id)
+            ->where('score_percentage', '>=', 60)
+            ->get();
+
+        // Group by category and get the best score per category
+        $bestScoresByCategory = $quizScores->groupBy('learning_material_category_id')
+            ->map(function ($categoryScores) {
+                return $categoryScores->sortByDesc(function ($score) {
+                    // Sort by difficulty first (hard > medium > easy), then by percentage
+                    $difficultyWeight = ['hard' => 3, 'medium' => 2, 'easy' => 1];
+                    return ($difficultyWeight[$score->difficulty] ?? 0) * 1000 + $score->score_percentage;
+                })->first();
+            });
 
         $totalQuizPoints = 0;
 
-        // Award points based on best scores and difficulty level (5% weight total)
-        // Easy: 8 points, Medium: 16 points, Hard: 24 points (only if score >= 60%)
-        if ($easyScore && $easyScore->score_percentage >= 60) {
-            $totalQuizPoints += 8;
-        }
-        if ($mediumScore && $mediumScore->score_percentage >= 60) {
-            $totalQuizPoints += 16;
-        }
-        if ($hardScore && $hardScore->score_percentage >= 60) {
-            $totalQuizPoints += 24;
+        foreach ($bestScoresByCategory as $bestScore) {
+            // Calculate points based on difficulty and score
+            $basePoints = $this->calculateDifficultyPoints($bestScore->difficulty);
+            
+            // Bonus multiplier for excellence (80%+ gets full points, 60-79% gets proportional)
+            if ($bestScore->score_percentage >= 80) {
+                $multiplier = 1.0;
+            } else {
+                // Scale between 0.5 and 1.0 for scores 60-79%
+                $multiplier = 0.5 + (($bestScore->score_percentage - 60) / 20) * 0.5;
+            }
+            
+            $totalQuizPoints += $basePoints * $multiplier;
         }
 
-        $this->quiz_points = $totalQuizPoints;
+        // Calculate the maximum possible points if all categories were completed at hard with 80%+
+        $maxPossiblePoints = $totalCategories * 24; // 24 points per category at hard difficulty
+        
+        // Scale to 40 points max
+        $this->quiz_points = min(($totalQuizPoints / $maxPossiblePoints) * 40, 40);
+        
         $this->calculateAndUpdateTotal();
+    }
+
+    /**
+     * Calculate base points for difficulty level per category
+     */
+    private function calculateDifficultyPoints($difficulty)
+    {
+        switch ($difficulty) {
+            case 'easy':
+                return 8;   // Easy difficulty
+            case 'medium':
+                return 16;  // Medium difficulty
+            case 'hard':
+                return 24;  // Hard difficulty (full points per category)
+            default:
+                return 0;
+        }
     }
     
     /**

@@ -868,9 +868,9 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
     }
 
     // ================================================================
-    // SUBMIT QUIZ ANSWERS (UPDATED)
+    // SUBMIT QUIZ ANSWERS
     // ================================================================
-    
+
     public function submitQuiz(Request $request)
     {
         $request->validate([
@@ -941,18 +941,35 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
         // Calculate points based on difficulty
         $newPoints = $this->calculatePoints($difficulty, $scorePercentage);
 
-        // Check if a score entry already exists for this cadet, category, and difficulty
+        // Check if a score entry already exists for this cadet and category (regardless of difficulty)
         $existingScore = CadetQuizScore::where('cadet_id', $cadetId)
             ->byCategory($categoryId)
-            ->byDifficulty($difficulty)
-            ->first();
+            ->first(); // Removed ->byDifficulty($difficulty)
 
         $wasUpdated = false;
 
         if ($existingScore) {
-            // Compare score percentages - update if new score is higher
-            if ($scorePercentage > $existingScore->score_percentage) {
+            // Determine if we should update based on:
+            // 1. Higher difficulty level, OR
+            // 2. Same difficulty but higher score percentage
+            
+            $difficultyWeight = ['easy' => 1, 'medium' => 2, 'hard' => 3];
+            $existingDifficultyWeight = $difficultyWeight[$existingScore->difficulty] ?? 0;
+            $newDifficultyWeight = $difficultyWeight[$difficulty] ?? 0;
+            
+            $shouldUpdate = false;
+            
+            if ($newDifficultyWeight > $existingDifficultyWeight) {
+                // New attempt is at higher difficulty - always update
+                $shouldUpdate = true;
+            } elseif ($newDifficultyWeight === $existingDifficultyWeight && $scorePercentage > $existingScore->score_percentage) {
+                // Same difficulty but better score - update
+                $shouldUpdate = true;
+            }
+            
+            if ($shouldUpdate) {
                 $existingScore->update([
+                    'difficulty' => $difficulty,
                     'score_percentage' => $scorePercentage,
                     'total_questions' => $totalQuestions,
                     'correct_answers' => $correctAnswers,
