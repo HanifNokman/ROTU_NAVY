@@ -174,9 +174,27 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     // ------------------------------------------------------------------------
     
     Route::get('/cadet_management', [CadetManagementController::class, 'index'])->name('cadet_management');
+    
+    // === ADD THESE 5 NEW AJAX ROUTES ===
+    Route::get('/cadets/ajax', [CadetManagementController::class, 'getCadetsAjax'])->name('cadets.ajax');
+    Route::get('/cadets/best-cadets', [CadetManagementController::class, 'getBestCadetsAjax'])->name('cadets.best');
+    Route::get('/cadets/best-academic', [CadetManagementController::class, 'getBestAcademicCadetsAjax'])->name('cadets.best_academic');
+    Route::get('/cadets/suspended', [CadetManagementController::class, 'getSuspendedCadetsAjax'])->name('cadets.suspended');
+    Route::get('/cadets/swimming-pass-dates', [CadetManagementController::class, 'getSwimmingPassDates'])->name('cadets.swimming_dates');
+    // === END NEW ROUTES ===
+    
     Route::get('/cadets/{cadet}', [CadetManagementController::class, 'show'])->name('cadets.show');
+
+    // Position Management
     Route::post('/cadets/positions', [CadetManagementController::class, 'updatePositions'])->name('cadets.positions.update');
+
+    // Swimming Qualification
     Route::post('/cadets/swimming/mark-passed', [CadetManagementController::class, 'markSwimmingPassed'])->name('cadets.swimming.mark-passed');
+
+    // Suspend Cadet
+    Route::post('/cadets/{cadet}/suspend', [CadetManagementController::class, 'suspend'])->name('cadets.suspend');
+
+    // Delete Cadet
     Route::delete('/cadets/{cadet}', [CadetManagementController::class, 'destroy'])->name('cadets.destroy');
 
     // ------------------------------------------------------------------------

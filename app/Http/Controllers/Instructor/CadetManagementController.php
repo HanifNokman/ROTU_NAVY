@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Instructor;
 use App\Http\Controllers\Controller;
 use App\Models\Cadet;
 use App\Models\User;
+use App\Models\PerformanceRating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
@@ -24,6 +25,7 @@ class CadetManagementController extends Controller
         // Initialize variables with defaults
         $infoType = $request->get('info_type', 'seniority');
         $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
+        $searchQuery = $request->get('search', '');
         
         if ($infoType === 'seniority') {
             $sortBy = 'asc';
@@ -41,7 +43,8 @@ class CadetManagementController extends Controller
             'infoType' => $infoType,
             'intakeYear' => $intakeYear,
             'sortBy' => $sortBy,
-            'filterBy' => $filterBy
+            'filterBy' => $filterBy,
+            'searchQuery' => $searchQuery
         ]);
 
         // Create recent intakes array
@@ -68,8 +71,23 @@ class CadetManagementController extends Controller
                     $query = $query->with('user');
                 }
                 
+                // Filter only active cadets
+                $query->where('cadet_status', '!=', 'Suspended');
+                
                 if ($intakeYear && Schema::hasColumn('cadets', 'intake_year')) {
                     $query->where('intake_year', $intakeYear);
+                }
+
+                // Apply search filter
+                if ($searchQuery) {
+                    $query->where(function($q) use ($searchQuery) {
+                        $q->where('service_number', 'like', "%{$searchQuery}%")
+                          ->orWhere('matric_no', 'like', "%{$searchQuery}%")
+                          ->orWhere('ic_number', 'like', "%{$searchQuery}%")
+                          ->orWhereHas('user', function($userQuery) use ($searchQuery) {
+                              $userQuery->where('name', 'like', "%{$searchQuery}%");
+                          });
+                    });
                 }
 
                 $this->applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy, $request);
@@ -86,6 +104,7 @@ class CadetManagementController extends Controller
         $swimmingPassDates = [];
         if ($infoType === 'swimming' && $intakeYear) {
             $swimmingPassDates = Cadet::where('intake_year', $intakeYear)
+                ->where('cadet_status', '!=', 'Suspended')
                 ->whereNotNull('swimming_pass_date')
                 ->where('swimming_qualification', 'Pass')
                 ->selectRaw('DATE(swimming_pass_date) as pass_date')
@@ -98,19 +117,265 @@ class CadetManagementController extends Controller
                 ->toArray();
         }
 
+        // Get best cadet suggestions
+        $bestCadetIntakeYear = $request->get('best_cadet_intake', $intakeYear);
+        $bestCadets = $this->getBestCadets($bestCadetIntakeYear);
+        $bestAcademicCadets = $this->getBestAcademicCadets($bestCadetIntakeYear);
+
+        // Get suspended cadets
+        $suspendedIntakeYear = $request->get('suspended_intake', $intakeYear);
+        $suspendedCadets = Cadet::with(['user', 'performanceRating'])
+            ->where('cadet_status', 'Suspended')
+            ->where('intake_year', $suspendedIntakeYear)
+            ->orderBy('service_number', 'asc')
+            ->get();
+
         $viewData = [
             'cadets' => $cadets,
             'infoType' => $infoType,
             'intakeYear' => $intakeYear,
             'sortBy' => $sortBy,
             'filterBy' => $filterBy,
+            'searchQuery' => $searchQuery,
             'recentIntakes' => $recentIntakes,
-            'swimmingPassDates' => $swimmingPassDates
+            'swimmingPassDates' => $swimmingPassDates,
+            'bestCadets' => $bestCadets,
+            'bestAcademicCadets' => $bestAcademicCadets,
+            'bestCadetIntakeYear' => $bestCadetIntakeYear,
+            'suspendedCadets' => $suspendedCadets,
+            'suspendedIntakeYear' => $suspendedIntakeYear
         ];
 
         Log::info('Sending to view', array_keys($viewData));
 
         return view('instructor.cadet_management', $viewData);
+    }
+
+    // ================================================================
+    // AJAX: Get cadets data for AJAX requests
+    // ================================================================
+    public function getCadetsAjax(Request $request)
+    {
+        try {
+            $infoType = $request->get('info_type', 'seniority');
+            $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
+            $searchQuery = $request->get('search', '');
+            
+            if ($infoType === 'seniority') {
+                $sortBy = 'asc';
+                $filterBy = 'all';
+            } else {
+                if ($infoType === 'cgpa') {
+                    $sortBy = 'desc';
+                } else {
+                    $sortBy = $request->get('sort_by', 'asc');
+                }
+                $filterBy = $request->get('filter_by', 'all');
+            }
+
+            $query = Cadet::with('user')->where('cadet_status', '!=', 'Suspended');
+            
+            if ($intakeYear) {
+                $query->where('intake_year', $intakeYear);
+            }
+
+            // Apply search filter
+            if ($searchQuery) {
+                $query->where(function($q) use ($searchQuery) {
+                    $q->where('service_number', 'like', "%{$searchQuery}%")
+                      ->orWhere('matric_no', 'like', "%{$searchQuery}%")
+                      ->orWhere('ic_number', 'like', "%{$searchQuery}%")
+                      ->orWhereHas('user', function($userQuery) use ($searchQuery) {
+                          $userQuery->where('name', 'like', "%{$searchQuery}%");
+                      });
+                });
+            }
+
+            $this->applyFiltersAndSorting($query, $infoType, $filterBy, $sortBy, $request);
+
+            $cadets = $query->paginate(20);
+
+            // Transform cadet data for JSON response
+            $transformedCadets = $cadets->map(function($cadet) {
+                return [
+                    'id' => $cadet->id,
+                    'service_number' => $cadet->service_number,
+                    'user_name' => $cadet->user->name ?? 'Unknown',
+                    'matric_no' => $cadet->matric_no,
+                    'ic_number' => $cadet->ic_number,
+                    'position' => $cadet->position,
+                    'gender' => $cadet->gender,
+                    'current_cgpa' => $cadet->current_cgpa,
+                    'swimming_qualification' => $cadet->swimming_qualification,
+                    'swimming_pass_date' => $cadet->swimming_pass_date ? $cadet->swimming_pass_date->format('d/m/Y') : null,
+                    'BMI' => $cadet->BMI,
+                    'BMI_update_date' => $cadet->BMI_update_date ? $cadet->BMI_update_date->format('d/m/Y') : null,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'cadets' => $transformedCadets,
+                'firstItem' => $cadets->firstItem() ?? 0,
+                'pagination' => [
+                    'currentPage' => $cadets->currentPage(),
+                    'lastPage' => $cadets->lastPage(),
+                    'perPage' => $cadets->perPage(),
+                    'total' => $cadets->total(),
+                    'from' => $cadets->firstItem(),
+                    'to' => $cadets->lastItem(),
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in getCadetsAjax: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load cadets'
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // AJAX: Get best cadets
+    // ================================================================
+    public function getBestCadetsAjax(Request $request)
+    {
+        try {
+            $intakeYear = $request->get('intake_year', now()->year);
+            $cadets = $this->getBestCadets($intakeYear);
+
+            $transformedCadets = $cadets->map(function($cadet) {
+                return [
+                    'id' => $cadet->id,
+                    'service_number' => $cadet->service_number,
+                    'user_name' => $cadet->user->name ?? 'Unknown',
+                    'rank' => $cadet->rank,
+                    'profile_pic' => $cadet->profile_pic,
+                    'total_points' => $cadet->performanceRating->total_points ?? 0,
+                    'rating' => $cadet->performanceRating->rating ?? '⭐☆☆☆☆',
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'cadets' => $transformedCadets
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in getBestCadetsAjax: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load best cadets'
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // AJAX: Get best academic cadets
+    // ================================================================
+    public function getBestAcademicCadetsAjax(Request $request)
+    {
+        try {
+            $intakeYear = $request->get('intake_year', now()->year);
+            $cadets = $this->getBestAcademicCadets($intakeYear);
+
+            $transformedCadets = $cadets->map(function($cadet) {
+                return [
+                    'id' => $cadet->id,
+                    'service_number' => $cadet->service_number,
+                    'user_name' => $cadet->user->name ?? 'Unknown',
+                    'rank' => $cadet->rank,
+                    'profile_pic' => $cadet->profile_pic,
+                    'current_cgpa' => $cadet->current_cgpa,
+                    'academic_points' => $cadet->performanceRating->academic_points ?? 0,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'cadets' => $transformedCadets
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in getBestAcademicCadetsAjax: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load best academic cadets'
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // AJAX: Get suspended cadets
+    // ================================================================
+    public function getSuspendedCadetsAjax(Request $request)
+    {
+        try {
+            $intakeYear = $request->get('intake_year', now()->year);
+            
+            $cadets = Cadet::with(['user', 'performanceRating'])
+                ->where('cadet_status', 'Suspended')
+                ->where('intake_year', $intakeYear)
+                ->orderBy('service_number', 'asc')
+                ->get();
+
+            $transformedCadets = $cadets->map(function($cadet) {
+                return [
+                    'id' => $cadet->id,
+                    'service_number' => $cadet->service_number,
+                    'user_name' => $cadet->user->name ?? 'Unknown',
+                    'matric_no' => $cadet->matric_no,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'cadets' => $transformedCadets
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in getSuspendedCadetsAjax: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load suspended cadets'
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // AJAX: Get swimming pass dates
+    // ================================================================
+    public function getSwimmingPassDates(Request $request)
+    {
+        try {
+            $intakeYear = $request->get('intake_year', now()->year);
+            
+            $dates = Cadet::where('intake_year', $intakeYear)
+                ->where('cadet_status', '!=', 'Suspended')
+                ->whereNotNull('swimming_pass_date')
+                ->where('swimming_qualification', 'Pass')
+                ->selectRaw('DATE(swimming_pass_date) as pass_date')
+                ->distinct()
+                ->orderBy('pass_date', 'desc')
+                ->pluck('pass_date')
+                ->map(function ($date) {
+                    return \Carbon\Carbon::parse($date)->format('d/m/Y');
+                })
+                ->toArray();
+
+            return response()->json([
+                'success' => true,
+                'dates' => $dates
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in getSwimmingPassDates: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load swimming pass dates'
+            ], 500);
+        }
     }
 
     // ================================================================
@@ -188,7 +453,6 @@ class CadetManagementController extends Controller
                     $query->where('swimming_qualification', $statusMap[$filterBy]);
                 }
 
-                // Filter by swimming pass date if provided
                 $swimmingPassDate = $request->get('swimming_pass_date');
                 if ($swimmingPassDate && $swimmingPassDate !== 'all' && Schema::hasColumn('cadets', 'swimming_pass_date')) {
                     try {
@@ -238,6 +502,39 @@ class CadetManagementController extends Controller
                 }
                 break;
         }
+    }
+
+    // ================================================================
+    // BEST CADETS: Get top 5 cadets by total points
+    // ================================================================
+    private function getBestCadets($intakeYear)
+    {
+        return Cadet::with(['user', 'performanceRating'])
+            ->where('intake_year', $intakeYear)
+            ->where('cadet_status', '!=', 'Suspended')
+            ->whereHas('performanceRating')
+            ->join('performance_ratings', 'cadets.id', '=', 'performance_ratings.cadet_id')
+            ->orderBy('performance_ratings.total_points', 'desc')
+            ->select('cadets.*')
+            ->take(5)
+            ->get();
+    }
+
+    // ================================================================
+    // BEST ACADEMIC: Get top 5 cadets by academic points
+    // ================================================================
+    private function getBestAcademicCadets($intakeYear)
+    {
+        return Cadet::with(['user', 'performanceRating'])
+            ->where('intake_year', $intakeYear)
+            ->where('cadet_status', '!=', 'Suspended')
+            ->whereHas('performanceRating')
+            ->join('performance_ratings', 'cadets.id', '=', 'performance_ratings.cadet_id')
+            ->orderBy('cadets.current_cgpa', 'desc')
+            ->orderBy('performance_ratings.academic_points', 'desc')
+            ->select('cadets.*')
+            ->take(5)
+            ->get();
     }
 
     // ================================================================
@@ -321,9 +618,6 @@ class CadetManagementController extends Controller
             }
             
             foreach ($positions as $cadetId => $position) {
-                if ($position === 'Normal Cadet') {
-                    $position = 'Normal';
-                }
                 Cadet::where('id', $cadetId)
                      ->where('intake_year', $intakeYear)
                      ->update(['position' => $position]);
@@ -344,9 +638,9 @@ class CadetManagementController extends Controller
     }
 
     // ================================================================
-    // DESTROY: Remove cadet and associated user
+    // SUSPEND: Suspend cadet
     // ================================================================
-    public function destroy(Request $request, $cadetId)
+    public function suspend(Request $request, $cadetId)
     {
         $request->validate([
             'confirmation_name' => 'required|string'
@@ -355,7 +649,6 @@ class CadetManagementController extends Controller
         try {
             $cadet = Cadet::with('user')->findOrFail($cadetId);
             $fullName = $cadet->user->name ?? 'Unknown';
-            $user = $cadet->user;
             
             if (strtolower(trim($request->confirmation_name)) !== strtolower(trim($fullName))) {
                 return response()->json([
@@ -363,6 +656,35 @@ class CadetManagementController extends Controller
                     'message' => 'Name confirmation does not match.'
                 ], 422);
             }
+
+            $cadet->cadet_status = 'Suspended';
+            $cadet->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Cadet suspended successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error suspending cadet: ' . $e->getMessage(), [
+                'cadet_id' => $cadetId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to suspend cadet: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // DESTROY: Remove cadet and associated user
+    // ================================================================
+    public function destroy(Request $request, $cadetId)
+    {
+        try {
+            $cadet = Cadet::with('user')->findOrFail($cadetId);
+            $user = $cadet->user;
 
             DB::transaction(function () use ($cadet, $user) {
                 $cadet->delete();

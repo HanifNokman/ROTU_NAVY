@@ -25,192 +25,132 @@
             </div>
 
             {{-- ================================================================ --}}
-            {{-- MAIN CONTENT CARD --}}
+            {{-- ACTIVE CADET MANAGEMENT SECTION (NOW AS DROPDOWN) --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                
-                {{-- Card Header --}}
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b border-blue-100">
+                    <button onclick="toggleSection('activeCadetSection')" class="w-full flex items-center justify-between text-left">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-800">Active Cadet Management</h3>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="activeCadetChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                        Cadet Management
-                    </h3>
-                    <p class="text-gray-600">Manage cadet information, positions, and qualifications</p>
+                    </button>
+                    <p class="text-gray-600 mt-2">Manage cadet information, positions, and qualifications</p>
                 </div>
-
-                {{-- Card Body --}}
-                <div class="p-6 text-gray-900">
+                
+                <div id="activeCadetSection" class="p-6">
+                    {{-- ================================================================ --}}
+                    {{-- SEARCH BAR --}}
+                    {{-- ================================================================ --}}
+                    <div class="mb-6">
+                        <div class="flex items-center space-x-2">
+                            <div class="flex-1 relative">
+                                <input type="text" 
+                                       id="searchInput"
+                                       placeholder="Search by name, service number, matric number, or IC number..."
+                                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                            
+                            <button id="clearSearchBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors hidden">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
 
                     {{-- ================================================================ --}}
                     {{-- FILTERS AND CONTROLS SECTION --}}
                     {{-- ================================================================ --}}
-                    <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
-                        
+                    <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:justify-between items-start">
+
                         {{-- Left Side: Intake and Dynamic Filters --}}
-                        <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
-                            
+                        <div class="flex flex-row space-x-4 items-center flex-wrap gap-y-4">
+
                             {{-- Intake Filter --}}
                             <div class="flex flex-col">
                                 <label class="text-sm font-medium text-gray-700 mb-1">Cadet Intake</label>
-                                <select id="intakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <select id="intakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 min-w-[180px]">
                                     @if(!empty($recentIntakes) && is_array($recentIntakes))
                                         @foreach($recentIntakes as $intake)
                                             <option value="{{ $intake['year'] }}" {{ $intakeYear == $intake['year'] ? 'selected' : '' }}>
                                                 {{ $intake['label'] }}
                                             </option>
                                         @endforeach
-                                    @else
-                                        @php
-                                            $currentYear = now()->year;
-                                            for ($i = 0; $i < 4; $i++) {
-                                                $year = $currentYear - $i;
-                                                $intakeNumber = 14 - $i;
-                                                echo "<option value='{$year}'" . ($intakeYear == $year ? ' selected' : '') . ">Intake - {$intakeNumber} ({$year})</option>";
-                                            }
-                                        @endphp
                                     @endif
                                 </select>
                             </div>
 
-                            {{-- Dynamic Sorting/Filter Controls --}}
-                            @if($infoType !== 'seniority')
-                                <div class="flex flex-row space-x-2 sm:space-x-4 overflow-x-auto">
+                            {{-- Dynamic Filter (Changes based on Info Type) --}}
+                            <div id="dynamicFilterContainer" class="flex flex-col">
+                                <label class="text-sm font-medium text-gray-700 mb-1" id="dynamicFilterLabel">Filter</label>
+                                <select id="dynamicFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 min-w-[120px]">
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
 
-                                    {{-- Standard Filter Dropdown (BMI, Position, Gender, Swimming) --}}
-                                    @if($infoType != 'cgpa')
-                                        <div class="flex flex-col flex-1">
-                                            <label class="text-sm font-medium text-gray-700 mb-1">
-                                                @switch($infoType)
-                                                    @case('bmi')
-                                                        Sort Order
-                                                        @break
-                                                    @case('position')
-                                                        Filter
-                                                        @break
-                                                    @case('gender')
-                                                        Gender
-                                                        @break
-                                                    @case('swimming')
-                                                        Status
-                                                        @break
-                                                @endswitch
-                                            </label>
-                                            <select id="sortFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full">
-                                                @switch($infoType)
-                                                    @case('bmi')
-                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                                        <option value="overweight" {{ $filterBy == 'overweight' ? 'selected' : '' }}>BMI > 26.9</option>
-                                                        <option value="underweight" {{ $filterBy == 'underweight' ? 'selected' : '' }}>BMI < 18.0</option>
-                                                        @break
-                                                    @case('position')
-                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                                        <option value="rank_holders" {{ $filterBy == 'rank_holders' ? 'selected' : '' }}>Rank Holders Only</option>
-                                                        @break
-                                                    @case('gender')
-                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                                        <option value="male" {{ $filterBy == 'male' ? 'selected' : '' }}>Male</option>
-                                                        <option value="female" {{ $filterBy == 'female' ? 'selected' : '' }}>Female</option>
-                                                        @break
-                                                    @case('swimming')
-                                                        <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                                        <option value="pass" {{ $filterBy == 'pass' ? 'selected' : '' }}>Pass</option>
-                                                        <option value="in_progress" {{ $filterBy == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                                        <option value="fail" {{ $filterBy == 'fail' ? 'selected' : '' }}>Fail</option>
-                                                        @break
-                                                @endswitch
-                                            </select>
-                                        </div>
-
-                                        {{-- Swimming Pass Date Filter --}}
-                                        @if($infoType == 'swimming')
-                                            <div class="flex flex-col flex-1">
-                                                <label class="text-sm font-medium text-gray-700 mb-1">Pass Date</label>
-                                                <select id="swimmingPassDateFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full">
-                                                    <option value="all" {{ request('swimming_pass_date', 'all') == 'all' ? 'selected' : '' }}>All Dates</option>
-                                                    @if(!empty($swimmingPassDates))
-                                                        @foreach($swimmingPassDates as $date)
-                                                            <option value="{{ $date }}" {{ request('swimming_pass_date') == $date ? 'selected' : '' }}>
-                                                                {{ $date }}
-                                                            </option>
-                                                        @endforeach
-                                                    @endif
-                                                </select>
-                                            </div>
-                                        @endif
-                                    @endif
-
-                                    {{-- CGPA Range Filter --}}
-                                    @if($infoType == 'cgpa')
-                                        <div class="flex flex-col">
-                                            <label class="text-sm font-medium text-gray-700 mb-1">CGPA Range Filter</label>
-                                            <select id="cgpaRangeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                                <option value="all" {{ $filterBy == 'all' ? 'selected' : '' }}>All</option>
-                                                <option value="3.67_and_above" {{ $filterBy == '3.67_and_above' ? 'selected' : '' }}>3.67 and above</option>
-                                                <option value="3.00_to_3.66" {{ $filterBy == '3.00_to_3.66' ? 'selected' : '' }}>3.00 - 3.66</option>
-                                                <option value="2.50_to_2.99" {{ $filterBy == '2.50_to_2.99' ? 'selected' : '' }}>2.50 - 2.99</option>
-                                                <option value="2.49_and_below" {{ $filterBy == '2.49_and_below' ? 'selected' : '' }}>2.49 and below</option>
-                                            </select>
-                                        </div>
-                                    @endif
-                                    
-                                </div>
-                            @endif
+                            {{-- Additional Dynamic Filter (For Swimming Pass Date) --}}
+                            <div id="additionalFilterContainer" class="flex flex-col hidden">
+                                <label class="text-sm font-medium text-gray-700 mb-1" id="additionalFilterLabel">Pass Date</label>
+                                <select id="additionalFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 min-w-[120px]">
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
                         </div>
 
-                        {{-- Right Side: Information Type Buttons --}}
-                        <div class="flex flex-nowrap gap-1 items-center overflow-x-auto">
-                            @php
-                                $infoTypes = [
-                                    'seniority' => 'Seniority',
-                                    'position' => 'Position',
-                                    'gender' => 'Gender',
-                                    'cgpa' => 'CGPA',
-                                    'swimming' => 'Swimming',
-                                    'bmi' => 'BMI'
-                                ];
-                            @endphp
-                            @foreach($infoTypes as $type => $label)
-                                <button
-                                    class="info-type-btn px-3 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap
-                                           {{ $infoType == $type ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
-                                    data-type="{{ $type }}">
-                                    {{ $label }}
-                                </button>
-                            @endforeach
+                        {{-- Right Side: Information Type Toggle Buttons --}}
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium text-gray-700 mb-1">Information Type</label>
+                            <div class="flex space-x-2 flex-wrap gap-y-2">
+                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'seniority' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="seniority">Seniority</button>
+                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'position' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="position">Position</button>
+                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'gender' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="gender">Gender</button>
+                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'cgpa' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="cgpa">CGPA</button>
+                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'swimming' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="swimming">Swimming</button>
+                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'bmi' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="bmi">BMI</button>
+                            </div>
                         </div>
                     </div>
 
                     {{-- ================================================================ --}}
                     {{-- ACTION BUTTONS SECTION --}}
                     {{-- ================================================================ --}}
-                    
-                    {{-- Save Changes Button (Position Management) --}}
-                    @if($infoType == 'position' && $cadets->count() > 0)
-                        <div class="mb-4 flex justify-end">
-                            <button id="savePositionsBtn" 
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                                Save Changes
-                            </button>
-                        </div>
-                    @endif
+                    <div id="actionButtonsContainer" class="mb-4 flex justify-end hidden">
+                        {{-- Save Changes Button (Position Management) --}}
+                        <button id="savePositionsBtn" 
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium hidden">
+                            Save Changes
+                        </button>
 
-                    {{-- Mark as Passed Button (Swimming Management) --}}
-                    @if($infoType == 'swimming' && $cadets->count() > 0)
-                        <div class="mb-4 flex justify-end">
-                            <button id="markAsPassedBtn" 
-                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                    disabled>
-                                Mark Selected as Passed
-                            </button>
-                        </div>
-                    @endif
+                        {{-- Mark as Passed Button (Swimming Management) --}}
+                        <button id="markAsPassedBtn" 
+                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden"
+                                disabled>
+                            Mark Selected as Passed
+                        </button>
+                    </div>
+
+                    {{-- ================================================================ --}}
+                    {{-- LOADING INDICATOR --}}
+                    {{-- ================================================================ --}}
+                    <div id="loadingIndicator" class="hidden text-center py-8">
+                        <svg class="animate-spin h-8 w-8 mx-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-gray-600 mt-2">Loading cadets...</p>
+                    </div>
 
                     {{-- ================================================================ --}}
                     {{-- CADET TABLE SECTION --}}
                     {{-- ================================================================ --}}
-                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <div id="cadetTableContainer" class="border border-gray-200 rounded-lg overflow-hidden">
                         
                         {{-- Table Header (Fixed) --}}
                         <div class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
@@ -219,180 +159,275 @@
                                     <div>No.</div>
                                     <div>Service Number</div>
                                     <div>Name</div>
-                                    <div>
-                                        @switch($infoType)
-                                            @case('seniority')
-                                                IC Number
-                                                @break
-                                            @case('position')
-                                                Position
-                                                @break
-                                            @case('gender')
-                                                Gender
-                                                @break
-                                            @case('cgpa')
-                                                CGPA
-                                                @break
-                                            @case('swimming')
-                                                Swimming Status
-                                                @break
-                                            @case('bmi')
-                                                BMI & Last Updated
-                                                @break
-                                        @endswitch
-                                    </div>
-                                    <div>
-                                        @if($infoType == 'swimming')
-                                            <div class="flex items-center">
-                                                <input type="checkbox" 
-                                                       id="selectAll" 
-                                                       class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
-                                                <span>Select All</span>
-                                            </div>
-                                        @else
-                                            Actions
-                                        @endif
-                                    </div>
+                                    <div id="dynamicColumnHeader">Information</div>
+                                    <div id="actionsColumnHeader">Actions</div>
                                 </div>
                             </div>
                         </div>
                         
-                        {{-- Table Body (Scrollable - Max 6 rows visible) --}}
-                        <div class="overflow-y-auto bg-white" style="max-height: calc(5 * 72px);">
+                        {{-- Table Body (Scrollable - Max 5 rows visible) --}}
+                        <div id="cadetTableBody" class="overflow-y-auto bg-white" style="max-height: calc(5 * 72px);">
+                            {{-- Content will be loaded via AJAX --}}
                             @forelse($cadets as $index => $cadet)
                                 <div class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer cadet-row px-6 py-4" 
                                      data-cadet-id="{{ $cadet->id }}">
                                     <div class="grid grid-cols-5 gap-4 items-center">
-                                            
-                                            {{-- Column 1: Number --}}
-                                            <div class="text-sm text-gray-900">
-                                                {{ $cadets->firstItem() + $index }}
-                                            </div>
-                                            
-                                            {{-- Column 2: Service Number --}}
-                                            <div class="text-sm text-gray-900">
-                                                {{ $cadet->service_number ?? 'N/A' }}
-                                            </div>
-                                            
-                                            {{-- Column 3: Name --}}
-                                            <div class="text-sm font-medium text-gray-900">
-                                                {{ $cadet->user->name ?? 'Unknown' }}
-                                            </div>
-                                            
-                                            {{-- Column 4: Dynamic Info --}}
-                                            <div class="text-sm text-gray-900">
-                                                @switch($infoType)
-                                                    @case('seniority')
-                                                        {{ $cadet->ic_number ?? 'N/A' }}
-                                                        @break
-                                                        
-                                                    @case('position')
-                                                        {{ $cadet->position ?? 'Normal Cadet' }}
-                                                        @break
-                                                        
-                                                    @case('gender')
-                                                        {{ $cadet->gender ?? 'N/A' }}
-                                                        @break
-                                                        
-                                                    @case('cgpa')
-                                                        {{ $cadet->current_cgpa ? number_format($cadet->current_cgpa, 2) : 'N/A' }}
-                                                        @break
-                                                        
-                                                    @case('swimming')
-                                                        <div>
-                                                            @if($cadet->swimming_qualification)
-                                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                    {{ $cadet->swimming_qualification == 'Pass' ? 'bg-green-100 text-green-800' :
-                                                                       ($cadet->swimming_qualification == 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                                                    {{ $cadet->swimming_qualification }}
-                                                                </span>
-                                                            @else
-                                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                                    N/A
-                                                                </span>
-                                                            @endif
-                                                            <div class="text-xs text-gray-500 mt-1">
-                                                                {{ $cadet->swimming_pass_date ? $cadet->swimming_pass_date->format('d/m/Y') : 'Not passed' }}
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                        
-                                                    @case('bmi')
-                                                        <div>
-                                                            <div class="font-medium">{{ $cadet->BMI ? number_format($cadet->BMI, 1) : 'N/A' }}</div>
-                                                            <div class="text-xs text-gray-500">
-                                                                {{ $cadet->BMI_update_date ? $cadet->BMI_update_date->format('d/m/Y') : 'Not updated' }}
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                @endswitch
-                                            </div>
-                                            
-                                            {{-- Column 5: Actions --}}
-                                            <div class="text-sm font-medium">
-                                                @switch($infoType)
-                                                    @case('seniority')
-                                                        <button class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 remove-cadet-btn" 
-                                                                data-cadet-id="{{ $cadet->id }}" 
-                                                                data-cadet-name="{{ $cadet->user->name }}">
-                                                            Remove Cadet
-                                                        </button>
-                                                        @break
-                                                        
-                                                    @case('position')
-                                                        <select class="position-select border-gray-300 rounded text-sm" 
-                                                                data-cadet-id="{{ $cadet->id }}"
-                                                                name="positions[{{ $cadet->id }}]">
-                                                            @foreach(App\Models\Cadet::getPositions() as $value => $label)
-                                                                <option value="{{ $value }}" 
-                                                                        {{ ($cadet->position ?? 'Normal Cadet') == $value ? 'selected' : '' }}>
-                                                                    {{ $label }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        @break
-                                                        
-                                                    @case('swimming')
-                                                        @if($cadet->swimming_qualification != 'Pass')
-                                                            <input type="checkbox" 
-                                                                   class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
-                                                                   data-cadet-id="{{ $cadet->id }}"
-                                                                   onclick="event.stopPropagation()">
-                                                        @else
-                                                            <span class="text-green-600 font-medium">Passed</span>
-                                                        @endif
-                                                        @break
-                                                        
-                                                    @default
-                                                        <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn" 
-                                                                data-cadet-id="{{ $cadet->id }}">
-                                                            View Profile
-                                                        </button>
-                                                        @break
-                                                @endswitch
-                                            </div>
+                                        <div class="text-sm text-gray-900">{{ $cadets->firstItem() + $index }}</div>
+                                        <div class="text-sm text-gray-900">{{ $cadet->service_number ?? 'N/A' }}</div>
+                                        <div class="text-sm font-medium text-gray-900">{{ $cadet->user->name ?? 'Unknown' }}</div>
+                                        <div class="text-sm text-gray-900" data-column-type="{{ $infoType }}">
+                                            {{-- Dynamic content based on info type --}}
+                                        </div>
+                                        <div class="text-sm font-medium">
+                                            {{-- Actions will be rendered dynamically --}}
                                         </div>
                                     </div>
-                                @empty
-                                    <div class="px-6 py-8 text-center">
-                                        <div class="text-sm text-gray-500">
-                                            No cadets found matching the current filters.
-                                        </div>
-                                    </div>
-                                @endforelse
-                            </div>
+                                </div>
+                            @empty
+                                <div class="px-6 py-8 text-center">
+                                    <div class="text-sm text-gray-500">No cadets found matching the current filters.</div>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
 
                     {{-- ================================================================ --}}
                     {{-- PAGINATION SECTION --}}
                     {{-- ================================================================ --}}
-                    <div class="mt-6">
+                    <div id="paginationContainer" class="mt-6">
                         {{ $cadets->appends(request()->query())->links() }}
                     </div>
 
                 </div>
             </div>
+
+            {{-- ================================================================ --}}
+            {{-- BEST CADET SUGGESTIONS SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
+                <div class="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 border-b border-yellow-100">
+                    <button onclick="toggleSection('bestCadetSection')" class="w-full flex items-center justify-between text-left">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-800">Best Cadet Suggestions</h3>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="bestCadetChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <p class="text-gray-600 mt-2">View top-performing cadets based on performance ratings and points.</p>
+                </div>
+                
+                <div id="bestCadetSection" class="p-6 hidden">
+                    <div class="mb-4 flex justify-end">
+                        <select id="bestCadetIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            @foreach($recentIntakes as $intake)
+                                <option value="{{ $intake['year'] }}" {{ $bestCadetIntakeYear == $intake['year'] ? 'selected' : '' }}>
+                                    {{ $intake['label'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="bestCadetLoadingIndicator" class="hidden text-center py-8">
+                        <svg class="animate-spin h-8 w-8 mx-auto text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-gray-600 mt-2">Loading best cadets...</p>
+                    </div>
+
+                    <div id="bestCadetContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        @forelse($bestCadets as $index => $cadet)
+                            <div class="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200">
+                                <div class="text-center mb-3">
+                                    <div class="text-2xl font-bold text-yellow-600 mb-1">#{{ $index + 1 }}</div>
+                                    @if($cadet->profile_pic)
+                                        <img src="{{ asset('storage/' . $cadet->profile_pic) }}" alt="Profile" class="w-20 h-20 rounded-full mx-auto object-cover border-4 border-yellow-300">
+                                    @else
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($cadet->user->name) }}" alt="Profile" class="w-20 h-20 rounded-full mx-auto object-cover border-4 border-yellow-300">
+                                    @endif
+                                </div>
+                                <div class="space-y-1 text-sm">
+                                    <div class="font-semibold text-gray-800 text-center">{{ $cadet->rank ?? 'Cadet' }}</div>
+                                    <div class="font-medium text-gray-900 text-center">{{ $cadet->user->name }}</div>
+                                    <div class="text-gray-600 text-center">{{ $cadet->service_number }}</div>
+                                    <div class="border-t border-yellow-200 pt-2 mt-2">
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-yellow-700">{{ number_format($cadet->performanceRating->total_points ?? 0, 0) }}</div>
+                                            <div class="text-xs text-gray-600">Total Points</div>
+                                        </div>
+                                        <div class="text-center mt-1">
+                                            <div class="text-lg">{{ $cadet->performanceRating->rating ?? '⭐☆☆☆☆' }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-span-5 text-center text-gray-500 py-8">
+                                No cadets found for this intake
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            {{-- ================================================================ --}}
+            {{-- BEST ACADEMIC CANDIDATE SUGGESTIONS SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 border-b border-green-100">
+                    <button onclick="toggleSection('bestAcademicSection')" class="w-full flex items-center justify-between text-left">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-800">Best Academic Candidate Suggestions</h3>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="bestAcademicChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <p class="text-gray-600 mt-2">View cadets with highest academic performance for scholarships and commendations.</p>
+                </div>
+                
+                <div id="bestAcademicSection" class="p-6 hidden">
+                    <div class="mb-4 flex justify-end">
+                        <select id="bestAcademicIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            @foreach($recentIntakes as $intake)
+                                <option value="{{ $intake['year'] }}" {{ $bestCadetIntakeYear == $intake['year'] ? 'selected' : '' }}>
+                                    {{ $intake['label'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="bestAcademicLoadingIndicator" class="hidden text-center py-8">
+                        <svg class="animate-spin h-8 w-8 mx-auto text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-gray-600 mt-2">Loading academic candidates...</p>
+                    </div>
+
+                    <div id="bestAcademicContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        @forelse($bestAcademicCadets as $index => $cadet)
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200">
+                                <div class="text-center mb-3">
+                                    <div class="text-2xl font-bold text-green-600 mb-1">#{{ $index + 1 }}</div>
+                                    @if($cadet->profile_pic)
+                                        <img src="{{ asset('storage/' . $cadet->profile_pic) }}" alt="Profile" class="w-20 h-20 rounded-full mx-auto object-cover border-4 border-green-300">
+                                    @else
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($cadet->user->name) }}" alt="Profile" class="w-20 h-20 rounded-full mx-auto object-cover border-4 border-green-300">
+                                    @endif
+                                </div>
+                                <div class="space-y-1 text-sm">
+                                    <div class="font-semibold text-gray-800 text-center">{{ $cadet->rank ?? 'Cadet' }}</div>
+                                    <div class="font-medium text-gray-900 text-center">{{ $cadet->user->name }}</div>
+                                    <div class="text-gray-600 text-center">{{ $cadet->service_number }}</div>
+                                    <div class="border-t border-green-200 pt-2 mt-2">
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-green-700">{{ number_format($cadet->current_cgpa ?? 0, 2) }}</div>
+                                            <div class="text-xs text-gray-600">CGPA</div>
+                                        </div>
+                                        <div class="text-center mt-1">
+                                            <div class="text-sm font-semibold text-green-600">{{ number_format($cadet->performanceRating->academic_points ?? 0, 0) }} pts</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-span-5 text-center text-gray-500 py-8">
+                                No cadets found for this intake
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            {{-- ================================================================ --}}
+            {{-- SUSPENDED CADETS SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
+                <div class="bg-gradient-to-r from-red-50 to-rose-50 p-4 border-b border-red-100">
+                    <button onclick="toggleSection('suspendedSection')" class="w-full flex items-center justify-between text-left">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-800">Suspended Cadets</h3>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="suspendedChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <p class="text-gray-600 mt-2">Manage suspended cadets and permanently delete them from the system.</p>
+                </div>
+                
+                <div id="suspendedSection" class="p-6 hidden">
+                    <div class="mb-4 flex justify-end">
+                        <select id="suspendedIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            @foreach($recentIntakes as $intake)
+                                <option value="{{ $intake['year'] }}" {{ $suspendedIntakeYear == $intake['year'] ? 'selected' : '' }}>
+                                    {{ $intake['label'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="suspendedLoadingIndicator" class="hidden text-center py-8">
+                        <svg class="animate-spin h-8 w-8 mx-auto text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-gray-600 mt-2">Loading suspended cadets...</p>
+                    </div>
+
+                    <div id="suspendedTableContainer" class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Number</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matric No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="suspendedTableBody" class="bg-white divide-y divide-gray-200">
+                                @forelse($suspendedCadets as $cadet)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cadet->service_number }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cadet->user->name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cadet->matric_no }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                Suspended
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-red-600 hover:text-red-900 delete-suspended-btn" 
+                                                    data-cadet-id="{{ $cadet->id }}"
+                                                    data-cadet-name="{{ $cadet->user->name }}">
+                                                Delete Permanently
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500">
+                                            No suspended cadets found for this intake
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -418,29 +453,55 @@
     </div>
 
     {{-- ================================================================ --}}
-    {{-- REMOVE CADET CONFIRMATION MODAL --}}
+    {{-- SUSPEND CADET CONFIRMATION MODAL --}}
     {{-- ================================================================ --}}
-    <div id="removeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div id="suspendModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
                 <div class="p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Cadet Removal</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Cadet Suspension</h3>
                     <p class="text-sm text-gray-600 mb-4">
-                        To confirm removal, please type the cadet's full name: 
-                        <strong id="cadetNameToConfirm"></strong>
+                        To confirm suspension, please type the cadet's full name: 
+                        <strong id="cadetNameToSuspend"></strong>
                     </p>
                     <input type="text" 
-                           id="confirmationNameInput" 
-                           class="w-full border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 mb-4"
+                           id="confirmationNameInputSuspend" 
+                           class="w-full border-gray-300 rounded-md shadow-sm focus:border-orange-500 focus:ring-orange-500 mb-4"
                            placeholder="Type the full name here">
                     <div class="flex justify-end space-x-3">
-                        <button id="cancelRemove" 
+                        <button id="cancelSuspend" 
                                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
                             Cancel
                         </button>
-                        <button id="confirmRemove" 
+                        <button id="confirmSuspend" 
+                                class="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700">
+                            Suspend Cadet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================================================================ --}}
+    {{-- DELETE SUSPENDED CADET CONFIRMATION MODAL --}}
+    {{-- ================================================================ --}}
+    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Permanent Deletion</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Are you sure you want to permanently delete <strong id="cadetNameToDelete"></strong>? This action cannot be undone.
+                    </p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="cancelDelete" 
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <button id="confirmDelete" 
                                 class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
-                            Remove Cadet
+                            Delete Permanently
                         </button>
                     </div>
                 </div>
@@ -453,435 +514,580 @@
     {{-- ================================================================ --}}
     @push('scripts')
     <script>
+        // ============================================================
+        // GLOBAL VARIABLES AND STATE
+        // ============================================================
+        let searchTimeout;
+        let currentPage = 1;
+        let currentFilters = {
+            infoType: '{{ $infoType }}',
+            intakeYear: '{{ $intakeYear }}',
+            filterBy: '{{ $filterBy }}',
+            sortBy: '{{ $sortBy }}',
+            search: '{{ $searchQuery }}',
+            swimmingPassDate: '{{ request("swimming_pass_date", "all") }}'
+        };
+
+        // ============================================================
+        // SECTION TOGGLE FUNCTIONS
+        // ============================================================
+        window.toggleSection = function(sectionId) {
+            const section = document.getElementById(sectionId);
+            const chevronId = sectionId.replace('Section', 'Chevron');
+            const chevron = document.getElementById(chevronId);
+
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                section.classList.add('hidden');
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        };
+
+        // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            
             // ============================================================
-            // EVENT LISTENERS: Info Type Buttons
+            // INITIALIZE DYNAMIC FILTERS
             // ============================================================
-            document.querySelectorAll('.info-type-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    updateFilters(this.dataset.type);
-                });
+            initializeDynamicFilters(currentFilters.infoType);
+
+            // ============================================================
+            // EVENT LISTENERS: Search Input with Debounce
+            // ============================================================
+            document.getElementById('searchInput').addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchValue = this.value;
+
+                searchTimeout = setTimeout(() => {
+                    currentFilters.search = searchValue;
+                    currentPage = 1;
+                    loadCadets();
+
+                    // Show/hide clear button
+                    const clearBtn = document.getElementById('clearSearchBtn');
+                    if (searchValue) {
+                        clearBtn.classList.remove('hidden');
+                    } else {
+                        clearBtn.classList.add('hidden');
+                    }
+                }, 500);
+            });
+
+            document.getElementById('clearSearchBtn').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                currentFilters.search = '';
+                currentPage = 1;
+                this.classList.add('hidden');
+                loadCadets();
             });
 
             // ============================================================
-            // EVENT LISTENERS: Filter Dropdowns
+            // EVENT LISTENERS: Filter Changes
             // ============================================================
             document.getElementById('intakeFilter').addEventListener('change', function() {
-                updateFilters();
+                currentFilters.intakeYear = this.value;
+                currentPage = 1;
+
+                // Reload swimming pass dates if swimming info type is selected
+                if (currentFilters.infoType === 'swimming') {
+                    loadSwimmingPassDates();
+                }
+
+                loadCadets();
             });
 
-            if(document.getElementById('sortFilter')) {
-                document.getElementById('sortFilter').addEventListener('change', function() {
-                    updateFilters();
-                });
-            }
+            // Event listeners for Information Type Toggle Buttons
+            document.querySelectorAll('.info-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const infoType = this.dataset.infoType;
 
-            if(document.getElementById('swimmingPassDateFilter')) {
-                document.getElementById('swimmingPassDateFilter').addEventListener('change', function() {
-                    updateFilters();
-                });
-            }
-
-            if(document.getElementById('cgpaRangeFilter')) {
-                document.getElementById('cgpaRangeFilter').addEventListener('change', function() {
-                    updateFilters();
-                });
-            }
-
-            // ============================================================
-            // SWIMMING QUALIFICATION: Checkbox Functionality
-            // ============================================================
-            const selectAllCheckbox = document.getElementById('selectAll');
-            const cadetCheckboxes = document.querySelectorAll('.cadet-checkbox');
-            const markAsPassedBtn = document.getElementById('markAsPassedBtn');
-
-            if (selectAllCheckbox) {
-                selectAllCheckbox.addEventListener('change', function() {
-                    cadetCheckboxes.forEach(checkbox => {
-                        checkbox.checked = this.checked;
+                    // Update active button styling
+                    document.querySelectorAll('.info-type-btn').forEach(b => {
+                        b.classList.remove('bg-[#3c92d9]', 'text-white');
+                        b.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
                     });
-                    updateMarkAsPassedButton();
-                });
-            }
+                    this.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                    this.classList.add('bg-[#3c92d9]', 'text-white');
 
-            cadetCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    updateSelectAllCheckbox();
-                    updateMarkAsPassedButton();
+                    // Update filters
+                    currentFilters.infoType = infoType;
+                    currentFilters.filterBy = 'all';
+                    currentFilters.swimmingPassDate = 'all';
+                    currentPage = 1;
+                    initializeDynamicFilters(infoType);
+                    loadCadets();
                 });
             });
 
-            if (markAsPassedBtn) {
-                markAsPassedBtn.addEventListener('click', function() {
-                    markSelectedAsPassed();
-                });
-            }
+            document.getElementById('dynamicFilter').addEventListener('change', function() {
+                currentFilters.filterBy = this.value;
+                currentPage = 1;
+                loadCadets();
+            });
 
-            function updateSelectAllCheckbox() {
-                if (selectAllCheckbox) {
-                    const checkedBoxes = document.querySelectorAll('.cadet-checkbox:checked');
-                    selectAllCheckbox.checked = checkedBoxes.length === cadetCheckboxes.length;
-                    selectAllCheckbox.indeterminate = checkedBoxes.length > 0 && checkedBoxes.length < cadetCheckboxes.length;
-                }
-            }
-
-            function updateMarkAsPassedButton() {
-                if (markAsPassedBtn) {
-                    const checkedBoxes = document.querySelectorAll('.cadet-checkbox:checked');
-                    markAsPassedBtn.disabled = checkedBoxes.length === 0;
-                }
-            }
-
-            function markSelectedAsPassed() {
-                const selectedCadets = [];
-                document.querySelectorAll('.cadet-checkbox:checked').forEach(checkbox => {
-                    selectedCadets.push(checkbox.dataset.cadetId);
-                });
-
-                if (selectedCadets.length === 0) {
-                    alert('Please select at least one cadet to mark as passed.');
-                    return;
-                }
-
-                const intakeYear = document.getElementById('intakeFilter').value;
-
-                fetch('/instructor/cadets/swimming/mark-passed', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        cadet_ids: selectedCadets,
-                        intake_year: intakeYear
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(`${data.updated_count} cadet(s) marked as passed successfully`);
-                        location.reload();
-                    } else {
-                        alert(data.message || 'Failed to update swimming qualification');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to update swimming qualification');
+            const additionalFilter = document.getElementById('additionalFilter');
+            if (additionalFilter) {
+                additionalFilter.addEventListener('change', function() {
+                    currentFilters.swimmingPassDate = this.value;
+                    currentPage = 1;
+                    loadCadets();
                 });
             }
 
             // ============================================================
-            // CADET PROFILE: View Profile Modal
+            // EVENT LISTENERS: Best Cadet Sections
             // ============================================================
-            document.querySelectorAll('.cadet-row, .view-profile-btn').forEach(element => {
-                element.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('remove-cadet-btn') || 
-                        e.target.classList.contains('position-select') ||
-                        e.target.classList.contains('cadet-checkbox') ||
-                        e.target.type === 'checkbox') {
-                        return;
-                    }
-                    
-                    const cadetId = this.dataset.cadetId || this.closest('.cadet-row').dataset.cadetId;
-                    showCadetProfile(cadetId);
-                });
+            document.getElementById('bestCadetIntakeFilter')?.addEventListener('change', function() {
+                loadBestCadets(this.value);
+            });
+
+            document.getElementById('bestAcademicIntakeFilter')?.addEventListener('change', function() {
+                loadBestAcademicCadets(this.value);
+            });
+
+            document.getElementById('suspendedIntakeFilter')?.addEventListener('change', function() {
+                loadSuspendedCadets(this.value);
             });
 
             // ============================================================
-            // REMOVE CADET: Button Click Handler
-            // ============================================================
-            document.querySelectorAll('.remove-cadet-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const cadetId = this.dataset.cadetId;
-                    const cadetName = this.dataset.cadetName;
-                    showRemoveModal(cadetId, cadetName);
-                });
-            });
-
-            // ============================================================
-            // POSITION MANAGEMENT: Validation
-            // ============================================================
-            document.querySelectorAll('.position-select').forEach(select => {
-                select.addEventListener('change', function(e) {
-                    e.stopPropagation();
-                    validatePositionSelection(this);
-                });
-            });
-
-            document.getElementById('savePositionsBtn')?.addEventListener('click', function() {
-                savePositions();
-            });
-
-            // ============================================================
-            // MODAL CONTROLS: Close Buttons
+            // EVENT LISTENERS: Modal Controls
             // ============================================================
             document.getElementById('closeModal').addEventListener('click', function() {
                 document.getElementById('cadetModal').classList.add('hidden');
             });
 
-            document.getElementById('cancelRemove').addEventListener('click', function() {
-                document.getElementById('removeModal').classList.add('hidden');
+            document.getElementById('cancelSuspend')?.addEventListener('click', function() {
+                document.getElementById('suspendModal').classList.add('hidden');
             });
 
-            document.getElementById('confirmRemove').addEventListener('click', function() {
-                confirmRemoval();
+            document.getElementById('confirmSuspend')?.addEventListener('click', function() {
+                confirmSuspension();
+            });
+
+            document.getElementById('cancelDelete')?.addEventListener('click', function() {
+                document.getElementById('deleteModal').classList.add('hidden');
+            });
+
+            document.getElementById('confirmDelete')?.addEventListener('click', function() {
+                confirmDeletion();
+            });
+
+            // ============================================================
+            // EVENT LISTENERS: Action Buttons
+            // ============================================================
+            document.getElementById('savePositionsBtn')?.addEventListener('click', function() {
+                savePositions();
+            });
+
+            document.getElementById('markAsPassedBtn')?.addEventListener('click', function() {
+                markSelectedAsPassed();
             });
         });
 
         // ============================================================
-        // FUNCTION: Update Filters
+        // FUNCTION: Initialize Dynamic Filters
         // ============================================================
-        function updateFilters(infoType = null) {
-            const url = new URL(window.location);
+        function initializeDynamicFilters(infoType) {
+            const dynamicFilterContainer = document.getElementById('dynamicFilterContainer');
+            const additionalFilterContainer = document.getElementById('additionalFilterContainer');
+            const dynamicFilterLabel = document.getElementById('dynamicFilterLabel');
+            const dynamicFilter = document.getElementById('dynamicFilter');
+            const actionButtonsContainer = document.getElementById('actionButtonsContainer');
+            const savePositionsBtn = document.getElementById('savePositionsBtn');
+            const markAsPassedBtn = document.getElementById('markAsPassedBtn');
 
-            if (infoType) {
-                url.searchParams.set('info_type', infoType);
-            }
+            // Reset visibility
+            additionalFilterContainer.classList.add('hidden');
+            actionButtonsContainer.classList.add('hidden');
+            savePositionsBtn.classList.add('hidden');
+            markAsPassedBtn.classList.add('hidden');
 
-            url.searchParams.set('intake_year', document.getElementById('intakeFilter').value);
+            // Clear existing options
+            dynamicFilter.innerHTML = '';
 
-            const currentInfoType = infoType || url.searchParams.get('info_type') || 'seniority';
-
-            if (currentInfoType === 'seniority') {
-                url.searchParams.set('sort_by', 'asc');
-                url.searchParams.delete('filter_by');
-                url.searchParams.delete('swimming_pass_date');
+            if (infoType === 'seniority') {
+                // Hide dynamic filter for seniority
+                dynamicFilterContainer.classList.add('hidden');
             } else {
-                if (currentInfoType === 'cgpa') {
-                    const cgpaRangeFilter = document.getElementById('cgpaRangeFilter');
-                    if (cgpaRangeFilter) {
-                        url.searchParams.set('filter_by', cgpaRangeFilter.value);
-                    } else {
-                        url.searchParams.delete('filter_by');
-                    }
-                    url.searchParams.delete('sort_by');
-                    url.searchParams.delete('swimming_pass_date');
-                } else if (currentInfoType === 'bmi') {
-                    const bmiFilter = document.getElementById('sortFilter');
-                    if (bmiFilter) {
-                        url.searchParams.set('filter_by', bmiFilter.value);
-                    } else {
-                        url.searchParams.delete('filter_by');
-                    }
-                    url.searchParams.delete('sort_by');
-                    url.searchParams.delete('swimming_pass_date');
-                } else if (currentInfoType === 'swimming') {
-                    const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'asc';
-                    url.searchParams.set('filter_by', sortValue);
-                    url.searchParams.delete('sort_by');
-
-                    const swimmingPassDateFilter = document.getElementById('swimmingPassDateFilter');
-                    if (swimmingPassDateFilter && swimmingPassDateFilter.value !== 'all') {
-                        url.searchParams.set('swimming_pass_date', swimmingPassDateFilter.value);
-                    } else {
-                        url.searchParams.delete('swimming_pass_date');
-                    }
-                } else {
-                    const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'asc';
-                    url.searchParams.set('filter_by', sortValue);
-                    url.searchParams.delete('sort_by');
-                    url.searchParams.delete('swimming_pass_date');
-                }
-            }
-
-            window.location.href = url.toString();
-        }
-
-        // ============================================================
-        // FUNCTION: Validate Position Selection
-        // ============================================================
-        function validatePositionSelection(selectElement) {
-            const selectedPosition = selectElement.value;
-            const cadetId = selectElement.dataset.cadetId;
-            const specialPositions = ['CO', 'Thana', 'Zayn', 'PMC'];
-            
-            if (specialPositions.includes(selectedPosition)) {
-                const otherSelects = document.querySelectorAll('.position-select');
-                let conflictFound = false;
+                dynamicFilterContainer.classList.remove('hidden');
                 
-                otherSelects.forEach(otherSelect => {
-                    if (otherSelect.dataset.cadetId !== cadetId && otherSelect.value === selectedPosition) {
-                        conflictFound = true;
-                    }
-                });
-                
-                if (conflictFound) {
-                    alert(`Only one cadet per intake can hold the ${selectedPosition} position. Please change the other cadet's position first.`);
-                    selectElement.value = selectElement.dataset.originalValue || 'Normal Cadet';
-                    return false;
-                }
-            }
-            
-            selectElement.dataset.originalValue = selectedPosition;
-            return true;
-        }
-
-        // ============================================================
-        // FUNCTION: Show Cadet Profile Modal
-        // ============================================================
-        function showCadetProfile(cadetId) {
-            fetch(`/instructor/cadets/${cadetId}`)
-                .then(response => response.json())
-                .then(data => {
-                    let profilePicHtml = '';
-                    if (data.cadet.profile_pic) {
-                        const profilePicUrl = `/storage/${data.cadet.profile_pic}`;
-                        profilePicHtml = `<img src="${profilePicUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
-                    } else {
-                        const fallbackAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name)}`;
-                        profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
-                    }
-
-                    const profileContent = `
-                        <div class="flex items-center space-x-4 mb-6">
-                            <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center">
-                                ${profilePicHtml}
-                            </div>
-                            <div>
-                                <h4 class="text-xl font-semibold text-gray-900">${data.user.name}</h4>
-                                <p class="text-sm text-gray-600">Service No: ${data.cadet.service_number || 'N/A'}</p>
-                                <p class="text-sm text-gray-600">Matric No: ${data.cadet.matric_no || 'N/A'}</p>
-                            </div>
-                        </div>
+                switch(infoType) {
+                    case 'bmi':
+                        dynamicFilterLabel.textContent = 'Sort Order';
+                        dynamicFilter.innerHTML = `
+                            <option value="all">All</option>
+                            <option value="overweight">BMI > 26.9</option>
+                            <option value="underweight">BMI < 18.0</option>
+                        `;
+                        break;
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <h5 class="font-medium text-gray-900 border-b pb-2">Personal Information</h5>
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Gender:</span>
-                                        <span class="font-medium">${data.cadet.gender || 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Phone:</span>
-                                        <span class="font-medium">${data.cadet.phone_number || 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Email:</span>
-                                        <span class="font-medium">${data.user.email || 'N/A'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <h5 class="font-medium text-gray-900 border-b pb-2">Military Information</h5>
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Rank:</span>
-                                        <span class="font-medium">${data.cadet.rank || 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Position:</span>
-                                        <span class="font-medium">${data.cadet.position || 'Normal Cadet'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Intake Year:</span>
-                                        <span class="font-medium">${data.cadet.intake_year || 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Swimming Status:</span>
-                                        <span class="font-medium px-2 py-1 rounded text-xs ${
-                                            data.cadet.swimming_qualification === 'Pass' ? 'bg-green-100 text-green-800' :
-                                            data.cadet.swimming_qualification === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
-                                            'bg-red-100 text-red-800'
-                                        }">
-                                            ${data.cadet.swimming_qualification || 'N/A'}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <h5 class="font-medium text-gray-900 border-b pb-2">Academic Information</h5>
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Faculty:</span>
-                                        <span class="font-medium">${data.cadet.faculty || 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Course:</span>
-                                        <span class="font-medium">${data.cadet.course || 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Current CGPA:</span>
-                                        <span class="font-medium">${data.cadet.current_cgpa ? parseFloat(data.cadet.current_cgpa).toFixed(2) : 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Past CGPA:</span>
-                                        <span class="font-medium">${data.cadet.past_cgpa ? parseFloat(data.cadet.past_cgpa).toFixed(2) : 'N/A'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <h5 class="font-medium text-gray-900 border-b pb-2">Physical Information</h5>
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">BMI:</span>
-                                        <span class="font-medium">${data.cadet.BMI ? parseFloat(data.cadet.BMI).toFixed(1) : 'N/A'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">BMI Updated:</span>
-                                        <span class="font-medium text-xs">${data.cadet.BMI_update_date ? new Date(data.cadet.BMI_update_date).toLocaleDateString() : 'Not updated'}</span>
-                                    </div>
-                                </div>
-                            </div>
+                    case 'position':
+                        dynamicFilterLabel.textContent = 'Filter';
+                        dynamicFilter.innerHTML = `
+                            <option value="all">All</option>
+                            <option value="rank_holders">Rank Holders Only</option>
+                        `;
+                        actionButtonsContainer.classList.remove('hidden');
+                        savePositionsBtn.classList.remove('hidden');
+                        break;
+                        
+                    case 'gender':
+                        dynamicFilterLabel.textContent = 'Gender';
+                        dynamicFilter.innerHTML = `
+                            <option value="all">All</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        `;
+                        break;
+                        
+                    case 'swimming':
+                        dynamicFilterLabel.textContent = 'Status';
+                        dynamicFilter.innerHTML = `
+                            <option value="all">All</option>
+                            <option value="pass">Pass</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="fail">Fail</option>
+                        `;
+                        // Show additional filter for swimming pass date
+                        additionalFilterContainer.classList.remove('hidden');
+                        document.getElementById('additionalFilterLabel').textContent = 'Pass Date';
+                        loadSwimmingPassDates();
+                        actionButtonsContainer.classList.remove('hidden');
+                        markAsPassedBtn.classList.remove('hidden');
+                        break;
+                        
+                    case 'cgpa':
+                        dynamicFilterLabel.textContent = 'CGPA Range';
+                        dynamicFilter.innerHTML = `
+                            <option value="all">All</option>
+                            <option value="3.67_and_above">3.67 and above</option>
+                            <option value="3.00_to_3.66">3.00 - 3.66</option>
+                            <option value="2.50_to_2.99">2.50 - 2.99</option>
+                            <option value="2.49_and_below">2.49 and below</option>
+                        `;
+                        break;
+                }
+                
+                // Set current filter value
+                dynamicFilter.value = currentFilters.filterBy || 'all';
+            }
+
+            // Update column headers
+            updateColumnHeaders(infoType);
+        }
+
+        // ============================================================
+        // FUNCTION: Update Column Headers
+        // ============================================================
+        function updateColumnHeaders(infoType) {
+            const dynamicColumnHeader = document.getElementById('dynamicColumnHeader');
+            const actionsColumnHeader = document.getElementById('actionsColumnHeader');
+
+            switch(infoType) {
+                case 'seniority':
+                    dynamicColumnHeader.textContent = 'IC Number';
+                    actionsColumnHeader.innerHTML = 'Actions';
+                    break;
+                case 'position':
+                    dynamicColumnHeader.textContent = 'Position';
+                    actionsColumnHeader.innerHTML = 'Actions';
+                    break;
+                case 'gender':
+                    dynamicColumnHeader.textContent = 'Gender';
+                    actionsColumnHeader.innerHTML = 'Actions';
+                    break;
+                case 'cgpa':
+                    dynamicColumnHeader.textContent = 'CGPA';
+                    actionsColumnHeader.innerHTML = 'Actions';
+                    break;
+                case 'swimming':
+                    dynamicColumnHeader.textContent = 'Swimming Status';
+                    actionsColumnHeader.innerHTML = `
+                        <div class="flex items-center">
+                            <input type="checkbox" 
+                                   id="selectAll" 
+                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
+                            <span>Select All</span>
                         </div>
                     `;
+                    // Re-attach select all event listener
+                    setTimeout(() => {
+                        const selectAllCheckbox = document.getElementById('selectAll');
+                        if (selectAllCheckbox) {
+                            selectAllCheckbox.addEventListener('change', handleSelectAll);
+                        }
+                    }, 100);
+                    break;
+                case 'bmi':
+                    dynamicColumnHeader.textContent = 'BMI & Last Updated';
+                    actionsColumnHeader.innerHTML = 'Actions';
+                    break;
+            }
+        }
+
+        // ============================================================
+        // FUNCTION: Load Swimming Pass Dates
+        // ============================================================
+        function loadSwimmingPassDates() {
+            fetch(`/instructor/cadets/swimming-pass-dates?intake_year=${currentFilters.intakeYear}`)
+                .then(response => response.json())
+                .then(data => {
+                    const additionalFilter = document.getElementById('additionalFilter');
+                    additionalFilter.innerHTML = '<option value="all">All Dates</option>';
                     
-                    document.getElementById('cadetProfileContent').innerHTML = profileContent;
-                    document.getElementById('cadetModal').classList.remove('hidden');
+                    if (data.dates && data.dates.length > 0) {
+                        data.dates.forEach(date => {
+                            const option = document.createElement('option');
+                            option.value = date;
+                            option.textContent = date;
+                            if (currentFilters.swimmingPassDate === date) {
+                                option.selected = true;
+                            }
+                            additionalFilter.appendChild(option);
+                        });
+                    }
                 })
                 .catch(error => {
-                    console.error('Error fetching cadet profile:', error);
-                    alert('Failed to load cadet profile');
+                    console.error('Error loading swimming pass dates:', error);
                 });
         }
 
         // ============================================================
-        // FUNCTION: Show Remove Cadet Modal
-        // ============================================================
-        function showRemoveModal(cadetId, cadetName) {
-            document.getElementById('cadetNameToConfirm').textContent = cadetName;
-            document.getElementById('confirmationNameInput').value = '';
-            document.getElementById('confirmRemove').dataset.cadetId = cadetId;
-            document.getElementById('removeModal').classList.remove('hidden');
+// FUNCTION: Load Cadets via AJAX
+// ============================================================
+function loadCadets(page = 1) {
+    currentPage = page;
+    
+    // Show loading indicator
+    document.getElementById('loadingIndicator').classList.remove('hidden');
+    document.getElementById('cadetTableContainer').style.opacity = '0.5';
+
+    const params = new URLSearchParams({
+        info_type: currentFilters.infoType,
+        intake_year: currentFilters.intakeYear,
+        filter_by: currentFilters.filterBy,
+        sort_by: currentFilters.sortBy,
+        search: currentFilters.search,
+        page: page
+    });
+
+    if (currentFilters.infoType === 'swimming' && currentFilters.swimmingPassDate !== 'all') {
+        params.append('swimming_pass_date', currentFilters.swimmingPassDate);
+    }
+
+    fetch(`/instructor/cadets/ajax?${params.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        renderCadetsTable(data);
+        
+        // Hide loading indicator
+        document.getElementById('loadingIndicator').classList.add('hidden');
+        document.getElementById('cadetTableContainer').style.opacity = '1';
+    })
+    .catch(error => {
+        console.error('Error loading cadets:', error);
+        document.getElementById('loadingIndicator').classList.add('hidden');
+        document.getElementById('cadetTableContainer').style.opacity = '1';
+        alert('Failed to load cadets. Please try again.');
+    });
+}
 
         // ============================================================
-        // FUNCTION: Confirm Cadet Removal
+        // FUNCTION: Render Cadets Table
         // ============================================================
-        function confirmRemoval() {
-            const cadetId = document.getElementById('confirmRemove').dataset.cadetId;
-            const confirmationName = document.getElementById('confirmationNameInput').value;
-            
-            fetch(`/instructor/cadets/${cadetId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    confirmation_name: confirmationName
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('removeModal').classList.add('hidden');
-                    location.reload();
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to remove cadet');
-            });
+        function renderCadetsTable(data) {
+            const tableBody = document.getElementById('cadetTableBody');
+            tableBody.innerHTML = '';
+
+            if (data.cadets && data.cadets.length > 0) {
+                data.cadets.forEach((cadet, index) => {
+                    const row = createCadetRow(cadet, data.firstItem + index);
+                    tableBody.appendChild(row);
+                });
+
+                // Attach event listeners
+                attachCadetRowEventListeners();
+            } else {
+                tableBody.innerHTML = `
+                    <div class="px-6 py-8 text-center">
+                        <div class="text-sm text-gray-500">No cadets found matching the current filters.</div>
+                    </div>
+                `;
+            }
+
+            // Update pagination
+            renderPagination(data.pagination);
+
+            // Reinitialize select all checkbox and mark as passed button after AJAX load
+            setTimeout(() => {
+                updateSelectAllCheckbox();
+                updateMarkAsPassedButton();
+            }, 100);
         }
+
+// ============================================================
+// FUNCTION: Create Cadet Row
+// ============================================================
+function createCadetRow(cadet, rowNumber) {
+    const row = document.createElement('div');
+    row.className = 'border-b border-gray-200 hover:bg-gray-50 cursor-pointer cadet-row px-6 py-4';
+    row.dataset.cadetId = cadet.id;
+
+    const dynamicContent = getDynamicColumnContent(cadet);
+    const actionsContent = getActionsColumnContent(cadet);
+
+    row.innerHTML = `
+        <div class="grid grid-cols-5 gap-4 items-center">
+            <div class="text-sm text-gray-900">${rowNumber}</div>
+            <div class="text-sm text-gray-900">${cadet.service_number || 'N/A'}</div>
+            <div class="text-sm font-medium text-gray-900">${cadet.user_name || 'Unknown'}</div>
+            <div class="text-sm text-gray-900">${dynamicContent}</div>
+            <div class="text-sm font-medium">${actionsContent}</div>
+        </div>
+    `;
+
+    return row;
+}
+
+// ============================================================
+// FUNCTION: Get Dynamic Column Content
+// ============================================================
+function getDynamicColumnContent(cadet) {
+    switch(currentFilters.infoType) {
+        case 'seniority':
+            return cadet.ic_number || 'N/A';
+            
+        case 'position':
+            return cadet.position || 'Normal Cadet';
+            
+        case 'gender':
+            return cadet.gender || 'N/A';
+            
+        case 'cgpa':
+            return cadet.current_cgpa ? parseFloat(cadet.current_cgpa).toFixed(2) : 'N/A';
+            
+        case 'swimming':
+            const statusClass = cadet.swimming_qualification === 'Pass' ? 'bg-green-100 text-green-800' :
+                              cadet.swimming_qualification === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-red-100 text-red-800';
+            return `
+                <div>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+                        ${cadet.swimming_qualification || 'N/A'}
+                    </span>
+                    <div class="text-xs text-gray-500 mt-1">
+                        ${cadet.swimming_pass_date || 'Not passed'}
+                    </div>
+                </div>
+            `;
+            
+        case 'bmi':
+            return `
+                <div>
+                    <div class="font-medium">${cadet.BMI ? parseFloat(cadet.BMI).toFixed(1) : 'N/A'}</div>
+                    <div class="text-xs text-gray-500">
+                        ${cadet.BMI_update_date || 'Not updated'}
+                    </div>
+                </div>
+            `;
+            
+        default:
+            return 'N/A';
+    }
+}
+
+// ============================================================
+// FUNCTION: Get Actions Column Content
+// ============================================================
+function getActionsColumnContent(cadet) {
+    switch(currentFilters.infoType) {
+        case 'seniority':
+            return `
+                <button class="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 suspend-cadet-btn" 
+                        data-cadet-id="${cadet.id}" 
+                        data-cadet-name="${cadet.user_name}">
+                    Suspend Cadet
+                </button>
+            `;
+            
+        case 'position':
+            const positions = {
+                'Normal': 'Normal Cadet',
+                'CO': 'CO',
+                'Thana': 'Thana',
+                'Zayn': 'Zayn',
+                'PMC': 'PMC',
+            };
+            let options = '';
+            for (const [value, label] of Object.entries(positions)) {
+                const selected = (cadet.position || 'Normal Cadet') === value ? 'selected' : '';
+                options += `<option value="${value}" ${selected}>${label}</option>`;
+            }
+            return `
+                <select class="position-select border-gray-300 rounded text-sm" 
+                        data-cadet-id="${cadet.id}"
+                        data-original-value="${cadet.position || 'Normal Cadet'}">
+                    ${options}
+                </select>
+            `;
+            
+        case 'swimming':
+            if (cadet.swimming_qualification !== 'Pass') {
+                return `
+                    <input type="checkbox" 
+                           class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                           data-cadet-id="${cadet.id}">
+                `;
+            } else {
+                return '<span class="text-green-600 font-medium">Passed</span>';
+            }
+            
+        default:
+            return `
+                <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn" 
+                        data-cadet-id="${cadet.id}">
+                    View Profile
+                </button>
+            `;
+    }
+}
+
+// Continue to next part...
+
+// ============================================================
+// FUNCTION: Validate Position Selection
+// ============================================================
+function validatePositionSelection(selectElement) {
+    const selectedPosition = selectElement.value;
+    const cadetId = selectElement.dataset.cadetId;
+    const specialPositions = ['CO', 'Thana', 'Zayn', 'PMC'];
+    
+    if (specialPositions.includes(selectedPosition)) {
+        const otherSelects = document.querySelectorAll('.position-select');
+        let conflictFound = false;
+        
+        otherSelects.forEach(otherSelect => {
+            if (otherSelect.dataset.cadetId !== cadetId && otherSelect.value === selectedPosition) {
+                conflictFound = true;
+            }
+        });
+        
+        if (conflictFound) {
+            alert(`Only one cadet per intake can hold the ${selectedPosition} position. Please change the other cadet's position first.`);
+            selectElement.value = selectElement.dataset.originalValue || 'Normal Cadet';
+            return false;
+        }
+    }
+    
+    selectElement.dataset.originalValue = selectedPosition;
+    return true;
+}
 
         // ============================================================
         // FUNCTION: Save Positions
@@ -889,17 +1095,17 @@
         function savePositions() {
             const positionSelects = document.querySelectorAll('.position-select');
             const positionCounts = { 'CO': 0, 'Thana': 0, 'Zayn': 0, 'PMC': 0 };
-            
+
             positionSelects.forEach(select => {
                 const position = select.value;
                 if (positionCounts.hasOwnProperty(position)) {
                     positionCounts[position]++;
                 }
             });
-            
+
             const conflicts = Object.entries(positionCounts).filter(([position, count]) => count > 1);
             if (conflicts.length > 0) {
-                const conflictMessage = conflicts.map(([position, count]) => 
+                const conflictMessage = conflicts.map(([position, count]) =>
                     `${position}: ${count} cadets selected`).join(', ');
                 alert(`Position conflicts detected: ${conflictMessage}. Each position can only be assigned to one cadet per intake.`);
                 return;
@@ -910,7 +1116,7 @@
                 positions[select.dataset.cadetId] = select.value;
             });
 
-            const intakeYear = document.getElementById('intakeFilter').value;
+            const intakeYear = currentFilters.intakeYear;
 
             fetch('/instructor/cadets/positions', {
                 method: 'POST',
@@ -927,7 +1133,7 @@
             .then(data => {
                 if (data.success) {
                     alert('Positions updated successfully');
-                    location.reload();
+                    loadCadets(currentPage);
                 } else {
                     alert(data.message);
                 }
@@ -937,6 +1143,666 @@
                 alert('Failed to update positions');
             });
         }
+
+
+
+// ============================================================
+// FUNCTION: Mark Selected as Passed (Swimming)
+// ============================================================
+function markSelectedAsPassed() {
+    const selectedCadets = [];
+    document.querySelectorAll('.cadet-checkbox:checked').forEach(checkbox => {
+        selectedCadets.push(checkbox.dataset.cadetId);
+    });
+
+    if (selectedCadets.length === 0) {
+        alert('Please select at least one cadet to mark as passed.');
+        return;
+    }
+
+    const intakeYear = currentFilters.intakeYear;
+
+    fetch('/instructor/cadets/swimming/mark-passed', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            cadet_ids: selectedCadets,
+            intake_year: intakeYear
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`${data.updated_count} cadet(s) marked as passed successfully`);
+            loadCadets(currentPage);
+        } else {
+            alert(data.message || 'Failed to update swimming qualification');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to update swimming qualification');
+    });
+}
+
+
+
+// ============================================================
+// EXPOSE FUNCTIONS TO GLOBAL SCOPE
+// ============================================================
+window.loadCadets = loadCadets;
+window.loadBestCadets = loadBestCadets;
+window.loadBestAcademicCadets = loadBestAcademicCadets;
+window.loadSuspendedCadets = loadSuspendedCadets;
+window.showCadetProfile = showCadetProfile;
+window.showSuspendModal = showSuspendModal;
+window.showDeleteModal = showDeleteModal;
+
+// ============================================================
+// FUNCTION: Show Cadet Profile Modal
+// ============================================================
+function showCadetProfile(cadetId) {
+    fetch(`/instructor/cadets/${cadetId}`)
+        .then(response => response.json())
+        .then(data => {
+            let profilePicHtml = '';
+            if (data.cadet.profile_pic) {
+                const profilePicUrl = `/storage/${data.cadet.profile_pic}`;
+                profilePicHtml = `<img src="${profilePicUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
+            } else {
+                const fallbackAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name)}`;
+                profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
+            }
+
+            const profileContent = `
+                <div class="flex items-center space-x-4 mb-6">
+                    <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center">
+                        ${profilePicHtml}
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-900">${data.user.name}</h4>
+                        <p class="text-sm text-gray-600">Service No: ${data.cadet.service_number || 'N/A'}</p>
+                        <p class="text-sm text-gray-600">Matric No: ${data.cadet.matric_no || 'N/A'}</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <h5 class="font-medium text-gray-900 border-b pb-2">Personal Information</h5>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Gender:</span>
+                                <span class="font-medium">${data.cadet.gender || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Phone:</span>
+                                <span class="font-medium">${data.cadet.phone_number || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Email:</span>
+                                <span class="font-medium">${data.user.email || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h5 class="font-medium text-gray-900 border-b pb-2">Military Information</h5>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Rank:</span>
+                                <span class="font-medium">${data.cadet.rank || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Position:</span>
+                                <span class="font-medium">${data.cadet.position || 'Normal Cadet'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Intake Year:</span>
+                                <span class="font-medium">${data.cadet.intake_year || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Swimming Status:</span>
+                                <span class="font-medium px-2 py-1 rounded text-xs ${
+                                    data.cadet.swimming_qualification === 'Pass' ? 'bg-green-100 text-green-800' :
+                                    data.cadet.swimming_qualification === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'
+                                }">
+                                    ${data.cadet.swimming_qualification || 'N/A'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h5 class="font-medium text-gray-900 border-b pb-2">Academic Information</h5>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Faculty:</span>
+                                <span class="font-medium">${data.cadet.faculty || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Course:</span>
+                                <span class="font-medium">${data.cadet.course || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Current CGPA:</span>
+                                <span class="font-medium">${data.cadet.current_cgpa ? parseFloat(data.cadet.current_cgpa).toFixed(2) : 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Past CGPA:</span>
+                                <span class="font-medium">${data.cadet.past_cgpa ? parseFloat(data.cadet.past_cgpa).toFixed(2) : 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h5 class="font-medium text-gray-900 border-b pb-2">Physical Information</h5>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">BMI:</span>
+                                <span class="font-medium">${data.cadet.BMI ? parseFloat(data.cadet.BMI).toFixed(1) : 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">BMI Updated:</span>
+                                <span class="font-medium text-xs">${data.cadet.BMI_update_date ? new Date(data.cadet.BMI_update_date).toLocaleDateString() : 'Not updated'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('cadetProfileContent').innerHTML = profileContent;
+            document.getElementById('cadetModal').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error fetching cadet profile:', error);
+            alert('Failed to load cadet profile');
+        });
+}
+
+// ============================================================
+// FUNCTION: Show Suspend Modal
+// ============================================================
+function showSuspendModal(cadetId, cadetName) {
+    document.getElementById('cadetNameToSuspend').textContent = cadetName;
+    document.getElementById('confirmationNameInputSuspend').value = '';
+    document.getElementById('confirmSuspend').dataset.cadetId = cadetId;
+    document.getElementById('suspendModal').classList.remove('hidden');
+}
+
+// ============================================================
+// FUNCTION: Confirm Suspension
+// ============================================================
+function confirmSuspension() {
+    const cadetId = document.getElementById('confirmSuspend').dataset.cadetId;
+    const confirmationName = document.getElementById('confirmationNameInputSuspend').value;
+    
+    fetch(`/instructor/cadets/${cadetId}/suspend`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            confirmation_name: confirmationName
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('suspendModal').classList.add('hidden');
+            alert('Cadet suspended successfully');
+            loadCadets(currentPage);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to suspend cadet');
+    });
+}
+
+// ============================================================
+// FUNCTION: Show Delete Modal
+// ============================================================
+function showDeleteModal(cadetId, cadetName) {
+    document.getElementById('cadetNameToDelete').textContent = cadetName;
+    document.getElementById('confirmDelete').dataset.cadetId = cadetId;
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+// ============================================================
+// FUNCTION: Confirm Deletion
+// ============================================================
+function confirmDeletion() {
+    const cadetId = document.getElementById('confirmDelete').dataset.cadetId;
+    
+    fetch(`/instructor/cadets/${cadetId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('deleteModal').classList.add('hidden');
+            alert('Cadet deleted permanently');
+            loadSuspendedCadets(document.getElementById('suspendedIntakeFilter').value);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to delete cadet');
+    });
+}
+
+// Continue to next part...
+
+// ============================================================
+// FUNCTION: Load Best Cadets
+// ============================================================
+function loadBestCadets(intakeYear) {
+    const loadingIndicator = document.getElementById('bestCadetLoadingIndicator');
+    const contentContainer = document.getElementById('bestCadetContent');
+    
+    loadingIndicator.classList.remove('hidden');
+    contentContainer.style.opacity = '0.5';
+
+    fetch(`/instructor/cadets/best-cadets?intake_year=${intakeYear}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        renderBestCadets(data.cadets);
+        loadingIndicator.classList.add('hidden');
+        contentContainer.style.opacity = '1';
+    })
+    .catch(error => {
+        console.error('Error loading best cadets:', error);
+        loadingIndicator.classList.add('hidden');
+        contentContainer.style.opacity = '1';
+        alert('Failed to load best cadets. Please try again.');
+    });
+}
+
+// ============================================================
+// FUNCTION: Render Best Cadets
+// ============================================================
+function renderBestCadets(cadets) {
+    const contentContainer = document.getElementById('bestCadetContent');
+    contentContainer.innerHTML = '';
+
+    if (cadets && cadets.length > 0) {
+        cadets.forEach((cadet, index) => {
+            const card = document.createElement('div');
+            card.className = 'bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200';
+            
+            const profilePic = cadet.profile_pic 
+                ? `/storage/${cadet.profile_pic}` 
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(cadet.user_name)}`;
+            
+            card.innerHTML = `
+                <div class="text-center mb-3">
+                    <div class="text-2xl font-bold text-yellow-600 mb-1">#${index + 1}</div>
+                    <img src="${profilePic}" alt="Profile" class="w-20 h-20 rounded-full mx-auto object-cover border-4 border-yellow-300">
+                </div>
+                <div class="space-y-1 text-sm">
+                    <div class="font-semibold text-gray-800 text-center">${cadet.rank || 'Cadet'}</div>
+                    <div class="font-medium text-gray-900 text-center">${cadet.user_name}</div>
+                    <div class="text-gray-600 text-center">${cadet.service_number}</div>
+                    <div class="border-t border-yellow-200 pt-2 mt-2">
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-yellow-700">${cadet.total_points || 0}</div>
+                            <div class="text-xs text-gray-600">Total Points</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <div class="text-lg">${cadet.rating || '⭐☆☆☆☆'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            contentContainer.appendChild(card);
+        });
+    } else {
+        contentContainer.innerHTML = '<div class="col-span-5 text-center text-gray-500 py-8">No cadets found for this intake</div>';
+    }
+}
+
+// ============================================================
+// FUNCTION: Load Best Academic Cadets
+// ============================================================
+function loadBestAcademicCadets(intakeYear) {
+    const loadingIndicator = document.getElementById('bestAcademicLoadingIndicator');
+    const contentContainer = document.getElementById('bestAcademicContent');
+    
+    loadingIndicator.classList.remove('hidden');
+    contentContainer.style.opacity = '0.5';
+
+    fetch(`/instructor/cadets/best-academic?intake_year=${intakeYear}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        renderBestAcademicCadets(data.cadets);
+        loadingIndicator.classList.add('hidden');
+        contentContainer.style.opacity = '1';
+    })
+    .catch(error => {
+        console.error('Error loading best academic cadets:', error);
+        loadingIndicator.classList.add('hidden');
+        contentContainer.style.opacity = '1';
+        alert('Failed to load best academic cadets. Please try again.');
+    });
+}
+
+// ============================================================
+// FUNCTION: Render Best Academic Cadets
+// ============================================================
+function renderBestAcademicCadets(cadets) {
+    const contentContainer = document.getElementById('bestAcademicContent');
+    contentContainer.innerHTML = '';
+
+    if (cadets && cadets.length > 0) {
+        cadets.forEach((cadet, index) => {
+            const card = document.createElement('div');
+            card.className = 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200';
+            
+            const profilePic = cadet.profile_pic 
+                ? `/storage/${cadet.profile_pic}` 
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(cadet.user_name)}`;
+            
+            card.innerHTML = `
+                <div class="text-center mb-3">
+                    <div class="text-2xl font-bold text-green-600 mb-1">#${index + 1}</div>
+                    <img src="${profilePic}" alt="Profile" class="w-20 h-20 rounded-full mx-auto object-cover border-4 border-green-300">
+                </div>
+                <div class="space-y-1 text-sm">
+                    <div class="font-semibold text-gray-800 text-center">${cadet.rank || 'Cadet'}</div>
+                    <div class="font-medium text-gray-900 text-center">${cadet.user_name}</div>
+                    <div class="text-gray-600 text-center">${cadet.service_number}</div>
+                    <div class="border-t border-green-200 pt-2 mt-2">
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-green-700">${parseFloat(cadet.current_cgpa || 0).toFixed(2)}</div>
+                            <div class="text-xs text-gray-600">CGPA</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <div class="text-sm font-semibold text-green-600">${cadet.academic_points || 0} pts</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            contentContainer.appendChild(card);
+        });
+    } else {
+        contentContainer.innerHTML = '<div class="col-span-5 text-center text-gray-500 py-8">No cadets found for this intake</div>';
+    }
+}
+
+// ============================================================
+// FUNCTION: Load Suspended Cadets
+// ============================================================
+function loadSuspendedCadets(intakeYear) {
+    const loadingIndicator = document.getElementById('suspendedLoadingIndicator');
+    const tableBody = document.getElementById('suspendedTableBody');
+    
+    loadingIndicator.classList.remove('hidden');
+    tableBody.style.opacity = '0.5';
+
+    fetch(`/instructor/cadets/suspended?intake_year=${intakeYear}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        renderSuspendedCadets(data.cadets);
+        loadingIndicator.classList.add('hidden');
+        tableBody.style.opacity = '1';
+    })
+    .catch(error => {
+        console.error('Error loading suspended cadets:', error);
+        loadingIndicator.classList.add('hidden');
+        tableBody.style.opacity = '1';
+        alert('Failed to load suspended cadets. Please try again.');
+    });
+}
+
+// ============================================================
+// FUNCTION: Render Suspended Cadets
+// ============================================================
+function renderSuspendedCadets(cadets) {
+    const tableBody = document.getElementById('suspendedTableBody');
+    tableBody.innerHTML = '';
+
+    if (cadets && cadets.length > 0) {
+        cadets.forEach(cadet => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50';
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cadet.service_number}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cadet.user_name}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cadet.matric_no}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                        Suspended
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="text-red-600 hover:text-red-900 delete-suspended-btn" 
+                            data-cadet-id="${cadet.id}"
+                            data-cadet-name="${cadet.user_name}">
+                        Delete Permanently
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Attach event listeners to delete buttons
+        document.querySelectorAll('.delete-suspended-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const cadetId = this.dataset.cadetId;
+                const cadetName = this.dataset.cadetName;
+                showDeleteModal(cadetId, cadetName);
+            });
+        });
+    } else {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500">
+                    No suspended cadets found for this intake
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Continue to next part...
+
+// ============================================================
+// FUNCTION: Render Pagination
+// ============================================================
+function renderPagination(pagination) {
+    const paginationContainer = document.getElementById('paginationContainer');
+    
+    if (!pagination || pagination.lastPage <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    let html = '<nav class="flex items-center justify-between">';
+    html += '<div class="flex-1 flex justify-between sm:hidden">';
+    
+    // Previous button (mobile)
+    if (pagination.currentPage > 1) {
+        html += `<button onclick="loadCadets(${pagination.currentPage - 1})" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Previous</button>`;
+    }
+    
+    // Next button (mobile)
+    if (pagination.currentPage < pagination.lastPage) {
+        html += `<button onclick="loadCadets(${pagination.currentPage + 1})" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next</button>`;
+    }
+    
+    html += '</div>';
+    html += '<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">';
+    html += `<div><p class="text-sm text-gray-700">Showing <span class="font-medium">${pagination.from}</span> to <span class="font-medium">${pagination.to}</span> of <span class="font-medium">${pagination.total}</span> results</p></div>`;
+    html += '<div><nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">';
+    
+    // Previous button (desktop)
+    if (pagination.currentPage > 1) {
+        html += `<button onclick="loadCadets(${pagination.currentPage - 1})" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">Previous</button>`;
+    }
+    
+    // Page numbers
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(pagination.lastPage, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage < maxVisiblePages - 1) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const activeClass = i === pagination.currentPage ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50';
+        html += `<button onclick="loadCadets(${i})" class="relative inline-flex items-center px-4 py-2 border text-sm font-medium ${activeClass}">${i}</button>`;
+    }
+    
+    // Next button (desktop)
+    if (pagination.currentPage < pagination.lastPage) {
+        html += `<button onclick="loadCadets(${pagination.currentPage + 1})" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">Next</button>`;
+    }
+    
+    html += '</nav></div></div></nav>';
+    
+    paginationContainer.innerHTML = html;
+}
+
+// ============================================================
+// FUNCTION: Attach Event Listeners to Cadet Rows
+// ============================================================
+function attachCadetRowEventListeners() {
+    // Cadet row click (view profile)
+    document.querySelectorAll('.cadet-row').forEach(row => {
+        row.addEventListener('click', function(e) {
+            if (e.target.classList.contains('suspend-cadet-btn') || 
+                e.target.classList.contains('position-select') ||
+                e.target.classList.contains('cadet-checkbox') ||
+                e.target.type === 'checkbox' ||
+                e.target.tagName === 'SELECT' ||
+                e.target.tagName === 'BUTTON') {
+                return;
+            }
+            
+            const cadetId = this.dataset.cadetId;
+            showCadetProfile(cadetId);
+        });
+    });
+
+    // Suspend cadet buttons
+    document.querySelectorAll('.suspend-cadet-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cadetId = this.dataset.cadetId;
+            const cadetName = this.dataset.cadetName;
+            showSuspendModal(cadetId, cadetName);
+        });
+    });
+
+    // Position selects
+    document.querySelectorAll('.position-select').forEach(select => {
+        select.addEventListener('change', function(e) {
+            e.stopPropagation();
+            validatePositionSelection(this);
+        });
+    });
+
+    // Swimming checkboxes
+    document.querySelectorAll('.cadet-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+            e.stopPropagation();
+            updateSelectAllCheckbox();
+            updateMarkAsPassedButton();
+        });
+    });
+
+    // View profile buttons
+    document.querySelectorAll('.view-profile-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cadetId = this.dataset.cadetId;
+            showCadetProfile(cadetId);
+        });
+    });
+}
+
+// ============================================================
+// FUNCTION: Handle Select All Checkbox
+// ============================================================
+function handleSelectAll() {
+    const cadetCheckboxes = document.querySelectorAll('.cadet-checkbox');
+    const selectAllCheckbox = document.getElementById('selectAll');
+    
+    cadetCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+    });
+    
+    updateMarkAsPassedButton();
+}
+
+// ============================================================
+// FUNCTION: Update Select All Checkbox State
+// ============================================================
+function updateSelectAllCheckbox() {
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (!selectAllCheckbox) return;
+    
+    const cadetCheckboxes = document.querySelectorAll('.cadet-checkbox');
+    const checkedBoxes = document.querySelectorAll('.cadet-checkbox:checked');
+    
+    if (cadetCheckboxes.length === 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+        return;
+    }
+    
+    if (checkedBoxes.length === cadetCheckboxes.length) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+    } else if (checkedBoxes.length > 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = true;
+    } else {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+    }
+}
+
+// ============================================================
+// FUNCTION: Update Mark As Passed Button State
+// ============================================================
+function updateMarkAsPassedButton() {
+    const markAsPassedBtn = document.getElementById('markAsPassedBtn');
+    if (!markAsPassedBtn) return;
+
+    const checkedBoxes = document.querySelectorAll('.cadet-checkbox:checked');
+    markAsPassedBtn.disabled = checkedBoxes.length === 0;
+}
     </script>
     @endpush
 </x-app-layout>
