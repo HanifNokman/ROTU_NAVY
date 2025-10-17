@@ -175,8 +175,17 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     
     Route::get('/cadet_management', [CadetManagementController::class, 'index'])->name('cadet_management');
     Route::get('/cadets/{cadet}', [CadetManagementController::class, 'show'])->name('cadets.show');
+
+    // Position Management
     Route::post('/cadets/positions', [CadetManagementController::class, 'updatePositions'])->name('cadets.positions.update');
+
+    // Swimming Qualification
     Route::post('/cadets/swimming/mark-passed', [CadetManagementController::class, 'markSwimmingPassed'])->name('cadets.swimming.mark-passed');
+
+    // Suspend Cadet (NEW)
+    Route::post('/cadets/{cadet}/suspend', [CadetManagementController::class, 'suspend'])->name('cadets.suspend');
+
+    // Delete Cadet (Permanent - for suspended cadets only)
     Route::delete('/cadets/{cadet}', [CadetManagementController::class, 'destroy'])->name('cadets.destroy');
 
     // ------------------------------------------------------------------------
