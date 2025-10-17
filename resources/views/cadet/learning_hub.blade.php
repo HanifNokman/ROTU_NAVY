@@ -28,22 +28,32 @@
             <!-- Learning Hub Content -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                </svg>
-                                Learning Hub
-                            </h3>
-                            <p class="text-gray-600">Access educational materials and resources</p>
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                    Learning Hub
+                                </h3>
+                                <p class="text-gray-600">Access educational materials and resources</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="openMyScoresModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    View My Scores
+                                </button>
+                                <button onclick="openQuizSelectionModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Test Your Knowledge
+                                </button>
+                            </div>
                         </div>
-                        <button onclick="openQuizSelectionModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Test Your Knowledge
-                        </button>
                     </div>
                 </div>
                 <div class="p-6">
@@ -229,7 +239,7 @@
         </div>
     </div>
 
-<!-- Quiz Modal - Fixed Visibility -->
+<!-- Quiz Modal --->
 <div id="quizModal" 
      class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" 
      x-data="quizData()" 
@@ -421,7 +431,7 @@
     </div>
 </div>
 
-    <!-- Enhanced Quiz Selection Modal -->
+    <!-- Quiz Selection Modal -->
 <div id="quizSelectionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full transform transition-all">
@@ -460,7 +470,7 @@
                     </label>
                     <select id="quizSelectionCategory" 
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
-                        <option value="">All Topics</option>
+                        <option value="">Practice Mode (All Topics)</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
@@ -515,6 +525,176 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Start Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- My Scores Modal -->
+<div id="myScoresModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+            <!-- Header -->
+            <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl sticky top-0 z-10">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-white">My Quiz Performance</h2>
+                            <p class="text-purple-100 text-sm">Top scores by category</p>
+                        </div>
+                    </div>
+                    <button onclick="closeMyScoresModal()" 
+                            class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+                @if($topScores->isEmpty())
+                    <div class="text-center py-12">
+                        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No Quiz Scores Yet</h3>
+                        <p class="text-gray-500 mb-4">Start taking quizzes to see your performance here!</p>
+                        <button onclick="closeMyScoresModal(); openQuizSelectionModal();" 
+                                class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition duration-200">
+                            Take Your First Quiz
+                        </button>
+                    </div>
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach($topScores as $score)
+                            <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-5 border-2 border-gray-200 hover:border-purple-400 hover:shadow-lg transition-all duration-200">
+                                <!-- Category Header -->
+                                <div class="flex justify-between items-start mb-3">
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-gray-800 text-lg mb-1">
+                                            {{ $score->category->name ?? 'General Quiz' }}
+                                        </h4>
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold
+                                                @if($score->difficulty === 'easy') bg-green-100 text-green-800
+                                                @elseif($score->difficulty === 'medium') bg-yellow-100 text-yellow-800
+                                                @else bg-red-100 text-red-800
+                                                @endif">
+                                                @if($score->difficulty === 'easy') 🟢
+                                                @elseif($score->difficulty === 'medium') 🟡
+                                                @else 🔴
+                                                @endif
+                                                {{ ucfirst($score->difficulty) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Score Circle -->
+                                    <div class="flex flex-col items-center">
+                                        <div class="relative w-20 h-20">
+                                            <svg class="w-20 h-20 transform -rotate-90">
+                                                <circle cx="40" cy="40" r="32" stroke="#e5e7eb" stroke-width="6" fill="none"/>
+                                                <circle cx="40" cy="40" r="32" 
+                                                        stroke="{{ $score->score_percentage >= 80 ? '#10b981' : ($score->score_percentage >= 60 ? '#f59e0b' : '#ef4444') }}" 
+                                                        stroke-width="6" 
+                                                        fill="none"
+                                                        stroke-dasharray="{{ 2 * 3.14159 * 32 }}"
+                                                        stroke-dashoffset="{{ 2 * 3.14159 * 32 * (1 - $score->score_percentage / 100) }}"
+                                                        stroke-linecap="round"/>
+                                            </svg>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-xl font-bold 
+                                                    @if($score->score_percentage >= 80) text-green-600
+                                                    @elseif($score->score_percentage >= 60) text-yellow-600
+                                                    @else text-red-600
+                                                    @endif">
+                                                    {{ number_format($score->score_percentage, 0) }}%
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats -->
+                                <div class="grid grid-cols-2 gap-3 mb-3">
+                                    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                        <div class="text-2xl font-bold text-blue-600">{{ $score->correct_answers }}</div>
+                                        <div class="text-xs text-gray-600">Correct</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                        <div class="text-2xl font-bold text-gray-600">{{ $score->total_questions }}</div>
+                                        <div class="text-xs text-gray-600">Total</div>
+                                    </div>
+                                </div>
+
+                                <!-- Date -->
+                                <div class="flex items-center text-xs text-gray-500 pt-2 border-t border-gray-300">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    Completed: {{ $score->completed_at->format('M d, Y') }}
+                                </div>
+
+                                <!-- Performance Badge -->
+                                @if($score->score_percentage >= 80)
+                                    <div class="mt-2 text-center">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                            ⭐ Excellent Performance
+                                        </span>
+                                    </div>
+                                @elseif($score->score_percentage >= 60)
+                                    <div class="mt-2 text-center">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                            ✓ Passed
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Summary Stats -->
+                    <div class="mt-6 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4 border border-purple-200">
+                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Overall Statistics
+                        </h4>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600">{{ $topScores->count() }}</div>
+                                <div class="text-sm text-gray-600">Categories Completed</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600">{{ number_format($topScores->avg('score_percentage'), 1) }}%</div>
+                                <div class="text-sm text-gray-600">Average Score</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600">{{ $topScores->where('score_percentage', '>=', 80)->count() }}</div>
+                                <div class="text-sm text-gray-600">Excellent Scores</div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Action Button -->
+                <div class="mt-6 text-center">
+                    <button onclick="closeMyScoresModal(); openQuizSelectionModal();" 
+                            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition duration-200 flex items-center justify-center gap-2 mx-auto">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Take Another Quiz
                     </button>
                 </div>
             </div>
@@ -1721,6 +1901,7 @@
                 closeQuizSelectionModal();
                 QuizManager.closeQuiz();
                 closeInstructorModal();
+                closeMyScoresModal(); // ADD THIS LINE
             }
         });
 
@@ -1729,6 +1910,7 @@
             const quizModal = document.getElementById('quizModal');
             const selectionModal = document.getElementById('quizSelectionModal');
             const instructorModal = document.getElementById('instructorModal');
+            const scoresModal = document.getElementById('myScoresModal'); // ADD THIS LINE
             
             if (e.target === quizModal) {
                 QuizManager.closeQuiz();
@@ -1739,6 +1921,23 @@
             if (e.target === instructorModal) {
                 closeInstructorModal();
             }
+            if (e.target === scoresModal) { // ADD THIS BLOCK
+                closeMyScoresModal();
+            }
         });
-    </script>
+
+        function openMyScoresModal() {
+            const modal = document.getElementById('myScoresModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeMyScoresModal() {
+            const modal = document.getElementById('myScoresModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+            </script>
 </x-app-layout>

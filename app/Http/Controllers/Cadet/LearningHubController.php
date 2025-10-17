@@ -37,6 +37,21 @@ class LearningHubController extends Controller
                 ->get();
         }
 
+        $cadet = auth()->user()->cadet;
+        $topScores = [];
+
+        if ($cadet) {
+            $topScores = CadetQuizScore::where('cadet_id', $cadet->id)
+                ->with('category')
+                ->get()
+                ->groupBy('learning_material_category_id')
+                ->map(function ($scores) {
+                    return $scores->sortByDesc('score_percentage')->first();
+                })
+                ->sortByDesc('score_percentage')
+                ->values();
+        }
+
         $instructorQuery = Instructor::with('user')
             ->whereHas('user', function ($query) {
                 $query->where('status', 'accepted');
@@ -77,7 +92,8 @@ class LearningHubController extends Controller
             'materials' => $materials,
             'instructors' => $instructors,
             'selectedCategory' => $request->get('category'),
-            'selectedInstructorStatus' => $request->get('instructor_status')
+            'selectedInstructorStatus' => $request->get('instructor_status'),
+            'topScores' => $topScores // ADD THIS LINE
         ]);
     }
 
@@ -927,74 +943,67 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
         $difficulty = $quizSession['difficulty'];
 
         // Get the cadet_id from the authenticated user
-        $cadet = auth()->user()->cadet;
-        
-        if (!$cadet) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cadet profile not found.'
-            ], 404);
-        }
-
-        $cadetId = $cadet->id;
-
-        // Calculate points based on difficulty
-        $newPoints = $this->calculatePoints($difficulty, $scorePercentage);
-
-        // Check if a score entry already exists for this cadet and category (regardless of difficulty)
-        $existingScore = CadetQuizScore::where('cadet_id', $cadetId)
-            ->byCategory($categoryId)
-            ->first(); // Removed ->byDifficulty($difficulty)
-
         $wasUpdated = false;
+        $newPoints = 0;
 
-        if ($existingScore) {
-            // Determine if we should update based on:
-            // 1. Higher difficulty level, OR
-            // 2. Same difficulty but higher score percentage
+        // Only store score if category is selected (not null)
+        if ($categoryId !== null) {
+            $cadet = auth()->user()->cadet;
             
-            $difficultyWeight = ['easy' => 1, 'medium' => 2, 'hard' => 3];
-            $existingDifficultyWeight = $difficultyWeight[$existingScore->difficulty] ?? 0;
-            $newDifficultyWeight = $difficultyWeight[$difficulty] ?? 0;
-            
-            $shouldUpdate = false;
-            
-            if ($newDifficultyWeight > $existingDifficultyWeight) {
-                // New attempt is at higher difficulty - always update
-                $shouldUpdate = true;
-            } elseif ($newDifficultyWeight === $existingDifficultyWeight && $scorePercentage > $existingScore->score_percentage) {
-                // Same difficulty but better score - update
-                $shouldUpdate = true;
+            if (!$cadet) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cadet profile not found.'
+                ], 404);
             }
-            
-            if ($shouldUpdate) {
-                $existingScore->update([
-                    'difficulty' => $difficulty,
+
+            $cadetId = $cadet->id;
+            $newPoints = $this->calculatePoints($difficulty, $scorePercentage);
+
+            $existingScore = CadetQuizScore::where('cadet_id', $cadetId)
+                ->byCategory($categoryId)
+                ->first();
+
+            if ($existingScore) {
+                $difficultyWeight = ['easy' => 1, 'medium' => 2, 'hard' => 3];
+                $existingDifficultyWeight = $difficultyWeight[$existingScore->difficulty] ?? 0;
+                $newDifficultyWeight = $difficultyWeight[$difficulty] ?? 0;
+                
+                $shouldUpdate = false;
+                
+                if ($newDifficultyWeight > $existingDifficultyWeight) {
+                    $shouldUpdate = true;
+                } elseif ($newDifficultyWeight === $existingDifficultyWeight && $scorePercentage > $existingScore->score_percentage) {
+                    $shouldUpdate = true;
+                }
+                
+                if ($shouldUpdate) {
+                    $existingScore->update([
+                        'difficulty' => $difficulty,
+                        'score_percentage' => $scorePercentage,
+                        'total_questions' => $totalQuestions,
+                        'correct_answers' => $correctAnswers,
+                        'completed_at' => now()
+                    ]);
+                    $wasUpdated = true;
+                }
+            } else {
+                CadetQuizScore::create([
+                    'cadet_id' => $cadetId,
+                    'learning_material_category_id' => $categoryId,
                     'score_percentage' => $scorePercentage,
+                    'difficulty' => $difficulty,
                     'total_questions' => $totalQuestions,
                     'correct_answers' => $correctAnswers,
                     'completed_at' => now()
                 ]);
                 $wasUpdated = true;
             }
-        } else {
-            // Create new score entry
-            CadetQuizScore::create([
-                'cadet_id' => $cadetId,
-                'learning_material_category_id' => $categoryId,
-                'score_percentage' => $scorePercentage,
-                'difficulty' => $difficulty,
-                'total_questions' => $totalQuestions,
-                'correct_answers' => $correctAnswers,
-                'completed_at' => now()
-            ]);
-            $wasUpdated = true;
-        }
 
-        // Update the cadet's performance rating quiz points only if score was updated
-        if ($wasUpdated) {
-            $performanceRating = PerformanceRating::getOrCreateForCadet($cadetId);
-            $performanceRating->updateQuizPoints();
+            if ($wasUpdated) {
+                $performanceRating = PerformanceRating::getOrCreateForCadet($cadetId);
+                $performanceRating->updateQuizPoints();
+            }
         }
 
         // Store results in cache for viewing
@@ -1008,8 +1017,9 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
             'difficulty' => $difficulty,
             'points_awarded' => $newPoints,
             'was_updated' => $wasUpdated,
-            'completed_at' => now()
-        ], now()->addHours(24));
+            'completed_at' => now(),
+            'is_practice' => $categoryId === null // ADD THIS LINE
+        ], now()->addHours(value: 24));
 
         Cache::forget($sessionKey);
 
@@ -1020,7 +1030,8 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
             'total_questions' => $totalQuestions,
             'correct_answers' => $correctAnswers,
             'points_awarded' => $newPoints,
-            'was_updated' => $wasUpdated
+            'was_updated' => $wasUpdated,
+            'is_practice' => $categoryId === null // ADD THIS LINE
         ]);
     }
 
