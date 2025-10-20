@@ -674,7 +674,7 @@
             {{-- ================================================================ --}}
             {{-- ACHIEVEMENT BADGES SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="bg-white overflow-visible shadow-sm sm:rounded-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                 <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
                     <div class="flex items-center">
                         <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -684,7 +684,7 @@
                             Achievement Badges
                         </h1>
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">Track your achievements and unlock new badges</p>
+                    <p class="mt-2 text-sm text-gray-500">Hover over badges to see details. Click unlocked badges to display/hide them on your profile.</p>
                 </div>
 
                 <div class="p-6 lg:p-8">
@@ -749,31 +749,59 @@
                                 <span class="ml-2 px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">{{ $totalUnlocked }}</span>
                             </h3>
                             
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                                 @foreach($badgesData['unlocked'] as $unlockedBadge)
-                                    <div class="bg-gradient-to-br from-white to-gray-50 border-2 {{ $unlockedBadge['is_displayed'] ? 'border-green-400 shadow-lg' : 'border-gray-200' }} rounded-xl p-4 text-center hover:shadow-xl transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
-                                         onclick="toggleBadgeDisplay({{ $unlockedBadge['badge']->id }})">
-                                        <div class="flex justify-center mb-3">
-                                            <div class="relative">
+                                    <div class="badge-card group relative bg-gradient-to-br from-white to-gray-50 border-2 {{ $unlockedBadge['is_displayed'] ? 'border-green-400 shadow-lg' : 'border-gray-200' }} rounded-xl p-4 text-center hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2"
+                                        onclick="toggleBadgeDisplay({{ $unlockedBadge['badge']->id }})">
+
+                                        {{-- Badge Icon/Image --}}
+                                        <div class="flex justify-center mb-2">
+                                            <div class="relative w-28 h-28 flex items-center justify-center">
                                                 @if($unlockedBadge['badge']->hasImageIcon())
-                                                    <img src="{{ $unlockedBadge['badge']->icon_url }}" alt="{{ $unlockedBadge['badge']->name }}" class="w-12 h-12 object-contain {{ $unlockedBadge['is_displayed'] ? '' : 'opacity-50' }}">
+                                                    <img src="{{ $unlockedBadge['badge']->icon_url }}"
+                                                        alt="{{ $unlockedBadge['badge']->name }}"
+                                                        class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110">
                                                 @else
-                                                    <i class="fas fa-medal text-4xl {{ $unlockedBadge['is_displayed'] ? 'text-yellow-500' : 'text-gray-600' }}"></i>
-                                                @endif
-                                                @if($unlockedBadge['is_displayed'])
-                                                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                                                    <i class="{{ $unlockedBadge['badge']->icon }} text-6xl text-yellow-500 transition-transform duration-300 group-hover:scale-110"></i>
                                                 @endif
                                             </div>
                                         </div>
-                                        <h4 class="text-sm font-semibold text-gray-900 mb-1">{{ $unlockedBadge['badge']->name }}</h4>
-                                        <p class="text-xs text-gray-600 mb-2 line-clamp-2">{{ $unlockedBadge['badge']->description }}</p>
-                                        <div class="text-xs text-gray-500 mb-2">
-                                            <i class="fas fa-calendar-check mr-1"></i>{{ $unlockedBadge['unlocked_at']->format('M d, Y') }}
+
+                                        {{-- Badge Name --}}
+                                        <h4 class="text-sm font-bold text-gray-900 mb-0.5 px-1">{{ $unlockedBadge['badge']->name }}</h4>
+
+                                        {{-- Rarity Level --}}
+                                        <div class="mb-1">
+                                            <span class="text-xs font-medium" style="color: {{ $unlockedBadge['badge']->rarity_color }};">
+                                                {{ $unlockedBadge['badge']->rarity_label }}
+                                            </span>
                                         </div>
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $unlockedBadge['is_displayed'] ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
-                                            <i class="fas fa-{{ $unlockedBadge['is_displayed'] ? 'eye' : 'eye-slash' }} mr-1 text-xs"></i>
+
+                                        {{-- Display Status --}}
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $unlockedBadge['is_displayed'] ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
+                                            <i class="fas fa-{{ $unlockedBadge['is_displayed'] ? 'eye' : 'eye-slash' }} mr-1"></i>
                                             {{ $unlockedBadge['is_displayed'] ? 'Displayed' : 'Hidden' }}
                                         </span>
+                                        
+                                        {{-- Hover Tooltip --}}
+                                        <div class="badge-tooltip absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
+                                            <div class="font-semibold mb-2 text-sm">{{ $unlockedBadge['badge']->name }}</div>
+                                            <div class="mb-2 text-gray-300">{{ $unlockedBadge['badge']->description }}</div>
+                                            <div class="pt-2 border-t border-gray-700 space-y-1">
+                                                <div class="flex items-center text-gray-400">
+                                                    <i class="fas fa-unlock-alt mr-2"></i>
+                                                    <span class="text-xs">{{ $unlockedBadge['badge']->unlock_criteria }}</span>
+                                                </div>
+                                                <div class="flex items-center text-green-400">
+                                                    <i class="fas fa-calendar-check mr-2"></i>
+                                                    <span class="text-xs">Unlocked: {{ $unlockedBadge['unlocked_at']->format('M d, Y') }}</span>
+                                                </div>
+                                            </div>
+                                            {{-- Arrow --}}
+                                            <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                                <div class="border-8 border-transparent border-t-gray-900"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -790,34 +818,78 @@
                         </h3>
                         
                         @foreach($badgesByCategory as $category => $badges)
-                            @if(count($badges['unlockable']) > 0)
+                            @if(count($badges['unlockable']) > 0 || count($badges['unlocked']) > 0)
                                 <div class="mb-8 last:mb-0">
                                     <h4 class="text-md font-semibold text-gray-800 mb-3 flex items-center">
                                         <i class="fas {{ $categoryIcons[$category] }} text-gray-600 mr-2"></i>
                                         {{ $categoryNames[$category] }}
-                                        <span class="ml-2 text-sm font-normal text-gray-500">({{ count($badges['unlocked']) }}/{{ count($badges['unlocked']) + count($badges['unlockable']) }} unlocked)</span>
+                                        <span class="ml-2 text-sm font-normal text-gray-500">
+                                            ({{ count($badges['unlocked']) }}/{{ count($badges['unlocked']) + count($badges['unlockable']) }} unlocked)
+                                        </span>
                                     </h4>
                                     
-                                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                                        @foreach($badges['unlockable'] as $badge)
-                                            <div class="bg-gray-50 border-2 border-gray-300 border-dashed rounded-xl p-4 text-center opacity-60 hover:opacity-90 transition-all duration-200"
-                                                 title="{{ $badge->unlock_criteria }}">
-                                                <div class="flex justify-center mb-3">
-                                                    <div class="relative">
-                                                        <i class="{{ $badge->icon }} text-4xl text-gray-300"></i>
-                                                        <div class="absolute inset-0 flex items-center justify-center">
-                                                            <i class="fas fa-lock text-gray-400 text-sm"></i>
+                                    @if(count($badges['unlockable']) > 0)
+                                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                                            @foreach($badges['unlockable'] as $badge)
+                                                <div class="badge-card group relative bg-gray-50 border-2 border-gray-300 border-dashed rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300">
+
+                                                    {{-- Greyed Out Badge Icon/Image --}}
+                                                    <div class="flex justify-center mb-2">
+                                                        <div class="relative w-28 h-28 flex items-center justify-center filter grayscale opacity-40 group-hover:opacity-60 transition-opacity duration-300">
+                                                            @if($badge->hasImageIcon())
+                                                                <img src="{{ $badge->icon_url }}"
+                                                                    alt="{{ $badge->name }}"
+                                                                    class="w-full h-full object-contain">
+                                                            @else
+                                                                <i class="{{ $badge->icon }} text-6xl text-gray-400"></i>
+                                                            @endif
+
+                                                            {{-- Lock Icon Overlay --}}
+                                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                                <div class="w-8 h-8 bg-gray-700 bg-opacity-80 rounded-full flex items-center justify-center">
+                                                                    <i class="fas fa-lock text-white text-sm"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Badge Name --}}
+                                                    <h4 class="text-sm font-bold text-gray-500 mb-0.5 px-1">{{ $badge->name }}</h4>
+
+                                                    {{-- Rarity Level --}}
+                                                    <div class="mb-1">
+                                                        <span class="text-xs font-medium" style="color: {{ $badge->rarity_color }};">
+                                                            {{ $badge->rarity_label }}
+                                                        </span>
+                                                    </div>
+
+                                                    {{-- Locked Status --}}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-600">
+                                                        <i class="fas fa-lock mr-1"></i>
+                                                        Locked
+                                                    </span>
+                                                    
+                                                    {{-- Hover Tooltip --}}
+                                                    <div class="badge-tooltip absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
+                                                        <div class="font-semibold mb-2 text-sm">{{ $badge->name }}</div>
+                                                        <div class="mb-2 text-gray-300">{{ $badge->description }}</div>
+                                                        <div class="pt-2 border-t border-gray-700">
+                                                            <div class="flex items-start text-yellow-400">
+                                                                <i class="fas fa-trophy mr-2 mt-0.5"></i>
+                                                                <span class="text-xs">How to unlock: {{ $badge->unlock_criteria }}</span>
+                                                            </div>
+                                                        </div>
+                                                        {{-- Arrow --}}
+                                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                                            <div class="border-8 border-transparent border-t-gray-900"></div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <h4 class="text-sm font-semibold text-gray-600 mb-1">{{ $badge->name }}</h4>
-                                                <p class="text-xs text-gray-500 mb-2 line-clamp-2">{{ $badge->description }}</p>
-                                                <div class="text-xs text-gray-400 bg-gray-100 rounded-lg p-2 mt-2">
-                                                    <i class="fas fa-info-circle mr-1"></i>{{ $badge->unlock_criteria }}
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-gray-500 italic">All badges in this category have been unlocked! 🎉</p>
+                                    @endif
                                 </div>
                             @endif
                         @endforeach
@@ -828,28 +900,51 @@
     </div>
 
     {{-- ================================================================ --}}
-    {{-- CUSTOM STYLES --}}
+    {{-- CUSTOM STYLES FOR BADGES --}}
     {{-- ================================================================ --}}
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+        .badge-card {
+            position: relative;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
+        
+        .badge-tooltip {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e0;
-            border-radius: 10px;
+        
+        /* Ensure tooltip stays within viewport */
+        .badge-tooltip {
+            max-width: calc(100vw - 2rem);
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0;
+
+        /* Animation for badge hover */
+        .badge-card:hover {
+            z-index: 10;
         }
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+
+        /* Prevent tooltip from being cut off - adjust positioning based on position in grid */
+        .badge-card:nth-child(6n+1):nth-last-child(-n+6) .badge-tooltip,
+        .badge-card:nth-child(6n+2):nth-last-child(-n+5) .badge-tooltip,
+        .badge-card:nth-child(6n+3):nth-last-child(-n+4) .badge-tooltip,
+        .badge-card:nth-child(6n+4):nth-last-child(-n+3) .badge-tooltip,
+        .badge-card:nth-child(6n+5):nth-last-child(-n+2) .badge-tooltip,
+        .badge-card:nth-child(6n+6):nth-last-child(-n+1) .badge-tooltip {
+            bottom: auto;
+            top: 100%;
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+
+        .badge-card:nth-child(6n+1):nth-last-child(-n+6) .badge-tooltip > div:last-child,
+        .badge-card:nth-child(6n+2):nth-last-child(-n+5) .badge-tooltip > div:last-child,
+        .badge-card:nth-child(6n+3):nth-last-child(-n+4) .badge-tooltip > div:last-child,
+        .badge-card:nth-child(6n+4):nth-last-child(-n+3) .badge-tooltip > div:last-child,
+        .badge-card:nth-child(6n+5):nth-last-child(-n+2) .badge-tooltip > div:last-child,
+        .badge-card:nth-child(6n+6):nth-last-child(-n+1) .badge-tooltip > div:last-child {
+            top: auto;
+            bottom: 100%;
+            transform: translateX(-50%) rotate(180deg);
+            margin-top: 0;
+            margin-bottom: -1rem;
         }
     </style>
 

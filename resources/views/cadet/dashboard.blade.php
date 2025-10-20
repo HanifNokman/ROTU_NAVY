@@ -866,7 +866,7 @@
                                 <h5 class="font-semibold text-gray-900">${badge.name}</h5>
                                 <p class="text-xs text-gray-600 mt-1">${badge.description}</p>
                                 <div class="flex items-center justify-between mt-2">
-                                    <span class="text-xs ${badge.rarity_color} font-medium">${badge.rarity_label}</span>
+                                    <span class="text-xs font-medium" style="color: ${badge.rarity_color};">${badge.rarity_label}</span>
                                     <span class="text-xs text-gray-500">Unlocked: ${badge.unlocked_at}</span>
                                 </div>
                             </div>
