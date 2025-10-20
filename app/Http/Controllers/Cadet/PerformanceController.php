@@ -53,21 +53,13 @@ class PerformanceController extends Controller
             ->select('performance_ratings.cadet_id', DB::raw('SUM(total_points) as total_points'))
             ->groupBy('performance_ratings.cadet_id')
             ->orderBy('total_points', 'desc')
-            ->limit(10)
             ->get()
             ->map(function ($rating) {
                 return [
                     'cadet' => $rating->cadet,
                     'score' => $rating->total_points,
-                    'rank' => 0 // Will be set below
                 ];
             });
-
-        // Set ranks
-        $rank = 1;
-        foreach ($leaderboards['overall'] as $entry) {
-            $entry['rank'] = $rank++;
-        }
 
         // Attendance Leaderboard
         $leaderboards['attendance'] = PerformanceRating::with('cadet.user')
@@ -76,20 +68,13 @@ class PerformanceController extends Controller
             ->select('performance_ratings.cadet_id', DB::raw('SUM(attendance_points) as attendance_points'))
             ->groupBy('performance_ratings.cadet_id')
             ->orderBy('attendance_points', 'desc')
-            ->limit(10)
             ->get()
             ->map(function ($rating) {
                 return [
                     'cadet' => $rating->cadet,
                     'score' => $rating->attendance_points,
-                    'rank' => 0
                 ];
             });
-
-        $rank = 1;
-        foreach ($leaderboards['attendance'] as $entry) {
-            $entry['rank'] = $rank++;
-        }
 
         // Quiz Overall Leaderboard
         $leaderboards['quiz_overall'] = CadetQuizScore::with('cadet.user')
@@ -98,20 +83,13 @@ class PerformanceController extends Controller
             ->select('cadet_quiz_scores.cadet_id', DB::raw('AVG(score_percentage) as avg_score'))
             ->groupBy('cadet_quiz_scores.cadet_id')
             ->orderBy('avg_score', 'desc')
-            ->limit(10)
             ->get()
             ->map(function ($score) {
                 return [
                     'cadet' => $score->cadet,
                     'score' => round($score->avg_score, 1),
-                    'rank' => 0
                 ];
             });
-
-        $rank = 1;
-        foreach ($leaderboards['quiz_overall'] as $entry) {
-            $entry['rank'] = $rank++;
-        }
 
         // Quiz by Category Leaderboard
         $categories = LearningMaterialCategory::all();
@@ -124,20 +102,13 @@ class PerformanceController extends Controller
                 ->select('cadet_quiz_scores.cadet_id', DB::raw('MAX(score_percentage) as max_score'))
                 ->groupBy('cadet_quiz_scores.cadet_id')
                 ->orderBy('max_score', 'desc')
-                ->limit(5)
                 ->get()
                 ->map(function ($score) {
                     return [
                         'cadet' => $score->cadet,
                         'score' => $score->max_score,
-                        'rank' => 0
                     ];
                 });
-
-            $rank = 1;
-            foreach ($categoryLeaderboard as $entry) {
-                $entry['rank'] = $rank++;
-            }
 
             $leaderboards['quiz_categories'][$category->name] = $categoryLeaderboard;
         }
@@ -148,20 +119,13 @@ class PerformanceController extends Controller
             ->where('intake_year', $cadetIntakeYear)
             ->whereNotNull('daily_duty_count')
             ->orderBy('daily_duty_count', 'desc')
-            ->limit(10)
             ->get()
             ->map(function ($cadet) {
                 return [
                     'cadet' => $cadet,
                     'score' => $cadet->daily_duty_count,
-                    'rank' => 0
                 ];
             });
-
-        $rank = 1;
-        foreach ($leaderboards['duty'] as $entry) {
-            $entry['rank'] = $rank++;
-        }
 
         // Learning Progress Leaderboard
         $leaderboards['learning'] = Cadet::with('user', 'categoryProgress')
@@ -171,20 +135,13 @@ class PerformanceController extends Controller
                 $query->select(DB::raw('AVG(progress_percentage)'));
             }])
             ->orderBy('avg_progress', 'desc')
-            ->limit(10)
             ->get()
             ->map(function ($cadet) {
                 return [
                     'cadet' => $cadet,
                     'score' => round($cadet->avg_progress ?? 0, 1),
-                    'rank' => 0
                 ];
             });
-
-        $rank = 1;
-        foreach ($leaderboards['learning'] as $entry) {
-            $entry['rank'] = $rank++;
-        }
 
         return $leaderboards;
     }
