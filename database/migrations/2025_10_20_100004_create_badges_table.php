@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('badges', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('icon')->nullable(); // Icon class or path
+            $table->string('icon_path')->nullable(); // Icon class or path
             $table->text('description');
             $table->text('unlock_criteria');
             $table->string('category'); // attendance, quiz, learning, duty, academic, overall
