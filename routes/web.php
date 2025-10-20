@@ -326,15 +326,6 @@ Route::middleware(['auth', 'verified'])->prefix('cadet')->name('cadet.')->group(
     Route::get('/allowance/ajax', [\App\Http\Controllers\Cadet\AllowanceController::class, 'ajax'])->name('allowance.ajax');
 
     // ------------------------------------------------------------------------
-    // Learning Hub
-    // ------------------------------------------------------------------------
-    
-    Route::get('/learning_hub', [CadetLearningHubController::class, 'index'])->name('learning_hub');
-    Route::post('/learning/start', [CadetLearningHubController::class, 'startMaterial'])->name('learning.start');
-    Route::post('/learning/complete', [CadetLearningHubController::class, 'completeMaterial'])->name('learning.complete');
-    Route::get('/learning/progress', [CadetLearningHubController::class, 'getProgress'])->name('learning.progress');
-
-    // ------------------------------------------------------------------------
     // Inventory
     // ------------------------------------------------------------------------
     
@@ -345,6 +336,22 @@ Route::middleware(['auth', 'verified'])->prefix('cadet')->name('cadet.')->group(
     Route::get('/inventory/uniform-types/{uniformTypeId}/components', [CadetInventoryController::class, 'getComponentsByType'])->name('inventory.components-by-type');
     Route::post('/inventory/loan', [CadetInventoryController::class, 'createLoan'])->name('inventory.loan.create');
     Route::patch('/inventory/loan/{loan}/return', [CadetInventoryController::class, 'returnLoan'])->name('inventory.loan.return');
+
+    // ------------------------------------------------------------------------
+    // Learning Hub
+    // ------------------------------------------------------------------------
+    
+    Route::get('/learning_hub', [CadetLearningHubController::class, 'index'])->name('learning_hub');
+    Route::post('/learning/start', [CadetLearningHubController::class, 'startMaterial'])->name('learning.start');
+    Route::post('/learning/complete', [CadetLearningHubController::class, 'completeMaterial'])->name('learning.complete');
+    Route::get('/learning/progress', [CadetLearningHubController::class, 'getProgress'])->name('learning.progress');
+
+    // ------------------------------------------------------------------------
+    // Performance
+    // ------------------------------------------------------------------------
+
+    Route::get('/performance', [App\Http\Controllers\Cadet\PerformanceController::class, 'index'])->name('performance');
+    Route::post('/performance/toggle-badge', [App\Http\Controllers\Cadet\PerformanceController::class, 'toggleBadgeDisplay'])->name('performance.toggle-badge');
 
     // ------------------------------------------------------------------------
     // Gallery
