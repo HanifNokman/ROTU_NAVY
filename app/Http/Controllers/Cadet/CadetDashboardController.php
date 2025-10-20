@@ -40,6 +40,41 @@ class CadetDashboardController extends Controller
             ->orderBy('daily_duty_count', $sortOrder)
             ->get();
 
+        // Get intake cadets with performance data and badges
+        // Custom ordering: CO, Thana, Zayn, PMC, then Normal Cadets by service number
+        $intakeCadets = Cadet::where('intake_year', $cadet->intake_year)
+            ->with([
+                'user',
+                'performanceRating',
+                'cadetBadges' => function($query) {
+                    $query->where('is_displayed', true)
+                        ->with('badge')
+                        ->orderBy('unlocked_at', 'desc');
+                }
+            ])
+            ->get()
+            ->sortBy(function($cadet) {
+                // Define position priority
+                $positionOrder = [
+                    'CO' => 1,
+                    'Thana' => 2,
+                    'Zayn' => 3,
+                    'PMC' => 4,
+                    'Normal Cadet' => 5,
+                    'Normal' => 5,
+                ];
+                
+                $position = $cadet->position ?? 'Normal';
+                $priority = $positionOrder[$position] ?? 5;
+                
+                // For normal cadets, use service number as secondary sort
+                $serviceNumber = $cadet->service_number ?? '9999';
+                
+                // Return compound sort key: position priority + service number
+                return sprintf('%d-%s', $priority, $serviceNumber);
+            })
+            ->values();
+
         $absentCadets = [];
         $absenceLeaderboard = [];
         if (in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn'])) {
@@ -51,7 +86,70 @@ class CadetDashboardController extends Controller
             return $this->getDutyRankingData($dutyCadets);
         }
 
-        return view('cadet.dashboard', compact('user', 'cadet', 'cadets', 'sortOrder', 'dutyCadets', 'absentCadets', 'absenceLeaderboard'));
+        return view('cadet.dashboard', compact(
+            'user', 
+            'cadet', 
+            'cadets', 
+            'sortOrder', 
+            'dutyCadets', 
+            'absentCadets', 
+            'absenceLeaderboard',
+            'intakeCadets'
+        ));
+    }
+
+    // ================================================================
+    // GET CADET DETAILS FOR MODAL (AJAX)
+    // ================================================================
+    
+    public function getCadetDetails($cadetId)
+    {
+        $cadet = Cadet::with([
+            'user',
+            'performanceRating',
+            'cadetBadges' => function($query) {
+                $query->where('is_displayed', true)
+                    ->with('badge')
+                    ->orderBy('unlocked_at', 'desc');
+            }
+        ])->findOrFail($cadetId);
+
+        return response()->json([
+            'success' => true,
+            'cadet' => [
+                'id' => $cadet->id,
+                'name' => $cadet->user->name ?? 'N/A',
+                'rank' => $cadet->rank ?? 'N/A',
+                'service_number' => $cadet->service_number ?? 'N/A',
+                'position' => $cadet->position ?? 'Normal Cadet',
+                'profile_pic' => $cadet->profile_pic 
+                    ? asset('storage/' . $cadet->profile_pic) 
+                    : asset('images/default.png'),
+                'matric_no' => $cadet->matric_no ?? 'N/A',
+                'faculty' => $cadet->faculty ?? 'N/A',
+                'course' => $cadet->course ?? 'N/A',
+                'email' => $cadet->user->email ?? 'N/A',
+                'phone_number' => $cadet->phone_number ?? 'N/A',
+                'rating' => $cadet->performanceRating->rating ?? '⭐☆☆☆☆',
+                'total_points' => $cadet->performanceRating->total_points ?? 0,
+                'attendance_points' => $cadet->performanceRating->attendance_points ?? 0,
+                'quiz_points' => $cadet->performanceRating->quiz_points ?? 0,
+                'learning_progress_points' => $cadet->performanceRating->learning_progress_points ?? 0,
+                'duty_points' => $cadet->performanceRating->duty_points ?? 0,
+                'academic_points' => $cadet->performanceRating->academic_points ?? 0,
+                'badges' => $cadet->cadetBadges->map(function($cadetBadge) {
+                    return [
+                        'name' => $cadetBadge->badge->name,
+                        'icon_path' => $cadetBadge->badge->icon_path,
+                        'description' => $cadetBadge->badge->description,
+                        'rarity_level' => $cadetBadge->badge->rarity_level,
+                        'rarity_label' => $cadetBadge->badge->rarity_label,
+                        'rarity_color' => $cadetBadge->badge->rarity_color,
+                        'unlocked_at' => $cadetBadge->formatted_unlock_date
+                    ];
+                })
+            ]
+        ]);
     }
 
     // ================================================================

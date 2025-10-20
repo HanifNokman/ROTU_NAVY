@@ -55,6 +55,31 @@
     .cgpa-wrapper {
         position: relative;
     }
+
+    .badge-icon-mini {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+
+    /* Scrollbar styling for intake table */
+    .max-h-\[500px\]::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .max-h-\[500px\]::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .max-h-\[500px\]::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .max-h-\[500px\]::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
     </style>
 
     <div class="py-6">
@@ -207,6 +232,107 @@
                     </div>
                 </div>
             </div>
+            {{-- ================================================================ --}}
+            {{-- MY INTAKE SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
+                x-data="{ open: false }">
+                <div class="bg-gradient-to-r from-cyan-50 to-teal-50 p-6 border-b border-gray-200 cursor-pointer"
+                    @click="open = !open">
+                    <h2 class="text-2xl font-semibold mb-2 flex items-center justify-between text-gray-900">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            My Intake
+                        </div>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200"
+                            :class="{ 'rotate-180': open }"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </h2>
+                    <p class="text-gray-600">View all cadets in your intake with their achievements</p>
+                </div>
+
+                <div class="p-6"
+                    x-show="open"
+                    x-transition>
+                    <div class="overflow-x-auto">
+                        <div class="max-h-[500px] overflow-y-auto">
+                            <table class="min-w-full bg-white">
+                                <thead class="bg-gray-100 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Service No.</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rank</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Position</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rating</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Total Points</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Badges</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @forelse($intakeCadets as $intakeCadet)
+                                        <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $intakeCadet->service_number ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $intakeCadet->rank ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                {{ $intakeCadet->user->name ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $intakeCadet->position ?? 'Normal Cadet' }}
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm">
+                                                <span class="text-xl">{{ $intakeCadet->performanceRating->rating ?? '⭐☆☆☆☆' }}</span>
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                                {{ number_format($intakeCadet->performanceRating->total_points ?? 0, 2) }}
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap">
+                                                <div class="flex items-center space-x-1">
+                                                    @forelse($intakeCadet->cadetBadges->take(3) as $cadetBadge)
+                                                        @if($cadetBadge->badge->icon_path)
+                                                            <img src="{{ asset('storage/badges/' . $cadetBadge->badge->icon_path) }}" 
+                                                                alt="{{ $cadetBadge->badge->name }}"
+                                                                title="{{ $cadetBadge->badge->name }}"
+                                                                class="badge-icon-mini">
+                                                        @else
+                                                            <span class="text-2xl" title="{{ $cadetBadge->badge->name }}">🏆</span>
+                                                        @endif
+                                                    @empty
+                                                        <span class="text-xs text-gray-400">No badges</span>
+                                                    @endforelse
+                                                    @if($intakeCadet->cadetBadges->count() > 3)
+                                                        <span class="text-xs text-gray-500 ml-1">+{{ $intakeCadet->cadetBadges->count() - 3 }}</span>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm">
+                                                <button onclick="openCadetModal({{ $intakeCadet->id }})"
+                                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-xs font-medium transition-colors duration-150">
+                                                    View Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                                No cadets found in your intake.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {{-- ================================================================ --}}
             {{-- PERFORMANCE METRICS SECTION --}}
@@ -351,15 +477,11 @@
                                 <div class="text-xl md:text-2xl text-pink-500 font-medium">
                                     Your service, dedication, and leadership are recognized! 🌟
                                 </div>
-                                <div class="text-3xl animate-bounce mt-4">
-                                    🎉🥳🎊
-                                </div>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
-
             {{-- ================================================================ --}}
             {{-- INTAKE ABSENCE TRACKING SECTION --}}
             {{-- Only visible for CO, Thana, Zayn positions --}}
@@ -545,122 +667,323 @@
     </div>
 
     {{-- ================================================================ --}}
+    {{-- CADET DETAILS MODAL --}}
+    {{-- ================================================================ --}}
+    <div id="cadetModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
+            {{-- Modal Header --}}
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 class="text-2xl font-semibold text-gray-900">Cadet Details</h3>
+                <button onclick="closeCadetModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Modal Body --}}
+            <div id="cadetModalContent" class="mt-4">
+                {{-- Loading spinner --}}
+                <div class="flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================================================================ --}}
     {{-- JAVASCRIPT --}}
     {{-- ================================================================ --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        // ================================================================
-        // SCROLL DETECTION FOR DUTY RANKING
-        // ================================================================
-        function checkScrollableContent() {
-            // Check Duty Ranking
-            const dutyContainer = document.getElementById('duty-ranking-content');
-            const dutyWrapper = dutyContainer?.closest('.duty-ranking-wrapper');
-            
-            if (dutyContainer && dutyWrapper) {
-                if (dutyContainer.scrollHeight > dutyContainer.clientHeight) {
-                    dutyWrapper.classList.add('has-scroll');
-                } else {
-                    dutyWrapper.classList.remove('has-scroll');
+            // ================================================================
+            // SCROLL DETECTION FOR DUTY RANKING
+            // ================================================================
+            function checkScrollableContent() {
+                // Check Duty Ranking
+                const dutyContainer = document.getElementById('duty-ranking-content');
+                const dutyWrapper = dutyContainer?.closest('.duty-ranking-wrapper');
+                
+                if (dutyContainer && dutyWrapper) {
+                    if (dutyContainer.scrollHeight > dutyContainer.clientHeight) {
+                        dutyWrapper.classList.add('has-scroll');
+                    } else {
+                        dutyWrapper.classList.remove('has-scroll');
+                    }
                 }
             }
-        }
 
-        // Check on load and after updates
-        checkScrollableContent();
-        window.addEventListener('resize', checkScrollableContent);
+            // Check on load and after updates
+            checkScrollableContent();
+            window.addEventListener('resize', checkScrollableContent);
 
-        // ================================================================
-        // CADET ABSENCE VIEW TOGGLE
-        // ================================================================
-        function toggleCadetAbsenceView(view) {
-            const pendingBtn = document.getElementById('cadet-pending-view-btn');
-            const leaderboardBtn = document.getElementById('cadet-leaderboard-view-btn');
-            const pendingContent = document.getElementById('cadet-absence-content');
-            const leaderboardContent = document.getElementById('cadet-absence-leaderboard-content');
-            const sectionTitle = document.getElementById('cadet-absence-section-title');
-            const sectionDescription = document.getElementById('cadet-absence-section-description');
-            const countBadge = document.getElementById('cadet-absence-count-badge');
-            
-            if (view === 'pending') {
-                pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
-                pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
-                leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
-                leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+            // ================================================================
+            // CADET ABSENCE VIEW TOGGLE
+            // ================================================================
+            function toggleCadetAbsenceView(view) {
+                const pendingBtn = document.getElementById('cadet-pending-view-btn');
+                const leaderboardBtn = document.getElementById('cadet-leaderboard-view-btn');
+                const pendingContent = document.getElementById('cadet-absence-content');
+                const leaderboardContent = document.getElementById('cadet-absence-leaderboard-content');
+                const sectionTitle = document.getElementById('cadet-absence-section-title');
+                const sectionDescription = document.getElementById('cadet-absence-section-description');
+                const countBadge = document.getElementById('cadet-absence-count-badge');
                 
-                pendingContent.classList.remove('hidden');
-                leaderboardContent.classList.add('hidden');
-                
-                sectionTitle.textContent = 'Intake Absence Tracking';
-                sectionDescription.textContent = 'Track your intake mates requiring absence documentation';
-                if (countBadge) countBadge.classList.remove('hidden');
-                
-            } else if (view === 'leaderboard') {
-                leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
-                leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
-                pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
-                pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
-                
-                leaderboardContent.classList.remove('hidden');
-                pendingContent.classList.add('hidden');
-                
-                sectionTitle.textContent = 'Intake Absence Summary';
-                sectionDescription.textContent = 'Overview of intake mates requiring attendance improvement';
-                if (countBadge) countBadge.classList.add('hidden');
+                if (view === 'pending') {
+                    pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
+                    pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+                    leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
+                    leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                    
+                    pendingContent.classList.remove('hidden');
+                    leaderboardContent.classList.add('hidden');
+                    
+                    sectionTitle.textContent = 'Intake Absence Tracking';
+                    sectionDescription.textContent = 'Track your intake mates requiring absence documentation';
+                    if (countBadge) countBadge.classList.remove('hidden');
+                    
+                } else if (view === 'leaderboard') {
+                    leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
+                    leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+                    pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
+                    pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                    
+                    leaderboardContent.classList.remove('hidden');
+                    pendingContent.classList.add('hidden');
+                    
+                    sectionTitle.textContent = 'Intake Absence Summary';
+                    sectionDescription.textContent = 'Overview of intake mates requiring attendance improvement';
+                    if (countBadge) countBadge.classList.add('hidden');
+                }
             }
-        }
 
-        window.toggleCadetAbsenceView = toggleCadetAbsenceView;
+            window.toggleCadetAbsenceView = toggleCadetAbsenceView;
 
-        // ================================================================
-        // DUTY RANKING SORT
-        // ================================================================
-        const sortSelect = document.getElementById('sort_order');
-        const contentContainer = document.getElementById('duty-ranking-content');
+            // ================================================================
+            // DUTY RANKING SORT
+            // ================================================================
+            const sortSelect = document.getElementById('sort_order');
+            const contentContainer = document.getElementById('duty-ranking-content');
 
-        if (sortSelect && contentContainer) {
-            sortSelect.addEventListener('change', function() {
-                const sortOrder = this.value;
+            if (sortSelect && contentContainer) {
+                sortSelect.addEventListener('change', function() {
+                    const sortOrder = this.value;
+                    
+                    contentContainer.innerHTML = '<div class="text-center text-gray-500 py-4">Loading...</div>';
+
+                    fetch(window.location.pathname + '?sort_order=' + sortOrder, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        contentContainer.innerHTML = data.html;
+                        // Check scroll after content update
+                        setTimeout(checkScrollableContent, 100);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        contentContainer.innerHTML = '<div class="text-center text-red-500 py-4">Error loading data. Please try again.</div>';
+                    });
+                });
+            }
+
+            // ================================================================
+            // ABSENCE DROPDOWN TOGGLE
+            // ================================================================
+            window.toggleAbsenceDropdown = function(cadetId) {
+                const dropdown = document.getElementById('absence-dropdown-' + cadetId);
+                const icon = document.getElementById('absence-icon-' + cadetId);
                 
-                contentContainer.innerHTML = '<div class="text-center text-gray-500 py-4">Loading...</div>';
+                if (dropdown && icon) {
+                    if (dropdown.classList.contains('hidden')) {
+                        dropdown.classList.remove('hidden');
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        dropdown.classList.add('hidden');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            };
+        });
 
-                fetch(window.location.pathname + '?sort_order=' + sortOrder, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json',
-                    },
-                })
+        // ================================================================
+        // CADET MODAL FUNCTIONS
+        // ================================================================
+        function openCadetModal(cadetId) {
+            const modal = document.getElementById('cadetModal');
+            const modalContent = document.getElementById('cadetModalContent');
+            
+            modal.classList.remove('hidden');
+            
+            // Show loading spinner
+            modalContent.innerHTML = `
+                <div class="flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                </div>
+            `;
+            
+            // Fetch cadet details
+            fetch(`/cadet/cadet/${cadetId}/details`)
                 .then(response => response.json())
                 .then(data => {
-                    contentContainer.innerHTML = data.html;
-                    // Check scroll after content update
-                    setTimeout(checkScrollableContent, 100);
+                    if (data.success) {
+                        displayCadetDetails(data.cadet);
+                    } else {
+                        modalContent.innerHTML = '<p class="text-center text-red-500">Error loading cadet details.</p>';
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    contentContainer.innerHTML = '<div class="text-center text-red-500 py-4">Error loading data. Please try again.</div>';
+                    modalContent.innerHTML = '<p class="text-center text-red-500">Error loading cadet details.</p>';
                 });
-            });
         }
 
-        // ================================================================
-        // ABSENCE DROPDOWN TOGGLE
-        // ================================================================
-        window.toggleAbsenceDropdown = function(cadetId) {
-            const dropdown = document.getElementById('absence-dropdown-' + cadetId);
-            const icon = document.getElementById('absence-icon-' + cadetId);
+        function closeCadetModal() {
+            document.getElementById('cadetModal').classList.add('hidden');
+        }
+
+        function displayCadetDetails(cadet) {
+            const modalContent = document.getElementById('cadetModalContent');
             
-            if (dropdown && icon) {
-                if (dropdown.classList.contains('hidden')) {
-                    dropdown.classList.remove('hidden');
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    dropdown.classList.add('hidden');
-                    icon.style.transform = 'rotate(0deg)';
-                }
+            let badgesHtml = '';
+            if (cadet.badges && cadet.badges.length > 0) {
+                badgesHtml = cadet.badges.map(badge => `
+                    <div class="bg-white border-2 border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200">
+                        <div class="flex items-center space-x-3">
+                            ${badge.icon_path ? 
+                                `<img src="/storage/badges/${badge.icon_path}" alt="${badge.name}" class="w-12 h-12 object-contain">` : 
+                                '<span class="text-4xl">🏆</span>'
+                            }
+                            <div class="flex-1">
+                                <h5 class="font-semibold text-gray-900">${badge.name}</h5>
+                                <p class="text-xs text-gray-600 mt-1">${badge.description}</p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs ${badge.rarity_color} font-medium">${badge.rarity_label}</span>
+                                    <span class="text-xs text-gray-500">Unlocked: ${badge.unlocked_at}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                badgesHtml = '<p class="text-center text-gray-500 py-8">No badges unlocked yet.</p>';
             }
-        };
-    });
+            
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    {{-- Profile Section --}}
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-shrink-0">
+                            <img src="${cadet.profile_pic}" 
+                                alt="${cadet.name}"
+                                class="w-32 h-40 md:w-40 md:h-52 object-cover border rounded-md">
+                        </div>
+                        
+                        <div class="flex-1 space-y-4">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-900">${cadet.rank} ${cadet.name}</h4>
+                                <p class="text-sm text-gray-600">${cadet.position}</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                                <div>
+                                    <span class="font-medium text-gray-700">Service Number:</span>
+                                    <span class="text-gray-900">${cadet.service_number}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Matric Number:</span>
+                                    <span class="text-gray-900">${cadet.matric_no}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Faculty:</span>
+                                    <span class="text-gray-900">${cadet.faculty}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Course:</span>
+                                    <span class="text-gray-900">${cadet.course}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Email:</span>
+                                    <span class="text-gray-900">${cadet.email}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Phone:</span>
+                                    <span class="text-gray-900">${cadet.phone_number}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Performance Section --}}
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
+                        <h5 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Performance Rating
+                        </h5>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4">
+                                <div class="text-center">
+                                    <p class="text-4xl mb-2">${cadet.rating}</p>
+                                    <p class="text-2xl font-bold text-gray-900">${parseFloat(cadet.total_points).toFixed(2)}</p>
+                                    <p class="text-sm text-gray-600">Total Points</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg p-4 space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Attendance:</span>
+                                    <span class="font-semibold text-gray-900">${parseFloat(cadet.attendance_points).toFixed(2)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Quiz:</span>
+                                    <span class="font-semibold text-gray-900">${parseFloat(cadet.quiz_points).toFixed(2)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Learning Progress:</span>
+                                    <span class="font-semibold text-gray-900">${parseFloat(cadet.learning_progress_points).toFixed(2)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Duty:</span>
+                                    <span class="font-semibold text-gray-900">${parseFloat(cadet.duty_points).toFixed(2)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Academic:</span>
+                                    <span class="font-semibold text-gray-900">${parseFloat(cadet.academic_points).toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Badges Section --}}
+                    <div>
+                        <h5 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            </svg>
+                            Displayed Badges (${cadet.badges ? cadet.badges.length : 0})
+                        </h5>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+                            ${badgesHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('cadetModal');
+            if (event.target === modal) {
+                closeCadetModal();
+            }
+        }
     </script>
 </x-app-layout>

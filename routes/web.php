@@ -308,6 +308,7 @@ Route::middleware(['auth', 'verified'])->prefix('cadet')->name('cadet.')->group(
     // ------------------------------------------------------------------------
     
     Route::get('/dashboard', [CadetDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/cadet/{cadet}/details', [CadetDashboardController::class, 'getCadetDetails'])->name('cadet.details');
 
     // ------------------------------------------------------------------------
     // Training
