@@ -57,49 +57,23 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <!-- Filter Section -->
+                    <!-- Filter Section - UPDATED WITHOUT MATERIAL SELECTOR -->
                     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h4 class="font-medium text-gray-800 mb-4">
-                            <span class="flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
-                                </svg>
-                                Filter & Navigation
-                            </span>
-                        </h4>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Category Filter -->
-                            <div class="space-y-2">
-                                <label for="categorySelect" class="block text-sm font-medium text-gray-700">
-                                    Filter by Category
-                                </label>
-                                <select id="categorySelect" name="category"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
-                                        onchange="filterMaterials(this.value)">
-                                    <option value="">All Categories</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" @selected(request('category') == $category->id)>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Material Selector -->
-                            <div class="space-y-2">
-                                <label for="materialDropdown" class="block text-sm font-medium text-gray-700">
-                                    Select Material to Open
-                                </label>
-                                <select id="materialDropdown"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
-                                        onchange="openMaterial(this.value)">
-                                    <option value="">Choose a material...</option>
-                                    @foreach ($materials as $material)
-                                        <option value="material-{{ $material->id }}">{{ $material->title }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                        <!-- Category Filter Only -->
+                        <div class="space-y-2">
+                            <label for="categorySelect" class="block text-sm font-medium text-gray-700">
+                                Select Category
+                            </label>
+                            <select id="categorySelect" name="category"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                                    onchange="filterMaterials(this.value)">
+                                <option value="">All Categories</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" @selected(request('category') == $category->id)>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -2099,15 +2073,12 @@
             }
         }
 
-        // Learning Material Progress Tracking - DEBUG VERSION
+        // Learning Material Progress Tracking
         const LearningProgressTracker = {
             materialTimers: {},
             videoPlayers: {},
             completedMaterials: new Set(),
             
-            /**
-             * Initialize progress tracking for a material
-             */
             init(materialId, materialType, fileUrl) {
                 // Check if already completed
                 if (this.completedMaterials.has(materialId)) {
@@ -2119,13 +2090,9 @@
                 console.log('📝 Starting tracking for type:', materialType);
                 
                 if (materialType === 'text' || materialType === 'image') {
-                    console.log('→ Calling trackTextMaterial');
                     this.trackTextMaterial(materialId);
                 } else if (materialType === 'video' || materialType === 'audio') {
-                    console.log('→ Calling trackMediaMaterial');
                     this.trackMediaMaterial(materialId, materialType);
-                } else {
-                    console.warn('⚠️ Unknown material type:', materialType);
                 }
             },
             
@@ -2134,11 +2101,9 @@
                 this.markMaterialStarted(materialId);
                 
                 if (this.materialTimers[materialId]) {
-                    console.log('⏱️ Clearing existing timer');
                     clearTimeout(this.materialTimers[materialId]);
                 }
                 
-                console.log('⏱️ Setting 10 second timer');
                 this.materialTimers[materialId] = setTimeout(() => {
                     console.log('⏰ 10 seconds elapsed! Marking as complete');
                     this.completeMaterial(materialId, 10);
@@ -2150,9 +2115,6 @@
                 this.markMaterialStarted(materialId);
                 
                 const mediaElement = document.getElementById(`${mediaType}-${materialId}`);
-                console.log('   Looking for element:', `${mediaType}-${materialId}`);
-                console.log('   Element found:', mediaElement ? 'YES ✓' : 'NO ✗');
-                
                 if (!mediaElement) {
                     console.error('❌ Media element not found');
                     return;
@@ -2185,7 +2147,6 @@
                 
                 mediaElement.addEventListener('ended', () => {
                     const watchedPercentage = (watchedTime / mediaElement.duration) * 100;
-                    console.log('🎬 Video ended - watched:', Math.round(watchedPercentage) + '%');
                     if (watchedPercentage >= 90) {
                         this.completeMaterial(materialId, Math.floor(watchedTime));
                     }
@@ -2199,7 +2160,6 @@
             },
             
             markMaterialStarted(materialId) {
-                console.log('🔵 markMaterialStarted called with ID:', materialId);
                 fetch("{{ route('cadet.learning.start') }}", {
                     method: 'POST',
                     headers: {
@@ -2209,17 +2169,12 @@
                     body: JSON.stringify({ material_id: materialId })
                 })
                 .then(response => response.json())
-                .then(data => {
-                    console.log('✅ Material started:', data);
-                })
-                .catch(error => {
-                    console.error('❌ Error:', error);
-                });
+                .then(data => console.log('✅ Material started:', data))
+                .catch(error => console.error('❌ Error:', error));
             },
             
             completeMaterial(materialId, timeSpent) {
-                console.log('🎉 COMPLETE MATERIAL CALLED');
-                console.log('   Material ID:', materialId);
+                console.log('🎉 COMPLETE MATERIAL CALLED for ID:', materialId);
                 
                 if (this.completedMaterials.has(materialId)) {
                     console.log('⚠️ Already completed - skipping');
@@ -2239,19 +2194,15 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('📥 Complete response:', data);
                     if (data.success) {
                         console.log('✅ Material marked as complete!');
                         this.completedMaterials.add(materialId);
                         this.showCompletionNotification();
                         this.showCompletionBadge(materialId);
                         this.highlightCompletedMaterial(materialId);
-                        this.updateProgressDisplay();
                     }
                 })
-                .catch(error => {
-                    console.error('❌ Error:', error);
-                });
+                .catch(error => console.error('❌ Error:', error));
             },
             
             showCompletionBadge(materialId) {
@@ -2289,22 +2240,26 @@
                 setTimeout(() => notification.remove(), 3000);
             },
             
-            updateProgressDisplay() {
+            // UPDATED: Load completion states from server
+            loadInitialProgress() {
+                console.log('📊 Loading initial progress...');
                 fetch("{{ route('cadet.learning.progress') }}")
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Progress updated:', data);
+                        console.log('Progress loaded:', data);
                         if (data.success && data.material_progress) {
+                            // Apply completion state to each material
                             Object.entries(data.material_progress).forEach(([id, isCompleted]) => {
                                 if (isCompleted) {
                                     const materialId = parseInt(id);
                                     this.completedMaterials.add(materialId);
                                     this.highlightCompletedMaterial(materialId);
+                                    this.showCompletionBadge(materialId);
                                 }
                             });
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => console.error('Error loading progress:', error));
             },
             
             cleanup(materialId) {
@@ -2312,45 +2267,19 @@
                     clearTimeout(this.materialTimers[materialId]);
                     delete this.materialTimers[materialId];
                 }
-            },
-            
-            loadInitialProgress() {
-                console.log('📊 Loading initial progress...');
-                this.updateProgressDisplay();
             }
         };
 
-        console.log('✅ LearningProgressTracker defined');
-        console.log('   Type:', typeof LearningProgressTracker);
-
-        // Add CSS animation 
-        if (!document.getElementById('learning-progress-styles')) {
-            const style = document.createElement('style');
-            style.id = 'learning-progress-styles';
-            style.textContent = `
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                
-                @keyframes slideOut {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
+        // Function to filter materials by category
+        function filterMaterials(categoryId) {
+            // Redirect with category parameter
+            const url = new URL(window.location.href);
+            if (categoryId) {
+                url.searchParams.set('category', categoryId);
+            } else {
+                url.searchParams.delete('category');
+            }
+            window.location.href = url.toString();
         }
 
         // Load initial progress when page loads
