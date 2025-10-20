@@ -84,6 +84,20 @@ class ContentSetting extends Model
     }
 
     /**
+     * Get formatted deadline as Carbon instance
+     */
+    public static function getDeadline(): ?Carbon
+    {
+        $deadline = self::get('application_deadline');
+        
+        if (!$deadline) {
+            return null;
+        }
+
+        return Carbon::parse($deadline);
+    }
+
+    /**
      * Clear all settings cache
      */
     public static function clearCache(): void

@@ -527,14 +527,8 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="application-container">
-            <div class="application-header">
-                <h1 class="application-title">Mohon Sertai PALAPES Laut UMS</h1>
-                <p class="application-subtitle">
-                    Ambil langkah pertama ke arah menjadi pegawai tentera laut yang ditauliahkan. Isi borang permohonan di bawah dengan maklumat yang tepat.
-                </p>
-            </div>
-
             @if($applicationDeadline && now() > $applicationDeadline)
+                <!-- Only show this when closed -->
                 <div class="alert alert-error" style="text-align: center; padding: 3rem;">
                     <i class="fas fa-clock" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.7;"></i>
                     <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Permohonan Ditutup</h2>
@@ -548,6 +542,14 @@
                     </a>
                 </div>
             @else
+                <!-- Only show header and form when applications are open -->
+                <div class="application-header">
+                    <h1 class="application-title">Mohon Sertai PALAPES Laut UMS</h1>
+                    <p class="application-subtitle">
+                        Ambil langkah pertama ke arah menjadi pegawai tentera laut yang ditauliahkan. Isi borang permohonan di bawah dengan maklumat yang tepat.
+                    </p>
+                </div>
+
                 @if(session('success'))
                     <div class="alert alert-success">
                         <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
@@ -568,170 +570,170 @@
                 @endif
 
                 <form action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data" class="application-form">
-                @csrf
+                    @csrf
 
-                <!-- Name and Email Row -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name" class="form-label">
-                            <i class="fas fa-user" style="margin-right: 0.5rem;"></i>
-                            Nama Penuh
-                        </label>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}" required
-                               class="form-input" placeholder="Masukkan nama penuh anda">
+                    <!-- Name and Email Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user" style="margin-right: 0.5rem;"></i>
+                                Nama Penuh
+                            </label>
+                            <input type="text" id="name" name="name" value="{{ old('name') }}" required
+                                class="form-input" placeholder="Masukkan nama penuh anda">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i>
+                                Alamat Emel
+                            </label>
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                                class="form-input" placeholder="contoh@email.com">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="email" class="form-label">
-                            <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i>
-                            Alamat Emel
-                        </label>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                               class="form-input" placeholder="contoh@email.com">
-                    </div>
-                </div>
+                    <!-- Phone and Gender Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone_number" class="form-label">
+                                <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>
+                                Nombor Telefon
+                            </label>
+                            <input type="text" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" required
+                                class="form-input" placeholder="012-3456789">
+                        </div>
 
-                <!-- Phone and Gender Row -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone_number" class="form-label">
-                            <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>
-                            Nombor Telefon
-                        </label>
-                        <input type="text" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" required
-                               class="form-input" placeholder="012-3456789">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="gender" class="form-label">
-                            <i class="fas fa-venus-mars" style="margin-right: 0.5rem;"></i>
-                            Jantina
-                        </label>
-                        <select id="gender" name="gender" required class="form-select">
-                            <option value="">Pilih Jantina</option>
-                            <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Lelaki</option>
-                            <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Perempuan</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- IC Number and Matric Number Row -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="ic_number" class="form-label">
-                            <i class="fas fa-id-card" style="margin-right: 0.5rem;"></i>
-                            Nombor Kad Pengenalan
-                        </label>
-                        <input type="text" id="ic_number" name="ic_number" value="{{ old('ic_number') }}" required
-                               class="form-input" placeholder="000000-00-0000">
+                        <div class="form-group">
+                            <label for="gender" class="form-label">
+                                <i class="fas fa-venus-mars" style="margin-right: 0.5rem;"></i>
+                                Jantina
+                            </label>
+                            <select id="gender" name="gender" required class="form-select">
+                                <option value="">Pilih Jantina</option>
+                                <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Lelaki</option>
+                                <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="matric_no" class="form-label">
-                            <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i>
-                            Nombor Matrik
-                        </label>
-                        <input type="text" id="matric_no" name="matric_no" value="{{ old('matric_no') }}" required
-                               class="form-input" placeholder="Masukkan nombor matrik UMS">
-                    </div>
-                </div>
+                    <!-- IC Number and Matric Number Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ic_number" class="form-label">
+                                <i class="fas fa-id-card" style="margin-right: 0.5rem;"></i>
+                                Nombor Kad Pengenalan
+                            </label>
+                            <input type="text" id="ic_number" name="ic_number" value="{{ old('ic_number') }}" required
+                                class="form-input" placeholder="000000-00-0000">
+                        </div>
 
-                <!-- Faculty and Course Row -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="faculty" class="form-label">
-                            <i class="fas fa-university" style="margin-right: 0.5rem;"></i>
-                            Fakulti
-                        </label>
-                        <select id="faculty" name="faculty" required class="form-select">
-                            <option value="">Pilih Fakulti</option>
-                            <option value="FKJ" {{ old('faculty') == 'FKJ' ? 'selected' : '' }}>Fakulti Kejuruteraan (FKJ)</option>
-                            <option value="FSMP" {{ old('faculty') == 'FSMP' ? 'selected' : '' }}>Fakulti Sains Makanan & Pemakanan (FSMP)</option>
-                            <option value="FPEP" {{ old('faculty') == 'FPEP' ? 'selected' : '' }}>Fakulti Perniagaan, Ekonomi & Perakaunan (FPEP)</option>
-                            <option value="FKI" {{ old('faculty') == 'FKI' ? 'selected' : '' }}>Fakulti Komputeran & Informatik (FKI)</option>
-                            <option value="FSSK" {{ old('faculty') == 'FSSK' ? 'selected' : '' }}>Fakulti Sains Sosial & Kemanusiaan (FSSK)</option>
-                            <option value="FPKS" {{ old('faculty') == 'FPKS' ? 'selected' : '' }}>Fakulti Psikologi & Kerja Sosial (FPKS)</option>
-                            <option value="FPPS" {{ old('faculty') == 'FPPS' ? 'selected' : '' }}>Fakulti Pendidikan & Pengurusan Sukan (FPPS)</option>
-                            <option value="FST" {{ old('faculty') == 'FST' ? 'selected' : '' }}>Fakulti Sains & Teknologi (FST)</option>
-                            <option value="FPT" {{ old('faculty') == 'FPT' ? 'selected' : '' }}>Fakulti Perhutanan Tropika (FPT)</option>
-                            <option value="FPI" {{ old('faculty') == 'FPI' ? 'selected' : '' }}>Fakulti Pengajian Islam (FPI)</option>
-                            <option value="ASTiF" {{ old('faculty') == 'ASTiF' ? 'selected' : '' }}>Akademi Seni & Teknologi Kreatif (ASTiF)</option>
-                        </select>
+                        <div class="form-group">
+                            <label for="matric_no" class="form-label">
+                                <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i>
+                                Nombor Matrik
+                            </label>
+                            <input type="text" id="matric_no" name="matric_no" value="{{ old('matric_no') }}" required
+                                class="form-input" placeholder="Masukkan nombor matrik UMS">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="course" class="form-label">
-                            <i class="fas fa-book" style="margin-right: 0.5rem;"></i>
-                            Kursus
-                        </label>
-                        <input type="text" id="course" name="course" value="{{ old('course') }}" required
-                               class="form-input" placeholder="Masukkan nama kursus">
-                    </div>
-                </div>
+                    <!-- Faculty and Course Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="faculty" class="form-label">
+                                <i class="fas fa-university" style="margin-right: 0.5rem;"></i>
+                                Fakulti
+                            </label>
+                            <select id="faculty" name="faculty" required class="form-select">
+                                <option value="">Pilih Fakulti</option>
+                                <option value="FKJ" {{ old('faculty') == 'FKJ' ? 'selected' : '' }}>Fakulti Kejuruteraan (FKJ)</option>
+                                <option value="FSMP" {{ old('faculty') == 'FSMP' ? 'selected' : '' }}>Fakulti Sains Makanan & Pemakanan (FSMP)</option>
+                                <option value="FPEP" {{ old('faculty') == 'FPEP' ? 'selected' : '' }}>Fakulti Perniagaan, Ekonomi & Perakaunan (FPEP)</option>
+                                <option value="FKI" {{ old('faculty') == 'FKI' ? 'selected' : '' }}>Fakulti Komputeran & Informatik (FKI)</option>
+                                <option value="FSSK" {{ old('faculty') == 'FSSK' ? 'selected' : '' }}>Fakulti Sains Sosial & Kemanusiaan (FSSK)</option>
+                                <option value="FPKS" {{ old('faculty') == 'FPKS' ? 'selected' : '' }}>Fakulti Psikologi & Kerja Sosial (FPKS)</option>
+                                <option value="FPPS" {{ old('faculty') == 'FPPS' ? 'selected' : '' }}>Fakulti Pendidikan & Pengurusan Sukan (FPPS)</option>
+                                <option value="FST" {{ old('faculty') == 'FST' ? 'selected' : '' }}>Fakulti Sains & Teknologi (FST)</option>
+                                <option value="FPT" {{ old('faculty') == 'FPT' ? 'selected' : '' }}>Fakulti Perhutanan Tropika (FPT)</option>
+                                <option value="FPI" {{ old('faculty') == 'FPI' ? 'selected' : '' }}>Fakulti Pengajian Islam (FPI)</option>
+                                <option value="ASTiF" {{ old('faculty') == 'ASTiF' ? 'selected' : '' }}>Akademi Seni & Teknologi Kreatif (ASTiF)</option>
+                            </select>
+                        </div>
 
-                <!-- Height, Weight, BMI Row -->
-                <div class="form-row">
+                        <div class="form-group">
+                            <label for="course" class="form-label">
+                                <i class="fas fa-book" style="margin-right: 0.5rem;"></i>
+                                Kursus
+                            </label>
+                            <input type="text" id="course" name="course" value="{{ old('course') }}" required
+                                class="form-input" placeholder="Masukkan nama kursus">
+                        </div>
+                    </div>
+
+                    <!-- Height, Weight, BMI Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="height" class="form-label">
+                                <i class="fas fa-ruler-vertical" style="margin-right: 0.5rem;"></i>
+                                Tinggi (cm)
+                            </label>
+                            <input type="number" id="height" name="height" value="{{ old('height') }}" step="0.01" min="100" max="250"
+                                class="form-input" placeholder="Contoh: 170.5">
+                            <span class="form-help">
+                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                                Masukkan tinggi dalam sentimeter (cm)
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weight" class="form-label">
+                                <i class="fas fa-weight" style="margin-right: 0.5rem;"></i>
+                                Berat (kg)
+                            </label>
+                            <input type="number" id="weight" name="weight" value="{{ old('weight') }}" step="0.01" min="30" max="200"
+                                class="form-input" placeholder="Contoh: 65.5">
+                            <span class="form-help">
+                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                                Masukkan berat dalam kilogram (kg)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- BMI Display -->
                     <div class="form-group">
-                        <label for="height" class="form-label">
-                            <i class="fas fa-ruler-vertical" style="margin-right: 0.5rem;"></i>
-                            Tinggi (cm)
+                        <label for="bmi" class="form-label">
+                            <i class="fas fa-calculator" style="margin-right: 0.5rem;"></i>
+                            BMI (Kiraan Automatik)
                         </label>
-                        <input type="number" id="height" name="height" value="{{ old('height') }}" step="0.01" min="100" max="250"
-                               class="form-input" placeholder="Contoh: 170.5">
+                        <input type="number" id="bmi" name="bmi" value="{{ old('bmi') }}" step="0.01" readonly
+                            class="form-input bg-gray-100" placeholder="BMI akan dikira secara automatik">
                         <span class="form-help">
                             <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
-                            Masukkan tinggi dalam sentimeter (cm)
+                            BMI akan dikira secara automatik berdasarkan tinggi dan berat yang dimasukkan
                         </span>
                     </div>
 
+                    <!-- Profile Picture -->
                     <div class="form-group">
-                        <label for="weight" class="form-label">
-                            <i class="fas fa-weight" style="margin-right: 0.5rem;"></i>
-                            Berat (kg)
+                        <label for="profile_pic" class="form-label">
+                            <i class="fas fa-camera" style="margin-right: 0.5rem;"></i>
+                            Gambar Profil
                         </label>
-                        <input type="number" id="weight" name="weight" value="{{ old('weight') }}" step="0.01" min="30" max="200"
-                               class="form-input" placeholder="Contoh: 65.5">
+                        <input type="file" id="profile_pic" name="profile_pic" accept="image/*"
+                            class="form-file">
                         <span class="form-help">
                             <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
-                            Masukkan berat dalam kilogram (kg)
+                            Muat naik gambar passport terkini (JPEG, PNG, JPG, GIF - Maksimum 2MB)
                         </span>
                     </div>
-                </div>
 
-                <!-- BMI Display -->
-                <div class="form-group">
-                    <label for="bmi" class="form-label">
-                        <i class="fas fa-calculator" style="margin-right: 0.5rem;"></i>
-                        BMI (Kiraan Automatik)
-                    </label>
-                    <input type="number" id="bmi" name="bmi" value="{{ old('bmi') }}" step="0.01" readonly
-                           class="form-input bg-gray-100" placeholder="BMI akan dikira secara automatik">
-                    <span class="form-help">
-                        <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
-                        BMI akan dikira secara automatik berdasarkan tinggi dan berat yang dimasukkan
-                    </span>
-                </div>
-
-                <!-- Profile Picture -->
-                <div class="form-group">
-                    <label for="profile_pic" class="form-label">
-                        <i class="fas fa-camera" style="margin-right: 0.5rem;"></i>
-                        Gambar Profil
-                    </label>
-                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*"
-                           class="form-file">
-                    <span class="form-help">
-                        <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
-                        Muat naik gambar passport terkini (JPEG, PNG, JPG, GIF - Maksimum 2MB)
-                    </span>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
-                    Hantar Permohonan
-                </button>
-            </form>
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
+                        Hantar Permohonan
+                    </button>
+                </form>
             @endif
         </div>
     </main>

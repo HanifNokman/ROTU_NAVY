@@ -6,19 +6,32 @@ use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Models\User;
 use App\Models\Cadet;
+use App\Models\ContentSetting;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ApplicationController extends Controller
 {
     public function create()
     {
-        $applicationDeadline = \App\Models\ContentSetting::getFormattedDeadline();
+        $deadlineString = ContentSetting::get('application_deadline');
+        $applicationDeadline = $deadlineString ? Carbon::parse($deadlineString) : null;
+        
         return view('application', compact('applicationDeadline'));
     }
 
     public function store(Request $request)
     {
+        // Check if deadline has passed before processing
+        $deadlineString = ContentSetting::get('application_deadline');
+        if ($deadlineString) {
+            $deadline = Carbon::parse($deadlineString);
+            if (now()->gt($deadline)) {
+                return redirect()->back()->with('error', 'Permohonan telah ditutup. Tarikh akhir telah berlalu.');
+            }
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:applications,email',
@@ -50,9 +63,9 @@ class ApplicationController extends Controller
 
         Application::create($data);
 
-        $qrCodeImage = \App\Models\ContentSetting::get('qr_code_image');
-        $whatsappUrl = \App\Models\ContentSetting::get('application_portal_url');
-        $applicationDeadline = \App\Models\ContentSetting::getFormattedDeadline();
+        $qrCodeImage = ContentSetting::get('qr_code_image');
+        $whatsappUrl = ContentSetting::get('whatsapp_group_url'); // Changed from application_portal_url
+        $applicationDeadline = ContentSetting::getFormattedDeadline();
 
         return view('application_success', compact('qrCodeImage', 'whatsappUrl', 'applicationDeadline'));
     }

@@ -2448,8 +2448,8 @@
                         </div>
 
                         <div style="text-align: center;">
-                            <a href="{{ route('application.create') }}" id="applicationPortalLink" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
-                                <i class="fas fa-external-link-alt"></i>
+                            <a href="{{ route('application.create') }}" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; font-size: 1.1rem;">
+                                <i class="fas fa-paper-plane"></i>
                                 Akses Portal Permohonan
                             </a>
                         </div>
@@ -2609,11 +2609,11 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="applicationPortalUrl">Application Portal URL:</label>
-                        <input type="url" id="applicationPortalUrl" name="application_portal_url" placeholder="https://application.ums.edu.my/palapes">
+                        <label for="whatsappGroupUrl">WhatsApp Group URL:</label>
+                        <input type="url" id="whatsappGroupUrl" name="whatsapp_group_url" placeholder="https://chat.whatsapp.com/xxx">
                         <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                            <i class="fas fa-link"></i> 
-                            URL for the "Access Application Portal" button
+                            <i class="fab fa-whatsapp"></i> 
+                            WhatsApp group link shown on the application success page
                         </small>
                     </div>
 
@@ -2969,8 +2969,8 @@
                         if (settings.application_deadline) {
                             document.getElementById('applicationDeadline').value = settings.application_deadline;
                         }
-                        if (settings.application_portal_url) {
-                            document.getElementById('applicationPortalUrl').value = settings.application_portal_url;
+                        if (settings.whatsapp_group_url) {
+                            document.getElementById('whatsappGroupUrl').value = settings.whatsapp_group_url;
                         }
                         if (settings.hero_title) {
                             document.getElementById('heroTitle').value = settings.hero_title;
@@ -3121,14 +3121,6 @@
                 }
             } else if (notificationBanner) {
                 notificationBanner.style.display = 'none';
-            }
-            
-            // Update application portal link
-            if (data.portal_url) {
-                const portalLink = document.getElementById('applicationPortalLink');
-                if (portalLink) {
-                    portalLink.href = data.portal_url;
-                }
             }
             
             // Update QR code image
