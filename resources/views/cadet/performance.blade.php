@@ -752,7 +752,8 @@
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                                 @foreach($badgesData['unlocked'] as $unlockedBadge)
                                     <div class="badge-card group relative bg-gradient-to-br from-white to-gray-50 border-2 {{ $unlockedBadge['is_displayed'] ? 'border-green-400 shadow-lg' : 'border-gray-200' }} rounded-xl p-4 text-center hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2"
-                                        onclick="toggleBadgeDisplay({{ $unlockedBadge['badge']->id }})">
+                                        onclick="toggleBadgeDisplay({{ $unlockedBadge['badge']->id }})"
+                                        data-badge-id="{{ $unlockedBadge['badge']->id }}">
 
                                         {{-- Badge Icon/Image --}}
                                         <div class="flex justify-center mb-2">
@@ -778,7 +779,7 @@
                                         </div>
 
                                         {{-- Display Status --}}
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $unlockedBadge['is_displayed'] ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
+                                        <span class="badge-status inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $unlockedBadge['is_displayed'] ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
                                             <i class="fas fa-{{ $unlockedBadge['is_displayed'] ? 'eye' : 'eye-slash' }} mr-1"></i>
                                             {{ $unlockedBadge['is_displayed'] ? 'Displayed' : 'Hidden' }}
                                         </span>
@@ -966,7 +967,44 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    // Find the badge card element
+                    const badgeCard = document.querySelector(`[data-badge-id="${badgeId}"]`);
+                    if (badgeCard) {
+                        // Update the border and shadow classes
+                        if (data.is_displayed) {
+                            badgeCard.classList.remove('border-gray-200');
+                            badgeCard.classList.add('border-green-400', 'shadow-lg');
+                        } else {
+                            badgeCard.classList.remove('border-green-400', 'shadow-lg');
+                            badgeCard.classList.add('border-gray-200');
+                        }
+
+                        // Update the status span
+                        const statusSpan = badgeCard.querySelector('.badge-status');
+                        if (statusSpan) {
+                            // Remove existing classes
+                            statusSpan.classList.remove('bg-green-100', 'text-green-800', 'bg-gray-100', 'text-gray-600');
+
+                            // Update icon and text
+                            const icon = statusSpan.querySelector('i');
+                            if (icon) {
+                                icon.className = data.is_displayed ? 'fas fa-eye mr-1' : 'fas fa-eye-slash mr-1';
+                            }
+
+                            // Update text content
+                            const textNode = statusSpan.lastChild;
+                            if (textNode.nodeType === Node.TEXT_NODE) {
+                                textNode.textContent = data.is_displayed ? 'Displayed' : 'Hidden';
+                            }
+
+                            // Add new classes
+                            if (data.is_displayed) {
+                                statusSpan.classList.add('bg-green-100', 'text-green-800');
+                            } else {
+                                statusSpan.classList.add('bg-gray-100', 'text-gray-600');
+                            }
+                        }
+                    }
                 } else {
                     alert('Error toggling badge display');
                 }
