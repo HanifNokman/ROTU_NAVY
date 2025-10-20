@@ -794,11 +794,11 @@
         function renderCadetsTable() {
             const tableBody = document.getElementById('cadetsTableBody');
             tableBody.innerHTML = '';
-            
+
             const totalPages = Math.ceil(filteredCadets.length / itemsPerPage);
             const startIndex = (cadetCurrentPage - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, filteredCadets.length);
-            
+
             if (filteredCadets.length === 0) {
                 const emptyRow = document.createElement('tr');
                 emptyRow.innerHTML = `
@@ -813,21 +813,38 @@
                 tableBody.appendChild(emptyRow);
             } else {
                 for (let i = startIndex; i < endIndex; i++) {
-                    tableBody.appendChild(filteredCadets[i].cloneNode(true));
+                    const row = filteredCadets[i].cloneNode(true);
+                    tableBody.appendChild(row);
+
+                    // Re-attach event listeners
+                    const editBtn = row.querySelector('.edit-btn');
+                    const deleteBtn = row.querySelector('.delete-btn');
+
+                    if (editBtn) {
+                        editBtn.addEventListener('click', function() {
+                            openEditModal(this.getAttribute('data-id'), this.getAttribute('data-type'));
+                        });
+                    }
+
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function() {
+                            openDeleteModal(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-type'));
+                        });
+                    }
                 }
             }
-            
+
             updateCadetPagination(totalPages);
         }
 
         function renderInstructorsTable() {
             const tableBody = document.getElementById('instructorsTableBody');
             tableBody.innerHTML = '';
-            
+
             const totalPages = Math.ceil(filteredInstructors.length / itemsPerPage);
             const startIndex = (instructorCurrentPage - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, filteredInstructors.length);
-            
+
             if (filteredInstructors.length === 0) {
                 const emptyRow = document.createElement('tr');
                 emptyRow.innerHTML = `
@@ -842,10 +859,27 @@
                 tableBody.appendChild(emptyRow);
             } else {
                 for (let i = startIndex; i < endIndex; i++) {
-                    tableBody.appendChild(filteredInstructors[i].cloneNode(true));
+                    const row = filteredInstructors[i].cloneNode(true);
+                    tableBody.appendChild(row);
+
+                    // Re-attach event listeners
+                    const editBtn = row.querySelector('.edit-btn');
+                    const deleteBtn = row.querySelector('.delete-btn');
+
+                    if (editBtn) {
+                        editBtn.addEventListener('click', function() {
+                            openEditModal(this.getAttribute('data-id'), this.getAttribute('data-type'));
+                        });
+                    }
+
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function() {
+                            openDeleteModal(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-type'));
+                        });
+                    }
                 }
             }
-            
+
             updateInstructorPagination(totalPages);
         }
 
