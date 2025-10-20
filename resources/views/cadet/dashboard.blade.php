@@ -106,20 +106,40 @@
                 x-data="{ open: false }">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 cursor-pointer"
                     @click="open = !open">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center justify-between text-gray-900">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                            Personal Profile
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-semibold mb-2 text-gray-900">
+                                <svg class="w-6 h-6 mr-2 text-blue-600 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                Personal Profile
+                            </h2>
+                            <p class="text-gray-600">Your profile information and details</p>
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200"
-                            :class="{ 'rotate-180': open }"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </h2>
-                    <p class="text-gray-600">Your profile information and details</p>
+                        <div class="flex items-center space-x-1 ml-6">
+                            {{-- Displayed Badges --}}
+                            @if($cadet->cadetBadges && $cadet->cadetBadges->count() > 0)
+                                @foreach($cadet->cadetBadges->take(8) as $cadetBadge)
+                                    @if($cadetBadge->badge->icon_path)
+                                        <img src="{{ asset('storage/badges/' . $cadetBadge->badge->icon_path) }}"
+                                            alt="{{ $cadetBadge->badge->name }}"
+                                            title="{{ $cadetBadge->badge->name }} ({{ $cadetBadge->badge->rarity_label }})"
+                                            class="w-12 h-12 object-contain">
+                                    @else
+                                        <span class="text-3xl" title="{{ $cadetBadge->badge->name }} ({{ $cadetBadge->badge->rarity_label }})">🏆</span>
+                                    @endif
+                                @endforeach
+                                @if($cadet->cadetBadges->count() > 8)
+                                    <span class="text-sm text-gray-500 ml-1">+{{ $cadet->cadetBadges->count() - 8 }}</span>
+                                @endif
+                            @endif
+                            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200 ml-4"
+                                :class="{ 'rotate-180': open }"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="p-6 flex flex-col md:flex-row gap-6"
