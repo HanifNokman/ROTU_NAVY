@@ -67,7 +67,6 @@ class AdminController extends Controller
             ->orderBy('service_number')
             ->get();
 
-        // Always show max 4 intakes: current year and 3 years below
         $currentYear = now()->year;
         $minYear = $currentYear - 3;
         $intakeYears = collect(range($currentYear, $minYear))->filter(function($year) {
@@ -99,6 +98,107 @@ class AdminController extends Controller
             'totalActiveCadets',
             'totalActiveInstructors'
         ));
+    }
+
+    // ============================================================================
+    // NEW: AJAX SEARCH FOR CADETS
+    // ============================================================================
+    public function searchCadets(Request $request)
+    {
+        $search = $request->get('search', '');
+        $intake = $request->get('intake', '');
+
+        $cadetsQuery = Cadet::with('user');
+        
+        // Apply intake filter
+        if ($intake == 'no_intake') {
+            $cadetsQuery->whereNull('intake_year');
+        } elseif ($intake) {
+            $cadetsQuery->where('intake_year', $intake);
+        }
+        
+        // Apply search filter
+        if ($search) {
+            $cadetsQuery->where(function($query) use ($search) {
+                $query->where('service_number', 'like', "%{$search}%")
+                      ->orWhere('rank', 'like', "%{$search}%")
+                      ->orWhere('position', 'like', "%{$search}%")
+                      ->orWhere('matric_no', 'like', "%{$search}%")
+                      ->orWhere('ic_number', 'like', "%{$search}%")
+                      ->orWhere('phone_number', 'like', "%{$search}%")
+                      ->orWhere('bank_account_number', 'like', "%{$search}%")
+                      ->orWhereHas('user', function($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                      });
+            });
+        }
+        
+        $cadets = $cadetsQuery->orderBy('service_number')->get();
+
+        return response()->json([
+            'success' => true,
+            'cadets' => $cadets,
+            'count' => $cadets->count()
+        ]);
+    }
+
+    // ============================================================================
+    // NEW: AJAX SEARCH FOR INSTRUCTORS
+    // ============================================================================
+    public function searchInstructors(Request $request)
+    {
+        $search = $request->get('search', '');
+        $status = $request->get('status', '');
+
+        $rankOrder = [
+            'Kpt' => 1,
+            'Kdr' => 2,
+            'Lt.Kdr' => 3,
+            'Lt' => 4,
+            'Lt.Dya' => 5,
+            'Lt.M' => 6,
+            'PWI' => 7,
+            'PWII' => 8,
+            'BK' => 9,
+            'BM' => 10,
+            'LK' => 11,
+            'LKI' => 12,
+            'LKII' => 13,
+        ];
+
+        $instructorsQuery = Instructor::with('user');
+        
+        // Apply status filter
+        if ($status) {
+            $instructorsQuery->where('status', $status);
+        }
+        
+        // Apply search filter
+        if ($search) {
+            $instructorsQuery->where(function($query) use ($search) {
+                $query->where('service_number', 'like', "%{$search}%")
+                      ->orWhere('rank', 'like', "%{$search}%")
+                      ->orWhere('position', 'like', "%{$search}%")
+                      ->orWhere('expertise', 'like', "%{$search}%")
+                      ->orWhere('phone_number', 'like', "%{$search}%")
+                      ->orWhereHas('user', function($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                      });
+            });
+        }
+        
+        $instructors = $instructorsQuery
+            ->orderByRaw("FIELD(rank, '" . implode("','", array_keys($rankOrder)) . "')")
+            ->orderBy('service_number')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'instructors' => $instructors,
+            'count' => $instructors->count()
+        ]);
     }
 
     public function updateUser(Request $request, $id)
@@ -133,7 +233,6 @@ class AdminController extends Controller
                 'service_number' => 'nullable|string|max:10',
             ]);
             
-            // Convert empty strings to null for date fields
             $dateFields = ['BMI_update_date', 'swimming_pass_date'];
             foreach ($dateFields as $field) {
                 if (isset($cadetValidated[$field]) && trim($cadetValidated[$field]) === '') {
@@ -249,6 +348,143 @@ class AdminController extends Controller
         return view('admin.data_management', compact('counts', 'models', 'selectedModel', 'data', 'request'));
     }
 
+    // ============================================================================
+    // NEW: AJAX SEARCH FOR DATA MANAGEMENT
+    // ============================================================================
+    public function searchData(Request $request)
+    {
+        $search = $request->get('search', '');
+        $selectedModel = $request->get('model', 'learning_materials');
+
+        $data = [];
+        
+        switch ($selectedModel) {
+            case 'learning_materials':
+                $query = LearningMaterial::with('instructor.user', 'category');
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('title', 'like', "%{$search}%")
+                          ->orWhere('description', 'like', "%{$search}%")
+                          ->orWhereHas('instructor.user', function($q2) use ($search) {
+                              $q2->where('name', 'like', "%{$search}%");
+                          })
+                          ->orWhereHas('category', function($q2) use ($search) {
+                              $q2->where('name', 'like', "%{$search}%");
+                          });
+                    });
+                }
+                $data = $query->get();
+                break;
+
+            case 'uniform_types':
+                $query = UniformType::query();
+                if ($search) {
+                    $query->where('type_name', 'like', "%{$search}%")
+                          ->orWhere('description', 'like', "%{$search}%");
+                }
+                $data = $query->get();
+                break;
+
+            case 'inventory_items':
+                $query = InventoryItem::query();
+                if ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                          ->orWhere('category', 'like', "%{$search}%")
+                          ->orWhere('description', 'like', "%{$search}%");
+                }
+                $data = $query->get();
+                break;
+
+            case 'uniform_components':
+                $query = UniformComponent::with('uniformType');
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('component_name', 'like', "%{$search}%")
+                          ->orWhereHas('uniformType', function($q2) use ($search) {
+                              $q2->where('type_name', 'like', "%{$search}%");
+                          });
+                    });
+                }
+                $data = $query->get();
+                break;
+
+            case 'equipment_loans':
+                $query = EquipmentLoan::with('cadet.user', 'inventoryItem');
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('status', 'like', "%{$search}%")
+                          ->orWhereHas('cadet.user', function($q2) use ($search) {
+                              $q2->where('name', 'like', "%{$search}%");
+                          })
+                          ->orWhereHas('inventoryItem', function($q2) use ($search) {
+                              $q2->where('name', 'like', "%{$search}%");
+                          });
+                    });
+                }
+                $data = $query->get();
+                break;
+
+            case 'galleries':
+                $query = Gallery::with('category', 'instructor');
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('title', 'like', "%{$search}%")
+                          ->orWhere('description', 'like', "%{$search}%")
+                          ->orWhereHas('category', function($q2) use ($search) {
+                              $q2->where('name', 'like', "%{$search}%");
+                          });
+                    });
+                }
+                $data = $query->get();
+                break;
+
+            case 'trainings':
+                $query = Training::query();
+                if ($search) {
+                    $query->where('title', 'like', "%{$search}%")
+                          ->orWhere('location', 'like', "%{$search}%")
+                          ->orWhere('status', 'like', "%{$search}%");
+                }
+                $data = $query->get();
+                break;
+
+            case 'quiz_questions':
+                $query = QuizQuestion::with('category', 'creator');
+                if ($search) {
+                    $query->where(function($q) use ($search) {
+                        $q->where('question_text', 'like', "%{$search}%")
+                          ->orWhere('question_type', 'like', "%{$search}%")
+                          ->orWhere('status', 'like', "%{$search}%")
+                          ->orWhereHas('category', function($q2) use ($search) {
+                              $q2->where('name', 'like', "%{$search}%");
+                          });
+                    });
+                }
+                $data = $query->get();
+                break;
+
+            case 'badges':
+                $query = Badge::query();
+                if ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                          ->orWhere('category', 'like', "%{$search}%")
+                          ->orWhere('description', 'like', "%{$search}%");
+                }
+                $data = $query->get();
+                break;
+
+            default:
+                $data = [];
+                break;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'count' => count($data)
+        ]);
+    }
+
     public function getData($model, $id)
     {
         $models = [
@@ -294,14 +530,11 @@ class AdminController extends Controller
         if ($model === 'badges') {
             $validated = $request->validate($this->getValidationRules($model));
 
-            // Handle file upload for badges
             if ($request->hasFile('icon_path')) {
-                // Delete old file if exists
                 if ($instance->icon_path && Storage::disk('public')->exists('badges/' . $instance->icon_path)) {
                     Storage::disk('public')->delete('badges/' . $instance->icon_path);
                 }
 
-                // Store new file
                 $file = $request->file('icon_path');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('badges', $filename, 'public');
