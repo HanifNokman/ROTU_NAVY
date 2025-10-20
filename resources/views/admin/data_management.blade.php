@@ -100,9 +100,6 @@
                         <h3 class="text-lg font-medium">{{ $models[$selectedModel]['name'] }}</h3>
                         <div class="flex items-center space-x-4">
                             <div class="text-sm text-gray-500">Total Records: {{ count($data) }}</div>
-                            @if($selectedModel == 'badges')
-                                <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" onclick="openCreateModal()">Add New Badge</button>
-                            @endif
                         </div>
                     </div>
 
@@ -449,33 +446,6 @@
         </div>
     </div>
 
-    {{-- ============================================================================
-    CREATE MODAL
-    =========================================================================== --}}
-    <div id="createModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-10 mx-auto p-5 border w-5/6 max-w-4xl shadow-lg rounded-md bg-white">
-            <button onclick="closeCreateModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-
-            <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Badge</h3>
-
-                <form id="createForm" method="POST">
-                    @csrf
-
-                    <div id="createFormFields" class="max-h-96 overflow-y-auto"></div>
-
-                    <div class="flex justify-end mt-4">
-                        <button type="button" class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400" onclick="closeCreateModal()">
-                            Cancel
-                        </button>
-                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-                            Create
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <script>
     // CONSTANTS
     const selectedModel = '{{ $selectedModel }}';
@@ -533,38 +503,9 @@
         document.getElementById('deleteModal').classList.add('hidden');
     }
 
-    function openCreateModal() {
-        populateCreateForm();
-        document.getElementById('createModal').classList.remove('hidden');
-    }
-
-    function closeCreateModal() {
-        document.getElementById('createModal').classList.add('hidden');
-    }
-
     // ============================================================================
     // FORM POPULATION FUNCTIONS
     // ============================================================================
-    function populateCreateForm() {
-        let fields = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-
-        switch(selectedModel) {
-            case 'badges':
-                fields += generateField('Name', 'name', '', 'text', true);
-                fields += generateFileField('Icon', 'icon', '');
-                fields += generateField('Category', 'category', '', 'text', true);
-                fields += generateSelectField('Rarity', 'rarity', '', ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'], true);
-                fields += generateField('Description', 'description', '', 'textarea', false, 'col-span-2');
-                fields += generateField('Unlock Criteria', 'unlock_criteria', '', 'textarea', false, 'col-span-2');
-                fields += generateSelectField('Is Active', 'is_active', '', [1, 0], true, '', ['Yes', 'No']);
-                break;
-            // Add other models if needed
-        }
-
-        fields += '</div>';
-        document.getElementById('createFormFields').innerHTML = fields;
-        document.getElementById('createForm').action = `/admin/data/${selectedModel}`;
-    }
     function populateEditForm(data) {
         let fields = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
         
