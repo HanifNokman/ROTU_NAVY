@@ -76,22 +76,28 @@ class PerformanceController extends Controller
                 ];
             });
 
-        // Quiz Overall Leaderboard
+        // Quiz Overall Leaderboard (sorted by score then by earliest completion time)
         $leaderboards['quiz_overall'] = CadetQuizScore::with('cadet.user')
             ->join('cadets', 'cadet_quiz_scores.cadet_id', '=', 'cadets.id')
             ->where('cadets.intake_year', $cadetIntakeYear)
-            ->select('cadet_quiz_scores.cadet_id', DB::raw('AVG(score_percentage) as avg_score'))
+            ->select(
+                'cadet_quiz_scores.cadet_id',
+                DB::raw('AVG(score_percentage) as avg_score'),
+                DB::raw('MIN(cadet_quiz_scores.created_at) as earliest_completion')
+            )
             ->groupBy('cadet_quiz_scores.cadet_id')
             ->orderBy('avg_score', 'desc')
+            ->orderBy('earliest_completion', 'asc')
             ->get()
             ->map(function ($score) {
                 return [
                     'cadet' => $score->cadet,
                     'score' => round($score->avg_score, 1),
+                    'completed_at' => $score->earliest_completion,
                 ];
             });
 
-        // Quiz by Category Leaderboard
+        // Quiz by Category Leaderboard (sorted by score then by earliest completion time)
         $categories = LearningMaterialCategory::all();
         $leaderboards['quiz_categories'] = [];
         foreach ($categories as $category) {
@@ -99,14 +105,20 @@ class PerformanceController extends Controller
                 ->join('cadets', 'cadet_quiz_scores.cadet_id', '=', 'cadets.id')
                 ->where('cadet_quiz_scores.learning_material_category_id', $category->id)
                 ->where('cadets.intake_year', $cadetIntakeYear)
-                ->select('cadet_quiz_scores.cadet_id', DB::raw('MAX(score_percentage) as max_score'))
+                ->select(
+                    'cadet_quiz_scores.cadet_id',
+                    DB::raw('MAX(score_percentage) as max_score'),
+                    DB::raw('MIN(cadet_quiz_scores.created_at) as earliest_completion')
+                )
                 ->groupBy('cadet_quiz_scores.cadet_id')
                 ->orderBy('max_score', 'desc')
+                ->orderBy('earliest_completion', 'asc')
                 ->get()
                 ->map(function ($score) {
                     return [
                         'cadet' => $score->cadet,
                         'score' => $score->max_score,
+                        'completed_at' => $score->earliest_completion,
                     ];
                 });
 
