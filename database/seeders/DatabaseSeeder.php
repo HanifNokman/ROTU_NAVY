@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             LearningMaterialSeeder::class,
             QuizQuestionSeeder::class,
             AttendanceSeeder::class,
+            BadgeSeeder::class,
         ]);
     }
 }

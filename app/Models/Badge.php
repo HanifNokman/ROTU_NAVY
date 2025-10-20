@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Badge extends Model
 {
@@ -22,6 +23,13 @@ class Badge extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'rarity_level' => 'integer'
+    ];
+
+    protected $appends = [
+        'rarity_label',
+        'rarity_color',
+        'icon_url',
+        'icon'
     ];
 
     /**
@@ -120,7 +128,14 @@ class Badge extends Model
     public function getIconUrlAttribute()
     {
         if ($this->icon_path) {
-            return asset('storage/badges/' . $this->icon_path);
+            // Check if file exists in storage
+            if (Storage::disk('public')->exists('assets/badges/' . $this->icon_path)) {
+                return asset('storage/assets/badges/' . $this->icon_path);
+            }
+            // Fallback: check if it's a direct public path
+            if (file_exists(public_path('storage/assets/badges/' . $this->icon_path))) {
+                return asset('storage/assets/badges/' . $this->icon_path);
+            }
         }
         return null;
     }
@@ -130,6 +145,82 @@ class Badge extends Model
      */
     public function hasImageIcon()
     {
-        return !empty($this->icon_path) && file_exists(public_path('storage/badges/' . $this->icon_path));
+        if (empty($this->icon_path)) {
+            return false;
+        }
+
+        // Check in storage disk first
+        if (Storage::disk('public')->exists('assets/badges/' . $this->icon_path)) {
+            return true;
+        }
+
+        // Fallback: check in public directory
+        return file_exists(public_path('storage/assets/badges/' . $this->icon_path));
+    }
+
+    /**
+     * Get FontAwesome icon class as fallback
+     */
+    public function getIconAttribute()
+    {
+        // Return FontAwesome icon based on category as fallback
+        $icons = [
+            'overall' => 'fas fa-trophy',
+            'attendance' => 'fas fa-calendar-check',
+            'quiz' => 'fas fa-brain',
+            'learning' => 'fas fa-book-open',
+            'duty' => 'fas fa-clipboard-check',
+            'academic' => 'fas fa-graduation-cap',
+        ];
+
+        return $icons[$this->category] ?? 'fas fa-award';
+    }
+
+    /**
+     * Get category display name
+     */
+    public function getCategoryNameAttribute()
+    {
+        $categories = [
+            'overall' => 'Overall Performance',
+            'attendance' => 'Attendance',
+            'quiz' => 'Quiz Performance',
+            'learning' => 'Learning Progress',
+            'duty' => 'Duty',
+            'academic' => 'Academic Excellence',
+        ];
+
+        return $categories[$this->category] ?? ucfirst($this->category);
+    }
+
+    /**
+     * Get category icon
+     */
+    public function getCategoryIconAttribute()
+    {
+        return $this->getIconAttribute();
+    }
+
+    /**
+     * Check if badge should be displayed
+     * (Helper method for checking display status for specific cadet)
+     */
+    public function isDisplayedBy($cadetId)
+    {
+        $cadetBadge = $this->cadetBadges()
+            ->where('cadet_id', $cadetId)
+            ->first();
+        
+        return $cadetBadge ? $cadetBadge->is_displayed : false;
+    }
+
+    /**
+     * Get the cadet badge record for a specific cadet
+     */
+    public function getCadetBadge($cadetId)
+    {
+        return $this->cadetBadges()
+            ->where('cadet_id', $cadetId)
+            ->first();
     }
 }
