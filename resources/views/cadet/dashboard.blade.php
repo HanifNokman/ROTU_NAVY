@@ -263,6 +263,7 @@
                             <table class="min-w-full bg-white">
                                 <thead class="bg-gray-100 sticky top-0">
                                     <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">No.</th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Service No.</th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rank</th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
@@ -274,8 +275,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse($intakeCadets as $intakeCadet)
+                                    @forelse($intakeCadets as $index => $intakeCadet)
                                         <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $index + 1 }}
+                                            </td>
                                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {{ $intakeCadet->service_number ?? 'N/A' }}
                                             </td>
