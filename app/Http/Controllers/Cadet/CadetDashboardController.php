@@ -17,7 +17,15 @@ class CadetDashboardController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
+        $cadet = Cadet::where('user_id', $user->id)
+            ->with([
+                'cadetBadges' => function($query) {
+                    $query->where('is_displayed', true)
+                        ->with('badge')
+                        ->orderBy('unlocked_at', 'desc');
+                }
+            ])
+            ->firstOrFail();
 
         $intakeYear = $cadet->intake_year ?? now()->year;
         $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);

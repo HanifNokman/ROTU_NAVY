@@ -376,7 +376,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->category }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="{{ ['text-gray-600', 'text-green-600', 'text-blue-600', 'text-purple-600', 'text-yellow-600'][$item->rarity_level - 1] ?? 'text-gray-600' }}">{{ ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'][$item->rarity_level - 1] ?? 'Common' }}</span></td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span style="color: {{ ['#6B7280', '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B'][$item->rarity_level - 1] ?? '#6B7280' }}">{{ ['Standard', 'Bronze', 'Silver', 'Gold', 'Platinum'][$item->rarity_level - 1] ?? 'Standard' }}</span></td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->is_active ? 'Yes' : 'No' }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
@@ -594,7 +594,7 @@
                 fields += generateField('Name', 'name', data.name, 'text', true);
                 fields += generateFileField('Icon', 'icon_path', data.icon_path, '', false);
                 fields += generateField('Category', 'category', data.category, 'text', true);
-                fields += generateSelectField('Rarity', 'rarity_level', data.rarity_level, [1, 2, 3, 4, 5], true, '', ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']);
+                fields += generateSelectField('Rarity', 'rarity_level', data.rarity_level, [1, 2, 3, 4, 5], true, '', ['Standard', 'Bronze', 'Silver', 'Gold', 'Platinum']);
                 fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
                 fields += generateField('Unlock Criteria', 'unlock_criteria', data.unlock_criteria, 'textarea', false, 'col-span-2');
                 fields += generateSelectField('Is Active', 'is_active', data.is_active, [1, 0], true, '', ['Yes', 'No']);
@@ -941,18 +941,18 @@
                         5: 'text-yellow-600'
                     };
                     const rarityLabels = {
-                        1: 'Common',
-                        2: 'Uncommon',
-                        3: 'Rare',
-                        4: 'Epic',
-                        5: 'Legendary'
+                        1: 'Standard',
+                        2: 'Bronze',
+                        3: 'Silver',
+                        4: 'Gold',
+                        5: 'Platinum'
                     };
                     row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
                         <td class="px-6 py-4 text-sm text-gray-500">${item.name}</td>
                         <td class="px-6 py-4 text-sm text-gray-500">${item.icon_path || ''}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.category}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="${rarityColors[item.rarity_level] || 'text-gray-600'}">${rarityLabels[item.rarity_level] || 'Common'}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="${rarityColors[item.rarity_level] || 'text-gray-600'}">${rarityLabels[item.rarity_level] || 'Standard'}</span></td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.is_active ? 'Yes' : 'No'}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
