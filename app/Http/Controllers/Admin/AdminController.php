@@ -19,6 +19,7 @@ use App\Models\EquipmentLoan;
 use App\Models\Gallery;
 use App\Models\Training;
 use App\Models\QuizQuestion;
+use App\Models\Badge;
 
 class AdminController extends Controller
 {
@@ -209,6 +210,7 @@ class AdminController extends Controller
             'galleries' => ['model' => Gallery::class, 'name' => 'Galleries'],
             'trainings' => ['model' => Training::class, 'name' => 'Trainings'],
             'quiz_questions' => ['model' => QuizQuestion::class, 'name' => 'Quiz Questions'],
+            'badges' => ['model' => Badge::class, 'name' => 'Badges'],
         ];
 
         $counts = [];
@@ -257,6 +259,7 @@ class AdminController extends Controller
             'galleries' => Gallery::class,
             'trainings' => Training::class,
             'quiz_questions' => QuizQuestion::class,
+            'badges' => Badge::class,
         ];
 
         if (!isset($models[$model])) {
@@ -278,6 +281,7 @@ class AdminController extends Controller
             'galleries' => Gallery::class,
             'trainings' => Training::class,
             'quiz_questions' => QuizQuestion::class,
+            'badges' => Badge::class,
         ];
 
         if (!isset($models[$model])) {
@@ -302,6 +306,7 @@ class AdminController extends Controller
             'galleries' => Gallery::class,
             'trainings' => Training::class,
             'quiz_questions' => QuizQuestion::class,
+            'badges' => Badge::class,
         ];
 
         if (!isset($models[$model])) {
