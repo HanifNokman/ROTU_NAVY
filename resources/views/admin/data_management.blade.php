@@ -199,13 +199,13 @@
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Status</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Actions</th>
 
-                                        {{-- ============================================================================
-                                        TABLE HEADERS: BADGES
-                                        =========================================================================== --}}
-                                        @elseif($selectedModel == 'badges')
+                                            {{-- ============================================================================
+                                            TABLE HEADERS: BADGES
+                                            =========================================================================== --}}
+                                            @elseif($selectedModel == 'badges')
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">ID</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Name</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Icon Path</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Icon</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Category</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Rarity</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 z-10">Active</th>
@@ -368,9 +368,15 @@
                                             @elseif($selectedModel == 'badges')
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->id }}</td>
                                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $item->name }}</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $item->icon }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    @if($item->icon_path)
+                                                        <img src="{{ asset('storage/' . $item->icon_path) }}" alt="{{ $item->name }}" class="w-8 h-8 object-cover rounded">
+                                                    @else
+                                                        No Icon
+                                                    @endif
+                                                </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->category }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="{{ $item->rarity_color }}">{{ $item->rarity_label }}</span></td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="{{ ['text-gray-600', 'text-green-600', 'text-blue-600', 'text-purple-600', 'text-yellow-600'][$item->rarity_level - 1] ?? 'text-gray-600' }}">{{ ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'][$item->rarity_level - 1] ?? 'Common' }}</span></td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->is_active ? 'Yes' : 'No' }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="{{ $item->id }}">Edit</button>
@@ -586,9 +592,9 @@
 
             case 'badges':
                 fields += generateField('Name', 'name', data.name, 'text', true);
-                fields += generateFileField('Icon', 'icon', data.icon);
+                fields += generateFileField('Icon', 'icon_path', data.icon_path, '', false);
                 fields += generateField('Category', 'category', data.category, 'text', true);
-                fields += generateSelectField('Rarity', 'rarity', data.rarity, ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'], true);
+                fields += generateSelectField('Rarity', 'rarity_level', data.rarity_level, [1, 2, 3, 4, 5], true, '', ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']);
                 fields += generateField('Description', 'description', data.description, 'textarea', false, 'col-span-2');
                 fields += generateField('Unlock Criteria', 'unlock_criteria', data.unlock_criteria, 'textarea', false, 'col-span-2');
                 fields += generateSelectField('Is Active', 'is_active', data.is_active, [1, 0], true, '', ['Yes', 'No']);
@@ -646,13 +652,14 @@
         `;
     }
 
-    function generateFileField(label, name, value, colSpan = '') {
+    function generateFileField(label, name, value, colSpan = '', required = false) {
         const colClass = colSpan || '';
+        const reqAttr = required ? 'required' : '';
 
         return `
             <div class="mb-4 ${colClass}">
                 <label class="block text-sm font-medium text-gray-700">${label}</label>
-                <input type="file" name="${name}" accept="image/*" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                <input type="file" name="${name}" accept="image/*" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" ${reqAttr}>
                 ${value ? `<p class="mt-1 text-sm text-gray-500">Current: ${value}</p>` : ''}
             </div>
         `;

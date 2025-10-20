@@ -758,7 +758,6 @@ class AdminController extends Controller
             ],
             'badges' => [
                 'name' => 'required|string|max:255',
-                'icon_path' => 'required|string|max:255',
                 'description' => 'required|string',
                 'unlock_criteria' => 'required|string',
                 'category' => 'required|string|max:255',
