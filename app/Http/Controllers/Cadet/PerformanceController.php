@@ -29,23 +29,29 @@ class PerformanceController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Calculate user's total points and latest overall rating
+        $userTotalPoints = $performanceRatings->sum('total_points');
+        $userOverallRating = $performanceRatings->first()->rating ?? 'N/A';
+
         // Get leaderboard data
-        $leaderboards = $this->getLeaderboards();
+        $leaderboards = $this->getLeaderboards($cadet->intake_year);
 
         // Get badges data
         $badgesData = $this->getBadgesData($cadet);
 
-        return view('cadet.performance', compact('performanceRatings', 'cadet', 'leaderboards', 'badgesData'));
+        return view('cadet.performance', compact('performanceRatings', 'cadet', 'leaderboards', 'badgesData', 'userTotalPoints', 'userOverallRating'));
     }
 
-    private function getLeaderboards()
+    private function getLeaderboards($cadetIntakeYear)
     {
         $leaderboards = [];
 
         // Overall Performance Leaderboard
         $leaderboards['overall'] = PerformanceRating::with('cadet.user')
-            ->select('cadet_id', DB::raw('SUM(total_points) as total_points'))
-            ->groupBy('cadet_id')
+            ->join('cadets', 'performance_ratings.cadet_id', '=', 'cadets.id')
+            ->where('cadets.intake_year', $cadetIntakeYear)
+            ->select('performance_ratings.cadet_id', DB::raw('SUM(total_points) as total_points'))
+            ->groupBy('performance_ratings.cadet_id')
             ->orderBy('total_points', 'desc')
             ->limit(10)
             ->get()
@@ -65,8 +71,10 @@ class PerformanceController extends Controller
 
         // Attendance Leaderboard
         $leaderboards['attendance'] = PerformanceRating::with('cadet.user')
-            ->select('cadet_id', DB::raw('SUM(attendance_points) as attendance_points'))
-            ->groupBy('cadet_id')
+            ->join('cadets', 'performance_ratings.cadet_id', '=', 'cadets.id')
+            ->where('cadets.intake_year', $cadetIntakeYear)
+            ->select('performance_ratings.cadet_id', DB::raw('SUM(attendance_points) as attendance_points'))
+            ->groupBy('performance_ratings.cadet_id')
             ->orderBy('attendance_points', 'desc')
             ->limit(10)
             ->get()
@@ -85,8 +93,10 @@ class PerformanceController extends Controller
 
         // Quiz Overall Leaderboard
         $leaderboards['quiz_overall'] = CadetQuizScore::with('cadet.user')
-            ->select('cadet_id', DB::raw('AVG(score_percentage) as avg_score'))
-            ->groupBy('cadet_id')
+            ->join('cadets', 'cadet_quiz_scores.cadet_id', '=', 'cadets.id')
+            ->where('cadets.intake_year', $cadetIntakeYear)
+            ->select('cadet_quiz_scores.cadet_id', DB::raw('AVG(score_percentage) as avg_score'))
+            ->groupBy('cadet_quiz_scores.cadet_id')
             ->orderBy('avg_score', 'desc')
             ->limit(10)
             ->get()
@@ -108,9 +118,11 @@ class PerformanceController extends Controller
         $leaderboards['quiz_categories'] = [];
         foreach ($categories as $category) {
             $categoryLeaderboard = CadetQuizScore::with('cadet.user')
-                ->where('learning_material_category_id', $category->id)
-                ->select('cadet_id', DB::raw('MAX(score_percentage) as max_score'))
-                ->groupBy('cadet_id')
+                ->join('cadets', 'cadet_quiz_scores.cadet_id', '=', 'cadets.id')
+                ->where('cadet_quiz_scores.learning_material_category_id', $category->id)
+                ->where('cadets.intake_year', $cadetIntakeYear)
+                ->select('cadet_quiz_scores.cadet_id', DB::raw('MAX(score_percentage) as max_score'))
+                ->groupBy('cadet_quiz_scores.cadet_id')
                 ->orderBy('max_score', 'desc')
                 ->limit(5)
                 ->get()
@@ -132,7 +144,8 @@ class PerformanceController extends Controller
 
         // Duty Count Leaderboard
         $leaderboards['duty'] = Cadet::with('user')
-            ->select('id', 'daily_duty_count')
+            ->whereHas('user')
+            ->where('intake_year', $cadetIntakeYear)
             ->whereNotNull('daily_duty_count')
             ->orderBy('daily_duty_count', 'desc')
             ->limit(10)
@@ -152,7 +165,8 @@ class PerformanceController extends Controller
 
         // Learning Progress Leaderboard
         $leaderboards['learning'] = Cadet::with('user', 'categoryProgress')
-            ->select('id')
+            ->whereHas('user')
+            ->where('intake_year', $cadetIntakeYear)
             ->withCount(['categoryProgress as avg_progress' => function ($query) {
                 $query->select(DB::raw('AVG(progress_percentage)'));
             }])

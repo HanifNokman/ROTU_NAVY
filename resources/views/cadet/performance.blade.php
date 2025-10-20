@@ -22,68 +22,35 @@
                     <p class="mt-6 text-gray-500 leading-relaxed">
                         View your performance ratings and progress over time.
                     </p>
-                </div>
 
-                <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 p-6 lg:p-8">
-                    @if($performanceRatings->count() > 0)
-                        @foreach($performanceRatings as $rating)
-                            <div class="bg-white rounded-lg shadow-md p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-lg font-semibold text-gray-900">
-                                        Performance Rating
-                                    </h3>
-                                    <span class="text-sm text-gray-500">
-                                        {{ $rating->created_at->format('M d, Y') }}
-                                    </span>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Overall Rating:</span>
-                                        <span class="font-semibold text-lg">{{ $rating->overall_rating ?? 'N/A' }}</span>
-                                    </div>
-
-                                    @if($rating->attendance_rating)
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-gray-600">Attendance:</span>
-                                            <span class="font-medium">{{ $rating->attendance_rating }}/10</span>
-                                        </div>
-                                    @endif
-
-                                    @if($rating->academic_rating)
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-gray-600">Academic:</span>
-                                            <span class="font-medium">{{ $rating->academic_rating }}/10</span>
-                                        </div>
-                                    @endif
-
-                                    @if($rating->discipline_rating)
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-gray-600">Discipline:</span>
-                                            <span class="font-medium">{{ $rating->discipline_rating }}/10</span>
-                                        </div>
-                                    @endif
-
-                                    @if($rating->comments)
-                                        <div class="mt-4">
-                                            <span class="text-gray-600 block mb-2">Comments:</span>
-                                            <p class="text-sm text-gray-700 bg-gray-50 p-3 rounded">
-                                                {{ $rating->comments }}
-                                            </p>
-                                        </div>
-                                    @endif
+                    {{-- User's Points and Rating Summary --}}
+                    <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Performance Summary</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-md p-4 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-600">Total Points:</span>
+                                    <span class="text-lg font-bold text-blue-600">{{ $userTotalPoints }}</span>
                                 </div>
                             </div>
-                        @endforeach
-                    @else
-                        <div class="col-span-full text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">No performance ratings yet</h3>
-                            <p class="mt-1 text-sm text-gray-500">Your performance ratings will appear here once they are available.</p>
+                            <div class="bg-white rounded-md p-4 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-600">Overall Rating:</span>
+                                    <div class="flex items-center">
+                                        @php
+                                            $stars = substr_count($userOverallRating, '⭐');
+                                        @endphp
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <svg class="w-5 h-5 {{ $i <= $stars ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        @endfor
+                                        <span class="ml-2 text-sm font-medium text-gray-600">({{ $stars }} Stars)</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
             </div>
 
@@ -115,7 +82,7 @@
                                     <div class="flex items-center justify-between p-3 bg-white rounded-md shadow-sm">
                                         <div class="flex items-center">
                                             <span class="text-sm font-medium text-gray-500 w-6">#{{ $entry['rank'] }}</span>
-                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
+                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? ($entry['cadet']->rank ? $entry['cadet']->rank . ' ' : '') . $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
                                         </div>
                                         <span class="text-sm font-semibold text-gray-700">{{ $entry['score'] }} pts</span>
                                     </div>
@@ -136,7 +103,7 @@
                                     <div class="flex items-center justify-between p-3 bg-white rounded-md shadow-sm">
                                         <div class="flex items-center">
                                             <span class="text-sm font-medium text-gray-500 w-6">#{{ $entry['rank'] }}</span>
-                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
+                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? ($entry['cadet']->rank ? $entry['cadet']->rank . ' ' : '') . $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
                                         </div>
                                         <span class="text-sm font-semibold text-gray-700">{{ $entry['score'] }} pts</span>
                                     </div>
@@ -157,7 +124,7 @@
                                     <div class="flex items-center justify-between p-3 bg-white rounded-md shadow-sm">
                                         <div class="flex items-center">
                                             <span class="text-sm font-medium text-gray-500 w-6">#{{ $entry['rank'] }}</span>
-                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
+                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? ($entry['cadet']->rank ? $entry['cadet']->rank . ' ' : '') . $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
                                         </div>
                                         <span class="text-sm font-semibold text-gray-700">{{ $entry['score'] }}%</span>
                                     </div>
@@ -178,7 +145,7 @@
                                     <div class="flex items-center justify-between p-3 bg-white rounded-md shadow-sm">
                                         <div class="flex items-center">
                                             <span class="text-sm font-medium text-gray-500 w-6">#{{ $entry['rank'] }}</span>
-                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
+                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? ($entry['cadet']->rank ? $entry['cadet']->rank . ' ' : '') . $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
                                         </div>
                                         <span class="text-sm font-semibold text-gray-700">{{ $entry['score'] }}</span>
                                     </div>
@@ -199,7 +166,7 @@
                                     <div class="flex items-center justify-between p-3 bg-white rounded-md shadow-sm">
                                         <div class="flex items-center">
                                             <span class="text-sm font-medium text-gray-500 w-6">#{{ $entry['rank'] }}</span>
-                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
+                                            <span class="ml-3 text-sm font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? ($entry['cadet']->rank ? $entry['cadet']->rank . ' ' : '') . $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
                                         </div>
                                         <span class="text-sm font-semibold text-gray-700">{{ $entry['score'] }}%</span>
                                     </div>
@@ -224,7 +191,7 @@
                                                 <div class="flex items-center justify-between p-2 bg-white rounded-md shadow-sm">
                                                     <div class="flex items-center">
                                                         <span class="text-xs font-medium text-gray-500 w-4">#{{ $entry['rank'] }}</span>
-                                                        <span class="ml-2 text-xs font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
+                                                        <span class="ml-2 text-xs font-medium text-gray-900">{{ $entry['cadet'] && $entry['cadet']->user ? ($entry['cadet']->rank ? $entry['cadet']->rank . ' ' : '') . $entry['cadet']->user->name : 'Unknown Cadet' }}</span>
                                                     </div>
                                                     <span class="text-xs font-semibold text-gray-700">{{ $entry['score'] }}%</span>
                                                 </div>
