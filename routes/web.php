@@ -394,6 +394,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'getData'])->name('data.show');
     Route::put('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateData'])->name('data.update');
     Route::delete('/data/{model}/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteData'])->name('data.delete');
+    Route::get('/user_management/search-cadets', [App\Http\Controllers\Admin\AdminController::class, 'searchCadets'])->name('user_management.search_cadets');
+    Route::get('/user_management/search-instructors', [App\Http\Controllers\Admin\AdminController::class, 'searchInstructors'])->name('user_management.search_instructors');
+    Route::get('/data_management/search', [App\Http\Controllers\Admin\AdminController::class, 'searchData'])->name('data_management.search');
     
     // Access Management Routes
     Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');

@@ -96,10 +96,14 @@
             =========================================================================== --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <h3 class="text-xl font-semibold mb-4">{{ $models[$selectedModel]['name'] }}</h3>
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium">{{ $models[$selectedModel]['name'] }}</h3>
-                        <div class="flex items-center space-x-4">
-                            <div class="text-sm text-gray-500">Total Records: {{ count($data) }}</div>
+                        <div class="text-sm text-gray-500">Total Records: {{ count($data) }}</div>
+                        <div id="dataSearchContainer" class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <input type="text" id="dataSearch" placeholder="Search by any field..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" style="min-width: 250px;">
                         </div>
                     </div>
 
@@ -731,5 +735,384 @@
             alert('Error deleting record: ' + error.message);
         });
     });
+    </script>
+
+    {{-- ================================================================ --}}
+    {{-- SEARCH AND PAGINATION SCRIPT --}}
+    {{-- ================================================================ --}}
+
+    <script>
+        // Store data
+        let allData = [];
+        let filteredData = [];
+        let dataCurrentPage = 1;
+        const dataItemsPerPage = 10;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Store initial data
+            document.querySelectorAll('tbody.bg-white.divide-y.divide-gray-200 tr').forEach(row => {
+                if (!row.querySelector('td[colspan]')) {
+                    allData.push(row.cloneNode(true));
+                }
+            });
+            
+            filteredData = [...allData];
+
+
+
+            // Search handler
+            const searchInput = document.getElementById('dataSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    searchData(searchTerm);
+                });
+            }
+
+            // Add pagination
+            addDataPagination();
+            renderDataTable();
+        });
+
+        async function searchData(searchTerm) {
+            try {
+                const response = await fetch(`{{ route('admin.data_management.search') }}?search=${encodeURIComponent(searchTerm)}&model=${selectedModel}`);
+                const responseData = await response.json();
+                
+                if (responseData.success) {
+                    allData = [];
+                    filteredData = [];
+                    
+                    responseData.data.forEach((item, index) => {
+                        const row = createDataRow(item, index);
+                        allData.push(row);
+                        filteredData.push(row);
+                    });
+                    
+                    dataCurrentPage = 1;
+                    renderDataTable();
+                    
+                    // Update total records display
+                    const totalRecordsDisplay = document.querySelector('.flex.justify-between.items-center.mb-4 .text-sm.text-gray-500');
+                    if (totalRecordsDisplay) {
+                        totalRecordsDisplay.textContent = `Total Records: ${responseData.count}`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error searching data:', error);
+            }
+        }
+
+        function createDataRow(item, index) {
+            const row = document.createElement('tr');
+            
+            switch(selectedModel) {
+                case 'learning_materials':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.title}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.instructor?.user?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.category?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.description ? item.description.substring(0, 50) : ''}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.file_url ? item.file_url.substring(0, 30) : ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'uniform_types':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.type_name}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.description || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(item.created_at).toLocaleDateString('en-GB')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'inventory_items':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.category}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.total_quantity}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.available_quantity}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.description ? item.description.substring(0, 50) : ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'uniform_components':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.component_name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.uniform_type?.type_name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(item.created_at).toLocaleDateString('en-GB')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'equipment_loans':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.cadet?.user?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.inventory_item?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.quantity}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.borrow_date ? new Date(item.borrow_date).toLocaleDateString('en-GB') : 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.return_date ? new Date(item.return_date).toLocaleDateString('en-GB') : 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.status}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'galleries':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.title}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.category?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.instructor?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.description ? item.description.substring(0, 50) : ''}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.image_path ? item.image_path.substring(0, 30) : ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'trainings':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.title}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.location}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.start_datetime ? new Date(item.start_datetime).toLocaleString('en-GB') : 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.end_datetime ? new Date(item.end_datetime).toLocaleString('en-GB') : 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.duration_hours || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.status}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'quiz_questions':
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.question_text ? item.question_text.substring(0, 50) : ''}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.category?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.question_type}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.creator?.name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.status}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+                    
+                case 'badges':
+                    const rarityColors = {
+                        1: 'text-gray-600',
+                        2: 'text-green-600',
+                        3: 'text-blue-600',
+                        4: 'text-purple-600',
+                        5: 'text-yellow-600'
+                    };
+                    const rarityLabels = {
+                        1: 'Common',
+                        2: 'Uncommon',
+                        3: 'Rare',
+                        4: 'Epic',
+                        5: 'Legendary'
+                    };
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.id}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.name}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.icon_path || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.category}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="${rarityColors[item.rarity_level] || 'text-gray-600'}">${rarityLabels[item.rarity_level] || 'Common'}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.is_active ? 'Yes' : 'No'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 edit-btn" data-id="${item.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    break;
+            }
+            
+            // Re-attach event listeners
+            const editBtn = row.querySelector('.edit-btn');
+            const deleteBtn = row.querySelector('.delete-btn');
+            
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    openEditModal(this.getAttribute('data-id'));
+                });
+            }
+            
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    openDeleteModal(this.getAttribute('data-id'));
+                });
+            }
+            
+            return row;
+        }
+
+        function renderDataTable() {
+            const tableBody = document.querySelector('tbody.bg-white.divide-y.divide-gray-200');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            const totalPages = Math.ceil(filteredData.length / dataItemsPerPage);
+            const startIndex = (dataCurrentPage - 1) * dataItemsPerPage;
+            const endIndex = Math.min(startIndex + dataItemsPerPage, filteredData.length);
+            
+            if (filteredData.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="10" class="px-6 py-12 text-center text-gray-500">
+                        <svg class="w-12 h-12 text-gray-400 mb-2 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="font-medium">No records found</p>
+                        <p class="text-sm">Try adjusting your search criteria</p>
+                    </td>
+                `;
+                tableBody.appendChild(emptyRow);
+            } else {
+                for (let i = startIndex; i < endIndex; i++) {
+                    const clonedRow = filteredData[i].cloneNode(true);
+                    
+                    // Re-attach event listeners to the cloned row
+                    const editBtn = clonedRow.querySelector('.edit-btn');
+                    const deleteBtn = clonedRow.querySelector('.delete-btn');
+                    
+                    if (editBtn) {
+                        editBtn.addEventListener('click', function() {
+                            openEditModal(this.getAttribute('data-id'));
+                        });
+                    }
+                    
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function() {
+                            openDeleteModal(this.getAttribute('data-id'));
+                        });
+                    }
+                    
+                    tableBody.appendChild(clonedRow);
+                }
+            }
+            
+            updateDataPagination(totalPages);
+        }
+
+        function addDataPagination() {
+            const tableContainer = document.querySelector('.overflow-x-auto');
+            if (!tableContainer) return;
+            
+            const paginationContainer = document.createElement('div');
+            paginationContainer.id = 'dataPaginationContainer';
+            paginationContainer.className = 'mt-4 flex items-center justify-between';
+            paginationContainer.innerHTML = `
+                <div class="text-sm text-gray-700">
+                    Showing <span id="dataShowingStart">1</span> to <span id="dataShowingEnd">10</span> of <span id="dataTotal">0</span> records
+                </div>
+                <div class="flex gap-2">
+                    <button id="dataPrevPage" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Previous
+                    </button>
+                    <div id="dataPageNumbers" class="flex gap-2"></div>
+                    <button id="dataNextPage" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next
+                    </button>
+                </div>
+            `;
+            tableContainer.parentNode.appendChild(paginationContainer);
+            
+            document.getElementById('dataPrevPage').addEventListener('click', function() {
+                if (dataCurrentPage > 1) {
+                    dataCurrentPage--;
+                    renderDataTable();
+                }
+            });
+            
+            document.getElementById('dataNextPage').addEventListener('click', function() {
+                const totalPages = Math.ceil(filteredData.length / dataItemsPerPage);
+                if (dataCurrentPage < totalPages) {
+                    dataCurrentPage++;
+                    renderDataTable();
+                }
+            });
+        }
+
+        function updateDataPagination(totalPages) {
+            const startIndex = (dataCurrentPage - 1) * dataItemsPerPage + 1;
+            const endIndex = Math.min(dataCurrentPage * dataItemsPerPage, filteredData.length);
+            
+            const showingStart = document.getElementById('dataShowingStart');
+            const showingEnd = document.getElementById('dataShowingEnd');
+            const totalElement = document.getElementById('dataTotal');
+            
+            if (showingStart) showingStart.textContent = filteredData.length > 0 ? startIndex : 0;
+            if (showingEnd) showingEnd.textContent = endIndex;
+            if (totalElement) totalElement.textContent = filteredData.length;
+            
+            const prevBtn = document.getElementById('dataPrevPage');
+            const nextBtn = document.getElementById('dataNextPage');
+            
+            if (prevBtn) prevBtn.disabled = dataCurrentPage === 1;
+            if (nextBtn) nextBtn.disabled = dataCurrentPage === totalPages || totalPages === 0;
+            
+            const pageNumbersContainer = document.getElementById('dataPageNumbers');
+            if (pageNumbersContainer) {
+                pageNumbersContainer.innerHTML = '';
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= dataCurrentPage - 1 && i <= dataCurrentPage + 1)) {
+                        const pageButton = document.createElement('button');
+                        pageButton.textContent = i;
+                        pageButton.className = `px-3 py-2 rounded-lg ${i === dataCurrentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+                        pageButton.addEventListener('click', function() {
+                            dataCurrentPage = i;
+                            renderDataTable();
+                        });
+                        pageNumbersContainer.appendChild(pageButton);
+                    } else if (i === dataCurrentPage - 2 || i === dataCurrentPage + 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.className = 'px-2 py-2 text-gray-500';
+                        pageNumbersContainer.appendChild(ellipsis);
+                    }
+                }
+            }
+        }
+
+        // Update model selection to reset search
+        document.querySelectorAll('a[href*="model="]').forEach(link => {
+            link.addEventListener('click', function() {
+                // Reset search input when changing models
+                const searchInput = document.getElementById('dataSearch');
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+            });
+        });
     </script>
 </x-app-layout>
