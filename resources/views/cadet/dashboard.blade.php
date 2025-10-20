@@ -121,7 +121,7 @@
                             @if($cadet->cadetBadges && $cadet->cadetBadges->count() > 0)
                                 @foreach($cadet->cadetBadges->take(8) as $cadetBadge)
                                     @if($cadetBadge->badge->icon_path)
-                                        <img src="{{ asset('storage/badges/' . $cadetBadge->badge->icon_path) }}"
+                                        <img src="{{ asset('storage/assets/badges/' . $cadetBadge->badge->icon_path) }}"
                                             alt="{{ $cadetBadge->badge->name }}"
                                             title="{{ $cadetBadge->badge->name }} ({{ $cadetBadge->badge->rarity_label }})"
                                             class="w-12 h-12 object-contain">
@@ -321,14 +321,14 @@
                                             <td class="px-4 py-4 whitespace-nowrap">
                                                 <div class="flex items-center space-x-1">
                                                     @forelse($intakeCadet->cadetBadges->take(3) as $cadetBadge)
-                                                        @if($cadetBadge->badge->icon_path)
-                                                            <img src="{{ asset('storage/badges/' . $cadetBadge->badge->icon_path) }}" 
-                                                                alt="{{ $cadetBadge->badge->name }}"
-                                                                title="{{ $cadetBadge->badge->name }}"
-                                                                class="badge-icon-mini">
-                                                        @else
-                                                            <span class="text-2xl" title="{{ $cadetBadge->badge->name }}">🏆</span>
-                                                        @endif
+                                                    @if($cadetBadge->badge->icon_path)
+                                                        <img src="{{ asset('storage/assets/badges/' . $cadetBadge->badge->icon_path) }}"
+                                                            alt="{{ $cadetBadge->badge->name }}"
+                                                            title="{{ $cadetBadge->badge->name }}"
+                                                            class="badge-icon-mini">
+                                                    @else
+                                                        <span class="text-2xl" title="{{ $cadetBadge->badge->name }}">🏆</span>
+                                                    @endif
                                                     @empty
                                                         <span class="text-xs text-gray-400">No badges</span>
                                                     @endforelse
@@ -878,8 +878,8 @@
                 badgesHtml = cadet.badges.map(badge => `
                     <div class="bg-white border-2 border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200">
                         <div class="flex items-center space-x-3">
-                            ${badge.icon_path ? 
-                                `<img src="/storage/badges/${badge.icon_path}" alt="${badge.name}" class="w-12 h-12 object-contain">` : 
+                            ${badge.icon_path ?
+                                `<img src="/storage/assets/badges/${badge.icon_path}" alt="${badge.name}" class="w-12 h-12 object-contain">` :
                                 '<span class="text-4xl">🏆</span>'
                             }
                             <div class="flex-1">
