@@ -11,7 +11,7 @@ class Badge extends Model
 
     protected $fillable = [
         'name',
-        'icon',
+        'icon_path',
         'description',
         'unlock_criteria',
         'category',
@@ -112,5 +112,24 @@ class Badge extends Model
     public function getUnlockCountAttribute()
     {
         return $this->cadetBadges()->count();
+    }
+
+    /**
+     * Get the full URL for the badge icon
+     */
+    public function getIconUrlAttribute()
+    {
+        if ($this->icon_path) {
+            return asset('storage/badges/' . $this->icon_path);
+        }
+        return null;
+    }
+
+    /**
+     * Check if badge has an image icon
+     */
+    public function hasImageIcon()
+    {
+        return !empty($this->icon_path) && file_exists(public_path('storage/badges/' . $this->icon_path));
     }
 }

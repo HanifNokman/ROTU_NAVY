@@ -17,7 +17,7 @@ class BadgeSeeder extends Seeder
             // Overall Performance Badges
             [
                 'name' => 'Naval Excellence',
-                'icon' => 'fas fa-star',
+                'icon_path' => 'fas fa-star',
                 'description' => 'Achieved maximum performance rating of 5 stars',
                 'unlock_criteria' => 'Earn 800+ total points across all categories',
                 'category' => 'overall',
@@ -25,7 +25,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Command Excellence',
-                'icon' => 'fas fa-trophy',
+                'icon_path' => 'fas fa-trophy',
                 'description' => 'Outstanding performance across all areas',
                 'unlock_criteria' => 'Earn 700+ total points',
                 'category' => 'overall',
@@ -33,7 +33,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Rising Officer',
-                'icon' => 'fas fa-rocket',
+                'icon_path' => 'fas fa-rocket',
                 'description' => 'Showing great potential with consistent performance',
                 'unlock_criteria' => 'Earn 500+ total points',
                 'category' => 'overall',
@@ -43,7 +43,7 @@ class BadgeSeeder extends Seeder
             // Attendance Badges
             [
                 'name' => 'Parade Perfect',
-                'icon' => 'fas fa-calendar-check',
+                'icon_path' => 'fas fa-calendar-check',
                 'description' => 'Never missed a training session',
                 'unlock_criteria' => '100% attendance rate',
                 'category' => 'attendance',
@@ -51,7 +51,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Reliable Sailor',
-                'icon' => 'fas fa-clock',
+                'icon_path' => 'fas fa-clock',
                 'description' => 'Consistent attendance record',
                 'unlock_criteria' => '90%+ attendance rate',
                 'category' => 'attendance',
@@ -59,7 +59,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Punctual Cadet',
-                'icon' => 'fas fa-check-circle',
+                'icon_path' => 'fas fa-check-circle',
                 'description' => 'Good attendance habits',
                 'unlock_criteria' => '75%+ attendance rate',
                 'category' => 'attendance',
@@ -69,7 +69,7 @@ class BadgeSeeder extends Seeder
             // Quiz Badges
             [
                 'name' => 'Strategic Mind',
-                'icon' => 'fas fa-brain',
+                'icon_path' => 'fas fa-brain',
                 'description' => 'Mastered all quiz categories at hard difficulty',
                 'unlock_criteria' => 'Pass all categories at hard difficulty with 80%+',
                 'category' => 'quiz',
@@ -77,7 +77,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Tactical Expert',
-                'icon' => 'fas fa-book-open',
+                'icon_path' => 'fas fa-book-open',
                 'description' => 'Excellent performance across all quiz categories',
                 'unlock_criteria' => 'Pass all categories at medium difficulty with 80%+',
                 'category' => 'quiz',
@@ -85,7 +85,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Quick Study',
-                'icon' => 'fas fa-lightbulb',
+                'icon_path' => 'fas fa-lightbulb',
                 'description' => 'Strong quiz performance',
                 'unlock_criteria' => 'Average 80%+ across all quiz attempts',
                 'category' => 'quiz',
@@ -93,7 +93,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Knowledgeable Cadet',
-                'icon' => 'fas fa-graduation-cap',
+                'icon_path' => 'fas fa-graduation-cap',
                 'description' => 'Consistent quiz performance',
                 'unlock_criteria' => 'Average 70%+ across all quiz attempts',
                 'category' => 'quiz',
@@ -103,7 +103,7 @@ class BadgeSeeder extends Seeder
             // Learning Progress Badges
             [
                 'name' => 'Master Navigator',
-                'icon' => 'fas fa-crown',
+                'icon_path' => 'fas fa-crown',
                 'description' => 'Completed all learning materials',
                 'unlock_criteria' => '100% learning progress',
                 'category' => 'learning',
@@ -111,7 +111,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Dedicated Scholar',
-                'icon' => 'fas fa-user-graduate',
+                'icon_path' => 'fas fa-user-graduate',
                 'description' => 'Excellent learning progress',
                 'unlock_criteria' => '90%+ learning progress',
                 'category' => 'learning',
@@ -119,7 +119,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Knowledge Seeker',
-                'icon' => 'fas fa-books',
+                'icon_path' => 'fas fa-books',
                 'description' => 'Strong learning commitment',
                 'unlock_criteria' => '75%+ learning progress',
                 'category' => 'learning',
@@ -129,7 +129,7 @@ class BadgeSeeder extends Seeder
             // Duty Badges
             [
                 'name' => 'Duty Commander',
-                'icon' => 'fas fa-shield-alt',
+                'icon_path' => 'fas fa-shield-alt',
                 'description' => 'Exemplary duty performance',
                 'unlock_criteria' => 'Complete 50+ duties',
                 'category' => 'duty',
@@ -137,7 +137,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Watch Officer',
-                'icon' => 'fas fa-hand-paper',
+                'icon_path' => 'fas fa-hand-paper',
                 'description' => 'Consistent duty participation',
                 'unlock_criteria' => 'Complete 30+ duties',
                 'category' => 'duty',
@@ -145,7 +145,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Deckhand',
-                'icon' => 'fas fa-anchor',
+                'icon_path' => 'fas fa-anchor',
                 'description' => 'Active duty participation',
                 'unlock_criteria' => 'Complete 20+ duties',
                 'category' => 'duty',
@@ -153,7 +153,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Seaman Recruit',
-                'icon' => 'fas fa-compass',
+                'icon_path' => 'fas fa-compass',
                 'description' => 'Started duty participation',
                 'unlock_criteria' => 'Complete 10+ duties',
                 'category' => 'duty',
@@ -163,7 +163,7 @@ class BadgeSeeder extends Seeder
             // Academic Badges
             [
                 'name' => 'Admiral Scholar',
-                'icon' => 'fas fa-award',
+                'icon_path' => 'fas fa-award',
                 'description' => 'Outstanding academic achievement',
                 'unlock_criteria' => 'CGPA 3.75+',
                 'category' => 'academic',
@@ -171,7 +171,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Captain Scholar',
-                'icon' => 'fas fa-medal',
+                'icon_path' => 'fas fa-medal',
                 'description' => 'Excellent academic performance',
                 'unlock_criteria' => 'CGPA 3.50+',
                 'category' => 'academic',
@@ -179,7 +179,7 @@ class BadgeSeeder extends Seeder
             ],
             [
                 'name' => 'Officer Scholar',
-                'icon' => 'fas fa-certificate',
+                'icon_path' => 'fas fa-certificate',
                 'description' => 'Strong academic record',
                 'unlock_criteria' => 'CGPA 3.00+',
                 'category' => 'academic',

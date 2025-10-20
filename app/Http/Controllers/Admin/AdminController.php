@@ -19,6 +19,8 @@ use App\Models\EquipmentLoan;
 use App\Models\Gallery;
 use App\Models\Training;
 use App\Models\QuizQuestion;
+use App\Models\Badge;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -209,6 +211,7 @@ class AdminController extends Controller
             'galleries' => ['model' => Gallery::class, 'name' => 'Galleries'],
             'trainings' => ['model' => Training::class, 'name' => 'Trainings'],
             'quiz_questions' => ['model' => QuizQuestion::class, 'name' => 'Quiz Questions'],
+            'badges' => ['model' => Badge::class, 'name' => 'Badges'],
         ];
 
         $counts = [];
@@ -257,6 +260,7 @@ class AdminController extends Controller
             'galleries' => Gallery::class,
             'trainings' => Training::class,
             'quiz_questions' => QuizQuestion::class,
+            'badges' => Badge::class,
         ];
 
         if (!isset($models[$model])) {
@@ -278,6 +282,7 @@ class AdminController extends Controller
             'galleries' => Gallery::class,
             'trainings' => Training::class,
             'quiz_questions' => QuizQuestion::class,
+            'badges' => Badge::class,
         ];
 
         if (!isset($models[$model])) {
@@ -285,8 +290,29 @@ class AdminController extends Controller
         }
 
         $instance = $models[$model]::findOrFail($id);
-        $validated = $request->validate($this->getValidationRules($model));
-        $instance->update($validated);
+
+        if ($model === 'badges') {
+            $validated = $request->validate($this->getValidationRules($model));
+
+            // Handle file upload for badges
+            if ($request->hasFile('icon_path')) {
+                // Delete old file if exists
+                if ($instance->icon_path && Storage::disk('public')->exists('badges/' . $instance->icon_path)) {
+                    Storage::disk('public')->delete('badges/' . $instance->icon_path);
+                }
+
+                // Store new file
+                $file = $request->file('icon_path');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('badges', $filename, 'public');
+                $validated['icon_path'] = $filename;
+            }
+
+            $instance->update($validated);
+        } else {
+            $validated = $request->validate($this->getValidationRules($model));
+            $instance->update($validated);
+        }
 
         return response()->json(['success' => true]);
     }
@@ -302,6 +328,7 @@ class AdminController extends Controller
             'galleries' => Gallery::class,
             'trainings' => Training::class,
             'quiz_questions' => QuizQuestion::class,
+            'badges' => Badge::class,
         ];
 
         if (!isset($models[$model])) {
@@ -495,6 +522,15 @@ class AdminController extends Controller
                 'correct_answer' => 'required|string',
                 'created_by' => 'required|exists:users,id',
                 'status' => 'required|in:active,inactive',
+            ],
+            'badges' => [
+                'name' => 'required|string|max:255',
+                'icon_path' => 'required|string|max:255',
+                'description' => 'required|string',
+                'unlock_criteria' => 'required|string',
+                'category' => 'required|string|max:255',
+                'rarity_level' => 'required|integer|min:1|max:5',
+                'is_active' => 'boolean',
             ],
         ];
 

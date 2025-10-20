@@ -755,7 +755,11 @@
                                          onclick="toggleBadgeDisplay({{ $unlockedBadge['badge']->id }})">
                                         <div class="flex justify-center mb-3">
                                             <div class="relative">
-                                                <i class="{{ $unlockedBadge['badge']->icon }} text-4xl {{ $unlockedBadge['is_displayed'] ? 'text-yellow-500' : 'text-gray-600' }}"></i>
+                                                @if($unlockedBadge['badge']->hasImageIcon())
+                                                    <img src="{{ $unlockedBadge['badge']->icon_url }}" alt="{{ $unlockedBadge['badge']->name }}" class="w-12 h-12 object-contain {{ $unlockedBadge['is_displayed'] ? '' : 'opacity-50' }}">
+                                                @else
+                                                    <i class="fas fa-medal text-4xl {{ $unlockedBadge['is_displayed'] ? 'text-yellow-500' : 'text-gray-600' }}"></i>
+                                                @endif
                                                 @if($unlockedBadge['is_displayed'])
                                                     <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                                                 @endif
