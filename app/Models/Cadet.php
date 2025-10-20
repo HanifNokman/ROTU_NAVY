@@ -141,6 +141,32 @@ class Cadet extends Model
                 ->orderBy('return_date', 'desc');
     }
 
+    /**
+     * Cadet badges relationship (pivot table)
+     */
+    public function cadetBadges()
+    {
+        return $this->hasMany(CadetBadge::class);
+    }
+
+    /**
+     * Displayed badges only
+     */
+    public function displayedBadges()
+    {
+        return $this->hasMany(CadetBadge::class)->where('is_displayed', true);
+    }
+
+    /**
+     * Badges relationship (many-to-many through cadet_badges pivot)
+     */
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'cadet_badges')
+            ->withPivot('unlocked_at', 'is_displayed')
+            ->withTimestamps();
+    }
+
     // Scopes for filtering
     public function scopeByIntake($query, $intakeYear)
     {
