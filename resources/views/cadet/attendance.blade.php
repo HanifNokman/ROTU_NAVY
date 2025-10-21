@@ -9,6 +9,12 @@
     </x-slot>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -120,7 +126,37 @@
 
                                     {{-- Attendance Action --}}
                                     @if(!$attendance || !$attendance->present)
-                                        <div class="pt-4 border-t border-gray-200">
+                                        <div class="pt-4 border-t border-gray-200 space-y-4">
+                                            {{-- Interactive Map --}}
+                                            <div class="bg-white rounded-lg border-2 border-blue-200 overflow-hidden">
+                                                <div class="bg-blue-50 px-4 py-2 border-b border-blue-200">
+                                                    <h4 class="font-semibold text-blue-900 flex items-center">
+                                                        <i class="fas fa-map-marked-alt mr-2"></i>
+                                                        Location Verification Map
+                                                    </h4>
+                                                </div>
+                                                <div id="map-{{ $training->id }}" class="w-full h-80"></div>
+                                                <div class="bg-gray-50 px-4 py-3 border-t border-gray-200">
+                                                    <div class="flex items-center justify-between text-sm">
+                                                        <div class="flex items-center gap-4">
+                                                            <div class="flex items-center">
+                                                                <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                                                <span class="text-gray-700">Meetup Location</span>
+                                                            </div>
+                                                            <div class="flex items-center">
+                                                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                                                <span class="text-gray-700">Your Location</span>
+                                                            </div>
+                                                            <div class="flex items-center">
+                                                                <div class="w-3 h-3 bg-green-200 border-2 border-green-500 rounded-full mr-2"></div>
+                                                                <span class="text-gray-700">Allowed Zone ({{ $geofence['radius'] }}m radius)</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Attendance Form --}}
                                             <form method="POST" action="{{ route('cadet.attendance.mark') }}" class="w-full">
                                                 @csrf
                                                 <input type="hidden" name="training_id" value="{{ $training->id }}">
@@ -466,6 +502,47 @@
             .char-count-danger {
                 color: #ef4444;
             }
+
+            /* Leaflet map custom styles */
+            .leaflet-container {
+                font-family: inherit;
+                height: 320px;
+                width: 100%;
+                z-index: 1;
+            }
+
+            /* Fix for missing tiles */
+            .leaflet-tile-container {
+                opacity: 1 !important;
+            }
+
+            .leaflet-tile {
+                opacity: 1 !important;
+            }
+
+            .distance-line {
+                stroke-dasharray: 5, 5;
+                animation: dash 20s linear infinite;
+            }
+
+            @keyframes dash {
+                to {
+                    stroke-dashoffset: -100;
+                }
+            }
+
+            .pulse-marker {
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
+            }
         </style>
     @endpush
 
@@ -475,9 +552,19 @@
     @push('scripts')
         <script>
             // ================================================================
-            // GEOFENCING ATTENDANCE SYSTEM
+            // GEOFENCING ATTENDANCE SYSTEM WITH INTERACTIVE MAP
             // ================================================================
-            document.addEventListener('DOMContentLoaded', function() {
+            
+            // Wait for Leaflet to be fully loaded
+            function initializeAttendanceMaps() {
+                if (typeof L === 'undefined') {
+                    console.error('Leaflet not loaded, retrying...');
+                    setTimeout(initializeAttendanceMaps, 100);
+                    return;
+                }
+
+                console.log('Leaflet loaded successfully');
+
                 const geofence = {
                     latitude: {{ $geofence['latitude'] }},
                     longitude: {{ $geofence['longitude'] }},
@@ -485,17 +572,73 @@
                 };
 
                 let userLocation = null;
+                const maps = {};
+
+                console.log('Looking for attendance forms...');
+                // More specific selector - find forms with training_id input
+                const forms = document.querySelectorAll('form[action*="attendance/mark"]');
+                console.log('Found', forms.length, 'attendance form(s)');
+
+                // Additional debugging
+                const allForms = document.querySelectorAll('form');
+                console.log('Total forms on page:', allForms.length);
+                allForms.forEach((f, i) => {
+                    const action = f.getAttribute('action');
+                    const hasTrainingId = f.querySelector('input[name="training_id"]');
+                    console.log(`Form ${i + 1} action:`, action, '| Has training_id:', !!hasTrainingId);
+                });
+
+                const trainingSections = document.querySelectorAll('.p-6.bg-gradient-to-r.from-gray-50.to-blue-50');
+                console.log('Training session cards found:', trainingSections.length);
+
+                const attendanceConfirmed = document.querySelectorAll('.bg-green-50.border.border-green-200');
+                console.log('Already marked attendance sections:', attendanceConfirmed.length);
+
+                if (forms.length === 0) {
+                    console.warn('⚠️ No attendance forms found. Possible reasons:');
+                    console.warn('1. No training sessions scheduled for today');
+                    console.warn('2. Attendance already marked for all sessions');
+                    console.warn('3. Training sessions are not active/eligible');
+                    console.warn('Check the page - do you see any "Mark Present" buttons?');
+                }
 
                 // Process all attendance forms on the page
-                document.querySelectorAll('form[action*="attendance.mark"]').forEach(form => {
+                forms.forEach((form, index) => {
+                    console.log('Processing form', index + 1);
                     const button = form.querySelector('button[type="submit"]');
                     const trainingCard = form.closest('.p-6');
+                    const trainingIdInput = form.querySelector('input[name="training_id"]');
+                    const trainingId = trainingIdInput ? trainingIdInput.value : index;
+                    const mapContainer = document.getElementById(`map-${trainingId}`);
                     
+                    console.log('Training ID:', trainingId);
+                    console.log('Map container element:', mapContainer);
+                    console.log('Button element:', button);
+                    console.log('Training card:', trainingCard);
+                    
+                    if (!mapContainer) {
+                        console.error('❌ Map container not found for training:', trainingId);
+                        console.error('Looking for element with ID: map-' + trainingId);
+                        return;
+                    }
+
+                    if (!button) {
+                        console.error('❌ Submit button not found');
+                        return;
+                    }
+
+                    if (!trainingCard) {
+                        console.error('❌ Training card container not found');
+                        return;
+                    }
+
+                    console.log('✅ All required elements found, proceeding with map initialization...');
+
                     // Create status message div
                     let statusDiv = trainingCard.querySelector('.location-status');
                     if (!statusDiv) {
                         statusDiv = document.createElement('div');
-                        statusDiv.className = 'location-status text-sm mb-3';
+                        statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2';
                         button.parentNode.insertBefore(statusDiv, button);
                     }
 
@@ -503,15 +646,91 @@
                     button.disabled = true;
                     button.classList.add('opacity-50', 'cursor-not-allowed');
 
+                    try {
+                        // Initialize map
+                        const map = L.map(mapContainer, {
+                            center: [geofence.latitude, geofence.longitude],
+                            zoom: 16,
+                            zoomControl: true,
+                            scrollWheelZoom: false,
+                            attributionControl: true
+                        });
+
+                        console.log('Map created successfully');
+
+                        // Add OpenStreetMap tiles with error handling
+                        const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                            maxZoom: 19,
+                            minZoom: 10
+                        });
+
+                        tileLayer.on('tileerror', function(error) {
+                            console.error('Tile loading error:', error);
+                        });
+
+                        tileLayer.on('tileload', function() {
+                            console.log('Tiles loading...');
+                        });
+
+                        tileLayer.addTo(map);
+
+                        // Force map to refresh
+                        setTimeout(() => {
+                            map.invalidateSize();
+                            console.log('Map size invalidated');
+                        }, 100);
+
+                        // Add geofence circle (allowed zone)
+                        const geofenceCircle = L.circle([geofence.latitude, geofence.longitude], {
+                            color: '#10b981',
+                            fillColor: '#10b981',
+                            fillOpacity: 0.15,
+                            radius: geofence.radius,
+                            weight: 2
+                        }).addTo(map);
+
+                        // Add meetup location marker
+                        const meetupIcon = L.divIcon({
+                            html: '<div class="bg-red-500 w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center"><i class="fas fa-flag text-white text-xs"></i></div>',
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 16],
+                            className: 'pulse-marker'
+                        });
+
+                        const meetupMarker = L.marker([geofence.latitude, geofence.longitude], {
+                            icon: meetupIcon
+                        }).addTo(map);
+                        meetupMarker.bindPopup('<b>Meetup Location</b><br>You must be within ' + geofence.radius + 'm of this point.');
+
+                        maps[trainingId] = {
+                            map: map,
+                            geofenceCircle: geofenceCircle,
+                            userMarker: null,
+                            distanceLine: null
+                        };
+
+                        console.log('Map elements added successfully');
+
+                    } catch (error) {
+                        console.error('Error initializing map:', error);
+                        statusDiv.innerHTML = `<div class="text-red-600"><i class="fas fa-exclamation-circle mr-2"></i>Map initialization failed. Please refresh the page.</div>`;
+                        statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2 bg-red-50 border-red-300';
+                        return;
+                    }
+
                     // Check geolocation support
                     if (!navigator.geolocation) {
                         showError(statusDiv, 'Geolocation is not supported by your browser.');
+                        console.error('Geolocation not supported');
                         return;
                     }
 
                     // Get user location
-                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying your location...';
-                    statusDiv.className = 'location-status text-blue-600 text-sm mb-3';
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <strong>Verifying your location...</strong><br><span class="text-xs">Please wait while we check your position</span>';
+                    statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2 bg-blue-50 border-blue-300 text-blue-800';
+
+                    console.log('Requesting geolocation...');
 
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
@@ -521,6 +740,9 @@
                                 accuracy: position.coords.accuracy
                             };
 
+                            console.log('User location obtained:', userLocation);
+                            console.log('GPS Accuracy:', userLocation.accuracy, 'meters');
+
                             const distance = calculateDistance(
                                 geofence.latitude,
                                 geofence.longitude,
@@ -528,24 +750,109 @@
                                 userLocation.longitude
                             );
 
+                            console.log('Distance from meetup:', distance);
+
+                            // Add user marker to map
+                            const userIcon = L.divIcon({
+                                html: '<div class="bg-blue-500 w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center"><i class="fas fa-user text-white text-xs"></i></div>',
+                                iconSize: [32, 32],
+                                iconAnchor: [16, 16],
+                                className: ''
+                            });
+
+                            maps[trainingId].userMarker = L.marker([userLocation.latitude, userLocation.longitude], {
+                                icon: userIcon
+                            }).addTo(maps[trainingId].map);
+                            maps[trainingId].userMarker.bindPopup('<b>Your Location</b><br>Distance: ' + Math.round(distance) + 'm from meetup');
+
+                            // Add accuracy circle
+                            L.circle([userLocation.latitude, userLocation.longitude], {
+                                color: '#3b82f6',
+                                fillColor: '#3b82f6',
+                                fillOpacity: 0.1,
+                                radius: userLocation.accuracy,
+                                weight: 1,
+                                dashArray: '3, 3'
+                            }).addTo(maps[trainingId].map);
+
+                            // Draw line between user and meetup point
+                            maps[trainingId].distanceLine = L.polyline([
+                                [geofence.latitude, geofence.longitude],
+                                [userLocation.latitude, userLocation.longitude]
+                            ], {
+                                color: distance <= geofence.radius ? '#10b981' : '#ef4444',
+                                weight: 2,
+                                dashArray: '5, 5',
+                                className: 'distance-line'
+                            }).addTo(maps[trainingId].map);
+
+                            // Fit map to show both markers
+                            const bounds = L.latLngBounds([
+                                [geofence.latitude, geofence.longitude],
+                                [userLocation.latitude, userLocation.longitude]
+                            ]);
+                            maps[trainingId].map.fitBounds(bounds, { padding: [50, 50] });
+
                             if (distance <= geofence.radius) {
                                 // SUCCESS - Within geofence
-                                statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Location verified! You are ${Math.round(distance)}m from the meetup point.`;
-                                statusDiv.className = 'location-status text-green-600 text-sm mb-3';
+                                statusDiv.innerHTML = `
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check-circle text-2xl mr-3"></i>
+                                        <div>
+                                            <strong class="block">✓ Location Verified!</strong>
+                                            <span class="text-xs">You are <strong>${Math.round(distance)}m</strong> from the meetup point (within ${geofence.radius}m allowed zone)</span>
+                                        </div>
+                                    </div>
+                                `;
+                                statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2 bg-green-50 border-green-300 text-green-800';
                                 
                                 // Enable button
                                 button.disabled = false;
-                                button.classList.remove('opacity-50', 'cursor-not-allowed');
+                                button.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                                button.classList.add('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'hover:from-green-600', 'hover:to-green-700');
 
                                 // Add location to form
                                 addLocationToForm(form, userLocation);
+
+                                // Open user marker popup
+                                setTimeout(() => {
+                                    maps[trainingId].userMarker.openPopup();
+                                }, 500);
                             } else {
                                 // FAIL - Outside geofence
-                                showError(statusDiv, `You are ${Math.round(distance)}m away. You must be within ${geofence.radius}m of the meetup location.`);
+                                statusDiv.innerHTML = `
+                                    <div class="flex items-start">
+                                        <i class="fas fa-exclamation-triangle text-2xl mr-3"></i>
+                                        <div>
+                                            <strong class="block">⚠ Outside Allowed Zone</strong>
+                                            <span class="text-xs">You are <strong>${Math.round(distance)}m</strong> away. Please move closer to the meetup location (within ${geofence.radius}m)</span>
+                                        </div>
+                                    </div>
+                                `;
+                                statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2 bg-red-50 border-red-300 text-red-800';
+                                
+                                // Keep button DISABLED
+                                button.disabled = true;
+                                button.classList.add('opacity-50', 'cursor-not-allowed');
+                                button.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'hover:from-green-600', 'hover:to-green-700');
+                                
+                                // Change button appearance to show it's locked
+                                button.innerHTML = '<i class="fas fa-lock text-xl mr-3"></i> Location Required - Move Closer';
+                                
+                                // Add refresh button
+                                const refreshBtn = document.createElement('button');
+                                refreshBtn.type = 'button';
+                                refreshBtn.className = 'mt-2 text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded';
+                                refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-1"></i> Refresh Location';
+                                refreshBtn.onclick = () => location.reload();
+                                statusDiv.appendChild(refreshBtn);
                             }
                         },
                         (error) => {
-                            handleGeolocationError(error, statusDiv);
+                            console.error('Geolocation error:', error);
+                            console.error('Error code:', error.code);
+                            console.error('Error message:', error.message);
+                            handleGeolocationError(error, statusDiv, maps[trainingId].map);
                         },
                         {
                             enableHighAccuracy: true,
@@ -594,7 +901,16 @@
                     
                     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                     
-                    return R * c;
+                    const distance = R * c;
+                    
+                    console.log('Distance Calculation:');
+                    console.log('From:', lat1, lon1);
+                    console.log('To:', lat2, lon2);
+                    console.log('dLat:', dLat, 'dLon:', dLon);
+                    console.log('a:', a, 'c:', c);
+                    console.log('Distance:', distance, 'meters =', (distance/1000).toFixed(2), 'km');
+                    
+                    return distance;
                 }
 
                 function toRad(degrees) {
@@ -602,28 +918,67 @@
                 }
 
                 function showError(statusDiv, message) {
-                    statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-                    statusDiv.className = 'location-status text-red-600 text-sm mb-3';
+                    statusDiv.innerHTML = `
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-circle text-2xl mr-3"></i>
+                            <div>
+                                <strong class="block">Location Error</strong>
+                                <span class="text-xs">${message}</span>
+                            </div>
+                        </div>
+                    `;
+                    statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2 bg-red-50 border-red-300 text-red-800';
                 }
 
-                function handleGeolocationError(error, statusDiv) {
+                function handleGeolocationError(error, statusDiv, map) {
                     let message = '';
+                    let instructions = '';
+                    
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            message = 'Location permission denied. Please enable location access in your browser settings.';
+                            message = 'Location permission denied.';
+                            instructions = 'Please enable location access in your browser settings and refresh the page.';
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            message = 'Location unavailable. Please check your device settings.';
+                            message = 'Location unavailable.';
+                            instructions = 'Please check your device settings and ensure GPS is enabled.';
                             break;
                         case error.TIMEOUT:
-                            message = 'Location request timed out. Please refresh the page.';
+                            message = 'Location request timed out.';
+                            instructions = 'Please refresh the page to try again.';
                             break;
                         default:
                             message = 'An error occurred while getting your location.';
+                            instructions = 'Please refresh the page and try again.';
                     }
-                    showError(statusDiv, message);
+                    
+                    statusDiv.innerHTML = `
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-circle text-2xl mr-3"></i>
+                            <div>
+                                <strong class="block">${message}</strong>
+                                <span class="text-xs">${instructions}</span>
+                            </div>
+                        </div>
+                    `;
+                    statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2 bg-red-50 border-red-300 text-red-800';
+                    
+                    // Add retry button
+                    const retryBtn = document.createElement('button');
+                    retryBtn.type = 'button';
+                    retryBtn.className = 'mt-2 text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded';
+                    retryBtn.innerHTML = '<i class="fas fa-redo mr-1"></i> Retry';
+                    retryBtn.onclick = () => location.reload();
+                    statusDiv.appendChild(retryBtn);
                 }
-            });
+            }
+
+            // Initialize when DOM and Leaflet are ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeAttendanceMaps);
+            } else {
+                initializeAttendanceMaps();
+            }
 
             // ================================================================
             // ABSENCE RECORD NAVIGATION
@@ -688,13 +1043,22 @@
 
                 const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
                 if (hasErrors) {
-                    const firstAccordion = document.querySelector('[id^="absence-"]');
-                    if (firstAccordion) {
-                        const button = firstAccordion.querySelector('button');
-                        if (button && !firstAccordion.querySelector('[x-data]').__x.$data.open) {
-                            button.click();
+                    // Wait for Alpine.js to initialize before accessing x-data
+                    setTimeout(() => {
+                        const firstAccordion = document.querySelector('[id^="absence-"]');
+                        if (firstAccordion) {
+                            const button = firstAccordion.querySelector('button');
+                            const alpineElement = firstAccordion.querySelector('[x-data]');
+                            
+                            // Check if Alpine has initialized and accordion is closed
+                            if (button && alpineElement && alpineElement.__x && !alpineElement.__x.$data.open) {
+                                button.click();
+                            } else if (button && (!alpineElement || !alpineElement.__x)) {
+                                // Fallback if Alpine hasn't initialized yet - just click the button
+                                button.click();
+                            }
                         }
-                    }
+                    }, 100);
                 }
             });
 
