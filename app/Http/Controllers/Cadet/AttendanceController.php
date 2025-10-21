@@ -14,14 +14,9 @@ use Illuminate\Support\Facades\Storage;
 class AttendanceController extends Controller
 {
     // Geofence configuration (meetup location)
-    private const GEOFENCE_LATITUDE = 3.1390;   // Example: Kuala Lumpur coordinates
-    private const GEOFENCE_LONGITUDE = 101.6869;
+    private const GEOFENCE_LATITUDE = 6.0445;
+    private const GEOFENCE_LONGITUDE = 116.1298;
     private const GEOFENCE_RADIUS = 100; // Radius in meters
-    
-    // ================================================================
-    // DISPLAY ATTENDANCE INDEX
-    // ================================================================
-    
     public function index()
     {
         $user = Auth::user();
@@ -107,35 +102,41 @@ class AttendanceController extends Controller
         ]);
     }
 
-    // ================================================================
-    // MARK ATTENDANCE AS PRESENT (WITH GEOFENCE VALIDATION)
-    // ================================================================
-    
     public function markPresent(Request $request)
     {
         try {
             $user = Auth::user();
             $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
             
+            // FIXED: Make latitude/longitude required for geofencing
             $request->validate([
                 'training_id' => 'required|exists:trainings,id',
-                'method' => 'in:manual',
                 'latitude' => 'required|numeric|between:-90,90',
                 'longitude' => 'required|numeric|between:-180,180',
             ]);
             
             $trainingId = $request->input('training_id');
-            $method = $request->input('method', 'manual');
-            $latitude = $request->input('latitude');
-            $longitude = $request->input('longitude');
+            $latitude = floatval($request->input('latitude'));
+            $longitude = floatval($request->input('longitude'));
 
-            // Validate geofence
+            // Validate geofence - THIS IS THE KEY SECURITY CHECK
             if (!$this->isWithinGeofence($latitude, $longitude)) {
-                return redirect()->back()->with('error', 'You must be at the designated meetup location to mark attendance.');
+                $distance = $this->calculateDistance(
+                    self::GEOFENCE_LATITUDE,
+                    self::GEOFENCE_LONGITUDE,
+                    $latitude,
+                    $longitude
+                );
+                
+                return redirect()->back()->with('error', 
+                    sprintf('You must be at the designated location. You are %.0fm away (need to be within %dm).', 
+                    $distance, self::GEOFENCE_RADIUS)
+                );
             }
 
             $training = Training::findOrFail($trainingId);
             
+            // Check intake eligibility
             $intakeNumber = $cadet->intake_year - 2011;
             $intakeStr = "Intake - " . $intakeNumber;
             
@@ -143,6 +144,7 @@ class AttendanceController extends Controller
                 return redirect()->back()->with('error', 'You are not eligible for this training session.');
             }
             
+            // Check timing validity
             $now = Carbon::now();
             $trainingDate = $training->start_datetime;
             $daysDiff = $now->diffInDays($trainingDate, false);
@@ -151,6 +153,7 @@ class AttendanceController extends Controller
                 return redirect()->back()->with('error', 'This training session is too old to mark attendance.');
             }
             
+            // Create or update attendance record
             $attendance = TrainingAttendance::firstOrNew([
                 'training_id' => $trainingId,
                 'cadet_id' => $cadet->id,
@@ -160,8 +163,9 @@ class AttendanceController extends Controller
                 return redirect()->back()->with('error', 'You have already marked attendance for this training.');
             }
             
+            // Save with geolocation data
             $attendance->present = true;
-            $attendance->method = $method;
+            $attendance->method = 'geofence';  // FIXED: Changed to 'geofence'
             $attendance->marked_at = Carbon::now();
             $attendance->latitude = $latitude;
             $attendance->longitude = $longitude;
@@ -169,18 +173,21 @@ class AttendanceController extends Controller
             $attendance->file_url = null;
             $attendance->save();
 
-            return redirect()->back()->with('success', 'Attendance marked as present successfully!');
+            return redirect()->back()->with('success', 
+                'Attendance marked successfully! Location verified within ' . self::GEOFENCE_RADIUS . 'm radius.'
+            );
             
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->with('error', 'Location data is required. Please enable location access.')
+                ->withErrors($e->validator);
+                
         } catch (\Exception $e) {
             \Log::error('Error marking attendance: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to mark attendance. Please try again.');
         }
     }
 
-    // ================================================================
-    // CHECK IF LOCATION IS WITHIN GEOFENCE
-    // ================================================================
-    
     private function isWithinGeofence($latitude, $longitude): bool
     {
         $distance = $this->calculateDistance(
@@ -190,13 +197,11 @@ class AttendanceController extends Controller
             $longitude
         );
         
+        \Log::info("Geofence check - Distance: {$distance}m, Radius: " . self::GEOFENCE_RADIUS . "m");
+        
         return $distance <= self::GEOFENCE_RADIUS;
     }
 
-    // ================================================================
-    // CALCULATE DISTANCE BETWEEN TWO COORDINATES (Haversine formula)
-    // ================================================================
-    
     private function calculateDistance($lat1, $lon1, $lat2, $lon2): float
     {
         $earthRadius = 6371000; // Earth's radius in meters
@@ -213,10 +218,6 @@ class AttendanceController extends Controller
         return $earthRadius * $c; // Distance in meters
     }
 
-    // ================================================================
-    // SUBMIT ABSENCE REASON AND SUPPORTING FILE
-    // ================================================================
-    
     public function submitAbsence(Request $request, $attendanceId)
     {
         try {
@@ -271,34 +272,5 @@ class AttendanceController extends Controller
                 ->with('error', 'Failed to submit absence information. Please try again.')
                 ->withInput();
         }
-    }
-
-    // ================================================================
-    // CHECK IF TRAINING IS ACCESSIBLE TO CADET
-    // ================================================================
-    
-    private function isTrainingAccessible(Training $training, Cadet $cadet): bool
-    {
-        if (!$training->involvement) {
-            return true;
-        }
-
-        $intakeNumber = $cadet->intake_year - 2011;
-        $intakeStr = "Intake - " . $intakeNumber;
-        
-        return str_contains($training->involvement, $intakeStr);
-    }
-
-    // ================================================================
-    // CHECK IF TRAINING TIME IS VALID FOR ATTENDANCE
-    // ================================================================
-    
-    private function isTrainingTimeValid(Training $training): bool
-    {
-        $now = Carbon::now();
-        $trainingStart = $training->start_datetime;
-        $allowedUntil = $trainingStart->copy()->addHours(24);
-        
-        return $now->between($trainingStart, $allowedUntil);
     }
 }
