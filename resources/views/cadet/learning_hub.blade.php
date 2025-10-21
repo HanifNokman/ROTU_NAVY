@@ -350,9 +350,9 @@
                                 <div class="text-lg font-semibold text-red-600" x-text="formatTime(timeRemaining)"></div>
                                 <div class="text-sm text-gray-500">Time Remaining</div>
                             </div>
-                            <button @click="closeQuiz()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
-                                ×
-                            </button>
+                        <button onclick="QuizManager.closeQuiz()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                            ×
+                        </button>
                         </div>
                     </div>
                     
@@ -455,7 +455,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <p class="text-gray-600 mb-4">No questions available for this category.</p>
-                    <button @click="closeQuiz()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                    <button onclick="QuizManager.closeQuiz()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                         Close
                     </button>
                 </div>
@@ -511,7 +511,7 @@
                     </div>
 
                     <div class="text-center">
-                        <button @click="closeQuiz()" 
+                        <button onclick="QuizManager.closeQuiz()"
                                 class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
                             Close Quiz
                         </button>
@@ -575,11 +575,26 @@
                             </svg>
                             Select Difficulty
                         </label>
-                        <select id="quizSelectionDifficulty" 
+                        <select id="quizSelectionDifficulty"
                                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
-                            <option value="easy">🟢 Easy - MCQ only (5 questions, 1 minute)</option>
-                            <option value="medium">🟡 Medium - Mixed types (5 questions, 2 minutes)</option>
-                            <option value="hard">🔴 Hard - More subjective (7 questions, 3 minutes)</option>
+                            @php
+                                $selectedCategory = request('category');
+                                // For practice mode (empty category), unlock all difficulties
+                                if (empty($selectedCategory)) {
+                                    $unlockedDifficulties = ['easy', 'medium', 'hard'];
+                                } else {
+                                    $unlockedDifficulties = $unlockedDifficulties[$selectedCategory] ?? ['easy'];
+                                }
+                            @endphp
+                            <option value="easy" title="{{ empty($selectedCategory) ? 'Always unlocked in practice mode' : 'Always unlocked' }}" {{ in_array('easy', $unlockedDifficulties) ? '' : 'disabled class="text-gray-400"' }}>
+                                🟢 Easy - MCQ only (5 questions, 1 minute)
+                            </option>
+                            <option value="medium" title="{{ empty($selectedCategory) ? 'Unlocked in practice mode' : 'Unlock by achieving 80%+ on Easy difficulty' }}" {{ in_array('medium', $unlockedDifficulties) ? '' : 'disabled class="text-gray-400"' }}>
+                                🟡 Medium - Mixed types (5 questions, 2 minutes)
+                            </option>
+                            <option value="hard" title="{{ empty($selectedCategory) ? 'Unlocked in practice mode' : 'Unlock by achieving 80%+ on Medium difficulty' }}" {{ in_array('hard', $unlockedDifficulties) ? '' : 'disabled class="text-gray-400"' }}>
+                                🔴 Hard - More subjective (7 questions, 3 minutes)
+                            </option>
                         </select>
                     </div>
 
@@ -1539,19 +1554,23 @@
                     // Reset inline styles
                     modal.removeAttribute('style');
                 }
-                
+
                 window.modalVisible = false;
-                
+
                 if (window.quizState.timer) {
                     clearInterval(window.quizState.timer);
                 }
-                
+
                 // Reset state
                 window.quizState.isActive = false;
                 window.quizState.showResults = false;
                 window.quizState.questions = [];
                 window.quizState.answers = {};
                 window.quizState.currentQuestion = 0;
+
+                // Update difficulty options after quiz completion
+                const categoryId = document.getElementById('quizSelectionCategory').value;
+                updateDifficultyOptionsForCategory(categoryId);
             }
         };
 
@@ -1562,6 +1581,10 @@
             if (modal) {
                 modal.classList.remove('hidden');
                 console.log('Modal should now be visible');
+
+                // Update difficulty options when opening the modal
+                const categoryId = document.getElementById('quizSelectionCategory').value;
+                updateDifficultyOptionsForCategory(categoryId);
             } else {
                 console.error('Quiz selection modal not found');
             }
@@ -2019,7 +2042,50 @@
         document.addEventListener('DOMContentLoaded', function() {
             window.modalVisible = false;
             console.log('Quiz system initialized');
+
+            // Add event listener for category change to update difficulties
+            document.getElementById('quizSelectionCategory').addEventListener('change', function() {
+                const categoryId = this.value;
+                updateDifficultyOptionsForCategory(categoryId);
+            });
         });
+
+        // Function to update difficulty options based on category
+        function updateDifficultyOptionsForCategory(categoryId) {
+            fetch(`/api/unlocked-difficulties?category_id=${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateDifficultyOptions(data.unlocked_difficulties);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching unlocked difficulties:', error);
+                });
+        }
+
+        // Function to update the difficulty select options
+        function updateDifficultyOptions(unlockedDifficulties) {
+            const difficultySelect = document.getElementById('quizSelectionDifficulty');
+            const options = difficultySelect.querySelectorAll('option');
+
+            options.forEach(option => {
+                const difficulty = option.value;
+                if (difficulty === 'easy') {
+                    // Easy is always unlocked
+                    option.disabled = false;
+                    option.classList.remove('text-gray-400');
+                } else {
+                    const isUnlocked = unlockedDifficulties.includes(difficulty);
+                    option.disabled = !isUnlocked;
+                    if (isUnlocked) {
+                        option.classList.remove('text-gray-400');
+                    } else {
+                        option.classList.add('text-gray-400');
+                    }
+                }
+            });
+        }
 
         // Clean up when page unloads
         window.addEventListener('beforeunload', function() {
