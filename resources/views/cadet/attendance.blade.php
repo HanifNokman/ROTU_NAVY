@@ -124,7 +124,8 @@
                                             <form method="POST" action="{{ route('cadet.attendance.mark') }}" class="w-full">
                                                 @csrf
                                                 <input type="hidden" name="training_id" value="{{ $training->id }}">
-                                                <input type="hidden" name="method" value="manual">
+                                                {{-- Location inputs will be added by JavaScript --}}
+                                                
                                                 <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center">
                                                     <i class="fas fa-hand-paper text-xl mr-3"></i>
                                                     Mark Present
@@ -141,6 +142,12 @@
                                                         <div class="text-sm text-green-600 mt-1">
                                                             Marked present at {{ $attendance->marked_at->format('g:i A') }}
                                                         </div>
+                                                        @if($attendance->latitude && $attendance->longitude)
+                                                            <div class="text-xs text-green-500 mt-1">
+                                                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                                                Location verified
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -467,6 +474,157 @@
     {{-- ================================================================ --}}
     @push('scripts')
         <script>
+            // ================================================================
+            // GEOFENCING ATTENDANCE SYSTEM
+            // ================================================================
+            document.addEventListener('DOMContentLoaded', function() {
+                const geofence = {
+                    latitude: {{ $geofence['latitude'] }},
+                    longitude: {{ $geofence['longitude'] }},
+                    radius: {{ $geofence['radius'] }}
+                };
+
+                let userLocation = null;
+
+                // Process all attendance forms on the page
+                document.querySelectorAll('form[action*="attendance.mark"]').forEach(form => {
+                    const button = form.querySelector('button[type="submit"]');
+                    const trainingCard = form.closest('.p-6');
+                    
+                    // Create status message div
+                    let statusDiv = trainingCard.querySelector('.location-status');
+                    if (!statusDiv) {
+                        statusDiv = document.createElement('div');
+                        statusDiv.className = 'location-status text-sm mb-3';
+                        button.parentNode.insertBefore(statusDiv, button);
+                    }
+
+                    // Disable button initially
+                    button.disabled = true;
+                    button.classList.add('opacity-50', 'cursor-not-allowed');
+
+                    // Check geolocation support
+                    if (!navigator.geolocation) {
+                        showError(statusDiv, 'Geolocation is not supported by your browser.');
+                        return;
+                    }
+
+                    // Get user location
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying your location...';
+                    statusDiv.className = 'location-status text-blue-600 text-sm mb-3';
+
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            userLocation = {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                accuracy: position.coords.accuracy
+                            };
+
+                            const distance = calculateDistance(
+                                geofence.latitude,
+                                geofence.longitude,
+                                userLocation.latitude,
+                                userLocation.longitude
+                            );
+
+                            if (distance <= geofence.radius) {
+                                // SUCCESS - Within geofence
+                                statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Location verified! You are ${Math.round(distance)}m from the meetup point.`;
+                                statusDiv.className = 'location-status text-green-600 text-sm mb-3';
+                                
+                                // Enable button
+                                button.disabled = false;
+                                button.classList.remove('opacity-50', 'cursor-not-allowed');
+
+                                // Add location to form
+                                addLocationToForm(form, userLocation);
+                            } else {
+                                // FAIL - Outside geofence
+                                showError(statusDiv, `You are ${Math.round(distance)}m away. You must be within ${geofence.radius}m of the meetup location.`);
+                            }
+                        },
+                        (error) => {
+                            handleGeolocationError(error, statusDiv);
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        }
+                    );
+
+                    // Prevent form submission if location not verified
+                    form.addEventListener('submit', function(e) {
+                        if (!userLocation || button.disabled) {
+                            e.preventDefault();
+                            alert('Please wait for location verification or enable location services.');
+                            return false;
+                        }
+                    });
+                });
+
+                function addLocationToForm(form, location) {
+                    // Remove old inputs if they exist
+                    form.querySelectorAll('input[name="latitude"], input[name="longitude"]').forEach(el => el.remove());
+
+                    // Add hidden inputs
+                    const latInput = document.createElement('input');
+                    latInput.type = 'hidden';
+                    latInput.name = 'latitude';
+                    latInput.value = location.latitude;
+                    
+                    const lonInput = document.createElement('input');
+                    lonInput.type = 'hidden';
+                    lonInput.name = 'longitude';
+                    lonInput.value = location.longitude;
+                    
+                    form.appendChild(latInput);
+                    form.appendChild(lonInput);
+                }
+
+                function calculateDistance(lat1, lon1, lat2, lon2) {
+                    const R = 6371000; // Earth's radius in meters
+                    const dLat = toRad(lat2 - lat1);
+                    const dLon = toRad(lon2 - lon1);
+                    
+                    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    
+                    return R * c;
+                }
+
+                function toRad(degrees) {
+                    return degrees * (Math.PI / 180);
+                }
+
+                function showError(statusDiv, message) {
+                    statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+                    statusDiv.className = 'location-status text-red-600 text-sm mb-3';
+                }
+
+                function handleGeolocationError(error, statusDiv) {
+                    let message = '';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message = 'Location permission denied. Please enable location access in your browser settings.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message = 'Location unavailable. Please check your device settings.';
+                            break;
+                        case error.TIMEOUT:
+                            message = 'Location request timed out. Please refresh the page.';
+                            break;
+                        default:
+                            message = 'An error occurred while getting your location.';
+                    }
+                    showError(statusDiv, message);
+                }
+            });
+
             // ================================================================
             // ABSENCE RECORD NAVIGATION
             // ================================================================
