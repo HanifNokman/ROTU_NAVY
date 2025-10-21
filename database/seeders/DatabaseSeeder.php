@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             ContentSettingsSeeder::class,
+            BadgeSeeder::class,
             InstructorSeeder::class,
             CadetSeeder::class,
             UniformCategorySeeder::class,
@@ -27,7 +28,6 @@ class DatabaseSeeder extends Seeder
             LearningMaterialSeeder::class,
             QuizQuestionSeeder::class,
             AttendanceSeeder::class,
-            BadgeSeeder::class,
             ApplicationSeeder::class,
             CadetCategoryProgressSeeder::class,
             CadetLearningMaterialProgressSeeder::class,
