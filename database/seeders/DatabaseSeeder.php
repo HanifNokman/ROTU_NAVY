@@ -15,17 +15,26 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            ContentSettingsSeeder::class,
             InstructorSeeder::class,
             CadetSeeder::class,
             UniformCategorySeeder::class,
             UniformComponentSeeder::class,
             CadetSizeSeeder::class,
+            InventoryItemSeeder::class,
             TrainingSeeder::class,
             LearningMaterialCategorySeeder::class,
             LearningMaterialSeeder::class,
             QuizQuestionSeeder::class,
             AttendanceSeeder::class,
             BadgeSeeder::class,
+            ApplicationSeeder::class,
+            CadetCategoryProgressSeeder::class,
+            CadetLearningMaterialProgressSeeder::class,
+            CadetQuizScoreSeeder::class,
+            EquipmentLoanSeeder::class,
+            GalleryCategorySeeder::class,
+            GallerySeeder::class,
         ]);
     }
 }
