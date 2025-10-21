@@ -520,13 +520,37 @@ class CadetManagementController extends Controller
     // ================================================================
     private function getBestCadets($intakeYear)
     {
+        // Calculate intake average and require above-average duty count
+        $avgDutyCount = Cadet::where('intake_year', $intakeYear)
+            ->where('cadet_status', '!=', 'Suspended')
+            ->avg('daily_duty_count') ?? 0;
+        
+        // Require above average (or at least half the average if average is high)
+        $minDutyCount = max(5, ceil($avgDutyCount)); // At least 5 or above the intake average
+
         return Cadet::with(['user', 'performanceRating'])
             ->where('intake_year', $intakeYear)
             ->where('cadet_status', '!=', 'Suspended')
-            ->whereHas('performanceRating')
+            ->where('current_cgpa', '>=', 2.50) // Minimum satisfactory CGPA
+            ->where('daily_duty_count', '>=', $minDutyCount) // Above average duties
+            ->whereHas('performanceRating', function($query) {
+                // Strict requirements for Best Cadet
+                $query->where('total_points', '>=', 500)         // At least 62.5% total participation
+                    ->where('attendance_points', '>=', 360)    // At least 75% attendance (360/480)
+                    ->where('quiz_points', '>=', 10)           // Some quiz participation
+                    ->where('learning_progress_points', '>=', 5); // Some learning engagement
+            })
             ->join('performance_ratings', 'cadets.id', '=', 'performance_ratings.cadet_id')
-            ->orderBy('performance_ratings.total_points', 'desc')
             ->select('cadets.*')
+            ->selectRaw('
+                (
+                    (cadets.current_cgpa * 30) + 
+                    (performance_ratings.academic_points * 2) +
+                    (performance_ratings.total_points * 0.1) +
+                    (cadets.daily_duty_count * 1.5)
+                ) as balanced_academic_score
+            ')
+            ->orderBy('balanced_academic_score', 'desc')
             ->take(5)
             ->get();
     }
@@ -536,14 +560,39 @@ class CadetManagementController extends Controller
     // ================================================================
     private function getBestAcademicCadets($intakeYear)
     {
+        // Calculate the average duty count for this specific intake
+        $avgDutyCount = Cadet::where('intake_year', $intakeYear)
+            ->where('cadet_status', '!=', 'Suspended')
+            ->avg('daily_duty_count') ?? 0;
+        
+        // Set minimum duty requirement (at least the intake average)
+        $minDutyCount = max(1, floor($avgDutyCount)); // At least 1, or the average rounded down
+
         return Cadet::with(['user', 'performanceRating'])
             ->where('intake_year', $intakeYear)
             ->where('cadet_status', '!=', 'Suspended')
-            ->whereHas('performanceRating')
+            ->where('daily_duty_count', '>=', $minDutyCount) // Must meet intake average
+            ->whereHas('performanceRating', function($query) {
+                // Filter out cadets who are inactive in training and other activities
+                $query->where('total_points', '>=', 400)        // At least 50% of max (800 points)
+                    ->where('attendance_points', '>=', 240);  // At least 50% attendance (240/480)
+            })
             ->join('performance_ratings', 'cadets.id', '=', 'performance_ratings.cadet_id')
-            ->orderBy('cadets.current_cgpa', 'desc')
-            ->orderBy('performance_ratings.academic_points', 'desc')
             ->select('cadets.*')
+            // Balanced academic score calculation including duty count
+            ->selectRaw('
+                (
+                    (cadets.current_cgpa * 25) + 
+                    (performance_ratings.academic_points * 1.5) +
+                    (performance_ratings.attendance_points * 0.15) +
+                    (performance_ratings.quiz_points * 0.5) +
+                    (performance_ratings.learning_progress_points * 0.5) +
+                    (performance_ratings.duty_points * 0.25) +
+                    (cadets.daily_duty_count * 1.0)
+                ) as academic_excellence_score
+            ')
+            ->orderBy('academic_excellence_score', 'desc')
+            ->orderBy('cadets.current_cgpa', 'desc') // Tiebreaker
             ->take(5)
             ->get();
     }
