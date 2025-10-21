@@ -291,6 +291,9 @@
                                         <div class="text-center mt-1">
                                             <div class="text-lg">{{ $cadet->performanceRating->rating ?? '⭐☆☆☆☆' }}</div>
                                         </div>
+                                        <div class="text-center mt-1">
+                                            <div class="text-sm font-semibold text-yellow-600">{{ number_format($cadet->current_cgpa ?? 0, 2) }} CGPA</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1836,6 +1839,9 @@ function renderBestCadets(cadets) {
                         </div>
                         <div class="text-center mt-1">
                             <div class="text-lg">${cadet.rating || '⭐☆☆☆☆'}</div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <div class="text-sm font-semibold text-yellow-600">${parseFloat(cadet.current_cgpa || 0).toFixed(2)} CGPA</div>
                         </div>
                     </div>
                 </div>
