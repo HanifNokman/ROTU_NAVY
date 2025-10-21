@@ -192,6 +192,9 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     // Swimming Qualification
     Route::post('/cadets/swimming/mark-passed', [CadetManagementController::class, 'markSwimmingPassed'])->name('cadets.swimming.mark-passed');
 
+    // Rank Up
+    Route::post('/cadets/rank-up', [CadetManagementController::class, 'rankUp'])->name('cadets.rank-up');
+
     // Suspend Cadet
     Route::post('/cadets/{cadet}/suspend', [CadetManagementController::class, 'suspend'])->name('cadets.suspend');
 

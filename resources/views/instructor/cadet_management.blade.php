@@ -108,7 +108,7 @@
                         <div class="flex flex-col">
                             <label class="text-sm font-medium text-gray-700 mb-1">Information Type</label>
                             <div class="flex space-x-2 flex-wrap gap-y-2">
-                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'seniority' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="seniority">Seniority</button>
+                                <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'personnel' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="personnel">Personnel</button>
                                 <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'position' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="position">Position</button>
                                 <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'gender' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="gender">Gender</button>
                                 <button class="info-type-btn px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $infoType == 'cgpa' ? 'bg-[#3c92d9] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" data-info-type="cgpa">CGPA</button>
@@ -119,21 +119,50 @@
                     </div>
 
                     {{-- ================================================================ --}}
-                    {{-- ACTION BUTTONS SECTION --}}
+                    {{-- PERSONNEL MODE TOGGLE --}}
                     {{-- ================================================================ --}}
-                    <div id="actionButtonsContainer" class="mb-4 flex justify-end hidden">
-                        {{-- Save Changes Button (Position Management) --}}
-                        <button id="savePositionsBtn" 
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium hidden">
-                            Save Changes
-                        </button>
+                    <div id="personnelModeContainer" class="mb-4 hidden">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <label class="text-sm font-medium text-gray-700">Mode:</label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="personnelMode" value="suspend" class="mr-2" {{ $personnelMode == 'suspend' ? 'checked' : '' }}>
+                                        <span class="text-sm">Suspend</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="personnelMode" value="rank_up" class="mr-2" {{ $personnelMode == 'rank_up' ? 'checked' : '' }}>
+                                        <span class="text-sm">Rank Up</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="actionButtonsContainer" class="flex space-x-2">
+                                {{-- Select All Button --}}
+                                <button id="selectAllBtn"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden">
+                                    Select All
+                                </button>
 
-                        {{-- Mark as Passed Button (Swimming Management) --}}
-                        <button id="markAsPassedBtn" 
-                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden"
-                                disabled>
-                            Mark Selected as Passed
-                        </button>
+                                {{-- Rank Up Button --}}
+                                <button id="rankUpBtn"
+                                        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden">
+                                    Rank Up Selected (PK → PKK)
+                                </button>
+
+                                {{-- Save Changes Button (Position Management) --}}
+                                <button id="savePositionsBtn"
+                                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium hidden">
+                                    Save Changes
+                                </button>
+
+                                {{-- Mark as Passed Button (Swimming Management) --}}
+                                <button id="markAsPassedBtn"
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden"
+                                        disabled>
+                                    Mark Selected as Passed
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- ================================================================ --}}
@@ -515,6 +544,32 @@
     </div>
 
     {{-- ================================================================ --}}
+    {{-- RANK UP CONFIRMATION MODAL --}}
+    {{-- ================================================================ --}}
+    <div id="rankUpModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Rank Up</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Are you sure you want to rank up the selected cadets from <strong>PK</strong> to <strong>PKK</strong>?
+                    </p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="cancelRankUp"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <button id="confirmRankUp"
+                                class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">
+                            Confirm Rank Up
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================================================================ --}}
     {{-- DELETE SUSPENDED CADET CONFIRMATION MODAL --}}
     {{-- ================================================================ --}}
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
@@ -556,6 +611,7 @@
             filterBy: '{{ $filterBy }}',
             sortBy: '{{ $sortBy }}',
             search: '{{ $searchQuery }}',
+            personnelMode: '{{ $personnelMode }}',
             swimmingPassDate: '{{ request("swimming_pass_date", "all") }}'
         };
 
@@ -682,6 +738,26 @@
             });
 
             // ============================================================
+            // EVENT LISTENERS: Personnel Mode Toggle
+            // ============================================================
+            document.querySelectorAll('input[name="personnelMode"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentFilters.personnelMode = this.value;
+                    currentPage = 1;
+                    loadCadets();
+                });
+            });
+
+            // ============================================================
+            // EVENT LISTENERS: Cadet Checkbox Changes
+            // ============================================================
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('cadet-checkbox')) {
+                    updateRankUpButtonState();
+                }
+            });
+
+            // ============================================================
             // EVENT LISTENERS: Modal Controls
             // ============================================================
             document.getElementById('closeModal').addEventListener('click', function() {
@@ -694,6 +770,14 @@
 
             document.getElementById('confirmSuspend')?.addEventListener('click', function() {
                 confirmSuspension();
+            });
+
+            document.getElementById('cancelRankUp')?.addEventListener('click', function() {
+                document.getElementById('rankUpModal').classList.add('hidden');
+            });
+
+            document.getElementById('confirmRankUp')?.addEventListener('click', function() {
+                confirmRankUp();
             });
 
             document.getElementById('cancelDelete')?.addEventListener('click', function() {
@@ -740,6 +824,14 @@
                 savePositions();
             });
 
+            document.getElementById('selectAllBtn')?.addEventListener('click', function() {
+                selectAllCadets();
+            });
+
+            document.getElementById('rankUpBtn')?.addEventListener('click', function() {
+                showRankUpModal();
+            });
+
             document.getElementById('markAsPassedBtn')?.addEventListener('click', function() {
                 markSelectedAsPassed();
             });
@@ -751,27 +843,44 @@
         function initializeDynamicFilters(infoType) {
             const dynamicFilterContainer = document.getElementById('dynamicFilterContainer');
             const additionalFilterContainer = document.getElementById('additionalFilterContainer');
+            const personnelModeContainer = document.getElementById('personnelModeContainer');
             const dynamicFilterLabel = document.getElementById('dynamicFilterLabel');
             const dynamicFilter = document.getElementById('dynamicFilter');
             const actionButtonsContainer = document.getElementById('actionButtonsContainer');
             const savePositionsBtn = document.getElementById('savePositionsBtn');
             const markAsPassedBtn = document.getElementById('markAsPassedBtn');
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const rankUpBtn = document.getElementById('rankUpBtn');
 
             // Reset visibility
             additionalFilterContainer.classList.add('hidden');
+            personnelModeContainer.classList.add('hidden');
             actionButtonsContainer.classList.add('hidden');
             savePositionsBtn.classList.add('hidden');
             markAsPassedBtn.classList.add('hidden');
+            selectAllBtn.classList.add('hidden');
+            rankUpBtn.classList.add('hidden');
 
             // Clear existing options
             dynamicFilter.innerHTML = '';
 
-            if (infoType === 'seniority') {
+            if (infoType === 'personnel') {
+                // Show personnel mode toggle
+                personnelModeContainer.classList.remove('hidden');
+                dynamicFilterContainer.classList.add('hidden');
+
+                // Show appropriate action buttons based on mode
+                if (currentFilters.personnelMode === 'rank_up') {
+                    actionButtonsContainer.classList.remove('hidden');
+                    selectAllBtn.classList.remove('hidden');
+                    rankUpBtn.classList.remove('hidden');
+                }
+            } else if (infoType === 'seniority') {
                 // Hide dynamic filter for seniority
                 dynamicFilterContainer.classList.add('hidden');
             } else {
                 dynamicFilterContainer.classList.remove('hidden');
-                
+
                 switch(infoType) {
                     case 'bmi':
                         dynamicFilterLabel.textContent = 'Sort Order';
@@ -834,17 +943,39 @@
             }
 
             // Update column headers
-            updateColumnHeaders(infoType);
+            updateColumnHeaders(infoType, currentFilters.personnelMode);
         }
 
         // ============================================================
         // FUNCTION: Update Column Headers
         // ============================================================
-        function updateColumnHeaders(infoType) {
+        function updateColumnHeaders(infoType, personnelMode = 'suspend') {
             const dynamicColumnHeader = document.getElementById('dynamicColumnHeader');
             const actionsColumnHeader = document.getElementById('actionsColumnHeader');
 
             switch(infoType) {
+                case 'personnel':
+                    dynamicColumnHeader.textContent = 'Rank';
+                    if (personnelMode === 'rank_up') {
+                        actionsColumnHeader.innerHTML = `
+                            <div class="flex items-center">
+                                <input type="checkbox"
+                                       id="selectAll"
+                                       class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
+                                <span>Select All</span>
+                            </div>
+                        `;
+                        // Re-attach select all event listener
+                        setTimeout(() => {
+                            const selectAllCheckbox = document.getElementById('selectAll');
+                            if (selectAllCheckbox) {
+                                selectAllCheckbox.addEventListener('change', handleSelectAll);
+                            }
+                        }, 100);
+                    } else {
+                        actionsColumnHeader.innerHTML = 'Actions';
+                    }
+                    break;
                 case 'seniority':
                     dynamicColumnHeader.textContent = 'IC Number';
                     actionsColumnHeader.innerHTML = 'Actions';
@@ -865,8 +996,8 @@
                     dynamicColumnHeader.textContent = 'Swimming Status';
                     actionsColumnHeader.innerHTML = `
                         <div class="flex items-center">
-                            <input type="checkbox" 
-                                   id="selectAll" 
+                            <input type="checkbox"
+                                   id="selectAll"
                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mr-2">
                             <span>Select All</span>
                         </div>
@@ -929,6 +1060,7 @@ function loadCadets(page = 1) {
         filter_by: currentFilters.filterBy,
         sort_by: currentFilters.sortBy,
         search: currentFilters.search,
+        personnel_mode: currentFilters.personnelMode,
         page: page
     });
 
@@ -1020,18 +1152,21 @@ function createCadetRow(cadet, rowNumber) {
 // ============================================================
 function getDynamicColumnContent(cadet) {
     switch(currentFilters.infoType) {
+        case 'personnel':
+            return cadet.rank || 'N/A';
+
         case 'seniority':
             return cadet.ic_number || 'N/A';
-            
+
         case 'position':
             return cadet.position || 'Normal Cadet';
-            
+
         case 'gender':
             return cadet.gender || 'N/A';
-            
+
         case 'cgpa':
             return cadet.current_cgpa ? parseFloat(cadet.current_cgpa).toFixed(2) : 'N/A';
-            
+
         case 'swimming':
             const statusClass = cadet.swimming_qualification === 'Pass' ? 'bg-green-100 text-green-800' :
                               cadet.swimming_qualification === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
@@ -1046,7 +1181,7 @@ function getDynamicColumnContent(cadet) {
                     </div>
                 </div>
             `;
-            
+
         case 'bmi':
             return `
                 <div>
@@ -1056,7 +1191,7 @@ function getDynamicColumnContent(cadet) {
                     </div>
                 </div>
             `;
-            
+
         default:
             return 'N/A';
     }
@@ -1067,15 +1202,36 @@ function getDynamicColumnContent(cadet) {
 // ============================================================
 function getActionsColumnContent(cadet) {
     switch(currentFilters.infoType) {
+        case 'personnel':
+            if (currentFilters.personnelMode === 'suspend') {
+                return `
+                    <button class="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 suspend-cadet-btn"
+                            data-cadet-id="${cadet.id}"
+                            data-cadet-name="${cadet.user_name}">
+                        Suspend Cadet
+                    </button>
+                `;
+            } else if (currentFilters.personnelMode === 'rank_up' && cadet.rank === 'PK') {
+                return `
+                    <input type="checkbox"
+                           class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                           data-cadet-id="${cadet.id}">
+                `;
+            } else if (currentFilters.personnelMode === 'rank_up' && cadet.rank === 'PKK') {
+                return '<span class="text-purple-600 font-medium">Already PKK</span>';
+            } else {
+                return '<span class="text-gray-500">N/A</span>';
+            }
+
         case 'seniority':
             return `
-                <button class="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 suspend-cadet-btn" 
-                        data-cadet-id="${cadet.id}" 
+                <button class="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 suspend-cadet-btn"
+                        data-cadet-id="${cadet.id}"
                         data-cadet-name="${cadet.user_name}">
                     Suspend Cadet
                 </button>
             `;
-            
+
         case 'position':
             const positions = {
                 'Normal': 'Normal Cadet',
@@ -1090,27 +1246,27 @@ function getActionsColumnContent(cadet) {
                 options += `<option value="${value}" ${selected}>${label}</option>`;
             }
             return `
-                <select class="position-select border-gray-300 rounded text-sm" 
+                <select class="position-select border-gray-300 rounded text-sm"
                         data-cadet-id="${cadet.id}"
                         data-original-value="${cadet.position || 'Normal Cadet'}">
                     ${options}
                 </select>
             `;
-            
+
         case 'swimming':
             if (cadet.swimming_qualification !== 'Pass') {
                 return `
-                    <input type="checkbox" 
-                           class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                    <input type="checkbox"
+                           class="cadet-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                            data-cadet-id="${cadet.id}">
                 `;
             } else {
                 return '<span class="text-green-600 font-medium">Passed</span>';
             }
-            
+
         default:
             return `
-                <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn" 
+                <button class="text-indigo-600 hover:text-indigo-900 view-profile-btn"
                         data-cadet-id="${cadet.id}">
                     View Profile
                 </button>
@@ -1203,6 +1359,96 @@ function validatePositionSelection(selectElement) {
         }
 
 
+
+// ============================================================
+// FUNCTION: Show Rank Up Modal
+// ============================================================
+function showRankUpModal() {
+    const selectedCadets = [];
+    document.querySelectorAll('.cadet-checkbox:checked').forEach(checkbox => {
+        selectedCadets.push(checkbox.dataset.cadetId);
+    });
+
+    if (selectedCadets.length === 0) {
+        alert('Please select at least one cadet to rank up.');
+        return;
+    }
+
+    document.getElementById('rankUpModal').classList.remove('hidden');
+}
+
+// ============================================================
+// FUNCTION: Select All Cadets
+// ============================================================
+function selectAllCadets() {
+    const checkboxes = document.querySelectorAll('.cadet-checkbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = !allChecked;
+    });
+
+    updateRankUpButtonState();
+}
+
+// ============================================================
+// FUNCTION: Update Rank Up Button State
+// ============================================================
+function updateRankUpButtonState() {
+    const selectedCount = document.querySelectorAll('.cadet-checkbox:checked').length;
+    const rankUpBtn = document.getElementById('rankUpBtn');
+
+    if (selectedCount > 0) {
+        rankUpBtn.disabled = false;
+        rankUpBtn.classList.remove('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
+    } else {
+        rankUpBtn.disabled = true;
+        rankUpBtn.classList.add('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
+    }
+}
+
+// ============================================================
+// FUNCTION: Confirm Rank Up
+// ============================================================
+function confirmRankUp() {
+    const selectedCadets = [];
+    document.querySelectorAll('.cadet-checkbox:checked').forEach(checkbox => {
+        selectedCadets.push(checkbox.dataset.cadetId);
+    });
+
+    if (selectedCadets.length === 0) {
+        alert('Please select at least one cadet to rank up.');
+        return;
+    }
+
+    const intakeYear = currentFilters.intakeYear;
+
+    fetch('/instructor/cadets/rank-up', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            cadet_ids: selectedCadets,
+            intake_year: intakeYear
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('rankUpModal').classList.add('hidden');
+            alert(`${data.updated_count} cadet(s) ranked up successfully`);
+            loadCadets(currentPage);
+        } else {
+            alert(data.message || 'Failed to rank up cadets');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to rank up cadets');
+    });
+}
 
 // ============================================================
 // FUNCTION: Mark Selected as Passed (Swimming)
