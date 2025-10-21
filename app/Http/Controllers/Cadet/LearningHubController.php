@@ -89,6 +89,9 @@ class LearningHubController extends Controller
             return $index !== false ? $index : count($rankOrder);
         });
 
+        // Get progress data for the cadet
+        $progressData = $this->getProgressData($cadet);
+
         return view('cadet.learning_hub', [
             'categories' => $categories,
             'materials' => $materials,
@@ -96,7 +99,8 @@ class LearningHubController extends Controller
             'selectedCategory' => $request->get('category'),
             'selectedInstructorStatus' => $request->get('instructor_status'),
             'topScores' => $topScores,
-            'unlockedDifficulties' => $unlockedDifficulties
+            'unlockedDifficulties' => $unlockedDifficulties,
+            'progressData' => $progressData
         ]);
     }
 
@@ -1289,5 +1293,60 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
             default:
                 return 'easy';
         }
+    }
+
+    /**
+     * Get progress data for the cadet across all categories
+     */
+    private function getProgressData($cadet)
+    {
+        if (!$cadet) {
+            return [
+                'overall_progress' => 0,
+                'category_progress' => [],
+                'total_materials' => 0,
+                'completed_materials' => 0
+            ];
+        }
+
+        $categories = LearningMaterialCategory::whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('quiz_questions')
+                ->whereColumn('quiz_questions.category_id', 'learning_material_categories.id')
+                ->where('status', 'active');
+        })->get();
+
+        $totalMaterials = 0;
+        $completedMaterials = 0;
+        $categoryProgress = [];
+
+        foreach ($categories as $category) {
+            $materialsInCategory = LearningMaterial::where('learning_material_category_id', $category->id)->get();
+            $totalMaterials += $materialsInCategory->count();
+
+            $completedInCategory = 0;
+            foreach ($materialsInCategory as $material) {
+                if ($material->isCompletedBy($cadet->id)) {
+                    $completedInCategory++;
+                    $completedMaterials++;
+                }
+            }
+
+            $categoryProgress[$category->id] = [
+                'category_name' => $category->name,
+                'total_materials' => $materialsInCategory->count(),
+                'completed_materials' => $completedInCategory,
+                'percentage' => $materialsInCategory->count() > 0 ? round(($completedInCategory / $materialsInCategory->count()) * 100, 1) : 0
+            ];
+        }
+
+        $overallProgress = $totalMaterials > 0 ? round(($completedMaterials / $totalMaterials) * 100, 1) : 0;
+
+        return [
+            'overall_progress' => $overallProgress,
+            'category_progress' => $categoryProgress,
+            'total_materials' => $totalMaterials,
+            'completed_materials' => $completedMaterials
+        ];
     }
 }
