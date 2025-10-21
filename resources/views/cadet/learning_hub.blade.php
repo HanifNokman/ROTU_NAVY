@@ -24,7 +24,103 @@
                 </h1>
                 <p class="text-gray-600">Access educational materials and resources</p>
             </div>
-            
+
+            <!-- Progress Overview Section - Collapsible -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-green-100">
+                    <button onclick="toggleProgressSection()"
+                            id="progress-toggle-btn"
+                            class="w-full flex justify-between items-center cursor-pointer hover:bg-green-100/50 rounded-lg p-2 -m-2 transition-colors duration-200">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800">Your Learning Progress</h3>
+                                <p class="text-gray-600 text-sm">Track your completion across all categories</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-green-600">{{ $progressData['overall_progress'] }}%</div>
+                                <div class="text-xs text-gray-600">Overall Progress</div>
+                            </div>
+                            <svg id="progress-chevron" class="w-6 h-6 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+                <div id="progress-content" class="hidden transition-all duration-300 ease-in-out">
+                    <div class="p-6">
+                        <!-- Overall Progress Bar -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700">Overall Completion</span>
+                                <span class="text-sm text-gray-600">{{ $progressData['completed_materials'] }}/{{ $progressData['total_materials'] }} materials</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500 ease-out"
+                                     style="width: {{ $progressData['overall_progress'] }}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Category Progress -->
+                        <div class="space-y-4">
+                            <h4 class="font-medium text-gray-800 mb-3">Progress by Category</h4>
+                            @forelse($progressData['category_progress'] as $categoryId => $progress)
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="font-medium text-gray-800">{{ $progress['category_name'] }}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm text-gray-600">{{ $progress['completed_materials'] }}/{{ $progress['total_materials'] }}</span>
+                                            <span class="text-sm font-semibold {{ $progress['percentage'] >= 80 ? 'text-green-600' : ($progress['percentage'] >= 60 ? 'text-yellow-600' : 'text-red-600') }}">
+                                                {{ $progress['percentage'] }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="h-2 rounded-full transition-all duration-500 ease-out
+                                                    {{ $progress['percentage'] >= 80 ? 'bg-gradient-to-r from-green-500 to-emerald-500' : ($progress['percentage'] >= 60 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' : 'bg-gradient-to-r from-red-500 to-pink-500') }}"
+                                             style="width: {{ $progress['percentage'] }}%"></div>
+                                    </div>
+                                    @if($progress['percentage'] == 100)
+                                        <div class="mt-2 flex items-center text-green-600 text-sm">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Category Completed!
+                                        </div>
+                                    @endif
+                                </div>
+                            @empty
+                                <div class="text-center text-gray-500 py-4">
+                                    <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    No categories available yet
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function toggleProgressSection() {
+                    const content = document.getElementById('progress-content');
+                    const chevron = document.getElementById('progress-chevron');
+
+                    if (content.classList.contains('hidden')) {
+                        content.classList.remove('hidden');
+                        chevron.classList.add('rotate-180');
+                    } else {
+                        content.classList.add('hidden');
+                        chevron.classList.remove('rotate-180');
+                    }
+                }
+            </script>
+
             <!-- Learning Hub Content -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
                 <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
