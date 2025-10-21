@@ -23,11 +23,15 @@ class CadetManagementController extends Controller
         ]);
 
         // Initialize variables with defaults
-        $infoType = $request->get('info_type', 'seniority');
+        $infoType = $request->get('info_type', 'personnel');
         $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
         $searchQuery = $request->get('search', '');
-        
-        if ($infoType === 'seniority') {
+        $personnelMode = $request->get('personnel_mode', 'suspend'); // 'suspend' or 'rank_up'
+
+        if ($infoType === 'personnel') {
+            $sortBy = 'asc';
+            $filterBy = 'all';
+        } elseif ($infoType === 'seniority') {
             $sortBy = 'asc';
             $filterBy = 'all';
         } else {
@@ -137,6 +141,7 @@ class CadetManagementController extends Controller
             'sortBy' => $sortBy,
             'filterBy' => $filterBy,
             'searchQuery' => $searchQuery,
+            'personnelMode' => $personnelMode,
             'recentIntakes' => $recentIntakes,
             'swimmingPassDates' => $swimmingPassDates,
             'bestCadets' => $bestCadets,
@@ -157,11 +162,15 @@ class CadetManagementController extends Controller
     public function getCadetsAjax(Request $request)
     {
         try {
-            $infoType = $request->get('info_type', 'seniority');
+            $infoType = $request->get('info_type', 'personnel');
             $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
             $searchQuery = $request->get('search', '');
-            
-            if ($infoType === 'seniority') {
+            $personnelMode = $request->get('personnel_mode', 'suspend');
+
+            if ($infoType === 'personnel') {
+                $sortBy = 'asc';
+                $filterBy = 'all';
+            } elseif ($infoType === 'seniority') {
                 $sortBy = 'asc';
                 $filterBy = 'all';
             } else {
@@ -196,7 +205,7 @@ class CadetManagementController extends Controller
             $cadets = $query->paginate(20);
 
             // Transform cadet data for JSON response
-            $transformedCadets = $cadets->map(function($cadet) {
+            $transformedCadets = $cadets->map(function($cadet) use ($personnelMode) {
                 return [
                     'id' => $cadet->id,
                     'service_number' => $cadet->service_number,
@@ -210,6 +219,8 @@ class CadetManagementController extends Controller
                     'swimming_pass_date' => $cadet->swimming_pass_date ? $cadet->swimming_pass_date->format('d/m/Y') : null,
                     'BMI' => $cadet->BMI,
                     'BMI_update_date' => $cadet->BMI_update_date ? $cadet->BMI_update_date->format('d/m/Y') : null,
+                    'rank' => $cadet->rank,
+                    'personnel_mode' => $personnelMode,
                 ];
             });
 
@@ -708,6 +719,37 @@ class CadetManagementController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to reactivate cadet: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // RANK UP: Bulk rank up cadets from PK to PKK
+    // ================================================================
+    public function rankUp(Request $request)
+    {
+        $request->validate([
+            'cadet_ids' => 'required|array',
+            'cadet_ids.*' => 'exists:cadets,id',
+            'intake_year' => 'required|integer'
+        ]);
+
+        try {
+            $updatedCount = Cadet::whereIn('id', $request->cadet_ids)
+                ->where('intake_year', $request->intake_year)
+                ->where('rank', 'PK')
+                ->update(['rank' => 'PKK']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cadets ranked up successfully',
+                'updated_count' => $updatedCount
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error ranking up cadets: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to rank up cadets'
             ], 500);
         }
     }
