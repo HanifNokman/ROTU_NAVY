@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Storage;
 
 class AttendanceController extends Controller
 {
+    // Geofence configuration (meetup location)
+    private const GEOFENCE_LATITUDE = 3.1390;   // Example: Kuala Lumpur coordinates
+    private const GEOFENCE_LONGITUDE = 101.6869;
+    private const GEOFENCE_RADIUS = 100; // Radius in meters
+    
     // ================================================================
     // DISPLAY ATTENDANCE INDEX
     // ================================================================
@@ -94,11 +99,16 @@ class AttendanceController extends Controller
             'attendance' => $attendance,
             'absentAttendances' => $absentAttendances,
             'todaysTrainings' => $todaysTrainings,
+            'geofence' => [
+                'latitude' => self::GEOFENCE_LATITUDE,
+                'longitude' => self::GEOFENCE_LONGITUDE,
+                'radius' => self::GEOFENCE_RADIUS,
+            ]
         ]);
     }
 
     // ================================================================
-    // MARK ATTENDANCE AS PRESENT
+    // MARK ATTENDANCE AS PRESENT (WITH GEOFENCE VALIDATION)
     // ================================================================
     
     public function markPresent(Request $request)
@@ -109,11 +119,20 @@ class AttendanceController extends Controller
             
             $request->validate([
                 'training_id' => 'required|exists:trainings,id',
-                'method' => 'in:manual'
+                'method' => 'in:manual',
+                'latitude' => 'required|numeric|between:-90,90',
+                'longitude' => 'required|numeric|between:-180,180',
             ]);
             
             $trainingId = $request->input('training_id');
             $method = $request->input('method', 'manual');
+            $latitude = $request->input('latitude');
+            $longitude = $request->input('longitude');
+
+            // Validate geofence
+            if (!$this->isWithinGeofence($latitude, $longitude)) {
+                return redirect()->back()->with('error', 'You must be at the designated meetup location to mark attendance.');
+            }
 
             $training = Training::findOrFail($trainingId);
             
@@ -144,6 +163,8 @@ class AttendanceController extends Controller
             $attendance->present = true;
             $attendance->method = $method;
             $attendance->marked_at = Carbon::now();
+            $attendance->latitude = $latitude;
+            $attendance->longitude = $longitude;
             $attendance->absence_reason = null;
             $attendance->file_url = null;
             $attendance->save();
@@ -154,6 +175,42 @@ class AttendanceController extends Controller
             \Log::error('Error marking attendance: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to mark attendance. Please try again.');
         }
+    }
+
+    // ================================================================
+    // CHECK IF LOCATION IS WITHIN GEOFENCE
+    // ================================================================
+    
+    private function isWithinGeofence($latitude, $longitude): bool
+    {
+        $distance = $this->calculateDistance(
+            self::GEOFENCE_LATITUDE,
+            self::GEOFENCE_LONGITUDE,
+            $latitude,
+            $longitude
+        );
+        
+        return $distance <= self::GEOFENCE_RADIUS;
+    }
+
+    // ================================================================
+    // CALCULATE DISTANCE BETWEEN TWO COORDINATES (Haversine formula)
+    // ================================================================
+    
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2): float
+    {
+        $earthRadius = 6371000; // Earth's radius in meters
+        
+        $latDiff = deg2rad($lat2 - $lat1);
+        $lonDiff = deg2rad($lon2 - $lon1);
+        
+        $a = sin($latDiff / 2) * sin($latDiff / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($lonDiff / 2) * sin($lonDiff / 2);
+        
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        
+        return $earthRadius * $c; // Distance in meters
     }
 
     // ================================================================

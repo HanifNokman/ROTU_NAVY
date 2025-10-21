@@ -17,6 +17,8 @@ class TrainingAttendance extends Model
         'absence_reason',
         'file_url',
         'method',
+        'latitude',
+        'longitude',
         'marked_at'
     ];
 

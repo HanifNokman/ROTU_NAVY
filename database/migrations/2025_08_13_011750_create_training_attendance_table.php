@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('cadet_id')->constrained()->onDelete('cascade');
             $table->boolean('present')->default(false);
             $table->enum('method', ['manual', 'qr_code'])->default('manual');
+            $table->decimal('latitude', 10, 8)->nullable()->after('method');
+            $table->decimal('longitude', 11, 8)->nullable()->after('latitude');
             $table->timestamp('marked_at')->nullable();
             $table->text('absence_reason')->nullable();
             $table->string('file_url')->nullable();
