@@ -127,12 +127,12 @@
                                 <label class="text-sm font-medium text-gray-700">Mode:</label>
                                 <div class="flex items-center space-x-4">
                                     <label class="flex items-center">
-                                        <input type="radio" name="personnelMode" value="suspend" class="mr-2" {{ $personnelMode == 'suspend' ? 'checked' : '' }}>
-                                        <span class="text-sm">Suspend</span>
-                                    </label>
-                                    <label class="flex items-center">
                                         <input type="radio" name="personnelMode" value="rank_up" class="mr-2" {{ $personnelMode == 'rank_up' ? 'checked' : '' }}>
                                         <span class="text-sm">Rank Up</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="personnelMode" value="suspend" class="mr-2" {{ $personnelMode == 'suspend' ? 'checked' : '' }}>
+                                        <span class="text-sm">Suspend</span>
                                     </label>
                                 </div>
                             </div>
@@ -614,6 +614,12 @@
             personnelMode: '{{ $personnelMode }}',
             swimmingPassDate: '{{ request("swimming_pass_date", "all") }}'
         };
+
+        // Initialize the page on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDynamicFilters(currentFilters.infoType);
+            loadCadets(1);
+        });
 
         // ============================================================
         // SECTION TOGGLE FUNCTIONS
