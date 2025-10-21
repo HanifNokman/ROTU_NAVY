@@ -128,6 +128,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/materials', [CadetLearningHubController::class, 'getMaterials'])->name('api.materials');
     Route::get('/api/instructors', [CadetLearningHubController::class, 'getInstructors'])->name('api.instructors');
     Route::get('/api/instructor/{instructor}', [CadetLearningHubController::class, 'getInstructor'])->name('api.instructor');
+    Route::get('/api/unlocked-difficulties', [CadetLearningHubController::class, 'getUnlockedDifficultiesAjax'])->name('api.unlocked-difficulties');
 });
 
 // ============================================================================

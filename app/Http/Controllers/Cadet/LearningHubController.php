@@ -59,6 +59,12 @@ class LearningHubController extends Controller
                 ->values();
         }
 
+        // Calculate unlocked difficulties for each category
+        $unlockedDifficulties = [];
+        foreach ($categories as $category) {
+            $unlockedDifficulties[$category->id] = $this->getUnlockedDifficulties($cadet->id, $category->id);
+        }
+
         $instructorQuery = Instructor::with('user')
             ->whereHas('user', function ($query) {
                 $query->where('status', 'accepted');
@@ -89,7 +95,8 @@ class LearningHubController extends Controller
             'instructors' => $instructors,
             'selectedCategory' => $request->get('category'),
             'selectedInstructorStatus' => $request->get('instructor_status'),
-            'topScores' => $topScores
+            'topScores' => $topScores,
+            'unlockedDifficulties' => $unlockedDifficulties
         ]);
     }
 
@@ -124,7 +131,7 @@ class LearningHubController extends Controller
     // ================================================================
     // GET INSTRUCTORS BY STATUS (AJAX)
     // ================================================================
-    
+
     public function getInstructors(Request $request)
     {
         $instructorQuery = Instructor::with('user')
@@ -166,6 +173,34 @@ class LearningHubController extends Controller
     }
 
     // ================================================================
+    // GET UNLOCKED DIFFICULTIES FOR CATEGORY (AJAX)
+    // ================================================================
+
+    public function getUnlockedDifficultiesAjax(Request $request)
+    {
+        $request->validate([
+            'category_id' => 'nullable|exists:learning_material_categories,id'
+        ]);
+
+        $categoryId = $request->category_id;
+        $cadet = auth()->user()->cadet;
+
+        if (!$cadet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cadet profile not found.'
+            ], 404);
+        }
+
+        $unlockedDifficulties = $this->getUnlockedDifficulties($cadet->id, $categoryId);
+
+        return response()->json([
+            'success' => true,
+            'unlocked_difficulties' => $unlockedDifficulties
+        ]);
+    }
+
+    // ================================================================
     // START QUIZ SESSION
     // ================================================================
     
@@ -178,6 +213,27 @@ class LearningHubController extends Controller
 
         $categoryId = $request->category_id;
         $difficulty = $request->difficulty;
+
+        // Check difficulty progression requirements
+        if ($categoryId !== null) {
+            $cadet = auth()->user()->cadet;
+            if (!$cadet) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cadet profile not found.'
+                ], 404);
+            }
+
+            $unlockedDifficulties = $this->getUnlockedDifficulties($cadet->id, $categoryId);
+
+            if (!in_array($difficulty, $unlockedDifficulties)) {
+                $requiredDifficulty = $this->getRequiredDifficulty($difficulty);
+                return response()->json([
+                    'success' => false,
+                    'message' => "You must achieve at least 80% in {$requiredDifficulty} difficulty before accessing {$difficulty} difficulty."
+                ], 403);
+            }
+        }
 
         $query = QuizQuestion::query()->active();
 
@@ -1164,6 +1220,74 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
                 'message' => 'Error fetching progress',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    // ================================================================
+    // Helper Methods for Difficulty Progression
+    // ================================================================
+
+    /**
+     * Get unlocked difficulties for a cadet in a specific category
+     * If categoryId is null (practice mode), all difficulties are unlocked
+     */
+    private function getUnlockedDifficulties($cadetId, $categoryId)
+    {
+        // Practice mode - all difficulties unlocked
+        if (!$categoryId) {
+            return ['easy', 'medium', 'hard'];
+        }
+
+        $unlocked = ['easy']; // Easy is always unlocked
+
+        // Get scores for the specific category
+        $categoryScores = CadetQuizScore::where('cadet_id', $cadetId)
+            ->where('learning_material_category_id', $categoryId)
+            ->get();
+
+        // Check for passed difficulties (>=80%) and unlock progressively
+        $easyScore = $categoryScores->where('difficulty', 'easy')
+            ->sortByDesc('score_percentage')
+            ->first();
+        $mediumScore = $categoryScores->where('difficulty', 'medium')
+            ->sortByDesc('score_percentage')
+            ->first();
+        $hardScore = $categoryScores->where('difficulty', 'hard')
+            ->sortByDesc('score_percentage')
+            ->first();
+
+        // Progressive unlocking logic:
+        // - Easy is always unlocked
+        // - If easy is passed (>=80%), unlock easy and medium
+        // - If medium is passed (>=80%), unlock easy, medium, and hard
+        // - If hard is passed (>=80%), unlock all difficulties
+
+        if ($hardScore && $hardScore->score_percentage >= 80) {
+            $unlocked = ['easy', 'medium', 'hard'];
+        }
+        elseif ($mediumScore && $mediumScore->score_percentage >= 80) {
+            $unlocked = ['easy', 'medium', 'hard'];
+        }
+        elseif ($easyScore && $easyScore->score_percentage >= 80) {
+            $unlocked = ['easy', 'medium'];
+        }
+        // If nothing is passed, only easy is unlocked
+
+        return $unlocked;
+    }
+
+    /**
+     * Get the required difficulty that must be passed to unlock the given difficulty
+     */
+    private function getRequiredDifficulty($difficulty)
+    {
+        switch ($difficulty) {
+            case 'medium':
+                return 'easy';
+            case 'hard':
+                return 'medium';
+            default:
+                return 'easy';
         }
     }
 }
