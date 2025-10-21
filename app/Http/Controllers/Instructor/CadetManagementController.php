@@ -26,7 +26,7 @@ class CadetManagementController extends Controller
         $infoType = $request->get('info_type', 'personnel');
         $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
         $searchQuery = $request->get('search', '');
-        $personnelMode = $request->get('personnel_mode', 'suspend'); // 'suspend' or 'rank_up'
+        $personnelMode = $request->get('personnel_mode', 'rank_up'); // 'suspend' or 'rank_up'
 
         if ($infoType === 'personnel') {
             $sortBy = 'asc';
@@ -165,7 +165,7 @@ class CadetManagementController extends Controller
             $infoType = $request->get('info_type', 'personnel');
             $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
             $searchQuery = $request->get('search', '');
-            $personnelMode = $request->get('personnel_mode', 'suspend');
+            $personnelMode = $request->get('personnel_mode', 'rank_up');
 
             if ($infoType === 'personnel') {
                 $sortBy = 'asc';
