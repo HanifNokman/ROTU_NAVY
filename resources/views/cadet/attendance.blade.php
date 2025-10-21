@@ -833,9 +833,9 @@
                                 
                                 // Keep button DISABLED
                                 button.disabled = true;
-                                button.classList.add('opacity-50', 'cursor-not-allowed');
+                                button.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
                                 button.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'hover:from-green-600', 'hover:to-green-700');
-                                
+
                                 // Change button appearance to show it's locked
                                 button.innerHTML = '<i class="fas fa-lock text-xl mr-3"></i> Location Required - Move Closer';
                                 
