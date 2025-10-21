@@ -95,10 +95,11 @@
             if ($user->role === 'instructor') {
                 $instructor = App\Models\Instructor::where('user_id', $user->id)->first();
                 $profilePicture = $instructor?->profile_pic;
-                
+
                 $pendingUsersCount = App\Models\User::where('status', 'pending')->count();
-                $hasNotifications = $pendingUsersCount > 0;
-                
+                $applicationsCount = App\Models\Application::count();
+                $hasNotifications = $pendingUsersCount > 0 || $applicationsCount > 0;
+
             } elseif ($user->role === 'cadet') {
                 $cadet = App\Models\Cadet::where('user_id', $user->id)->first();
                 $profilePicture = $cadet?->profile_pic;
