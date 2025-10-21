@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Storage;
 class AttendanceController extends Controller
 {
     // Geofence configuration (meetup location)
-    private const GEOFENCE_LATITUDE = 6.0447;
-    private const GEOFENCE_LONGITUDE = 116.1291;
+    private const GEOFENCE_LATITUDE = 6.044763;
+    private const GEOFENCE_LONGITUDE = 116.129359;
     private const GEOFENCE_RADIUS = 100; // Radius in meters
+
     public function index()
     {
         $user = Auth::user();
