@@ -241,8 +241,9 @@ class PendingVerificationController extends Controller
     {
         try {
             $createdCount = 0;
+            $failedCreations = [];
 
-            DB::transaction(function () use (&$createdCount) {
+            DB::transaction(function () use (&$createdCount, &$failedCreations) {
                 // Get all applications that passed all steps
                 $passedApplications = Application::where('attendance', 'passed')
                     ->where('drill_test', 'passed')
@@ -252,56 +253,104 @@ class PendingVerificationController extends Controller
                     ->where('final_evaluation', 'passed')
                     ->get();
 
-                foreach ($passedApplications as $application) {
-                    // Create user account
-                    $user = User::create([
-                        'name' => $application->name,
-                        'email' => $application->email,
-                        'password' => Hash::make($application->matric_no),
-                        'role' => 'cadet',
-                        'status' => 'accepted',
-                    ]);
-
-                    // Create cadet record
-                    \App\Models\Cadet::create([
-                        'user_id' => $user->id,
-                        'phone_number' => $application->phone_number,
-                        'gender' => $application->gender,
-                        'ic_number' => $application->ic_number,
-                        'matric_no' => $application->matric_no,
-                        'faculty' => $application->faculty,
-                        'course' => $application->course,
-                        'profile_pic' => $application->profile_pic,
-                        'BMI' => $application->bmi,
-                        'rank' => 'PK',
-                        'position' => 'Normal',
-                        'cadet_status' => 'Active',
-                        'intake_year' => now()->year,
-                        'daily_duty_count' => 0,
-                        'swimming_qualification' => 'In Progress',
-                    ]);
-
-                    // Send acceptance email
-                    try {
-                        Mail::to($user->email)->send(new UserAcceptedMail($user));
-                    } catch (\Exception $e) {
-                        \Log::error('Failed to send acceptance email to ' . $user->email . ': ' . $e->getMessage());
-                    }
-
-                    $createdCount++;
+                if ($passedApplications->isEmpty()) {
+                    throw new \Exception('No passed applications found to process.');
                 }
 
-                // Delete all applications
-                Application::truncate();
+                foreach ($passedApplications as $application) {
+                    try {
+                        // Check if user with this email already exists
+                        $existingUser = User::where('email', $application->email)->first();
+                        if ($existingUser) {
+                            $failedCreations[] = "{$application->name} - Email already exists";
+                            \Log::warning("Skipped application for {$application->name} - email {$application->email} already exists");
+                            continue;
+                        }
 
-                \Log::info("Selection process completed. Created {$createdCount} cadet accounts.");
+                        // Check if matric_no already exists
+                        $existingMatric = \App\Models\Cadet::where('matric_no', $application->matric_no)->first();
+                        if ($existingMatric) {
+                            $failedCreations[] = "{$application->name} - Matric number already exists";
+                            \Log::warning("Skipped application for {$application->name} - matric {$application->matric_no} already exists");
+                            continue;
+                        }
+
+                        // Validate required fields
+                        if (empty($application->email) || empty($application->matric_no)) {
+                            $failedCreations[] = "{$application->name} - Missing email or matric number";
+                            \Log::warning("Skipped application for {$application->name} - missing required fields");
+                            continue;
+                        }
+
+                        // Create user account
+                        $user = User::create([
+                            'name' => $application->name,
+                            'email' => $application->email,
+                            'password' => Hash::make($application->matric_no),
+                            'role' => 'cadet',
+                            'status' => 'accepted',
+                        ]);
+
+                        // Create cadet record
+                        \App\Models\Cadet::create([
+                            'user_id' => $user->id,
+                            'phone_number' => $application->phone_number,
+                            'gender' => $application->gender,
+                            'ic_number' => $application->ic_number,
+                            'matric_no' => $application->matric_no,
+                            'faculty' => $application->faculty,
+                            'course' => $application->course,
+                            'profile_pic' => $application->profile_pic,
+                            'BMI' => $application->bmi,
+                            'rank' => 'PK',
+                            'position' => 'Normal',
+                            'cadet_status' => 'Active',
+                            'intake_year' => now()->year,
+                            'daily_duty_count' => 0,
+                            'swimming_qualification' => 'In Progress',
+                        ]);
+
+                        // Send acceptance email
+                        try {
+                            Mail::to($user->email)->send(new UserAcceptedMail($user));
+                        } catch (\Exception $e) {
+                            \Log::error('Failed to send acceptance email to ' . $user->email . ': ' . $e->getMessage());
+                            // Don't fail the whole process if email fails
+                        }
+
+                        $createdCount++;
+                        \Log::info("Successfully created cadet account for {$application->name}");
+
+                    } catch (\Exception $e) {
+                        $failedCreations[] = "{$application->name} - {$e->getMessage()}";
+                        \Log::error("Failed to create cadet account for {$application->name}: " . $e->getMessage());
+                        // Continue with next application instead of failing entire transaction
+                        continue;
+                    }
+                }
+
+                // Only delete applications after successful account creation
+                if ($createdCount > 0) {
+                    Application::truncate();
+                    \Log::info("Selection process completed. Created {$createdCount} cadet accounts and cleared applications table.");
+                }
             });
 
-            return back()->with('success', 'Selection process completed successfully. All passed candidates have been registered as cadets.');
+            // Build success message
+            $message = "Selection process completed successfully! Created {$createdCount} cadet account" . ($createdCount != 1 ? 's' : '') . '.';
+            
+            if (!empty($failedCreations)) {
+                $message .= " However, " . count($failedCreations) . " application(s) failed: " . implode(', ', $failedCreations);
+            }
+
+            return redirect()->route('instructor.pending.verification.index')
+                ->with('success', $message);
 
         } catch (\Exception $e) {
             \Log::error('Failed to complete selection process: ' . $e->getMessage());
-            return back()->with('error', 'Failed to complete selection process. Please try again.');
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return back()->with('error', 'Failed to complete selection process: ' . $e->getMessage());
         }
     }
 }
