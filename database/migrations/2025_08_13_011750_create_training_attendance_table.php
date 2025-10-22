@@ -16,15 +16,22 @@ return new class extends Migration
             $table->foreignId('training_id')->constrained()->onDelete('cascade');
             $table->foreignId('cadet_id')->constrained()->onDelete('cascade');
             $table->boolean('present')->default(false);
-            $table->enum('method', ['manual', 'qr_code'])->default('manual');
-            $table->decimal('latitude', 10, 8)->nullable()->after('method');
-            $table->decimal('longitude', 11, 8)->nullable()->after('latitude');
+            // FIXED: Changed from enum to string and added 'geofence' option
+            $table->string('method', 50)->default('manual')->comment('manual, qr_code, geofence');
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamp('marked_at')->nullable();
             $table->text('absence_reason')->nullable();
             $table->string('file_url')->nullable();
             $table->timestamps();
+            
             // Ensure one record per training per cadet
             $table->unique(['training_id', 'cadet_id']);
+            
+            // Indexes for better query performance
+            $table->index('training_id');
+            $table->index('cadet_id');
+            $table->index(['present', 'training_id']);
         });
     }
 
