@@ -10,13 +10,94 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class AttendanceController extends Controller
 {
     // Geofence configuration (meetup location)
-    private const GEOFENCE_LATITUDE = 6.044763;
-    private const GEOFENCE_LONGITUDE = 116.129359;
+    private const GEOFENCE_LATITUDE = 6.044440;
+    private const GEOFENCE_LONGITUDE = 116.129260;
     private const GEOFENCE_RADIUS = 100; // Radius in meters
+
+    // 6.044440, 116.129260 Palapes UMS
+    // 6.027834, 116.143001 Angkasa Apartment
+
+    /**
+     * Helper method to safely log data without binary content
+     * Writes to separate attendance.log file to avoid Laravel's default request logging
+     */
+    private function safeLog($level, $message, $context = [])
+    {
+        try {
+            // Write directly to custom file - bypasses all Laravel logging
+            $timestamp = now()->format('Y-m-d H:i:s');
+            $logMessage = "[{$timestamp}] [{$level}] {$message}";
+            
+            if (!empty($context)) {
+                $safeContext = $this->sanitizeForLog($context);
+                $contextStr = is_array($safeContext) ? json_encode($safeContext, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : $safeContext;
+                $logMessage .= " | Context: {$contextStr}";
+            }
+            
+            $logMessage .= PHP_EOL;
+            
+            // Write to custom log file
+            $logPath = storage_path('logs/attendance_debug.log');
+            
+            // Create file if it doesn't exist
+            if (!file_exists($logPath)) {
+                file_put_contents($logPath, "=== ATTENDANCE DEBUG LOG ===" . PHP_EOL);
+                chmod($logPath, 0664);
+            }
+            
+            file_put_contents($logPath, $logMessage, FILE_APPEND | LOCK_EX);
+            
+        } catch (\Exception $e) {
+            // Fallback - don't let logging errors break the app
+            error_log("Logging failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Sanitize data for logging - removes binary content
+     */
+    private function sanitizeForLog($data)
+    {
+        if (is_null($data)) {
+            return 'NULL';
+        }
+        
+        if (is_bool($data)) {
+            return $data ? 'TRUE' : 'FALSE';
+        }
+        
+        if (is_scalar($data)) {
+            return $data;
+        }
+        
+        if (is_array($data)) {
+            $sanitized = [];
+            foreach ($data as $key => $value) {
+                if (is_object($value)) {
+                    $sanitized[$key] = get_class($value);
+                } elseif (is_array($value)) {
+                    $sanitized[$key] = $this->sanitizeForLog($value);
+                } elseif (is_resource($value)) {
+                    $sanitized[$key] = 'RESOURCE';
+                } else {
+                    $sanitized[$key] = $value;
+                }
+            }
+            return $sanitized;
+        }
+        
+        if (is_object($data)) {
+            return get_class($data);
+        }
+        
+        return 'UNKNOWN_TYPE';
+    }
 
     public function index()
     {
@@ -106,85 +187,210 @@ class AttendanceController extends Controller
     public function markPresent(Request $request)
     {
         try {
-            $user = Auth::user();
-            $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
+            $this->safeLog('info', '======================================== START');
+            $this->safeLog('info', 'ATTENDANCE MARKING ATTEMPT');
+            $this->safeLog('info', 'Timestamp: ' . Carbon::now()->toDateTimeString());
             
-            // FIXED: Make latitude/longitude required for geofencing
-            $request->validate([
-                'training_id' => 'required|exists:trainings,id',
-                'latitude' => 'required|numeric|between:-90,90',
-                'longitude' => 'required|numeric|between:-180,180',
-            ]);
+            // Log authenticated user
+            $user = Auth::user();
+            $this->safeLog('info', 'User ID: ' . $user->id);
+            $this->safeLog('info', 'User Email: ' . $user->email);
+            
+            // Log ONLY the specific inputs we need
+            $this->safeLog('info', 'Training ID: ' . $request->input('training_id', 'MISSING'));
+            $this->safeLog('info', 'Latitude: ' . $request->input('latitude', 'MISSING'));
+            $this->safeLog('info', 'Longitude: ' . $request->input('longitude', 'MISSING'));
+            $this->safeLog('info', 'Has Latitude: ' . ($request->has('latitude') ? 'YES' : 'NO'));
+            $this->safeLog('info', 'Has Longitude: ' . ($request->has('longitude') ? 'YES' : 'NO'));
+            
+            // Get cadet record
+            $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
+            $this->safeLog('info', 'Cadet ID: ' . $cadet->id);
+            $this->safeLog('info', 'Cadet Intake Year: ' . $cadet->intake_year);
+            
+            // VALIDATION
+            $this->safeLog('info', 'Starting validation...');
+            try {
+                $validated = $request->validate([
+                    'training_id' => 'required|exists:trainings,id',
+                    'latitude' => 'required|numeric|between:-90,90',
+                    'longitude' => 'required|numeric|between:-180,180',
+                ]);
+                $this->safeLog('info', 'VALIDATION PASSED');
+                $this->safeLog('info', 'Validated Training ID: ' . $validated['training_id']);
+                $this->safeLog('info', 'Validated Latitude: ' . $validated['latitude']);
+                $this->safeLog('info', 'Validated Longitude: ' . $validated['longitude']);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                $this->safeLog('error', 'VALIDATION FAILED');
+                foreach ($e->errors() as $field => $errors) {
+                    $this->safeLog('error', 'Field: ' . $field . ' - ' . implode(', ', $errors));
+                }
+                throw $e;
+            }
             
             $trainingId = $request->input('training_id');
             $latitude = floatval($request->input('latitude'));
             $longitude = floatval($request->input('longitude'));
+            
+            $this->safeLog('info', 'Parsed latitude: ' . $latitude);
+            $this->safeLog('info', 'Parsed longitude: ' . $longitude);
 
-            // Validate geofence - THIS IS THE KEY SECURITY CHECK
+            // GEOFENCE VALIDATION
+            $this->safeLog('info', 'Starting geofence validation...');
+            $this->safeLog('info', 'Geofence center: ' . self::GEOFENCE_LATITUDE . ', ' . self::GEOFENCE_LONGITUDE);
+            $this->safeLog('info', 'Geofence radius: ' . self::GEOFENCE_RADIUS . 'm');
+            
+            $distance = $this->calculateDistance(
+                self::GEOFENCE_LATITUDE,
+                self::GEOFENCE_LONGITUDE,
+                $latitude,
+                $longitude
+            );
+            
+            $this->safeLog('info', 'Distance from center: ' . round($distance, 2) . 'm');
+            $this->safeLog('info', 'Within geofence: ' . ($distance <= self::GEOFENCE_RADIUS ? 'YES' : 'NO'));
+            
             if (!$this->isWithinGeofence($latitude, $longitude)) {
-                $distance = $this->calculateDistance(
-                    self::GEOFENCE_LATITUDE,
-                    self::GEOFENCE_LONGITUDE,
-                    $latitude,
-                    $longitude
-                );
+                $this->safeLog('warning', 'GEOFENCE CHECK FAILED');
+                $this->safeLog('warning', 'User is ' . round($distance - self::GEOFENCE_RADIUS, 2) . 'm outside allowed zone');
                 
                 return redirect()->back()->with('error', 
                     sprintf('You must be at the designated location. You are %.0fm away (need to be within %dm).', 
                     $distance, self::GEOFENCE_RADIUS)
                 );
             }
-
-            $training = Training::findOrFail($trainingId);
             
-            // Check intake eligibility
+            $this->safeLog('info', 'Geofence validation PASSED');
+
+            // GET TRAINING RECORD
+            $this->safeLog('info', 'Fetching training record...');
+            $training = Training::findOrFail($trainingId);
+            $this->safeLog('info', 'Training ID: ' . $training->id);
+            $this->safeLog('info', 'Training Title: ' . $training->title);
+            $this->safeLog('info', 'Training Location: ' . $training->location);
+            $this->safeLog('info', 'Training Status: ' . $training->status);
+            
+            // CHECK INTAKE ELIGIBILITY
+            $this->safeLog('info', 'Checking intake eligibility...');
             $intakeNumber = $cadet->intake_year - 2011;
             $intakeStr = "Intake - " . $intakeNumber;
             
+            $this->safeLog('info', 'Cadet intake string: ' . $intakeStr);
+            $this->safeLog('info', 'Training involvement: ' . ($training->involvement ?? 'NULL'));
+            
             if ($training->involvement && !str_contains($training->involvement, $intakeStr)) {
+                $this->safeLog('warning', 'INTAKE CHECK FAILED - Not eligible');
                 return redirect()->back()->with('error', 'You are not eligible for this training session.');
             }
             
-            // Check timing validity
+            $this->safeLog('info', 'Intake eligibility check PASSED');
+            
+            // CHECK TIMING VALIDITY
+            $this->safeLog('info', 'Checking timing validity...');
             $now = Carbon::now();
             $trainingDate = $training->start_datetime;
             $daysDiff = $now->diffInDays($trainingDate, false);
             
+            $this->safeLog('info', 'Days difference: ' . $daysDiff);
+            
             if ($daysDiff > 1) {
+                $this->safeLog('warning', 'TIMING CHECK FAILED - Training too old');
                 return redirect()->back()->with('error', 'This training session is too old to mark attendance.');
             }
             
-            // Create or update attendance record
-            $attendance = TrainingAttendance::firstOrNew([
-                'training_id' => $trainingId,
-                'cadet_id' => $cadet->id,
-            ]);
+            $this->safeLog('info', 'Timing validation PASSED');
             
-            if ($attendance->exists && $attendance->present) {
-                return redirect()->back()->with('error', 'You have already marked attendance for this training.');
+            // CHECK EXISTING ATTENDANCE
+            $this->safeLog('info', 'Checking for existing attendance...');
+            $attendance = TrainingAttendance::where('training_id', $trainingId)
+                ->where('cadet_id', $cadet->id)
+                ->first();
+            
+            if ($attendance) {
+                $this->safeLog('info', 'Existing attendance found - ID: ' . $attendance->id);
+                $this->safeLog('info', 'Present status: ' . ($attendance->present ? 'TRUE' : 'FALSE'));
+                
+                if ($attendance->present) {
+                    $this->safeLog('warning', 'DUPLICATE ATTENDANCE - Already marked');
+                    return redirect()->back()->with('error', 'You have already marked attendance for this training.');
+                }
+                
+                $this->safeLog('info', 'Will update existing ABSENT record to PRESENT');
+            } else {
+                $this->safeLog('info', 'No existing record - will create new');
+                $attendance = new TrainingAttendance([
+                    'training_id' => $trainingId,
+                    'cadet_id' => $cadet->id,
+                ]);
             }
             
-            // Save with geolocation data
+            // PREPARE ATTENDANCE DATA
+            $this->safeLog('info', 'Preparing attendance data...');
             $attendance->present = true;
-            $attendance->method = 'geofence';  // FIXED: Changed to 'geofence'
+            $attendance->method = 'geofence';
             $attendance->marked_at = Carbon::now();
             $attendance->latitude = $latitude;
             $attendance->longitude = $longitude;
             $attendance->absence_reason = null;
             $attendance->file_url = null;
-            $attendance->save();
-
-            return redirect()->back()->with('success', 
-                'Attendance marked successfully! Location verified within ' . self::GEOFENCE_RADIUS . 'm radius.'
-            );
+            
+            $this->safeLog('info', 'Attendance present: TRUE');
+            $this->safeLog('info', 'Attendance method: geofence');
+            $this->safeLog('info', 'Attendance latitude: ' . $latitude);
+            $this->safeLog('info', 'Attendance longitude: ' . $longitude);
+            
+            // SAVE TO DATABASE
+            $this->safeLog('info', 'Attempting to save to database...');
+            try {
+                $saved = $attendance->save();
+                
+                if ($saved) {
+                    $this->safeLog('info', '========================================');
+                    $this->safeLog('info', 'SUCCESS - ATTENDANCE SAVED');
+                    $this->safeLog('info', 'Record ID: ' . $attendance->id);
+                    $this->safeLog('info', '======================================== END');
+                    
+                    return redirect()->back()->with('success', 
+                        'Attendance marked successfully! Location verified within ' . self::GEOFENCE_RADIUS . 'm radius.'
+                    );
+                } else {
+                    $this->safeLog('error', 'Database save returned FALSE');
+                    throw new \Exception('Database save operation returned false');
+                }
+            } catch (\Exception $dbException) {
+                $this->safeLog('error', 'DATABASE EXCEPTION');
+                $this->safeLog('error', 'Message: ' . $dbException->getMessage());
+                $this->safeLog('error', 'File: ' . $dbException->getFile());
+                $this->safeLog('error', 'Line: ' . $dbException->getLine());
+                throw $dbException;
+            }
             
         } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->safeLog('error', '======================================== ERROR');
+            $this->safeLog('error', 'VALIDATION EXCEPTION');
+            foreach ($e->errors() as $field => $errors) {
+                $this->safeLog('error', $field . ': ' . implode(', ', $errors));
+            }
+            
             return redirect()->back()
                 ->with('error', 'Location data is required. Please enable location access.')
                 ->withErrors($e->validator);
                 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $this->safeLog('error', '======================================== ERROR');
+            $this->safeLog('error', 'MODEL NOT FOUND EXCEPTION');
+            $this->safeLog('error', 'Message: ' . $e->getMessage());
+            
+            return redirect()->back()->with('error', 'Record not found. Please try again.');
+            
         } catch (\Exception $e) {
-            \Log::error('Error marking attendance: ' . $e->getMessage());
+            $this->safeLog('error', '======================================== ERROR');
+            $this->safeLog('error', 'GENERAL EXCEPTION');
+            $this->safeLog('error', 'Type: ' . get_class($e));
+            $this->safeLog('error', 'Message: ' . $e->getMessage());
+            $this->safeLog('error', 'File: ' . $e->getFile());
+            $this->safeLog('error', 'Line: ' . $e->getLine());
+            
             return redirect()->back()->with('error', 'Failed to mark attendance. Please try again.');
         }
     }
@@ -197,8 +403,6 @@ class AttendanceController extends Controller
             $latitude,
             $longitude
         );
-        
-        \Log::info("Geofence check - Distance: {$distance}m, Radius: " . self::GEOFENCE_RADIUS . "m");
         
         return $distance <= self::GEOFENCE_RADIUS;
     }
@@ -222,13 +426,26 @@ class AttendanceController extends Controller
     public function submitAbsence(Request $request, $attendanceId)
     {
         try {
+            $this->safeLog('info', '======================================== START');
+            $this->safeLog('info', 'ABSENCE SUBMISSION ATTEMPT');
+            $this->safeLog('info', 'Attendance ID: ' . $attendanceId);
+            
             $user = Auth::user();
             $cadet = Cadet::where('user_id', $user->id)->firstOrFail();
+            
+            $this->safeLog('info', 'User ID: ' . $user->id);
+            $this->safeLog('info', 'Cadet ID: ' . $cadet->id);
             
             $attendance = TrainingAttendance::where('id', $attendanceId)
                 ->where('cadet_id', $cadet->id)
                 ->where('present', false)
                 ->firstOrFail();
+
+            $this->safeLog('info', 'Attendance record found');
+            $this->safeLog('info', 'Training ID: ' . $attendance->training_id);
+
+            $this->safeLog('info', 'Has absence_reason: ' . ($request->has('absence_reason') ? 'YES' : 'NO'));
+            $this->safeLog('info', 'Has supporting_file: ' . ($request->hasFile('supporting_file') ? 'YES' : 'NO'));
 
             $request->validate([
                 'absence_reason' => 'required|string|min:10|max:500',
@@ -242,6 +459,8 @@ class AttendanceController extends Controller
                 'supporting_file.max' => 'File size cannot exceed 5MB.',
             ]);
 
+            $this->safeLog('info', 'Validation passed');
+
             $file = $request->file('supporting_file');
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $file->getClientOriginalExtension();
@@ -249,26 +468,46 @@ class AttendanceController extends Controller
             $cleanName = preg_replace('/[^A-Za-z0-9\-_]/', '_', $originalName);
             $fileName = time() . '_cadet_' . $cadet->id . '_' . $cleanName . '.' . $extension;
             
+            $this->safeLog('info', 'File name: ' . $fileName);
+            $this->safeLog('info', 'File size: ' . $file->getSize() . ' bytes');
+            $this->safeLog('info', 'File mime: ' . $file->getMimeType());
+            
             $path = $file->storeAs('absences', $fileName, 'public');
             
             if (!$path) {
+                $this->safeLog('error', 'File upload failed');
                 throw new \Exception('Failed to upload file.');
             }
+            
+            $this->safeLog('info', 'File uploaded: ' . $path);
             
             $attendance->absence_reason = $request->input('absence_reason');
             $attendance->file_url = $path;
             $attendance->updated_at = Carbon::now();
-            $attendance->save();
-
-            return redirect()->back()->with('success', 'Absence reason and supporting documentation submitted successfully!');
+            
+            $saved = $attendance->save();
+            
+            if ($saved) {
+                $this->safeLog('info', 'SUCCESS - ABSENCE SUBMITTED');
+                $this->safeLog('info', '======================================== END');
+                return redirect()->back()->with('success', 'Absence reason and supporting documentation submitted successfully!');
+            } else {
+                $this->safeLog('error', 'Database save returned FALSE');
+                throw new \Exception('Failed to save absence data');
+            }
             
         } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->safeLog('error', 'VALIDATION EXCEPTION');
+            foreach ($e->errors() as $field => $errors) {
+                $this->safeLog('error', $field . ': ' . implode(', ', $errors));
+            }
             return redirect()->back()
                 ->withErrors($e->validator)
                 ->withInput();
                 
         } catch (\Exception $e) {
-            \Log::error('Error submitting absence: ' . $e->getMessage());
+            $this->safeLog('error', 'EXCEPTION: ' . $e->getMessage());
+            $this->safeLog('error', 'File: ' . $e->getFile() . ' Line: ' . $e->getLine());
             return redirect()->back()
                 ->with('error', 'Failed to submit absence information. Please try again.')
                 ->withInput();
