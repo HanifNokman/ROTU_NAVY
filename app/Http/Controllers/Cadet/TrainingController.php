@@ -67,6 +67,20 @@ class TrainingController extends Controller
 
         $trainings = $query->orderBy('start_datetime', 'asc')->get();
 
+        // Prepare trainings data with formatted fields for both view and AJAX
+        $formattedTrainings = $trainings->map(function ($training) {
+            return [
+                'id' => $training->id,
+                'title' => $training->title,
+                'description' => $training->description,
+                'location' => $training->location,
+                'formatted_start_date' => $training->formatted_start_date,
+                'formatted_start_time' => $training->formatted_start_time,
+                'formatted_duration' => $training->formatted_duration,
+                'status' => $training->status,
+            ];
+        });
+
         $calendarEvents = $trainings->map(function ($training) {
             return [
                 'id' => $training->id,
@@ -100,34 +114,21 @@ class TrainingController extends Controller
         // If AJAX request, return JSON
         if ($request->ajax() || $request->get('ajax')) {
             return response()->json([
-                'trainings' => $trainings->map(function ($training) {
-                    return [
-                        'id' => $training->id,
-                        'title' => $training->title,
-                        'description' => $training->description,
-                        'location' => $training->location,
-                        'formatted_start_date' => $training->formatted_start_date,
-                        'formatted_start_time' => $training->formatted_start_time,
-                        'status' => $training->status,
-                        'duration' => $training->end_datetime 
-                            ? $training->start_datetime->diffForHumans($training->end_datetime, true)
-                            : null,
-                    ];
-                }),
+                'trainings' => $formattedTrainings,
                 'calendarEvents' => $calendarEvents
             ]);
         }
 
-        return view('cadet.training', compact(
-            'trainings', 
-            'calendarEvents', 
+        return view('cadet.training', array_merge(compact(
+            'trainings',
+            'calendarEvents',
             'cadetIntake',
             'availableYears',
             'availableYearsMonths',
             'filterYear',
             'filterMonth',
             'filterStatus'
-        ));
+        ), ['formattedTrainings' => $formattedTrainings]));
     }
 
     // ================================================================

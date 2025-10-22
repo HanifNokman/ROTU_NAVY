@@ -156,11 +156,7 @@
                                                 <div class="text-gray-500">{{ $training->formatted_start_time }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                @if($training->end_datetime)
-                                                    {{ $training->start_datetime->diffForHumans($training->end_datetime, true) }}
-                                                @else
-                                                    <span class="text-gray-400">Not specified</span>
-                                                @endif
+                                                {{ $training->formatted_duration }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
@@ -258,22 +254,30 @@
                 @if(!isset($error))
                     initializeCalendar();
                 @endif
-                
+
                 // Initialize month filter
                 updateMonthFilter();
-                
+
                 // Add event listener to year filter
                 document.getElementById('year').addEventListener('change', function() {
                     updateMonthFilter();
                     applyFilters();
                 });
-                
+
                 // Add event listeners to all filters for auto-apply
                 document.getElementById('month').addEventListener('change', applyFilters);
                 document.getElementById('status').addEventListener('change', applyFilters);
-                
+
                 // Initial table render
-                renderTable(@json($trainings));
+                renderTable(@json($formattedTrainings ?? $trainings));
+
+                // Add event listener to modal for closing when clicking outside
+                const viewTrainingModal = document.getElementById('viewTrainingModal');
+                if (viewTrainingModal) {
+                    viewTrainingModal.addEventListener('click', function(e) {
+                        if (e.target === this) closeViewModal();
+                    });
+                }
             });
 
             // ================================================================
@@ -406,7 +410,7 @@
                                 <div class="text-gray-500">${training.formatted_start_time}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                ${duration}
+                                ${training.formatted_duration}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusColor}">
@@ -575,10 +579,6 @@
             function closeViewModal() {
                 document.getElementById('viewTrainingModal').classList.add('hidden');
             }
-
-            document.getElementById('viewTrainingModal').addEventListener('click', function(e) {
-                if (e.target === this) closeViewModal();
-            });
 
             // ================================================================
             // UTILITY FUNCTIONS

@@ -130,7 +130,7 @@ public function calculateRoundedDuration(): ?int
      */
     public function getFormattedStartDateAttribute(): string
     {
-        return $this->start_datetime->format('M d, Y');
+        return $this->start_datetime ? $this->start_datetime->format('M d, Y') : 'Not set';
     }
 
     /**
@@ -138,12 +138,35 @@ public function calculateRoundedDuration(): ?int
      */
     public function getFormattedStartTimeAttribute(): string
     {
-        return $this->start_datetime->format('h:i A');
+        return $this->start_datetime ? $this->start_datetime->format('h:i A') : 'Not set';
     }
 
-/**
- * Get formatted date range for display
- */
+    /**
+     * Get formatted duration (hours for single-day, days for multi-day)
+     */
+    public function getFormattedDurationAttribute(): string
+    {
+        if (!$this->end_datetime) {
+            return 'Not specified';
+        }
+
+        $start = $this->start_datetime;
+        $end = $this->end_datetime;
+
+        $isMultiDay = $start->diffInDays($end) >= 1;
+
+        if ($isMultiDay) {
+            $days = (int) floor($start->diffInDays($end) + 1);
+            return $days . ' day' . ($days > 1 ? 's' : '');
+        } else {
+            $hours = $this->calculateDuration() ?? 2;
+            return $hours . ' hour' . ($hours > 1 ? 's' : '');
+        }
+    }
+
+    /**
+     * Get formatted date range for display
+     */
 public function getFormattedDateRangeAttribute(): string
 {
     if (!$this->end_datetime) {
