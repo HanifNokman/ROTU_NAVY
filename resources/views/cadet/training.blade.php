@@ -170,38 +170,38 @@
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- ================================================================ --}}
-            {{-- HEADER SECTION --}}
-            {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
+                {{-- ================================================================ --}}
+                {{-- HEADER SECTION --}}
+                {{-- ================================================================ --}}
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Training Schedule</h1>
+                    <p class="text-gray-600 text-lg">View your upcoming training sessions and schedule</p>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Training Schedule</h1>
-                <p class="text-gray-600 text-lg">View your upcoming training sessions and schedule</p>
-            </div>
 
-            {{-- ================================================================ --}}
-            {{-- ERROR MESSAGE --}}
-            {{-- ================================================================ --}}
-            @if(isset($error))
-                <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 shadow-lg">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800">
-                                <strong class="font-bold">Error:</strong> {{ $error }}
-                            </p>
+                {{-- ================================================================ --}}
+                {{-- ERROR MESSAGE --}}
+                {{-- ================================================================ --}}
+                @if(isset($error))
+                    <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 shadow-lg">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-red-800">
+                                    <strong class="font-bold">Error:</strong> {{ $error }}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @else
+                @else
 
                 {{-- ================================================================ --}}
                 {{-- CALENDAR VIEW --}}
@@ -393,7 +393,6 @@
                     </div>
                 </div>
             @endif
-
         </div>
     </div>
 
