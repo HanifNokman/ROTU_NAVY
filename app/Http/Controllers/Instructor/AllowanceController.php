@@ -324,103 +324,86 @@ class AllowanceController extends Controller
 
     private function renderTrainingCard($training, $duration)
     {
-        return '<div class="border border-gray-200 rounded-lg sm:rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-                    <!-- Training Header (Clickable) -->
-                    <div class="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-blue-50 cursor-pointer hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 training-header" 
-                        data-training-id="' . $training->id . '">
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-5 sm:gap-6 items-center">
-                            <!-- First column: Training Name and Location -->
-                            <div class="flex flex-col items-start justify-center text-left w-full">
-                                <h4 class="font-semibold text-gray-900 text-sm sm:text-base mb-1">' . e($training->title) . '</h4>
-                                <div class="flex items-center text-xs text-gray-500">
-                                    <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                    <span class="truncate">' . e($training->location) . '</span>
+        $dateDisplay = '';
+        if ($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString()) {
+            $dateDisplay = $training->start_datetime->format('d/m/y') . ' - ' . $training->end_datetime->format('d/m/y');
+        } else {
+            $dateDisplay = $training->start_datetime->format('d/m/Y');
+        }
+
+        return '<div class="border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+                    <div class="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-blue-50 cursor-pointer hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 training-header"
+                         data-training-id="' . $training->id . '">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-gray-900 text-sm sm:text-base mb-1 truncate">' . e($training->title) . '</h4>
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
+                                    <div class="flex items-center min-w-0">
+                                        <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                        <span class="truncate">' . e($training->location) . '</span>
+                                    </div>
+                                    <div class="flex items-center flex-shrink-0">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span class="whitespace-nowrap">' . $dateDisplay . '</span>
+                                    </div>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                                        ' . $duration . '
+                                    </span>
                                 </div>
                             </div>
-                            <!-- Second column: Date -->
-                            <div class="flex flex-col items-start justify-center">
-                                <div class="flex items-center text-xs sm:text-sm text-gray-600 mb-1">
-                                    <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    ' . $training->start_datetime->format('d/m/Y') . '
-                                </div>
-                                <div class="text-xs text-gray-500">
-                                    ' . $training->start_datetime->format('h:i A') . '
-                                </div>
-                            </div>
-                            <!-- Third column: Duration -->
-                            <div class="flex flex-col items-center justify-center">
-                                <div class="text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">' . $duration . '</div>
-                            </div>
-                            <!-- Fourth column: Actions -->
-                            <div class="flex items-center justify-center">
-                                <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full mr-2">
+                            <div class="flex-shrink-0 flex items-center gap-1">
+                                <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full whitespace-nowrap">
                                     Details
                                 </span>
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 transform transition-transform duration-300 training-arrow" 
-                                    id="arrow-' . $training->id . '">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 transform transition-transform duration-300 training-arrow"
+                                     id="arrow-' . $training->id . '">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
                         </div>
                     </div>
-                
-                    <!-- Training Details (Hidden by default) -->
                     <div class="hidden training-details" id="details-' . $training->id . '">
-                        <!-- Intake Filter Row -->
-                        <div class="px-4 py-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-2 flex-shrink-0">
-                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="px-3 sm:px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                <label for="intake-' . $training->id . '" class="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                                     </svg>
-                                    <label for="intake-' . $training->id . '" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
-                                </div>
-                                <select id="intake-' . $training->id . '" 
-                                        class="bg-white border border-gray-300 rounded-md pl-3 pr-8 py-1.5 text-sm text-gray-700 shadow-sm hover:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 min-w-[140px]"
+                                    <span>Filter by Intake</span>
+                                </label>
+                                <select id="intake-' . $training->id . '"
+                                        class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 shadow-sm hover:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto sm:min-w-[180px]"
                                         onchange="filterByIntake(' . $training->id . ')">
+                                    <option value="">All Intakes</option>
                                 </select>
                             </div>
                         </div>
-                    
-                        <!-- Cadet List -->
-                        <div class="p-3 sm:p-4 bg-white">
+                        <div class="p-3 sm:p-6 bg-white">
                             <div class="overflow-x-auto -mx-3 sm:mx-0">
                                 <div class="inline-block min-w-full align-middle px-3 sm:px-0">
-                                    <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden" id="cadets-table-' . $training->id . '">
-                                        <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
-                                            <tr>
-                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                    No
-                                                </th>
-                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                    Service No
-                                                </th>
-                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden sm:table-cell">
-                                                    Rank
-                                                </th>
-                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                    Name
-                                                </th>
-                                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden sm:table-cell">
-                                                    Bank Account
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                            <!-- Cadets will be loaded here via AJAX -->
-                                        </tbody>
-                                    </table>
+                                    <div class="overflow-y-auto" style="max-height: 520px;">
+                                        <table class="min-w-full divide-y divide-gray-200" id="cadets-table-' . $training->id . '">
+                                            <thead class="bg-gradient-to-r from-gray-50 to-blue-50 sticky top-0 z-10">
+                                                <tr>
+                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">No</th>
+                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">Service No</th>
+                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase hidden lg:table-cell">Rank</th>
+                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase">Name</th>
+                                                    <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase hidden md:table-cell">Bank Account</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        
-                            <!-- Allowance Summary -->
-                            <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl border border-blue-200" id="summary-' . $training->id . '">
-                                <!-- Summary will be loaded here via AJAX -->
+                            <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200" id="summary-' . $training->id . '">
                             </div>
                         </div>
                     </div>
