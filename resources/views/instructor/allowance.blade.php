@@ -5,44 +5,128 @@
         </h2>
     </x-slot>
 
-    <div class="py-4 sm:py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- ================================================================ --}}
-            {{-- PAGE HEADER --}}
+            {{-- DASHBOARD HEADER --}}
             {{-- ================================================================ --}}
-
-            <div class="text-center">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                     </svg>
-                    <span class="leading-tight">Training Allowance Management</span>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
+                    Training Allowance Management
                 </h1>
-                <p class="text-sm sm:text-base text-gray-600">Manage and track cadet training allowances</p>
+                <p class="text-lg text-gray-600">Manage and track cadet training allowances</p>
             </div>
 
             {{-- ================================================================ --}}
             {{-- TRAINING LIST SECTION --}}
             {{-- ================================================================ --}}
 
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300" id="training-list-container">
-                
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden" id="training-list-container">
+
                 {{-- Section Header with Filters --}}
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 sm:p-6 border-b border-gray-200">
+                <div class="section-header">
                     <div class="flex flex-col gap-4">
                         <div>
-                            <h2 class="text-lg sm:text-2xl font-semibold mb-2 flex items-start sm:items-center text-gray-900">
-                                <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-green-600 flex-shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                </svg>
-                                <span class="leading-tight">
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">
                                     Training Sessions for
-                                    <span id="selected-month" class="text-green-600 block sm:inline sm:ml-2">{{ $months[$selectedMonth] ?? 'Unknown' }}</span>
-                                    <span id="selected-year" class="text-green-600 sm:ml-1">{{ $selectedYear ?? date('Y') }}</span>
-                                </span>
-                            </h2>
-                            <p class="text-sm text-gray-600 mt-1">View and manage cadet allowances</p>
+                                    <span id="selected-month" class="text-green-600">{{ $months[$selectedMonth] ?? 'Unknown' }}</span>
+                                    <span id="selected-year" class="text-green-600">{{ $selectedYear ?? date('Y') }}</span>
+                                </h3>
+                            </div>
+                            <p class="text-gray-600 ml-13">View and manage cadet allowances</p>
                         </div>
 
                         <form method="GET" action="{{ route('instructor.allowance') }}" class="flex gap-2 sm:gap-3">
