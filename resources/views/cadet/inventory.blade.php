@@ -216,7 +216,7 @@
     }
 
     .section-toggle:hover {
-        background: linear-gradient(to right, #f1f5f9 0%, #e2e8f0 100%);
+        /* No background change on hover */
     }
 
     .dropdown-icon {
@@ -336,23 +336,19 @@
                 {{-- Section Header --}}
                 <div class="section-header section-toggle" onclick="toggleSection('uniformSizes')">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-blue mr-3">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
-                                    My Uniform Sizes
-                                </h3>
-                                <p class="text-gray-600">Manage your uniform component sizes</p>
-                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">My Uniform Sizes</h3>
                         </div>
                         <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="uniformSizes-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
+                    <p class="text-gray-600 ml-13">Manage your uniform component sizes</p>
                 </div>
 
                 <div class="section-content" id="uniformSizes-content">
@@ -498,22 +494,17 @@
                 {{-- Section Header --}}
                 <div class="section-header section-toggle" onclick="toggleSection('availableItems')">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-purple mr-3">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-purple mr-3 p-2 rounded-md">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
-                                    Available Items
-                                </h3>
-                                <p class="text-gray-600">Select items to borrow</p>
-                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Available Items</h3>
                         </div>
                         <div class="flex items-center gap-4">
-                            <button 
-                                id="selectItemsBtn" 
+                            <button
+                                id="selectItemsBtn"
                                 type="button"
                                 onclick="openBorrowModal()"
                                 disabled
@@ -528,6 +519,7 @@
                             </svg>
                         </div>
                     </div>
+                    <p class="text-gray-600 ml-13">Select items to borrow</p>
                 </div>
 
                 <div class="section-content" id="availableItems-content">
@@ -591,23 +583,19 @@
                 {{-- Section Header --}}
                 <div class="section-header section-toggle" onclick="toggleSection('activeLoans')">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-yellow mr-3">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-yellow mr-3 p-2 rounded-md">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
-                                    Active Loans
-                                </h3>
-                                <p class="text-gray-600">Your currently borrowed equipment</p>
-                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Active Loans</h3>
                         </div>
                         <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="activeLoans-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
+                    <p class="text-gray-600 ml-13">Your currently borrowed equipment</p>
                 </div>
 
                 <div class="section-content" id="activeLoans-content">
@@ -687,23 +675,19 @@
                 {{-- Section Header --}}
                 <div class="section-header section-toggle" onclick="toggleSection('pastLoans')">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-green mr-3">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
-                                    Past Loans
-                                </h3>
-                                <p class="text-gray-600">Your loan history</p>
-                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Past Loans</h3>
                         </div>
                         <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="pastLoans-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
+                    <p class="text-gray-600 ml-13">Your loan history</p>
                 </div>
 
                 <div class="section-content" id="pastLoans-content">

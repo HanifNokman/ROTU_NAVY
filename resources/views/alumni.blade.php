@@ -5,30 +5,103 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
             <!-- Header Section -->
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
                     Alumni
                 </h1>
-                <p class="text-gray-600">Meet our alumni and their achievements after ROTU NAVY training</p>
+                <p class="text-lg text-gray-600">Meet our alumni and their achievements after ROTU NAVY training</p>
             </div>
 
             <!-- Main Content Card -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 border-b border-gray-200">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                        <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                        Success Stories
-                    </h2>
-                    <p class="text-gray-600">Our graduates making a difference in their careers and communities</p>
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Success Stories</h3>
+                    </div>
+                    <p class="text-gray-600 ml-13">Our graduates making a difference in their careers and communities</p>
                 </div>
 
                 <div class="p-6">
@@ -36,7 +109,7 @@
                     @forelse($alumniByIntake as $intake => $cadets)
                     <div class="mb-8">
                         <details class="bg-gray-50 rounded-lg border border-gray-200">
-                            <summary class="cursor-pointer p-4 font-semibold text-lg text-gray-800 hover:bg-gray-100 transition duration-200">
+                            <summary class="cursor-pointer p-4 font-semibold text-lg text-gray-800 transition duration-200">
                                 Intake - {{ $intake - 2011 }} ({{ $intake }})
                                 <span class="text-sm text-gray-600 ml-2">({{ $cadets->count() }} alumni)</span>
                             </summary>

@@ -150,17 +150,15 @@
                 
                 {{-- Card Header --}}
                 <div class="section-header">
-                    <div class="flex items-center">
+                    <div class="flex items-center mb-2">
                         <div class="icon-wrapper bg-green-100 mr-3">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Training Records & Allowances</h2>
-                            <p class="text-gray-600">View your training participation and calculate earned allowances</p>
-                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Training Records & Allowances</h2>
                     </div>
+                    <p class="text-gray-600 ml-13">View your training participation and calculate earned allowances</p>
                 </div>
 
                 {{-- Card Body --}}

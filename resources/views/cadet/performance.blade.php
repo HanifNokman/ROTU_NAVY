@@ -420,17 +420,15 @@
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
                 <div class="section-header">
-                    <div class="flex items-center">
-                        <div class="icon-wrapper gradient-blue mr-4">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-blue mr-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Performance Overview</h2>
-                            <p class="text-gray-600 mt-1">View your performance ratings and progress over time</p>
-                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Performance Overview</h2>
                     </div>
+                    <p class="text-gray-600 ml-13">View your performance ratings and progress over time</p>
                 </div>
 
                 <div class="p-8">
@@ -490,17 +488,15 @@
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
                 <div class="section-header">
-                    <div class="flex items-center">
-                        <div class="icon-wrapper gradient-orange mr-4">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-orange mr-3">
                             <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Overall Performance</h2>
-                            <p class="text-gray-600 mt-1">See how you rank against other cadets</p>
-                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Overall Performance</h2>
                     </div>
+                    <p class="text-gray-600 ml-13">See how you rank against other cadets</p>
                 </div>
 
                 <div class="p-8">
@@ -607,17 +603,15 @@
                 {{-- ================================================================ --}}
                 <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
                     <div class="section-header">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-blue mr-4">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-blue mr-3">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900">Attendance</h2>
-                                <p class="text-gray-600 mt-1">Track attendance performance rankings</p>
-                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900">Attendance</h2>
                         </div>
+                        <p class="text-gray-600 ml-13">Track attendance performance rankings</p>
                     </div>
 
                     <div class="p-8">
@@ -719,17 +713,15 @@
                 {{-- ================================================================ --}}
                 <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
                     <div class="section-header">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-purple mr-4">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-purple mr-3">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900">Duty Count</h2>
-                                <p class="text-gray-600 mt-1">Track duty participation rankings</p>
-                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900">Duty Count</h2>
                         </div>
+                        <p class="text-gray-600 ml-13">Track duty participation rankings</p>
                     </div>
 
                     <div class="p-8">
@@ -837,17 +829,15 @@
                 {{-- ================================================================ --}}
                 <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
                     <div class="section-header">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-green mr-4">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-green mr-3">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900">Quiz Overall</h2>
-                                <p class="text-gray-600 mt-1">Track quiz performance rankings</p>
-                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900">Quiz Overall</h2>
                         </div>
+                        <p class="text-gray-600 ml-13">Track quiz performance rankings</p>
                     </div>
 
                     <div class="p-8">
@@ -949,17 +939,15 @@
                 {{-- ================================================================ --}}
                 <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
                     <div class="section-header">
-                        <div class="flex items-center">
-                            <div class="icon-wrapper gradient-cyan mr-4">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-cyan mr-3">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900">Learning Progress</h2>
-                                <p class="text-gray-600 mt-1">Track learning progress rankings</p>
-                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900">Learning Progress</h2>
                         </div>
+                        <p class="text-gray-600 ml-13">Track learning progress rankings</p>
                     </div>
 
                     <div class="p-8">
@@ -1062,17 +1050,15 @@
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden mb-6">
                 <div class="section-header">
-                    <div class="flex items-center">
-                        <div class="icon-wrapper gradient-red mr-4">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-red mr-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                             </svg>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Quiz by Category</h2>
-                            <p class="text-gray-600 mt-1">Track performance across different quiz categories</p>
-                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Quiz by Category</h2>
                     </div>
+                    <p class="text-gray-600 ml-13">Track performance across different quiz categories</p>
                 </div>
 
                 <div class="p-8">
@@ -1133,17 +1119,15 @@
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-visible">
                 <div class="section-header">
-                    <div class="flex items-center">
-                        <div class="icon-wrapper gradient-purple mr-4">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-purple mr-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                             </svg>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Achievement Badges</h2>
-                            <p class="text-gray-600 mt-1">Hover over badges to see details. Click unlocked badges to display/hide them on your profile.</p>
-                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Achievement Badges</h2>
                     </div>
+                    <p class="text-gray-600 ml-13">Hover over badges to see details. Click unlocked badges to display/hide them on your profile.</p>
                 </div>
 
                 <div class="p-6 lg:p-8">
