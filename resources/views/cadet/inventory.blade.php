@@ -1,50 +1,329 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                My Inventory
-            </h2>
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('My Inventory') }}
+        </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* TABLE STYLES */
+    /* ========================================= */
+    .data-table {
+        min-width: 100%;
+        background: white;
+    }
+
+    .data-table thead {
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .data-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f9fafb;
+    }
+
+    /* ========================================= */
+    /* BADGE & STATUS STYLES */
+    /* ========================================= */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .status-borrowed {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-overdue {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-returned {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    }
+
+    .gradient-yellow {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    /* ========================================= */
+    /* FORM STYLES */
+    /* ========================================= */
+    .form-input {
+        border-radius: 0.5rem;
+        border: 1px solid #d1d5db;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* ========================================= */
+    /* BUTTON STYLES */
+    /* ========================================= */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #374151;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: 1px solid #d1d5db;
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+    }
+
+    /* ========================================= */
+    /* DROPDOWN/COLLAPSE STYLES */
+    /* ========================================= */
+    .section-toggle {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .section-toggle:hover {
+        background: linear-gradient(to right, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    .dropdown-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .dropdown-icon.rotated {
+        transform: rotate(180deg);
+    }
+
+    .section-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .section-content.expanded {
+        max-height: 5000px;
+        transition: max-height 0.5s ease-in;
+    }
+
+    /* ========================================= */
+    /* ALERT STYLES */
+    /* ========================================= */
+    .alert {
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: start;
+        gap: 0.75rem;
+    }
+
+    .alert-warning {
+        background-color: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        color: #92400e;
+    }
+
+    .alert-success {
+        background-color: #d1fae5;
+        border-left: 4px solid #10b981;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background-color: #fee2e2;
+        border-left: 4px solid #ef4444;
+        color: #991b1b;
+    }
+    </style>
+
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
             {{-- ================================================================ --}}
             {{-- PAGE HEADER --}}
             {{-- ================================================================ --}}
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-blue rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                     </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
                     My Inventory
                 </h1>
-                <p class="text-gray-600">Manage your uniform sizes and equipment loans</p>
+                <p class="text-lg text-gray-600">Manage your uniform sizes and equipment loans</p>
             </div>
 
             {{-- ================================================================ --}}
-            {{-- ACTIVE LOANS ALERT --}}
+            {{-- ALERTS --}}
             {{-- ================================================================ --}}
+            @if(session('success'))
+                <div class="alert alert-success">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-error">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <p>{{ session('error') }}</p>
+                </div>
+            @endif
+
+            {{-- ACTIVE LOANS ALERT --}}
             @if($activeLoans->isNotEmpty())
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-yellow-700">
-                                You have {{ $activeLoans->count() }} active equipment loan(s).
-                                @php
-                                    $overdueCount = $activeLoans->filter(fn($loan) => $loan->isOverdue())->count();
-                                @endphp
-                                @if($overdueCount > 0)
-                                    <span class="font-semibold text-red-600">{{ $overdueCount }} overdue!</span>
-                                @endif
-                            </p>
-                        </div>
+                <div class="alert alert-warning">
+                    <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                        <p class="font-semibold">
+                            You have {{ $activeLoans->count() }} active equipment loan(s).
+                            @php
+                                $overdueCount = $activeLoans->filter(fn($loan) => $loan->isOverdue())->count();
+                            @endphp
+                            @if($overdueCount > 0)
+                                <span class="text-red-700">{{ $overdueCount }} overdue!</span>
+                            @endif
+                        </p>
                     </div>
                 </div>
             @endif
@@ -52,125 +331,137 @@
             {{-- ================================================================ --}}
             {{-- UNIFORM SIZES SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
                 
                 {{-- Section Header --}}
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                <div class="section-header section-toggle" onclick="toggleSection('uniformSizes')">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-blue mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
+                                    My Uniform Sizes
+                                </h3>
+                                <p class="text-gray-600">Manage your uniform component sizes</p>
+                            </div>
+                        </div>
+                        <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="uniformSizes-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                        My Uniform Sizes
-                    </h3>
-                    <p class="text-gray-600">Manage your uniform component sizes</p>
+                    </div>
                 </div>
 
-                <div class="p-6">
-                    <h4 class="text-lg font-semibold text-gray-900 mb-4">Size Guidelines</h4>
-                    
+                <div class="section-content" id="uniformSizes-content">
+                    <div class="p-6">
                     {{-- Size Format Guidelines --}}
-                    <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <h4 class="font-medium text-blue-800 mb-2">Size Format Guidelines</h4>
-                        <div class="text-sm text-blue-700 space-y-1">
-                            <p><strong>General Rules:</strong></p>
+                    <div class="mb-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+                        <h4 class="font-bold text-blue-900 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            Size Format Guidelines
+                        </h4>
+                        <div class="text-sm text-blue-800 space-y-2">
+                            <p class="font-semibold">General Rules:</p>
                             <ul class="list-disc list-inside ml-4 space-y-1">
                                 <li>Size must be 1-5 characters long</li>
                                 <li>Only letters, numbers, spaces, forward slashes (/) and hyphens (-) allowed</li>
                                 <li>Cannot start or end with spaces</li>
-                                <li>Examples: XS, S, M, L, XL, XXL, 1, 32, 34/36, 7 1/2,</li>
+                                <li>Examples: XS, S, M, L, XL, XXL, 1, 32, 34/36, 7 1/2</li>
                             </ul>
                         </div>
                     </div>
                     
                     {{-- Uniform Type Filter --}}
-                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h4 class="font-medium text-gray-800 mb-3 flex items-center justify-between">
-                            Filter by Uniform Type
-                            <div>
-                                <select 
-                                    id="uniform_type_filter" 
-                                    name="uniform_type" 
-                                    onchange="loadUniformComponents(this.value)"
-                                    class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Uniform Type</option>
-                                    @foreach($uniformTypes as $type)
-                                        <option value="{{ $type->id }}" {{ $selectedUniformType == $type->id ? 'selected' : '' }}>
-                                            {{ $type->type_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </h4>
+                    <div class="mb-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-bold text-gray-900 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                </svg>
+                                Filter by Uniform Type
+                            </h4>
+                            <select 
+                                id="uniform_type_filter" 
+                                name="uniform_type" 
+                                onchange="loadUniformComponentsAjax(this.value)"
+                                class="form-input w-64">
+                                <option value="">Select Uniform Type</option>
+                                @foreach($uniformTypes as $type)
+                                    <option value="{{ $type->id }}" {{ $selectedUniformType == $type->id ? 'selected' : '' }}>
+                                        {{ $type->type_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         {{-- Components Container --}}
                         <div id="uniform-components-container">
                             @if($selectedUniformType && $uniformComponents->isNotEmpty())
                                 <form method="POST" action="{{ route('cadet.inventory.uniform-size.update') }}" id="uniformSizeForm" onsubmit="return validateForm()">
                                     @csrf
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200">
-                                            <thead class="bg-gray-50">
+                                    <div class="overflow-x-auto custom-scrollbar rounded-lg border border-gray-200">
+                                        <table class="data-table">
+                                            <thead>
                                                 <tr>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Component
-                                                    </th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Size
-                                                    </th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Status
-                                                    </th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Actions
-                                                    </th>
+                                                    <th>Component</th>
+                                                    <th>Size</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="bg-white divide-y divide-gray-200">
+                                            <tbody>
                                                 @foreach($uniformComponents as $component)
                                                     @php
                                                         $sizeEntry = $uniformSizes->get($component->id);
                                                     @endphp
                                                     <tr>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        <td class="font-medium text-gray-900">
                                                             {{ $component->component_name }}
                                                         </td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        <td>
                                                             @if($sizeEntry && $sizeEntry->is_issued)
-                                                                <span class="text-gray-600">{{ $sizeEntry->size }}</span>
-                                                                <input type="hidden" name="size[]" value="{{ $sizeEntry->size }}">
-                                                                <input type="hidden" name="component_id[]" value="{{ $component->id }}">
+                                                                <span class="text-gray-600 font-medium">{{ $sizeEntry->size }}</span>
                                                             @else
+                                                                <input 
+                                                                    type="hidden" 
+                                                                    name="component_id[]" 
+                                                                    value="{{ $component->id }}">
                                                                 <input 
                                                                     type="text" 
                                                                     name="size[]" 
-                                                                    value="{{ old('size.' . $loop->index, $sizeEntry ? $sizeEntry->size : '') }}"
-                                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 size-input"
-                                                                    placeholder="e.g., XS, S, M, L, 32, 7 1/2"
-                                                                    maxlength="10"
-                                                                    pattern="^[A-Za-z0-9\s\/-]{1,10}$"
-                                                                    title="Size must be 1-10 characters. Only letters, numbers, spaces, forward slashes (/) and hyphens (-) allowed."
-                                                                    data-component-name="{{ $component->component_name }}">
-                                                                <input type="hidden" name="component_id[]" value="{{ $component->id }}">
-                                                                <div class="text-xs text-red-600 mt-1 hidden validation-error"></div>
+                                                                    value="{{ $sizeEntry ? $sizeEntry->size : '' }}"
+                                                                    placeholder="Enter size"
+                                                                    class="form-input w-full max-w-xs size-input"
+                                                                    maxlength="10">
+                                                                <div class="text-red-500 text-xs mt-1 hidden error-message"></div>
                                                             @endif
                                                         </td>
-                                                        <td class="px-6 py-4 whitespace-nowrap">
-                                                            @if($sizeEntry && $sizeEntry->is_issued)
-                                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                                    Issued
-                                                                </span>
+                                                        <td>
+                                                            @if($sizeEntry)
+                                                                @if($sizeEntry->is_issued)
+                                                                    <span class="status-badge" style="background-color: #d1fae5; color: #065f46;">
+                                                                        Issued
+                                                                    </span>
+                                                                @else
+                                                                    <span class="status-badge" style="background-color: #fef3c7; color: #92400e;">
+                                                                        Not Issued
+                                                                    </span>
+                                                                @endif
                                                             @else
-                                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                                    Pending
-                                                                </span>
+                                                                <span class="text-gray-400 text-sm">No size recorded</span>
                                                             @endif
                                                         </td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                        <td>
                                                             @if($sizeEntry && !$sizeEntry->is_issued)
                                                                 <button 
-                                                                    type="button" 
-                                                                    onclick="removeUniformSize({{ $sizeEntry->id }}, '{{ $component->component_name }}')" 
-                                                                    class="text-red-600 hover:text-red-900">
+                                                                    type="button"
+                                                                    onclick="openDeleteModal({{ $sizeEntry->id }}, '{{ $component->component_name }}')"
+                                                                    class="text-red-600 hover:text-red-800 font-medium transition-colors">
                                                                     Remove
                                                                 </button>
                                                             @endif
@@ -179,306 +470,283 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
-
-                                        <div class="mt-4 flex justify-end">
-                                            <button 
-                                                type="submit" 
-                                                id="updateSizesBtn" 
-                                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
-                                                Update Sizes
-                                            </button>
-                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-6 flex justify-end">
+                                        <button type="submit" class="btn-primary">
+                                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            Save Uniform Sizes
+                                        </button>
                                     </div>
                                 </form>
                             @else
-                                <div class="text-center py-8 text-gray-500">
-                                    <p>Select a uniform type to view and manage your sizes.</p>
-                                </div>
+                                <p class="text-center text-gray-500 py-8">Please select a uniform type to view components.</p>
                             @endif
                         </div>
-
-                        {{-- Loading Indicator --}}
-                        <div id="loading-indicator" class="hidden text-center py-8">
-                            <div class="inline-flex items-center">
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Loading uniform components...
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {{-- ================================================================ --}}
-            {{-- EQUIPMENT LOANS SECTION --}}
+            {{-- AVAILABLE ITEMS SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
                 
                 {{-- Section Header --}}
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
-                        Equipment & Uniform Loans
-                    </h3>
-                    <p class="text-gray-600">Borrow equipment and uniform items</p>
+                <div class="section-header section-toggle" onclick="toggleSection('availableItems')">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-purple mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
+                                    Available Items
+                                </h3>
+                                <p class="text-gray-600">Select items to borrow</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <button 
+                                id="selectItemsBtn" 
+                                type="button"
+                                onclick="openBorrowModal()"
+                                disabled
+                                class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Borrow Selected Items
+                            </button>
+                            <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="availableItems-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
+                <div class="section-content" id="availableItems-content">
                 <div class="p-6">
-                    
-                    {{-- Category Filter --}}
-                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h4 class="font-medium text-gray-800 mb-3 flex items-center justify-between">
-                            Filter by Category
-                            <div>
-                                <select 
-                                    id="category_filter" 
-                                    name="category_filter" 
-                                    onchange="filterItemsByCategory(this.value)"
-                                    class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">All Categories</option>
-                                    <option value="equipment">Equipment</option>
-                                    <option value="uniform">Uniform</option>
-                                </select>
-                            </div>
-                        </h4>
-                    </div>
-
-                    {{-- Items Selection List --}}
-                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h4 class="font-medium text-gray-800 mb-3">Select Items to Borrow</h4>
-                        
-                        <div id="items-container" class="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">
-                            @if($availableItems->count() > 0)
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-100">
+                    @if($availableItems->isNotEmpty())
+                        <div class="overflow-x-auto custom-scrollbar rounded-lg border border-gray-200">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th class="w-12">
+                                            <input type="checkbox" id="selectAll" class="rounded">
+                                        </th>
+                                        <th>Item Name</th>
+                                        <th>Category</th>
+                                        <th>Total Quantity</th>
+                                        <th>Available</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($availableItems as $item)
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Select
-                                            </th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Item Name
-                                            </th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Category
-                                            </th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Available Quantity
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($availableItems as $item)
-                                            <tr class="item-row" data-category="{{ $item->category }}">
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        name="selected_items[]" 
-                                                        value="{{ $item->id }}" 
-                                                        class="item-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                                        data-item-id="{{ $item->id }}"
-                                                        data-item-name="{{ $item->name }}"
-                                                        data-available-quantity="{{ $item->available_quantity }}"
-                                                        data-category="{{ $item->category }}">
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ $item->name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $item->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
-                                                        {{ $item->category }}
+                                            <td>
+                                                <input 
+                                                    type="checkbox" 
+                                                    class="item-checkbox rounded" 
+                                                    value="{{ $item->id }}"
+                                                    data-item-name="{{ $item->name }}"
+                                                    data-available-quantity="{{ $item->available_quantity }}">
+                                            </td>
+                                            <td class="font-medium text-gray-900">{{ $item->name }}</td>
+                                            <td>
+                                                @if($item->category === 'equipment')
+                                                    <span class="status-badge" style="background-color: #dbeafe; color: #1e40af;">
+                                                        Equipment
                                                     </span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $item->available_quantity }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @else
-                                <div class="text-center py-8 text-gray-500">
-                                    <p>No items available for borrowing</p>
-                                </div>
-                            @endif
+                                                @else
+                                                    <span class="status-badge" style="background-color: #e9d5ff; color: #6b21a8;">
+                                                        Uniform
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-gray-700">{{ $item->total_quantity }}</td>
+                                            <td class="text-gray-700 font-semibold">{{ $item->available_quantity }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        
-                        <div class="mt-4 flex justify-end">
-                            <button 
-                                type="button" 
-                                id="selectItemsBtn" 
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" 
-                                disabled>
-                                Select Items
-                            </button>
-                        </div>
-                    </div>
+                    @else
+                        <p class="text-center text-gray-500 py-12">No items available for borrowing.</p>
+                    @endif
+                </div>
                 </div>
             </div>
 
             {{-- ================================================================ --}}
             {{-- ACTIVE LOANS SECTION --}}
             {{-- ================================================================ --}}
-            @if($activeLoans->isNotEmpty())
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                    
-                    {{-- Section Header --}}
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Active Loans
-                        </h3>
-                        <p class="text-gray-600">Items currently borrowed</p>
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                
+                {{-- Section Header --}}
+                <div class="section-header section-toggle" onclick="toggleSection('activeLoans')">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-yellow mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
+                                    Active Loans
+                                </h3>
+                                <p class="text-gray-600">Your currently borrowed equipment</p>
+                            </div>
+                        </div>
+                        <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="activeLoans-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
+                </div>
 
+                <div class="section-content" id="activeLoans-content">
                     <div class="p-6">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                    @if($activeLoans->isNotEmpty())
+                        <div class="overflow-x-auto custom-scrollbar rounded-lg border border-gray-200">
+                            <table class="data-table">
+                                <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Item
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Category
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Quantity
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Borrow Date
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Return Date
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
+                                        <th>Item Name</th>
+                                        <th>Category</th>
+                                        <th>Quantity</th>
+                                        <th>Borrow Date</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody>
                                     @foreach($activeLoans as $loan)
-                                        <tr class="{{ $loan->isOverdue() ? 'bg-red-50' : '' }}">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        <tr>
+                                            <td class="font-medium text-gray-900">
                                                 {{ $loan->inventoryItem->name }}
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
-                                                    {{ $loan->inventoryItem->category }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->quantity }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->borrow_date->format('M d, Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                @if($loan->return_date)
-                                                    {{ $loan->return_date->format('M d, Y') }}
+                                            <td>
+                                                @if($loan->isEquipment())
+                                                    <span class="status-badge" style="background-color: #dbeafe; color: #1e40af;">
+                                                        Equipment
+                                                    </span>
                                                 @else
-                                                    <span class="text-gray-400 italic">Not returned yet</span>
+                                                    <span class="status-badge" style="background-color: #e9d5ff; color: #6b21a8;">
+                                                        Uniform
+                                                    </span>
                                                 @endif
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="text-gray-700">{{ $loan->quantity }}</td>
+                                            <td class="text-gray-700">{{ $loan->formatted_borrow_date }}</td>
+                                            <td class="text-gray-700">{{ $loan->formatted_due_date }}</td>
+                                            <td>
                                                 @if($loan->isOverdue())
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                    <span class="status-badge status-overdue">
                                                         Overdue
                                                     </span>
                                                 @else
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                        {{ $loan->status }}
+                                                    <span class="status-badge status-borrowed">
+                                                        Borrowed
                                                     </span>
                                                 @endif
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button 
-                                                    onclick="openReturnModal({{ $loan->id }}, '{{ $loan->inventoryItem->name }}', '{{ $loan->borrow_date->format('Y-m-d') }}')"
-                                                    class="text-green-600 hover:text-green-900">
-                                                    Return
-                                                </button>
+                                            <td>
+                                                <form method="POST" action="{{ route('cadet.inventory.loan.return', $loan) }}" class="inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="return_date" value="{{ now()->toDateString() }}">
+                                                    <button type="submit" class="text-green-600 hover:text-green-800 font-medium transition-colors">
+                                                        Return
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+                    @else
+                        <p class="text-center text-gray-500 py-12">No active loans at the moment.</p>
+                    @endif
                     </div>
                 </div>
-            @endif
+            </div>
 
             {{-- ================================================================ --}}
             {{-- PAST LOANS SECTION --}}
             {{-- ================================================================ --}}
-            @if($pastLoans->isNotEmpty())
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                    
-                    {{-- Section Header --}}
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-green-100">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Past Loans
-                        </h3>
-                        <p class="text-gray-600">Completed loan history</p>
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                
+                {{-- Section Header --}}
+                <div class="section-header section-toggle" onclick="toggleSection('pastLoans')">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-green mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-1">
+                                    Past Loans
+                                </h3>
+                                <p class="text-gray-600">Your loan history</p>
+                            </div>
+                        </div>
+                        <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="pastLoans-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
+                </div>
 
-                    <div class="p-6">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                <div class="section-content" id="pastLoans-content">
+                <div class="p-6">
+                    @if($pastLoans->isNotEmpty())
+                        <div class="overflow-x-auto custom-scrollbar rounded-lg border border-gray-200">
+                            <table class="data-table">
+                                <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Item
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Category
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Quantity
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Borrow Date
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Return Date
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Duration
-                                        </th>
+                                        <th>Item Name</th>
+                                        <th>Category</th>
+                                        <th>Quantity</th>
+                                        <th>Borrow Date</th>
+                                        <th>Return Date</th>
+                                        <th>Days Borrowed</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody>
                                     @foreach($pastLoans as $loan)
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            <td class="font-medium text-gray-900">
                                                 {{ $loan->inventoryItem->name }}
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $loan->inventoryItem->category === 'equipment' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
-                                                    {{ $loan->inventoryItem->category }}
+                                            <td>
+                                                @if($loan->isEquipment())
+                                                    <span class="status-badge" style="background-color: #dbeafe; color: #1e40af;">
+                                                        Equipment
+                                                    </span>
+                                                @else
+                                                    <span class="status-badge" style="background-color: #e9d5ff; color: #6b21a8;">
+                                                        Uniform
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-gray-700">{{ $loan->quantity }}</td>
+                                            <td class="text-gray-700">{{ $loan->formatted_borrow_date }}</td>
+                                            <td class="text-gray-700">{{ $loan->formatted_return_date }}</td>
+                                            <td class="text-gray-700">{{ $loan->days_borrowed }} days</td>
+                                            <td>
+                                                <span class="status-badge status-returned">
+                                                    Returned
                                                 </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->quantity }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->borrow_date->format('M d, Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $loan->return_date->format('M d, Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $loan->borrow_date->diffInDays($loan->return_date) }} days
                                             </td>
                                         </tr>
                                     @endforeach
@@ -486,148 +754,41 @@
                             </table>
                         </div>
 
-                        <div class="mt-4">
+                        {{-- Pagination --}}
+                        <div class="mt-6">
                             {{ $pastLoans->links() }}
                         </div>
-                    </div>
+                    @else
+                        <p class="text-center text-gray-500 py-12">No past loans found.</p>
+                    @endif
                 </div>
-            @endif
-
-        </div>
-    </div>
-
-    {{-- ================================================================ --}}
-    {{-- BORROW DETAILS MODAL --}}
-    {{-- ================================================================ --}}
-    <div id="borrowModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-3xl shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Borrow Selected Items</h3>
-                <form id="borrowForm" method="POST" action="{{ route('cadet.inventory.loan.create') }}">
-                    @csrf
-                    <div class="overflow-y-auto max-h-96">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Item
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Available
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Quantity
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody id="borrowItemsContainer" class="bg-white divide-y divide-gray-200">
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <label for="borrow_date" class="block text-sm font-medium text-gray-700 mb-1">
-                            Borrow Date
-                        </label>
-                        <input 
-                            type="date" 
-                            name="borrow_date" 
-                            id="borrow_date" 
-                            required
-                            value="{{ date('Y-m-d') }}" 
-                            max="{{ date('Y-m-d') }}"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    
-                    <div class="mt-6 flex justify-end space-x-4">
-                        <button 
-                            type="button" 
-                            onclick="closeBorrowModal()" 
-                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                            Cancel
-                        </button>
-                        <button 
-                            type="submit" 
-                            id="confirmBorrowBtn" 
-                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                            Confirm Borrow
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    {{-- ================================================================ --}}
-    {{-- RETURN ITEM MODAL --}}
-    {{-- ================================================================ --}}
-    <div id="returnModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <h3 class="text-lg font-medium text-gray-900" id="modalTitle">Return Equipment</h3>
-                <div class="mt-2 px-7 py-3">
-                    <p class="text-sm text-gray-500" id="modalDescription">
-                        Are you sure you want to return this item?
-                    </p>
                 </div>
-                <form id="returnForm" method="POST" class="mt-4">
-                    @csrf
-                    @method('PATCH')
-                    <div class="mb-4">
-                        <label for="return_date" class="block text-sm font-medium text-gray-700 mb-2">
-                            Return Date
-                        </label>
-                        <input 
-                            type="date" 
-                            name="return_date" 
-                            id="return_date" 
-                            value="{{ date('Y-m-d') }}" 
-                            max="{{ date('Y-m-d') }}"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div class="flex justify-center space-x-4">
-                        <button 
-                            type="button" 
-                            onclick="closeReturnModal()"
-                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                            Cancel
-                        </button>
-                        <button 
-                            type="submit"
-                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                            Return Item
-                        </button>
-                    </div>
-                </form>
             </div>
+
         </div>
     </div>
 
     {{-- ================================================================ --}}
     {{-- DELETE CONFIRMATION MODAL --}}
     {{-- ================================================================ --}}
-    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <h3 class="text-lg font-medium text-gray-900">Remove Uniform Size</h3>
-                <div class="mt-2 px-7 py-3">
-                    <p class="text-sm text-gray-500" id="deleteModalDescription">
-                        Are you sure you want to remove this uniform size?
-                    </p>
+    <div id="deleteModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-xl bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
                 </div>
-                <form id="deleteForm" method="POST" class="mt-4">
+                <h3 class="text-lg font-bold text-gray-900 text-center mb-2">Remove Uniform Size</h3>
+                <p class="text-sm text-gray-600 text-center mb-6" id="deleteMessage"></p>
+                <form id="deleteForm" method="POST">
                     @csrf
                     @method('DELETE')
-                    <div class="flex justify-center space-x-4">
-                        <button 
-                            type="button" 
-                            onclick="closeDeleteModal()"
-                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeDeleteModal()" class="btn-secondary flex-1">
                             Cancel
                         </button>
-                        <button 
-                            type="submit"
-                            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                             Remove
                         </button>
                     </div>
@@ -637,328 +798,269 @@
     </div>
 
     {{-- ================================================================ --}}
-    {{-- FLASH MESSAGES --}}
+    {{-- BORROW MODAL --}}
     {{-- ================================================================ --}}
-    @if(session('success'))
-        <div class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
-            {{ session('success') }}
-        </div>
-        <script>
-            setTimeout(() => {
-                const successAlert = document.querySelector('.fixed.bottom-4');
-                if (successAlert) successAlert.remove();
-            }, 3000);
-        </script>
-    @endif
+    <div id="borrowModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white my-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Borrow Items
+                </h3>
+                <button type="button" onclick="closeBorrowModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
 
-    @if(session('error'))
-        <div class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
-            {{ session('error') }}
-        </div>
-        <script>
-            setTimeout(() => {
-                const errorAlert = document.querySelector('.fixed.bottom-4.bg-red-500');
-                if (errorAlert) errorAlert.remove();
-            }, 3000);
-        </script>
-    @endif
+            <form method="POST" action="{{ route('cadet.inventory.loan.create') }}" id="borrowForm">
+                @csrf
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Borrow Date</label>
+                    <input 
+                        type="date" 
+                        name="borrow_date" 
+                        max="{{ date('Y-m-d') }}"
+                        value="{{ date('Y-m-d') }}"
+                        required
+                        class="form-input w-full">
+                </div>
 
-    @if(session('info'))
-        <div class="fixed bottom-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
-            {{ session('info') }}
+                <div class="overflow-x-auto custom-scrollbar rounded-lg border border-gray-200 mb-6">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Available</th>
+                                <th>Quantity to Borrow</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borrowItemsContainer">
+                            {{-- Dynamic content added by JavaScript --}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeBorrowModal()" class="btn-secondary flex-1">
+                        Cancel
+                    </button>
+                    <button type="submit" id="confirmBorrowBtn" class="btn-primary flex-1">
+                        Confirm Borrow
+                    </button>
+                </div>
+            </form>
         </div>
-        <script>
-            setTimeout(() => {
-                const infoAlert = document.querySelector('.fixed.bottom-4.bg-blue-500');
-                if (infoAlert) infoAlert.remove();
-            }, 3000);
-        </script>
-    @endif
+    </div>
 
     {{-- ================================================================ --}}
-    {{-- JAVASCRIPT - VALIDATION FUNCTIONS --}}
+    {{-- JAVASCRIPT - UNIFORM SIZE MANAGEMENT --}}
     {{-- ================================================================ --}}
     <script>
-        // ================================================================
-        // SIZE VALIDATION
-        // ================================================================
-        function validateUniformSize(size, componentName) {
-            const errors = [];
-            
-            if (!size || size.trim() === '') {
-                return { isValid: false, errors: ['Size cannot be empty'] };
-            }
-
-            size = size.trim();
-            
-            if (size.length < 1 || size.length > 10) {
-                errors.push('Size must be between 1 and 10 characters');
-            }
-            
-            const allowedPattern = /^[A-Za-z0-9\s\/-]+$/;
-            if (!allowedPattern.test(size)) {
-                errors.push('Size can only contain letters, numbers, spaces, forward slashes (/) and hyphens (-)');
-            }
-            
-            if (size !== size.trim()) {
-                errors.push('Size cannot start or end with spaces');
-            }
-            
-            if (/\s{2,}/.test(size)) {
-                errors.push('Size cannot contain consecutive spaces');
-            }
-
-            return {
-                isValid: errors.length === 0,
-                errors: errors,
-                cleanedSize: size.trim()
-            };
-        }
-
-        function attachSizeValidation() {
-            document.querySelectorAll('.size-input').forEach(input => {
-                const errorDiv = input.parentElement.querySelector('.validation-error');
-                
-                function validateInput() {
-                    const componentName = input.dataset.componentName;
-                    const validation = validateUniformSize(input.value, componentName);
-                    
-                    if (validation.isValid) {
-                        input.classList.remove('border-red-500');
-                        input.classList.add('border-gray-300');
-                        errorDiv.textContent = '';
-                        errorDiv.classList.add('hidden');
-                    } else {
-                        input.classList.remove('border-gray-300');
-                        input.classList.add('border-red-500');
-                        errorDiv.textContent = validation.errors[0];
-                        errorDiv.classList.remove('hidden');
-                    }
-                    
-                    updateSubmitButtonState();
-                }
-                
-                input.addEventListener('input', validateInput);
-                input.addEventListener('blur', validateInput);
-                
-                if (input.value) {
-                    validateInput();
-                }
-            });
-        }
-
-        function updateSubmitButtonState() {
-            const submitBtn = document.getElementById('updateSizesBtn');
-            if (!submitBtn) return;
-
-            const hasErrors = document.querySelectorAll('.size-input.border-red-500').length > 0;
-            
-            if (hasErrors) {
-                submitBtn.disabled = true;
-                submitBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
-                submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
-                submitBtn.title = 'Please fix validation errors before submitting';
-            } else {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                submitBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
-                submitBtn.title = '';
-            }
-        }
-
-        function validateForm() {
-            let isValid = true;
-            const errors = [];
-            
-            document.querySelectorAll('.size-input').forEach(input => {
-                if (input.value.trim()) {
-                    const componentName = input.dataset.componentName;
-                    const validation = validateUniformSize(input.value, componentName);
-                    
-                    if (!validation.isValid) {
-                        isValid = false;
-                        errors.push(`${componentName}: ${validation.errors.join(', ')}`);
-                    }
-                }
-            });
-            
-            if (!isValid) {
-                alert('Please fix the following errors:\n\n' + errors.join('\n'));
-                return false;
-            }
-            
-            return true;
-        }
-
-        // ================================================================
-        // UNIFORM COMPONENTS LOADING
-        // ================================================================
-        function loadUniformComponents(uniformTypeId) {
+        function loadUniformComponentsAjax(uniformTypeId) {
             const container = document.getElementById('uniform-components-container');
-            const loadingIndicator = document.getElementById('loading-indicator');
             
             if (!uniformTypeId) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        <p>Select a uniform type to view and manage your sizes.</p>
-                    </div>
-                `;
+                container.innerHTML = '<p class="text-center text-gray-500 py-8">Please select a uniform type to view components.</p>';
                 return;
             }
-
-            container.innerHTML = '';
-            loadingIndicator.classList.remove('hidden');
-
+            
+            // Show loading state
+            container.innerHTML = `
+                <div class="flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                </div>
+            `;
+            
+            // Fetch components via AJAX
             fetch(`/cadet/inventory/uniform-types/${uniformTypeId}/components`)
                 .then(response => response.json())
                 .then(data => {
-                    loadingIndicator.classList.add('hidden');
-                    
                     if (data.components && data.components.length > 0) {
-                        let formHtml = `
+                        let html = `
                             <form method="POST" action="{{ route('cadet.inventory.uniform-size.update') }}" id="uniformSizeForm" onsubmit="return validateForm()">
                                 @csrf
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
+                                <div class="overflow-x-auto custom-scrollbar rounded-lg border border-gray-200">
+                                    <table class="data-table">
+                                        <thead>
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                                <th>Component</th>
+                                                <th>Size</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
+                                        <tbody>
                         `;
-
+                        
                         data.components.forEach(component => {
-                            let sizeInput;
-                            if (component.is_issued) {
-                                sizeInput = `
-                                    <span class="text-gray-600">${component.size}</span>
-                                    <input type="hidden" name="size[]" value="${component.size}">
-                                    <input type="hidden" name="component_id[]" value="${component.id}">
-                                `;
-                            } else {
-                                sizeInput = `
-                                    <input type="text" name="size[]" value="${component.size}"
-                                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 size-input"
-                                           placeholder="e.g., XS, S, M, L, 32, 7 1/2"
-                                           maxlength="10"
-                                           data-component-name="${component.name}">
-                                    <input type="hidden" name="component_id[]" value="${component.id}">
-                                    <div class="text-xs text-red-600 mt-1 hidden validation-error"></div>
-                                `;
-                            }
-
-                            let status = component.is_issued 
-                                ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Issued</span>'
-                                : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Pending</span>';
-
-                            let actions = component.can_delete 
-                                ? `<button type="button" onclick="removeUniformSize(${component.size_entry_id}, '${component.name}')" class="text-red-600 hover:text-red-900">Remove</button>`
-                                : '';
-
-                            formHtml += `
+                            html += `
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <td class="font-medium text-gray-900">
                                         ${component.name}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        ${sizeInput}
+                                    <td>
+                            `;
+                            
+                            if (component.is_issued) {
+                                html += `<span class="text-gray-600 font-medium">${component.size}</span>`;
+                            } else {
+                                html += `
+                                    <input type="hidden" name="component_id[]" value="${component.id}">
+                                    <input 
+                                        type="text" 
+                                        name="size[]" 
+                                        value="${component.size || ''}"
+                                        placeholder="Enter size"
+                                        class="form-input w-full max-w-xs size-input"
+                                        maxlength="10">
+                                    <div class="text-red-500 text-xs mt-1 hidden error-message"></div>
+                                `;
+                            }
+                            
+                            html += `
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        ${status}
+                                    <td>
+                            `;
+                            
+                            if (component.size) {
+                                if (component.is_issued) {
+                                    html += `
+                                        <span class="status-badge" style="background-color: #d1fae5; color: #065f46;">
+                                            Issued
+                                        </span>
+                                    `;
+                                } else {
+                                    html += `
+                                        <span class="status-badge" style="background-color: #fef3c7; color: #92400e;">
+                                            Not Issued
+                                        </span>
+                                    `;
+                                }
+                            } else {
+                                html += `<span class="text-gray-400 text-sm">No size recorded</span>`;
+                            }
+                            
+                            html += `
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        ${actions}
+                                    <td>
+                            `;
+                            
+                            if (component.can_delete) {
+                                html += `
+                                    <button 
+                                        type="button"
+                                        onclick="openDeleteModal(${component.size_entry_id}, '${component.name}')"
+                                        class="text-red-600 hover:text-red-800 font-medium transition-colors">
+                                        Remove
+                                    </button>
+                                `;
+                            }
+                            
+                            html += `
                                     </td>
                                 </tr>
                             `;
                         });
-
-                        formHtml += `
+                        
+                        html += `
                                         </tbody>
                                     </table>
-                                    <div class="mt-4 flex justify-end">
-                                        <button type="submit" id="updateSizesBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
-                                            Update Sizes
-                                        </button>
-                                    </div>
+                                </div>
+                                
+                                <div class="mt-6 flex justify-end">
+                                    <button type="submit" class="btn-primary">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        Save Uniform Sizes
+                                    </button>
                                 </div>
                             </form>
                         `;
-
-                        container.innerHTML = formHtml;
+                        
+                        container.innerHTML = html;
+                        
+                        // Re-attach validation to new inputs
                         attachSizeValidation();
+                        
+                        // Re-attach form submit handler
+                        const form = document.getElementById('uniformSizeForm');
+                        if (form) {
+                            form.addEventListener('submit', function(e) {
+                                if (!validateForm()) {
+                                    e.preventDefault();
+                                }
+                            });
+                        }
                     } else {
-                        container.innerHTML = `
-                            <div class="text-center py-8 text-gray-500">
-                                <p>No uniform components found for this type.</p>
-                            </div>
-                        `;
+                        container.innerHTML = '<p class="text-center text-gray-500 py-8">No components found for this uniform type.</p>';
                     }
                 })
                 .catch(error => {
-                    loadingIndicator.classList.add('hidden');
-                    container.innerHTML = `
-                        <div class="text-center py-8 text-red-500">
-                            <p>Error loading uniform components. Please try again.</p>
-                        </div>
-                    `;
                     console.error('Error:', error);
+                    container.innerHTML = '<p class="text-center text-red-500 py-8">Error loading components. Please try again.</p>';
                 });
         }
 
-        // ================================================================
-        // MODAL FUNCTIONS
-        // ================================================================
-        function openReturnModal(loanId, itemName, borrowDate) {
-            document.getElementById('modalTitle').textContent = `Return ${itemName}`;
-            document.getElementById('modalDescription').textContent = `Return ${itemName} borrowed on ${borrowDate}?`;
-            document.getElementById('returnForm').action = `/cadet/inventory/loan/${loanId}/return`;
-            document.getElementById('return_date').setAttribute('min', borrowDate);
-            document.getElementById('returnModal').classList.remove('hidden');
-        }
-
-        function closeReturnModal() {
-            document.getElementById('returnModal').classList.add('hidden');
-        }
-
-        function removeUniformSize(sizeEntryId, componentName) {
-            document.getElementById('deleteModalDescription').textContent = 
-                `Are you sure you want to remove the uniform size for ${componentName}?`;
-            document.getElementById('deleteForm').action = `/cadet/inventory/uniform-size/${sizeEntryId}`;
-            document.getElementById('deleteModal').classList.remove('hidden');
+        function openDeleteModal(sizeId, componentName) {
+            const modal = document.getElementById('deleteModal');
+            const form = document.getElementById('deleteForm');
+            const message = document.getElementById('deleteMessage');
+            
+            form.action = `/cadet/inventory/uniform-size/${sizeId}`;
+            message.textContent = `Are you sure you want to remove the uniform size for ${componentName}?`;
+            modal.classList.remove('hidden');
         }
 
         function closeDeleteModal() {
             document.getElementById('deleteModal').classList.add('hidden');
         }
 
-        function closeBorrowModal() {
-            document.getElementById('borrowModal').classList.add('hidden');
-        }
+        function validateForm() {
+            const inputs = document.querySelectorAll('.size-input');
+            let isValid = true;
 
-        function filterItemsByCategory(category) {
-            const rows = document.querySelectorAll('.item-row');
-            rows.forEach(row => {
-                if (category === '' || row.dataset.category === category) {
-                    row.style.display = '';
+            inputs.forEach(input => {
+                const value = input.value.trim();
+                const errorDiv = input.nextElementSibling;
+                
+                if (value && !validateSizeFormat(value)) {
+                    errorDiv.textContent = 'Invalid size format';
+                    errorDiv.classList.remove('hidden');
+                    isValid = false;
                 } else {
-                    row.style.display = 'none';
+                    errorDiv.classList.add('hidden');
                 }
             });
+
+            return isValid;
         }
 
-        // ================================================================
-        // EVENT LISTENERS
-        // ================================================================
-        document.getElementById('returnModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeReturnModal();
-            }
-        });
+        function validateSizeFormat(size) {
+            const pattern = /^[A-Za-z0-9\/\- ]{1,10}$/;
+            return pattern.test(size) && size.trim() === size;
+        }
+
+        function attachSizeValidation() {
+            document.querySelectorAll('.size-input').forEach(input => {
+                input.addEventListener('blur', function() {
+                    const value = this.value.trim();
+                    const errorDiv = this.nextElementSibling;
+                    
+                    if (value && !validateSizeFormat(value)) {
+                        errorDiv.textContent = 'Invalid size format';
+                        errorDiv.classList.remove('hidden');
+                    } else {
+                        errorDiv.classList.add('hidden');
+                    }
+                });
+            });
+        }
 
         document.getElementById('deleteModal').addEventListener('click', function(e) {
             if (e.target === this) {
@@ -981,90 +1083,55 @@
     </script>
 
     {{-- ================================================================ --}}
-    {{-- JAVASCRIPT - MULTIPLE ITEMS BORROWING --}}
+    {{-- JAVASCRIPT - BORROW MANAGEMENT --}}
     {{-- ================================================================ --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('selectAll');
             const selectItemsBtn = document.getElementById('selectItemsBtn');
             const itemCheckboxes = document.querySelectorAll('.item-checkbox');
             const borrowModal = document.getElementById('borrowModal');
             const borrowItemsContainer = document.getElementById('borrowItemsContainer');
             const borrowForm = document.getElementById('borrowForm');
             
-            // ================================================================
-            // UPDATE BUTTON STATE
-            // ================================================================
+            // Select all functionality
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    itemCheckboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                    updateButtonState();
+                });
+            }
+            
+            // Update button state
             itemCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
-                    const checkedItems = document.querySelectorAll('.item-checkbox:checked');
-                    selectItemsBtn.disabled = checkedItems.length === 0;
+                    updateButtonState();
+                    updateSelectAllState();
                 });
             });
             
-            // ================================================================
-            // SELECT ITEMS BUTTON HANDLER
-            // ================================================================
-            selectItemsBtn.addEventListener('click', function() {
-                const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
-                
-                if (selectedCheckboxes.length === 0) {
-                    alert('Please select at least one item to borrow.');
-                    return;
-                }
-                
-                borrowItemsContainer.innerHTML = '';
-                
-                selectedCheckboxes.forEach(checkbox => {
-                    const itemId = checkbox.value;
-                    const itemName = checkbox.dataset.itemName;
-                    const availableQuantity = parseInt(checkbox.dataset.availableQuantity);
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            ${itemName}
-                            <input type="hidden" name="item_ids[]" value="${itemId}">
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            ${availableQuantity}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <input type="number" name="quantities[${itemId}]" min="1" max="${availableQuantity}" value="1" 
-                                   class="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 quantity-input"
-                                   data-item-id="${itemId}" data-max-quantity="${availableQuantity}">
-                        </td>
-                    `;
-                    
-                    borrowItemsContainer.appendChild(row);
-                    
-                    const quantityInput = row.querySelector('.quantity-input');
-                    quantityInput.addEventListener('change', function() {
-                        const value = parseInt(this.value);
-                        const max = parseInt(this.dataset.maxQuantity);
-                        
-                        if (value < 1) {
-                            this.value = 1;
-                        } else if (value > max) {
-                            this.value = max;
-                        }
-                    });
-                });
-                
-                borrowModal.classList.remove('hidden');
-            });
+            function updateButtonState() {
+                const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+                selectItemsBtn.disabled = checkedItems.length === 0;
+            }
             
-            // ================================================================
-            // MODAL CLOSE HANDLER
-            // ================================================================
+            function updateSelectAllState() {
+                const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(itemCheckboxes).some(cb => cb.checked);
+                selectAllCheckbox.checked = allChecked;
+                selectAllCheckbox.indeterminate = someChecked && !allChecked;
+            }
+            
+            // Modal close handler
             borrowModal.addEventListener('click', function(e) {
                 if (e.target === this) {
                     closeBorrowModal();
                 }
             });
             
-            // ================================================================
-            // FORM SUBMISSION HANDLER
-            // ================================================================
+            // Form submission handler
             borrowForm.addEventListener('submit', function(e) {
                 const quantityInputs = document.querySelectorAll('.quantity-input');
                 let isValid = true;
@@ -1094,5 +1161,79 @@
                 confirmBtn.textContent = 'Processing...';
             });
         });
+
+        function openBorrowModal() {
+            const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+            
+            if (selectedCheckboxes.length === 0) {
+                alert('Please select at least one item to borrow.');
+                return;
+            }
+            
+            const borrowItemsContainer = document.getElementById('borrowItemsContainer');
+            borrowItemsContainer.innerHTML = '';
+            
+            selectedCheckboxes.forEach(checkbox => {
+                const itemId = checkbox.value;
+                const itemName = checkbox.dataset.itemName;
+                const availableQuantity = parseInt(checkbox.dataset.availableQuantity);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="font-medium text-gray-900">
+                        ${itemName}
+                        <input type="hidden" name="item_ids[]" value="${itemId}">
+                    </td>
+                    <td class="text-gray-700">
+                        ${availableQuantity}
+                    </td>
+                    <td>
+                        <input type="number" name="quantities[${itemId}]" min="1" max="${availableQuantity}" value="1" 
+                               class="form-input w-32 quantity-input"
+                               data-item-id="${itemId}" data-max-quantity="${availableQuantity}">
+                    </td>
+                `;
+                
+                borrowItemsContainer.appendChild(row);
+                
+                const quantityInput = row.querySelector('.quantity-input');
+                quantityInput.addEventListener('change', function() {
+                    const value = parseInt(this.value);
+                    const max = parseInt(this.dataset.maxQuantity);
+                    
+                    if (value < 1) {
+                        this.value = 1;
+                    } else if (value > max) {
+                        this.value = max;
+                    }
+                });
+            });
+            
+            document.getElementById('borrowModal').classList.remove('hidden');
+        }
+
+        function closeBorrowModal() {
+            document.getElementById('borrowModal').classList.add('hidden');
+            document.getElementById('confirmBorrowBtn').disabled = false;
+            document.getElementById('confirmBorrowBtn').textContent = 'Confirm Borrow';
+        }
+
+        // ================================================================
+        // SECTION TOGGLE FUNCTION
+        // ================================================================
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const icon = document.getElementById(sectionId + '-icon');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.classList.remove('rotated');
+            } else {
+                content.classList.add('expanded');
+                icon.classList.add('rotated');
+            }
+        }
+
+        // Sections are collapsed by default (no auto-expand on page load)
     </script>
 </x-app-layout>
