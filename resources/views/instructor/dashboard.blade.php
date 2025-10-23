@@ -6,6 +6,88 @@
     </x-slot>
 
     <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    /* ========================================= */
+    /* EXISTING STYLES */
+    /* ========================================= */
     #duty-ranking-content {
         max-height: 300px;
         overflow-y: auto;
@@ -55,9 +137,63 @@
     .cgpa-wrapper {
         position: relative;
     }
+
+    /* ========================================= */
+    /* INFO CARD STYLES */
+    /* ========================================= */
+    .info-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .info-card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border-color: #d1d5db;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .info-item:hover {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+    }
+
+    .icon-wrapper-sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
     </style>
 
-    <div class="py-6">
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- ================================================================ --}}
@@ -78,114 +214,245 @@
             {{-- ================================================================ --}}
             {{-- DASHBOARD HEADER --}}
             {{-- ================================================================ --}}
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-blue rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0121 14.657V8m-9 6l-6.16-3.422A12.083 12.083 0 013 14.657V8"/>
                     </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
                     Instructor Dashboard
                 </h1>
-                <p class="text-gray-600">Your command center for cadet management and analytics</p>
+                <p class="text-lg text-gray-600">Your command center for cadet management and analytics</p>
             </div>
             {{-- ================================================================ --}}
             {{-- PERSONAL PROFILE SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300" x-data="{ open: false }">
-                
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 cursor-pointer" @click="open = !open">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center justify-between text-gray-900">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                            Personal Profile
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden" x-data="{ open: false }">
+
+                <div class="section-header" @click="open = !open" style="cursor: pointer;">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Personal Profile</h3>
                         </div>
                         <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                    </h2>
-                    <p class="text-gray-600">Your profile information and service details</p>
+                    </div>
+                    <p class="text-gray-600 ml-13">Your profile information and service details</p>
                 </div>
 
-                <div class="p-6 flex flex-col md:flex-row gap-6" x-show="open" x-transition>
-                    
-                    <div class="flex justify-center lg:justify-start">
-                        <img src="{{ $instructor?->profile_pic ? asset('storage/' . $instructor->profile_pic) : asset('images/default.png') }}" 
-                             alt="Profile Picture" 
-                             class="w-40 h-52 md:w-60 md:h-80 object-cover border rounded-md">
-                    </div>
-
-                    <div class="flex-1 space-y-6">
-                        
-                        <div class="flex items-center justify-center md:justify-start gap-4">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold px-6 py-2 rounded-xl shadow-lg whitespace-nowrap">
-                                <i class="fas fa-shield-alt mr-2"></i>
-                                Personal Profile
+                <div class="p-8"
+                    x-show="open"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0">
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        {{-- Profile Picture & Badges Section --}}
+                        <div class="flex flex-row lg:flex-col items-start lg:items-start space-x-4 lg:space-x-0 lg:space-y-4">
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ $instructor?->profile_pic ? asset('storage/' . $instructor->profile_pic) : asset('images/default.png') }}"
+                                    alt="Profile Picture"
+                                    class="w-32 h-44 sm:w-48 sm:h-64 md:w-56 md:h-80 object-cover rounded-2xl shadow-lg border-4 border-white">
+                                <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
+                                    <div class="w-12 h-12 gradient-blue rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
-                            @php
-                                $prefix = '';
-                                if (str_starts_with($instructor?->service_number, 'NV')) {
-                                    $prefix = ' PSSTLDM';
-                                } elseif (str_starts_with($instructor?->service_number, 'N')) {
-                                    $prefix = ' TLDM';
-                                }
-                            @endphp
-                            <p class="text-2xl font-semibold text-gray-800">
-                                {{ ($instructor?->rank ?? 'Unknown') . ' ' . ($user?->name ?? 'No Name') . $prefix }}
-                            </p>
+
+                            {{-- Displayed Badges --}}
+                            @if($instructor->instructorBadges && $instructor->instructorBadges->count() > 0)
+                                <div class="flex-1 lg:w-full lg:max-w-[14rem] md:max-w-[16rem] space-y-2 max-h-[176px] sm:max-h-[256px] md:max-h-[320px] lg:max-h-none overflow-y-auto custom-scrollbar">
+                                    @php
+                                        // Define rarity order (higher number = higher priority/rarity)
+                                        $rarityOrder = ['Platinum' => 5, 'Gold' => 4, 'Silver' => 3, 'Bronze' => 2, 'Standard' => 1];
+
+                                        // Sort badges by rarity (descending - highest first)
+                                        $sortedBadges = $instructor->instructorBadges->sortByDesc(function($instructorBadge) use ($rarityOrder) {
+                                            $rarity = $instructorBadge->badge->rarity_label ?? 'Standard';
+                                            return $rarityOrder[$rarity] ?? 0;
+                                        });
+                                    @endphp
+
+                                    @foreach($sortedBadges as $instructorBadge)
+                                        <div class="bg-white rounded-lg p-2 sm:p-3 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 flex items-center space-x-2 sm:space-x-3">
+                                            @if($instructorBadge->badge->icon_path)
+                                                <img src="{{ asset('storage/assets/badges/' . $instructorBadge->badge->icon_path) }}"
+                                                    alt="{{ $instructorBadge->badge->name }}"
+                                                    class="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0">
+                                            @else
+                                                <span class="text-2xl sm:text-3xl flex-shrink-0">🏆</span>
+                                            @endif
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs sm:text-sm font-semibold text-gray-900 truncate">{{ $instructorBadge->badge->name }}</p>
+                                                <p class="text-xs text-gray-600" style="color: {{ $instructorBadge->badge->rarity_color ?? '#6b7280' }};">
+                                                    {{ $instructorBadge->badge->rarity_label ?? 'Badge' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
 
-                        <div class="bg-gray-50 rounded-xl p-4">
-                            <div class="flex items-center mb-3">
-                                <i class="fas fa-address-book w-5 text-blue-500 mr-2"></i>
-                                <p class="text-gray-700 font-semibold">Contact Information</p>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="flex items-center">
-                                    <i class="fas fa-phone w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Phone:</strong> {{ $instructor?->phone_number ?? 'Not set' }}</span>
+                        {{-- Profile Information --}}
+                        <div class="flex-1 space-y-6">
+                            {{-- Rank and Name --}}
+                            <div class="info-card">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="icon-wrapper gradient-blue">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Rank & Identity</h3>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-envelope w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Email:</strong> {{ $user?->email ?? 'Not set' }}</span>
-                                </div>
+                                @php
+                                    $prefix = '';
+                                    if (str_starts_with($instructor?->service_number, 'NV')) {
+                                        $prefix = ' PSSTLDM';
+                                    } elseif (str_starts_with($instructor?->service_number, 'N')) {
+                                        $prefix = ' TLDM';
+                                    }
+                                @endphp
+                                <p class="text-2xl font-bold text-gray-900">
+                                    {{ ($instructor?->rank ?? 'Unknown') . ' ' . ($user?->name ?? 'No Name') . $prefix }}
+                                </p>
                             </div>
-                        </div>
 
-                        <div class="bg-gray-50 rounded-xl p-4">
-                            <div class="flex items-center mb-3">
-                                <i class="fas fa-medal w-5 text-purple-500 mr-2"></i>
-                                <p class="text-gray-700 font-semibold">Service Information</p>
+                            {{-- Contact Information --}}
+                            <div class="info-card">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="icon-wrapper bg-green-100">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Contact Information</h3>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-green-50 mr-3">
+                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Phone Number</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor?->phone_number ?? 'Not set' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-blue-50 mr-3">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Email Address</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $user?->email ?? 'Not set' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="flex items-center">
-                                    <i class="fas fa-user-tie w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Position:</strong> {{ $instructor->position ?? '-' }}</span>
+
+                            {{-- General Information --}}
+                            <div class="info-card">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="icon-wrapper bg-purple-100">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Service Information</h3>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-brain w-4 text-purple-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Expertise:</strong> {{ $instructor->expertise ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-clock w-4 text-orange-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Service Years:</strong> {{ $instructor->time_in_service ? $instructor->time_in_service . ' Years' : '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-certificate w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>TTP:</strong> {{ $instructor->ttp ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Status:</strong> {{ $instructor->status ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-hashtag w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Service Number:</strong> {{ $instructor->service_number ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center col-span-2">
-                                    <i class="fas fa-building w-4 text-gray-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Past Units:</strong> {{ is_array($instructor->past_unit) ? implode(', ', $instructor->past_unit) : ($instructor->past_unit ?? '-') }}</span>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-blue-50 mr-3">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Position</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->position ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-purple-50 mr-3">
+                                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Expertise</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->expertise ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-orange-50 mr-3">
+                                            <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Service Years</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->time_in_service ? $instructor->time_in_service . ' Years' : '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-green-50 mr-3">
+                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">TTP</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->ttp ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-green-50 mr-3">
+                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Status</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->status ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-blue-50 mr-3">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Service Number</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->service_number ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-gray-50 mr-3">
+                                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Past Units</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ is_array($instructor->past_unit) ? implode(', ', $instructor->past_unit) : ($instructor->past_unit ?? '-') }}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -200,18 +467,17 @@
                 {{-- ================================================================ --}}
                 {{-- DUTY RANKING CARD --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300" x-data="{ open: false, selected: [] }">
+                <div class="dashboard-card bg-white rounded-xl overflow-hidden" x-data="{ open: false, selected: [] }">
                     
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                                    <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="section-header">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                     </svg>
-                                    Duty Ranking
-                                </h2>
-                                <p class="text-gray-600">Manage cadet duty assignments and performance</p>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Duty Ranking</h3>
                             </div>
                             <button @click="$store.modal.open = true" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,6 +486,7 @@
                                 <span class="flex-shrink-0">Add Duty</span>
                             </button>
                         </div>
+                        <p class="text-gray-600 ml-13">Manage cadet duty assignments and performance</p>
                     </div>
 
                     <div class="p-6">
@@ -346,20 +613,18 @@
                 {{-- ================================================================ --}}
                 {{-- CGPA ANALYTICS CARD --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+                <div class="dashboard-card bg-white rounded-xl overflow-hidden">
                     
-                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                                    <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                                    </svg>
-                                    Cadet CGPA Analytics
-                                </h2>
-                                <p class="text-gray-600">Academic performance tracking and comparison</p>
+                    <div class="section-header">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-purple mr-3 p-2 rounded-md">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                </svg>
                             </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Cadet CGPA Analytics</h3>
                         </div>
+                        <p class="text-gray-600 ml-13">Academic performance tracking and comparison</p>
                     </div>
 
                     <div class="p-6">
@@ -462,27 +727,27 @@
             {{-- ================================================================ --}}
             {{-- PENDING ABSENCE REASONS SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
                 
-                <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                                <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="section-header">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-red mr-3 p-2 rounded-md">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                 </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">
                                 <span id="absence-section-title">Pending Absence Reasons</span>
                                 @if(isset($absentCadets) && !empty($absentCadets))
                                     <span id="absence-count-badge" class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
                                         {{ collect($absentCadets)->flatten(1)->count() }}
                                     </span>
                                 @endif
-                            </h2>
-                            <p id="absence-section-description" class="text-gray-600">Cadets with training absences requiring documentation</p>
+                            </h3>
                         </div>
                         
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                            
                             <div class="flex bg-gray-100 rounded-lg p-1 self-stretch sm:self-auto">
                                 <button id="pending-view-btn" onclick="toggleAbsenceView('pending')" class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm flex-1 sm:flex-none">
                                     <i class="fas fa-exclamation-triangle mr-1"></i>
@@ -509,6 +774,7 @@
                             </div>
                         </div>
                     </div>
+                    <p id="absence-section-description" class="text-gray-600 ml-13">Cadets with training absences requiring documentation</p>
                 </div>
 
                 <div class="p-6">
