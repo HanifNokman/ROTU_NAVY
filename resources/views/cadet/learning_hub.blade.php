@@ -11,45 +11,452 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* BADGE STYLES */
+    /* ========================================= */
+    .badge-icon-mini {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        transition: transform 0.2s ease;
+    }
+
+    .badge-icon-mini:hover {
+        transform: scale(1.1);
+    }
+
+    .badge-icon-large {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+    }
+
+    .badge-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .gradient-cyan {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    }
+
+    /* ========================================= */
+    /* INFO CARD STYLES */
+    /* ========================================= */
+    .info-card {
+        background: #ffffff;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+
+    .info-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+        transition: background 0.2s ease;
+    }
+
+    .info-item:hover {
+        background: #f3f4f6;
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .icon-wrapper-sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* TABLE STYLES */
+    /* ========================================= */
+    .data-table {
+        min-width: 100%;
+        background: white;
+    }
+
+    .data-table thead {
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .data-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    /* ========================================= */
+    /* PROGRESS BAR STYLES */
+    /* ========================================= */
+    .progress-container {
+        height: 2rem;
+        background: #e5e7eb;
+        border-radius: 9999px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ========================================= */
+    /* BUTTON STYLES */
+    /* ========================================= */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .btn-toggle {
+        padding: 0.625rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-toggle.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-toggle:not(.active) {
+        background: transparent;
+        color: #64748b;
+    }
+
+    .btn-toggle:not(.active):hover {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    /* ========================================= */
+    /* COUNTDOWN CIRCLE */
+    /* ========================================= */
+    .countdown-circle {
+        position: relative;
+        width: 12rem;
+        height: 12rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .countdown-inner {
+        position: absolute;
+        width: 10rem;
+        height: 10rem;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ========================================= */
+    /* ACCORDION STYLES */
+    /* ========================================= */
+    .accordion-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background: white;
+        margin-bottom: 0.75rem;
+    }
+
+    .accordion-header {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background: linear-gradient(to right, #fef3c7 0%, #fde68a 100%);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .accordion-header:hover {
+        background: linear-gradient(to right, #fde68a 0%, #fcd34d 100%);
+    }
+
+    .accordion-content {
+        border-top: 1px solid #e5e7eb;
+        background: #fefce8;
+    }
+
+    /* ========================================= */
+    /* MODAL STYLES */
+    /* ========================================= */
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================= */
+    /* RANKING CARD STYLES */
+    /* ========================================= */
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s ease;
+    }
+
+    .ranking-item:hover {
+        border-color: #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transform: translateX(4px);
+    }
+
+    .rank-badge {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.875rem;
+    }
+
+    /* ========================================= */
+    /* UTILITY CLASSES */
+    /* ========================================= */
+    .text-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .shadow-custom {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Header Section -->
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            {{-- ================================================================ --}}
+            {{-- HEADER SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
-                    Learning Hub
-                </h1>
-                <p class="text-gray-600">Access educational materials and resources</p>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Learning Hub</h1>
+                <p class="text-gray-600 text-lg">Access educational materials and resources</p>
             </div>
 
             <!-- Progress Overview Section - Collapsible -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-green-100">
-                    <button onclick="toggleProgressSection()"
-                            id="progress-toggle-btn"
-                            class="w-full flex justify-between items-center cursor-pointer hover:bg-green-100/50 rounded-lg p-2 -m-2 transition-colors duration-200">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-800">Your Learning Progress</h3>
-                                <p class="text-gray-600 text-sm">Track your completion across all categories</p>
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card"
+                x-data="{ open: false }">
+                <div class="bg-white shadow-sm rounded-xl p-5 border border-gray-100 cursor-pointer transition hover:shadow-md"
+                    onclick="toggleProgressSection()">
+                    <div class="flex justify-between items-center">
+                        <!-- Left: Icon + Title + Description -->
+                        <div class="flex flex-col">
+                            <!-- First row: Icon + Title -->
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-cyan p-2 rounded-md mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">Your Learning Progress</h2>
                             </div>
+                            <!-- Second row: Description -->
+                            <p class="text-gray-600">Track your completion across all categories</p>
                         </div>
-                        <div class="flex items-center gap-4">
+
+                        <!-- Right: Progress + Chevron -->
+                        <div class="flex items-center gap-3">
                             <div class="text-right">
-                                <div class="text-2xl font-bold text-green-600">{{ $progressData['overall_progress'] }}%</div>
+                                <div class="text-2xl font-bold text-teal-600">{{ $progressData['overall_progress'] }}%</div>
                                 <div class="text-xs text-gray-600">Overall Progress</div>
                             </div>
-                            <svg id="progress-chevron" class="w-6 h-6 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            <svg id="progress-chevron"
+                                class="w-6 h-6 text-gray-400 transform transition-transform duration-300"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
-                    </button>
+                    </div>
                 </div>
                 <div id="progress-content" class="hidden transition-all duration-300 ease-in-out">
                     <div class="p-6">
@@ -122,33 +529,42 @@
             </script>
 
             <!-- Learning Hub Content -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
-                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                                    <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                <div class="section-header">
+                    <div class="flex justify-between items-center">
+                        <!-- Left side: Icon + Title + Description -->
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                     </svg>
-                                    Learning Hub
-                                </h3>
-                                <p class="text-gray-600">Access educational materials and resources</p>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">Learning Hub</h2>
                             </div>
-                            <div class="flex gap-2">
-                                <button onclick="openMyScoresModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                                    </svg>
-                                    View My Scores
-                                </button>
-                                <button onclick="openQuizSelectionModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Test Your Knowledge
-                                </button>
-                            </div>
+                            <p class="text-gray-600 ml-13">Access educational materials and resources</p>
+                        </div>
+
+                        <!-- Right side: Action Buttons -->
+                        <div class="flex gap-2">
+                            <button onclick="openMyScoresModal()"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                View My Scores
+                            </button>
+
+                            <button onclick="openQuizSelectionModal()"
+                                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Test Your Knowledge
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -335,7 +751,7 @@
                                                         @php
                                                             $progress = $material->getProgressFor($cadetId);
                                                         @endphp
-                                                        @if($progress)
+                                                        @if($progress && $progress->started_at)
                                                             <span class="text-gray-500 text-xs">
                                                                 Started: {{ $progress->started_at->diffForHumans() }}
                                                             </span>
@@ -355,27 +771,31 @@
             </div>
 
             <!-- Instructor Section -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                <div class="section-header">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <!-- Left: Icon + Title + Description -->
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                </svg>
-                                Meet Your Instructors
-                            </h3>
-                            <p class="text-gray-600">Click on any instructor to view their detailed profile</p>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">Meet Your Instructors</h2>
+                            </div>
+                            <p class="text-gray-600 ml-13">Click on any instructor to view their detailed profile</p>
                         </div>
 
-                        <!-- Instructor Status Filter -->
+                        <!-- Right: Filter Dropdown -->
                         <div class="flex flex-col space-y-2 min-w-[200px]">
                             <label for="instructorStatusSelect" class="block text-sm font-medium text-gray-700">
                                 Filter by Status
                             </label>
                             <select id="instructorStatusSelect" name="instructor_status"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                                    onchange="filterInstructors(this.value)">
+                                class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                onchange="filterInstructors(this.value)">
                                 <option value="">All Statuses</option>
                                 <option value="Active" @selected(request('instructor_status') == 'Active')>Active</option>
                                 <option value="Relocated" @selected(request('instructor_status') == 'Relocated')>Relocated</option>
