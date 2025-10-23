@@ -5,20 +5,107 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- ================================================================ --}}
-            {{-- PAGE HEADER --}}
+            {{-- DASHBOARD HEADER --}}
             {{-- ================================================================ --}}
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-blue rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
                     Learning Hub
                 </h1>
-                <p class="text-gray-600">Manage educational materials and learning resources for cadets</p>
+                <p class="text-lg text-gray-600">Manage educational materials and learning resources for cadets</p>
             </div>
 
             @if(session('success'))
@@ -32,15 +119,17 @@
             {{-- ================================================================ --}}
             {{-- LEARNING MATERIALS SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-blue-100">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                        Learning Materials Management
-                    </h3>
-                    <p class="text-gray-600">Manage educational materials and learning resources for cadets</p>
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Learning Materials Management</h3>
+                    </div>
+                    <p class="text-gray-600 ml-13">Manage educational materials and learning resources for cadets</p>
                 </div>
                 
                 <div class="p-6 text-gray-900">
@@ -150,96 +239,140 @@
                         </div>
 
                         {{-- ================================================================ --}}
-                        {{-- EDIT MATERIAL MODAL --}}
+                        {{-- EDIT MATERIAL MODAL (inside Alpine.js scope but positioned outside) --}}
                         {{-- ================================================================ --}}
-                        <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-xl relative">
-                                <button type="button" @click="showModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                                <h2 class="text-lg font-semibold mb-4">Edit Learning Material</h2>
-                                <form method="POST" :action="updateUrl" enctype="multipart/form-data">
-                                    <input type="hidden" name="_method" value="PUT">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                                        <input type="text" name="title" x-model="material.title" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <template x-teleport="body">
+                            <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
+                                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl transform transition-all duration-300 overflow-hidden">
+                                    <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center gap-3">
+                                                <div class="icon-wrapper gradient-blue">
+                                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </div>
+                                                <h2 class="text-xl font-bold text-gray-900">Edit Learning Material</h2>
+                                            </div>
+                                            <button type="button" @click="showModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                        <textarea name="description" x-model="material.description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                        <p class="text-xs text-gray-500 mt-1">Note: Leave description empty if you only want to upload an image for full-width display on the cadet learning hub.</p>
-                                    </div>
+                                    <div class="p-6">
+                                    <form method="POST" :action="updateUrl" enctype="multipart/form-data">
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                        <select name="learning_material_category_id" x-model="material.learning_material_category_id" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            @foreach($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                            <input type="text" name="title" x-model="material.title" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
 
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Replace File (optional)</label>
-                                        <input type="file" name="file" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv">
-                                        <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
-                                    </div>
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                            <textarea name="description" x-model="material.description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                            <p class="text-xs text-gray-500 mt-1">Note: Leave description empty if you only want to upload an image for full-width display on the cadet learning hub.</p>
+                                        </div>
 
-                                    <div class="flex justify-end gap-3">
-                                        <button type="button" @click="showModal = false" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition duration-200">Cancel</button>
-                                        <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition duration-200">Save</button>
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                            <select name="learning_material_category_id" x-model="material.learning_material_category_id" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                @foreach($categories as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Replace File (optional)</label>
+                                            <input type="file" name="file" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv">
+                                            <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
+                                        </div>
+
+                                        <div class="flex justify-end gap-3 pt-4">
+                                            <button type="button" @click="showModal = false" class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">Cancel</button>
+                                            <button type="submit" class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                Save
+                                            </button>
+                                        </div>
+                                    </form>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+                        </template>
 
                         {{-- ================================================================ --}}
-                        {{-- DELETE MATERIAL CONFIRMATION MODAL --}}
+                        {{-- DELETE MATERIAL MODAL (inside Alpine.js scope but positioned outside) --}}
                         {{-- ================================================================ --}}
-                        <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-                                <h2 class="text-lg font-semibold mb-4">Confirm Deletion</h2>
-                                <p class="mb-6 text-gray-700">Are you sure you want to delete <strong x-text="deleteMaterial.title"></strong>?</p>
-
-                                <form :action="deleteUrl" method="POST">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                    <div class="flex justify-end gap-3">
-                                        <button type="button" @click="showDeleteModal = false"
-                                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200">
-                                            Cancel
-                                        </button>
-                                        <button type="submit"
-                                                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200">
-                                            Confirm Delete
-                                        </button>
+                        <template x-teleport="body">
+                            <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
+                                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 overflow-hidden">
+                                    <div class="px-6 py-5 bg-gradient-to-r from-red-50 to-orange-50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="icon-wrapper gradient-red">
+                                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                                </svg>
+                                            </div>
+                                            <h2 class="text-xl font-bold text-gray-900">Confirm Deletion</h2>
+                                        </div>
                                     </div>
-                                </form>
+
+                                    <div class="p-6">
+                                        <p class="mb-6 text-gray-700 leading-relaxed">Are you sure you want to delete <strong x-text="deleteMaterial.title"></strong>? This action cannot be undone.</p>
+
+                                        <form :action="deleteUrl" method="POST">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                                            <div class="flex justify-end gap-3">
+                                                <button type="button" @click="showDeleteModal = false"
+                                                        class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
+                                                    Cancel
+                                                </button>
+                                                <button type="submit"
+                                                        class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                    Confirm Delete
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
 
             {{-- ================================================================ --}}
-            {{-- QUIZ MANAGEMENT SECTION (COMPLETE) --}}
+            {{-- QUIZ MANAGEMENT SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 border-b border-purple-100">
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Quiz Management
-                            </h3>
-                            <p class="text-gray-600">Create and manage quiz questions for cadets</p>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-purple mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Quiz Management</h3>
+                            </div>
+                            <p class="text-gray-600 ml-13">Create and manage quiz questions for cadets</p>
                         </div>
-                        <button onclick="openQuizModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="openQuizModal()" class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                             Add Quiz Question
@@ -296,143 +429,201 @@
                         </div>
 
                         {{-- ================================================================ --}}
-                        {{-- EDIT QUIZ MODAL --}}
+                        {{-- EDIT QUIZ MODAL (inside Alpine.js scope but positioned outside) --}}
                         {{-- ================================================================ --}}
-                        <div x-show="showEditModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
-                                <button type="button" @click="showEditModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                                <h2 class="text-lg font-semibold mb-4">Edit Quiz Question</h2>
-                                <form method="POST" :action="editUrl" enctype="multipart/form-data">
-                                    <input type="hidden" name="_method" value="PUT">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Question Text</label>
-                                        <textarea name="question_text" rows="3" required x-text="editingQuestion.question_text" @input="editingQuestion.question_text = $event.target.value"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Question Type</label>
-                                        <select name="question_type" x-model="editingQuestion.question_type" @change="toggleEditQuestionType()" required
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <option value="MCQ">Multiple Choice Question (MCQ)</option>
-                                            <option value="Subjective">Subjective/Free Text</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                        <select name="category_id" x-model="editingQuestion.category_id" required
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            @foreach($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div id="editMcqOptions" x-show="editingQuestion.question_type === 'MCQ'" class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
-                                        <div class="space-y-2">
-                                            <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A" :required="editingQuestion.question_type === 'MCQ'"
-                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B" :required="editingQuestion.question_type === 'MCQ'"
-                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C" :required="editingQuestion.question_type === 'MCQ'"
-                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D" :required="editingQuestion.question_type === 'MCQ'"
-                                                class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <template x-teleport="body">
+                            <div x-show="showEditModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
+                                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden transform transition-all duration-300">
+                                    <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center gap-3">
+                                                <div class="icon-wrapper gradient-purple">
+                                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </div>
+                                                <h2 class="text-xl font-bold text-gray-900">Edit Quiz Question</h2>
+                                            </div>
+                                            <button type="button" @click="showEditModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
 
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
-                                        <div id="editMcqAnswerSelect" x-show="editingQuestion.question_type === 'MCQ'">
-                                            <select name="correct_answer" x-model="editingQuestion.correct_answer" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                                <option value="">Select Correct Answer</option>
-                                                <option value="A">A</option>
-                                                <option value="B">B</option>
-                                                <option value="C">C</option>
-                                                <option value="D">D</option>
+                                    <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
+                                        <div class="p-6">
+                                    <form method="POST" :action="editUrl" enctype="multipart/form-data">
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Question Text</label>
+                                            <textarea name="question_text" rows="3" required x-text="editingQuestion.question_text" @input="editingQuestion.question_text = $event.target.value"
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Question Type</label>
+                                            <select name="question_type" x-model="editingQuestion.question_type" @change="toggleEditQuestionType()" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                <option value="MCQ">Multiple Choice Question (MCQ)</option>
+                                                <option value="Subjective">Subjective/Free Text</option>
                                             </select>
                                         </div>
-                                        <div id="editSubjectiveAnswerInput" x-show="editingQuestion.question_type === 'Subjective'">
-                                            <textarea name="correct_answer" rows="2" placeholder="Enter the correct answer for subjective questions" x-model="editingQuestion.correct_answer"
-                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                                            <p class="text-xs text-gray-500 mt-1">Note: Subjective answers are checked case-insensitively</p>
+
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                            <select name="category_id" x-model="editingQuestion.category_id" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                @foreach($categories as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div id="editMcqOptions" x-show="editingQuestion.question_type === 'MCQ'" class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
+                                            <div class="space-y-2">
+                                                <input type="text" name="option_a" x-model="editingQuestion.option_a" placeholder="Option A" :required="editingQuestion.question_type === 'MCQ'"
+                                                    class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                <input type="text" name="option_b" x-model="editingQuestion.option_b" placeholder="Option B" :required="editingQuestion.question_type === 'MCQ'"
+                                                    class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                <input type="text" name="option_c" x-model="editingQuestion.option_c" placeholder="Option C" :required="editingQuestion.question_type === 'MCQ'"
+                                                    class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                <input type="text" name="option_d" x-model="editingQuestion.option_d" placeholder="Option D" :required="editingQuestion.question_type === 'MCQ'"
+                                                    class="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
+                                            <div id="editMcqAnswerSelect" x-show="editingQuestion.question_type === 'MCQ'">
+                                                <select name="correct_answer" x-model="editingQuestion.correct_answer" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                    <option value="">Select Correct Answer</option>
+                                                    <option value="A">A</option>
+                                                    <option value="B">B</option>
+                                                    <option value="C">C</option>
+                                                    <option value="D">D</option>
+                                                </select>
+                                            </div>
+                                            <div id="editSubjectiveAnswerInput" x-show="editingQuestion.question_type === 'Subjective'">
+                                                <textarea name="correct_answer" rows="2" placeholder="Enter the correct answer for subjective questions" x-model="editingQuestion.correct_answer"
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                                                <p class="text-xs text-gray-500 mt-1">Note: Subjective answers are checked case-insensitively</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                            <select name="status" x-model="editingQuestion.status" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Replace Supporting File (optional)</label>
+                                            <input type="file" name="file"
+                                                accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                            <p class="text-xs text-gray-500 mt-1">Current file will be replaced if new file is uploaded</p>
+                                        </div>
+
+                                        <div class="flex justify-end gap-3 pt-4">
+                                            <button type="button" @click="showEditModal = false" class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">Cancel</button>
+                                            <button type="submit" class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                Update Question
+                                            </button>
+                                        </div>
+                                    </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- ================================================================ --}}
+                        {{-- DELETE QUIZ MODAL (inside Alpine.js scope but positioned outside) --}}
+                        {{-- ================================================================ --}}
+                        <template x-teleport="body">
+                            <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
+                                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 overflow-hidden">
+                                    <div class="px-6 py-5 bg-gradient-to-r from-red-50 to-orange-50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="icon-wrapper gradient-red">
+                                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                                </svg>
+                                            </div>
+                                            <h2 class="text-xl font-bold text-gray-900">Confirm Deletion</h2>
                                         </div>
                                     </div>
 
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                                        <select name="status" x-model="editingQuestion.status" required
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                        </select>
-                                    </div>
+                                    <div class="p-6">
+                                        <p class="mb-6 text-gray-700 leading-relaxed">Are you sure you want to delete this quiz question? This action cannot be undone and all associated data will be permanently removed.</p>
 
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Replace Supporting File (optional)</label>
-                                        <input type="file" name="file"
-                                            accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                        <p class="text-xs text-gray-500 mt-1">Current file will be replaced if new file is uploaded</p>
-                                    </div>
+                                        <form :action="deleteUrl" method="POST">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                                    <div class="flex justify-end gap-3">
-                                        <button type="button" @click="showEditModal = false" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition duration-200">Cancel</button>
-                                        <button type="submit" class="px-4 py-2 rounded bg-purple-600 text-white hover:bg-purple-700 transition duration-200">Update Question</button>
+                                            <div class="flex justify-end gap-3">
+                                                <button type="button" @click="showDeleteModal = false"
+                                                        class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
+                                                    Cancel
+                                                </button>
+                                                <button type="submit"
+                                                        class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                    Delete Question
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
-
-                        {{-- ================================================================ --}}
-                        {{-- DELETE QUIZ CONFIRMATION MODAL --}}
-                        {{-- ================================================================ --}}
-                        <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-                                <h2 class="text-lg font-semibold mb-4">Confirm Deletion</h2>
-                                <p class="mb-6 text-gray-700">Are you sure you want to delete this quiz question? This action cannot be undone.</p>
-
-                                <form :action="deleteUrl" method="POST">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                    <div class="flex justify-end gap-3">
-                                        <button type="button" @click="showDeleteModal = false"
-                                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200">
-                                            Cancel
-                                        </button>
-                                        <button type="submit"
-                                                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200">
-                                            Delete Question
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+
     {{-- ================================================================ --}}
+    {{-- MODALS (non-Alpine) --}}
+    {{-- ================================================================ --}}
+
     {{-- ADD MATERIAL MODAL --}}
-    {{-- ================================================================ --}}
-    <div id="materialModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="materialModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Add Learning Material</h3>
-                        <button onclick="closeMaterialModal()" class="text-gray-400 hover:text-gray-600">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="icon-wrapper gradient-green">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Add Learning Material</h3>
+                        </div>
+                        <button onclick="closeMaterialModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <div class="p-6">
                     
                     <form action="{{ route('instructor.learning_materials.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -468,13 +659,16 @@
                             <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
                         </div>
                         
-                        <div class="flex justify-end gap-3">
-                            <button type="button" onclick="closeMaterialModal()" 
-                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                        <div class="flex justify-end gap-3 pt-4">
+                            <button type="button" onclick="closeMaterialModal()"
+                                    class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
                                 Cancel
                             </button>
-                            <button type="submit" 
-                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
+                            <button type="submit"
+                                    class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
                                 Add Material
                             </button>
                         </div>
@@ -487,18 +681,29 @@
     {{-- ================================================================ --}}
     {{-- CATEGORY MANAGEMENT MODAL --}}
     {{-- ================================================================ --}}
-    <div id="categoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="categoryModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Category Management</h3>
-                        <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="icon-wrapper gradient-blue">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Category Management</h3>
+                        </div>
+                        <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div class="p-6">
 
                     <div class="flex mb-6 bg-gray-100 p-1 rounded-lg">
                         <button id="addCategoryBtn" onclick="showAddCategoryForm()" 
@@ -521,13 +726,16 @@
                                        placeholder="Enter category name">
                             </div>
                             
-                            <div class="flex justify-end gap-3">
-                                <button type="button" onclick="closeCategoryModal()" 
-                                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                            <div class="flex justify-end gap-3 pt-4">
+                                <button type="button" onclick="closeCategoryModal()"
+                                        class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
                                     Cancel
                                 </button>
-                                <button type="submit" 
-                                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                                <button type="submit"
+                                        class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
                                     Add Category
                                 </button>
                             </div>
@@ -561,6 +769,7 @@
                             @endif
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -569,35 +778,40 @@
     {{-- ================================================================ --}}
     {{-- DELETE CATEGORY CONFIRMATION MODAL --}}
     {{-- ================================================================ --}}
-    <div id="deleteCategoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[60]">
+    <div id="deleteCategoryModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-[60] transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Confirm Category Deletion</h3>
-                        <button onclick="closeDeleteCategoryModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 overflow-hidden">
+                <div class="px-6 py-5 bg-gradient-to-r from-red-50 to-orange-50">
+                    <div class="flex items-center gap-3">
+                        <div class="icon-wrapper gradient-red">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                             </svg>
-                        </button>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Confirm Category Deletion</h3>
                     </div>
-                    
-                    <div class="mb-4">
+                </div>
+
+                <div class="p-6">
+                    <div class="mb-6">
                         <p class="text-gray-700 mb-2">Are you sure you want to delete the category:</p>
-                        <p class="font-semibold text-gray-900" id="categoryToDeleteName"></p>
-                        <p class="text-sm text-red-600 mt-2" id="categoryWarningMessage"></p>
+                        <p class="font-bold text-gray-900 text-lg" id="categoryToDeleteName"></p>
+                        <p class="text-sm text-red-600 mt-3 font-medium" id="categoryWarningMessage"></p>
                     </div>
-                    
+
                     <form id="deleteCategoryForm" method="POST">
                         @csrf
                         @method('DELETE')
                         <div class="flex justify-end gap-3">
-                            <button type="button" onclick="closeDeleteCategoryModal()" 
-                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                            <button type="button" onclick="closeDeleteCategoryModal()"
+                                    class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
                                 Cancel
                             </button>
-                            <button type="submit" 
-                                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200">
+                            <button type="submit"
+                                    class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
                                 Delete Category
                             </button>
                         </div>
@@ -609,18 +823,29 @@
     {{-- ================================================================ --}}
     {{-- ADD QUIZ QUESTION MODAL --}}
     {{-- ================================================================ --}}
-    <div id="quizModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="quizModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Add Quiz Question</h3>
-                        <button onclick="closeQuizModal()" class="text-gray-400 hover:text-gray-600">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="icon-wrapper gradient-purple">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Add Quiz Question</h3>
+                        </div>
+                        <button onclick="closeQuizModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div class="p-6">
 
                     <form action="{{ route('instructor.quiz.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -691,17 +916,21 @@
                             <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
                         </div>
 
-                        <div class="flex justify-end gap-3">
+                        <div class="flex justify-end gap-3 pt-4">
                             <button type="button" onclick="closeQuizModal()"
-                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                                    class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
                                 Cancel
                             </button>
                             <button type="submit"
-                                    class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-200">
+                                    class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
                                 Add Question
                             </button>
                         </div>
                     </form>
+                    </div>
                 </div>
             </div>
         </div>
