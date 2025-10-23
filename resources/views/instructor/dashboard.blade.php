@@ -230,7 +230,6 @@
             {{-- PERSONAL PROFILE SECTION --}}
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-xl overflow-hidden" x-data="{ open: false }">
-
                 <div class="section-header" @click="open = !open" style="cursor: pointer;">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center mb-2">

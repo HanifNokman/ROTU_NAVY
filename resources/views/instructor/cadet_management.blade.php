@@ -8,39 +8,241 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
+<style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .gradient-yellow {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    }
+
+    /* ========================================= */
+    /* EXISTING STYLES */
+    /* ========================================= */
+    #duty-ranking-content {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #cgpa-content {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar,
+    #cgpa-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar-track,
+    #cgpa-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar-thumb,
+    #cgpa-content::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    #duty-ranking-content::-webkit-scrollbar-thumb:hover,
+    #cgpa-content::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    #duty-ranking-content,
+    #cgpa-content {
+        scrollbar-width: thin;
+        scrollbar-color: #888 #f1f1f1;
+    }
+
+    #duty-ranking-content,
+    #cgpa-content {
+        scroll-behavior: smooth;
+    }
+
+    .duty-ranking-wrapper,
+    .cgpa-wrapper {
+        position: relative;
+    }
+
+    /* ========================================= */
+    /* INFO CARD STYLES */
+    /* ========================================= */
+    .info-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .info-card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border-color: #d1d5db;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .info-item:hover {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+    }
+
+    .icon-wrapper-sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- ================================================================ --}}
             {{-- PAGE TITLE SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-blue rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
                     Cadet Management
                 </h1>
-                <p class="text-gray-600">Manage cadet information, positions, and qualifications</p>
+                <p class="text-lg text-gray-600">Manage cadet information, positions, and qualifications</p>
             </div>
 
             {{-- ================================================================ --}}
             {{-- ACTIVE CADET MANAGEMENT SECTION (NOW AS DROPDOWN) --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b border-blue-100">
-                    <button onclick="toggleSection('activeCadetSection')" class="w-full flex items-center justify-between text-left">
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header" style="cursor: pointer;">
+                    <button onclick="toggleSection('activeCadetSection')" class="w-full flex flex-col text-left">
+                        <!-- Top row: title + chevron -->
+                        <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            <h3 class="text-lg font-semibold text-gray-800">Active Cadet Management</h3>
+                            <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Active Cadet Management</h3>
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="activeCadetChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
+                            <svg class="chevron-icon w-6 h-6 text-gray-500 transform transition-transform duration-200"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-600 ml-13">Manage cadet information, positions, and qualifications</p>
                     </button>
-                    <p class="text-gray-600 mt-2">Manage cadet information, positions, and qualifications</p>
                 </div>
                 
                 <div id="activeCadetSection" class="p-6">
@@ -136,7 +338,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div id="actionButtonsContainer" class="flex space-x-2">
+                            <div id="personnelActionButtonsContainer" class="flex space-x-2">
                                 {{-- Select All Button --}}
                                 <button id="selectAllBtn"
                                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden">
@@ -148,21 +350,26 @@
                                         class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden">
                                     Rank Up Selected (PK → PKK)
                                 </button>
-
-                                {{-- Save Changes Button (Position Management) --}}
-                                <button id="savePositionsBtn"
-                                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium hidden">
-                                    Save Changes
-                                </button>
-
-                                {{-- Mark as Passed Button (Swimming Management) --}}
-                                <button id="markAsPassedBtn"
-                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden"
-                                        disabled>
-                                    Mark Selected as Passed
-                                </button>
                             </div>
                         </div>
+                    </div>
+
+                    {{-- ================================================================ --}}
+                    {{-- ACTION BUTTONS CONTAINER --}}
+                    {{-- ================================================================ --}}
+                    <div id="actionButtonsContainer" class="mb-4 flex justify-end hidden">
+                        {{-- Save Changes Button (Position Management) --}}
+                        <button id="savePositionsBtn"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            Save Changes
+                        </button>
+
+                        {{-- Mark as Passed Button (Swimming Management) --}}
+                        <button id="markAsPassedBtn"
+                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden"
+                                disabled>
+                            Mark Selected as Passed
+                        </button>
                     </div>
 
                     {{-- ================================================================ --}}
@@ -233,20 +440,27 @@
             {{-- ================================================================ --}}
             {{-- BEST CADET SUGGESTIONS SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
-                <div class="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 border-b border-yellow-100">
-                    <button onclick="toggleSection('bestCadetSection')" class="w-full flex items-center justify-between text-left">
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header" style="cursor: pointer;">
+                    <button onclick="toggleSection('bestCadetSection')" class="w-full flex flex-col text-left">
+                        <!-- Top row: title + chevron -->
+                        <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                            </svg>
-                            <h3 class="text-lg font-semibold text-gray-800">Best Cadet Candidates</h3>
+                            <div class="icon-wrapper gradient-yellow mr-3 p-2 rounded-md">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Best Cadet Candidates</h3>
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="bestCadetChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
+                            <svg class="chevron-icon w-6 h-6 text-gray-500 transform transition-transform duration-200"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-600 ml-13">View top-performing cadets based on performance ratings and points.</p>
                     </button>
-                    <p class="text-gray-600 mt-2">View top-performing cadets based on performance ratings and points.</p>
                 </div>
                 
                 <div id="bestCadetSection" class="p-6 hidden">
@@ -309,20 +523,27 @@
             {{-- ================================================================ --}}
             {{-- BEST ACADEMIC CANDIDATE SUGGESTIONS SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 border-b border-green-100">
-                    <button onclick="toggleSection('bestAcademicSection')" class="w-full flex items-center justify-between text-left">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                            <h3 class="text-lg font-semibold text-gray-800">Best Academic Candidates</h3>
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header" style="cursor: pointer;">
+                    <button onclick="toggleSection('bestAcademicSection')" class="w-full flex flex-col text-left">
+                        <!-- Top row: title + chevron -->
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center">
+                                <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Best Academic Candidates</h3>
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="bestAcademicChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
+                            <svg class="chevron-icon w-6 h-6 text-gray-500 transform transition-transform duration-200"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-600 ml-13">View cadets with highest academic performance for scholarships and commendations.</p>
                     </button>
-                    <p class="text-gray-600 mt-2">View cadets with highest academic performance for scholarships and commendations.</p>
                 </div>
                 
                 <div id="bestAcademicSection" class="p-6 hidden">
@@ -382,20 +603,27 @@
             {{-- ================================================================ --}}
             {{-- SUSPENDED CADETS SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0">
-                <div class="bg-gradient-to-r from-red-50 to-rose-50 p-4 border-b border-red-100">
-                    <button onclick="toggleSection('suspendedSection')" class="w-full flex items-center justify-between text-left">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                            </svg>
-                            <h3 class="text-lg font-semibold text-gray-800">Suspended Cadets</h3>
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header" style="cursor: pointer;">
+                    <button onclick="toggleSection('suspendedSection')" class="w-full flex flex-col text-left">
+                        <!-- Top row: title + chevron -->
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center">
+                                <div class="icon-wrapper gradient-red mr-3 p-2 rounded-md">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                    </svg>
+                                </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Suspended Cadets</h3>
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" id="suspendedChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
+                            <svg class="chevron-icon w-6 h-6 text-gray-500 transform transition-transform duration-200"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-600 ml-13">Manage suspended cadets and permanently delete them from the system.</p>
                     </button>
-                    <p class="text-gray-600 mt-2">Manage suspended cadets and permanently delete them from the system.</p>
                 </div>
                 
                 <div id="suspendedSection" class="p-6 hidden">
@@ -608,6 +836,7 @@
         // ============================================================
         let searchTimeout;
         let currentPage = 1;
+        let hasUnsavedPositionChanges = false;
         let currentFilters = {
             infoType: '{{ $infoType }}',
             intakeYear: '{{ $intakeYear }}',
@@ -629,15 +858,14 @@
         // ============================================================
         window.toggleSection = function(sectionId) {
             const section = document.getElementById(sectionId);
-            const chevronId = sectionId.replace('Section', 'Chevron');
-            const chevron = document.getElementById(chevronId);
+            const chevron = document.querySelector(`[onclick="toggleSection('${sectionId}')"] .chevron-icon`);
 
             if (section.classList.contains('hidden')) {
                 section.classList.remove('hidden');
-                chevron.style.transform = 'rotate(180deg)';
+                if (chevron) chevron.classList.add('rotate-180');
             } else {
                 section.classList.add('hidden');
-                chevron.style.transform = 'rotate(0deg)';
+                if (chevron) chevron.classList.remove('rotate-180');
             }
         };
 
@@ -682,6 +910,17 @@
             // EVENT LISTENERS: Filter Changes
             // ============================================================
             document.getElementById('intakeFilter').addEventListener('change', function() {
+                // Check for unsaved changes before changing intake
+                if (hasUnsavedPositionChanges) {
+                    if (!confirm('You have unsaved position changes. Changing the intake will discard these changes. Continue?')) {
+                        // Reset the select to previous value
+                        this.value = currentFilters.intakeYear;
+                        return;
+                    }
+                    hasUnsavedPositionChanges = false;
+                    updateSaveButtonVisibility();
+                }
+
                 currentFilters.intakeYear = this.value;
                 currentPage = 1;
 
@@ -1312,60 +1551,76 @@ function validatePositionSelection(selectElement) {
     return true;
 }
 
-        // ============================================================
-        // FUNCTION: Save Positions
-        // ============================================================
-        function savePositions() {
-            const positionSelects = document.querySelectorAll('.position-select');
-            const positionCounts = { 'CO': 0, 'Thana': 0, 'Zayn': 0, 'PMC': 0 };
+// ============================================================
+// FUNCTION: Save Positions
+// ============================================================
+function savePositions() {
+    const positionSelects = document.querySelectorAll('.position-select');
+    const positionCounts = { 'CO': 0, 'Thana': 0, 'Zayn': 0, 'PMC': 0 };
 
-            positionSelects.forEach(select => {
-                const position = select.value;
-                if (positionCounts.hasOwnProperty(position)) {
-                    positionCounts[position]++;
-                }
-            });
-
-            const conflicts = Object.entries(positionCounts).filter(([position, count]) => count > 1);
-            if (conflicts.length > 0) {
-                const conflictMessage = conflicts.map(([position, count]) =>
-                    `${position}: ${count} cadets selected`).join(', ');
-                alert(`Position conflicts detected: ${conflictMessage}. Each position can only be assigned to one cadet per intake.`);
-                return;
-            }
-
-            const positions = {};
-            positionSelects.forEach(select => {
-                positions[select.dataset.cadetId] = select.value;
-            });
-
-            const intakeYear = currentFilters.intakeYear;
-
-            fetch('/instructor/cadets/positions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    positions: positions,
-                    intake_year: intakeYear
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Positions updated successfully');
-                    loadCadets(currentPage);
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to update positions');
-            });
+    positionSelects.forEach(select => {
+        const position = select.value;
+        if (positionCounts.hasOwnProperty(position)) {
+            positionCounts[position]++;
         }
+    });
+
+    const conflicts = Object.entries(positionCounts).filter(([position, count]) => count > 1);
+    if (conflicts.length > 0) {
+        const conflictMessage = conflicts.map(([position, count]) =>
+            `${position}: ${count} cadets selected`).join(', ');
+        alert(`Position conflicts detected: ${conflictMessage}. Each position can only be assigned to one cadet per intake.`);
+        return;
+    }
+
+    const positions = {};
+    positionSelects.forEach(select => {
+        positions[select.dataset.cadetId] = select.value;
+    });
+
+    const intakeYear = currentFilters.intakeYear;
+
+    fetch('/instructor/cadets/positions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            positions: positions,
+            intake_year: intakeYear
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Positions updated successfully');
+            hasUnsavedPositionChanges = false;
+            updateSaveButtonVisibility();
+            loadCadets(currentPage);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to update positions');
+    });
+}
+
+// ============================================================
+// FUNCTION: Update Save Button Visibility
+// ============================================================
+function updateSaveButtonVisibility() {
+    const savePositionsBtn = document.getElementById('savePositionsBtn');
+    if (hasUnsavedPositionChanges) {
+        savePositionsBtn.disabled = false;
+        savePositionsBtn.classList.remove('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
+    } else {
+        savePositionsBtn.disabled = true;
+        savePositionsBtn.classList.add('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
+    }
+}
 
 
 
@@ -2101,7 +2356,10 @@ function attachCadetRowEventListeners() {
     document.querySelectorAll('.position-select').forEach(select => {
         select.addEventListener('change', function(e) {
             e.stopPropagation();
-            validatePositionSelection(this);
+            if (validatePositionSelection(this)) {
+                hasUnsavedPositionChanges = true;
+                updateSaveButtonVisibility();
+            }
         });
     });
 
