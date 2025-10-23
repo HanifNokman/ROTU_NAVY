@@ -6,134 +6,436 @@
     </x-slot>
 
     <style>
-    #duty-ranking-content {
-        max-height: 300px;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    #cgpa-content {
-        max-height: 300px;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    #duty-ranking-content::-webkit-scrollbar,
-    #cgpa-content::-webkit-scrollbar {
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
         width: 8px;
+        height: 8px;
     }
 
-    #duty-ranking-content::-webkit-scrollbar-track,
-    #cgpa-content::-webkit-scrollbar-track {
-        background: #f1f1f1;
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
         border-radius: 10px;
     }
 
-    #duty-ranking-content::-webkit-scrollbar-thumb,
-    #cgpa-content::-webkit-scrollbar-thumb {
-        background: #888;
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
         border-radius: 10px;
     }
 
-    #duty-ranking-content::-webkit-scrollbar-thumb:hover,
-    #cgpa-content::-webkit-scrollbar-thumb:hover {
-        background: #555;
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
     }
 
-    #duty-ranking-content,
-    #cgpa-content {
+    .custom-scrollbar {
         scrollbar-width: thin;
-        scrollbar-color: #888 #f1f1f1;
+        scrollbar-color: #94a3b8 #f1f5f9;
     }
 
-    #duty-ranking-content,
-    #cgpa-content {
-        scroll-behavior: smooth;
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
     }
 
-    .duty-ranking-wrapper,
-    .cgpa-wrapper {
-        position: relative;
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
     }
 
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* BADGE STYLES */
+    /* ========================================= */
     .badge-icon-mini {
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        transition: transform 0.2s ease;
+    }
+
+    .badge-icon-mini:hover {
+        transform: scale(1.1);
+    }
+
+    .badge-icon-large {
+        width: 56px;
+        height: 56px;
         object-fit: contain;
     }
 
-    /* Scrollbar styling for intake table */
-    .max-h-\[500px\]::-webkit-scrollbar {
-        width: 8px;
+    .badge-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
     }
 
-    .max-h-\[500px\]::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
-    .max-h-\[500px\]::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 10px;
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     }
 
-    .max-h-\[500px\]::-webkit-scrollbar-thumb:hover {
-        background: #555;
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .gradient-cyan {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    }
+
+    /* ========================================= */
+    /* INFO CARD STYLES */
+    /* ========================================= */
+    .info-card {
+        background: #ffffff;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+
+    .info-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+        transition: background 0.2s ease;
+    }
+
+    .info-item:hover {
+        background: #f3f4f6;
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .icon-wrapper-sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* TABLE STYLES */
+    /* ========================================= */
+    .data-table {
+        min-width: 100%;
+        background: white;
+    }
+
+    .data-table thead {
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .data-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    /* ========================================= */
+    /* PROGRESS BAR STYLES */
+    /* ========================================= */
+    .progress-container {
+        height: 2rem;
+        background: #e5e7eb;
+        border-radius: 9999px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ========================================= */
+    /* BUTTON STYLES */
+    /* ========================================= */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .btn-toggle {
+        padding: 0.625rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-toggle.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-toggle:not(.active) {
+        background: transparent;
+        color: #64748b;
+    }
+
+    .btn-toggle:not(.active):hover {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    /* ========================================= */
+    /* COUNTDOWN CIRCLE */
+    /* ========================================= */
+    .countdown-circle {
+        position: relative;
+        width: 12rem;
+        height: 12rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .countdown-inner {
+        position: absolute;
+        width: 10rem;
+        height: 10rem;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ========================================= */
+    /* ACCORDION STYLES */
+    /* ========================================= */
+    .accordion-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background: white;
+        margin-bottom: 0.75rem;
+    }
+
+    .accordion-header {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background: linear-gradient(to right, #fef3c7 0%, #fde68a 100%);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .accordion-header:hover {
+        background: linear-gradient(to right, #fde68a 0%, #fcd34d 100%);
+    }
+
+    .accordion-content {
+        border-top: 1px solid #e5e7eb;
+        background: #fefce8;
+    }
+
+    /* ========================================= */
+    /* MODAL STYLES */
+    /* ========================================= */
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================= */
+    /* RANKING CARD STYLES */
+    /* ========================================= */
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s ease;
+    }
+
+    .ranking-item:hover {
+        border-color: #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transform: translateX(4px);
+    }
+
+    .rank-badge {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.875rem;
+    }
+
+    /* ========================================= */
+    /* UTILITY CLASSES */
+    /* ========================================= */
+    .text-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .shadow-custom {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
     </style>
 
-    <div class="py-6">
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- ================================================================ --}}
             {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"/>
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
-                    Cadet Dashboard
-                </h1>
-                <p class="text-gray-600">Your personal overview and performance metrics</p>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Cadet Dashboard</h1>
+                <p class="text-gray-600 text-lg">Your personal overview and performance metrics</p>
             </div>
 
             {{-- ================================================================ --}}
             {{-- PROFILE SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card"
                 x-data="{ open: false }">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 cursor-pointer"
+                <div class="section-header cursor-pointer"
                     @click="open = !open">
                     <div class="flex items-center justify-between">
                         <div class="flex-1">
-                            <h2 class="text-2xl font-semibold mb-2 text-gray-900">
-                                <svg class="w-6 h-6 mr-2 text-blue-600 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                Personal Profile
-                            </h2>
-                            <p class="text-gray-600">Your profile information and details</p>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper bg-blue-100 mr-3">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">Personal Profile</h2>
+                            </div>
+                            <p class="text-gray-600 ml-13">Your profile information and details</p>
                         </div>
-                        <div class="flex items-center space-x-1 ml-6">
-                            {{-- Displayed Badges --}}
-                            @if($cadet->cadetBadges && $cadet->cadetBadges->count() > 0)
-                                @foreach($cadet->cadetBadges->take(8) as $cadetBadge)
-                                    @if($cadetBadge->badge->icon_path)
-                                        <img src="{{ asset('storage/assets/badges/' . $cadetBadge->badge->icon_path) }}"
-                                            alt="{{ $cadetBadge->badge->name }}"
-                                            title="{{ $cadetBadge->badge->name }} ({{ $cadetBadge->badge->rarity_label }})"
-                                            class="w-12 h-12 object-contain">
-                                    @else
-                                        <span class="text-3xl" title="{{ $cadetBadge->badge->name }} ({{ $cadetBadge->badge->rarity_label }})">🏆</span>
-                                    @endif
-                                @endforeach
-                                @if($cadet->cadetBadges->count() > 8)
-                                    <span class="text-sm text-gray-500 ml-1">+{{ $cadet->cadetBadges->count() - 8 }}</span>
-                                @endif
-                            @endif
-                            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200 ml-4"
+                        <div class="flex items-center ml-6">
+                            <svg class="w-6 h-6 text-gray-400 transform transition-transform duration-300"
                                 :class="{ 'rotate-180': open }"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -142,212 +444,370 @@
                     </div>
                 </div>
 
-                <div class="p-6 flex flex-col md:flex-row gap-6"
+                <div class="p-8"
                     x-show="open"
-                    x-transition>
-                    {{-- Profile Picture --}}
-                    <div class="flex justify-center lg:justify-start">
-                        <img src="{{ $cadet?->profile_pic ? asset('storage/' . $cadet->profile_pic) : asset('images/default.png') }}"
-                            alt="Profile Picture"
-                            class="w-40 h-52 md:w-60 md:h-80 object-cover border rounded-md">
-                    </div>
-
-                    {{-- Profile Information --}}
-                    <div class="flex-1 space-y-6">
-                        {{-- Rank and Name --}}
-                        <div class="flex items-center justify-center md:justify-start gap-4">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold px-6 py-2 rounded-xl shadow-lg whitespace-nowrap">
-                                <i class="fas fa-shield-alt mr-2"></i>
-                                Personal Profile
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0">
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        {{-- Profile Picture & Badges Section --}}
+                        <div class="flex flex-row lg:flex-col items-start lg:items-start space-x-4 lg:space-x-0 lg:space-y-4">
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ $cadet?->profile_pic ? asset('storage/' . $cadet->profile_pic) : asset('images/default.png') }}"
+                                    alt="Profile Picture"
+                                    class="w-32 h-44 sm:w-48 sm:h-64 md:w-56 md:h-80 object-cover rounded-2xl shadow-lg border-4 border-white">
+                                <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
+                                    <div class="w-12 h-12 gradient-blue rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
-                            @php
-                                $prefix = '';
-                                if (trim($cadet?->rank) === 'Lt.M') {
-                                    $prefix = ' PSSTLDM';
-                                }
-                            @endphp
-                            <p class="text-2xl font-semibold text-gray-800">
-                                {{ ($cadet?->rank ?? 'Unknown') . ' ' . ($user?->name ?? 'No Name') . $prefix }}
-                            </p>
+
+                            {{-- Displayed Badges --}}
+                            @if($cadet->cadetBadges && $cadet->cadetBadges->count() > 0)
+                                <div class="flex-1 lg:w-full lg:max-w-[14rem] md:max-w-[16rem] space-y-2 max-h-[176px] sm:max-h-[256px] md:max-h-[320px] lg:max-h-none overflow-y-auto custom-scrollbar">
+                                    @php
+                                        // Define rarity order (higher number = higher priority/rarity)
+                                        $rarityOrder = ['Platinum' => 5, 'Gold' => 4, 'Silver' => 3, 'Bronze' => 2, 'Standard' => 1];
+                                        
+                                        // Sort badges by rarity (descending - highest first)
+                                        $sortedBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) use ($rarityOrder) {
+                                            $rarity = $cadetBadge->badge->rarity_label ?? 'Standard';
+                                            return $rarityOrder[$rarity] ?? 0;
+                                        });
+                                    @endphp
+                                    
+                                    @foreach($sortedBadges as $cadetBadge)
+                                        <div class="bg-white rounded-lg p-2 sm:p-3 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 flex items-center space-x-2 sm:space-x-3">
+                                            @if($cadetBadge->badge->icon_path)
+                                                <img src="{{ asset('storage/assets/badges/' . $cadetBadge->badge->icon_path) }}"
+                                                    alt="{{ $cadetBadge->badge->name }}"
+                                                    class="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0">
+                                            @else
+                                                <span class="text-2xl sm:text-3xl flex-shrink-0">🏆</span>
+                                            @endif
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs sm:text-sm font-semibold text-gray-900 truncate">{{ $cadetBadge->badge->name }}</p>
+                                                <p class="text-xs text-gray-600" style="color: {{ $cadetBadge->badge->rarity_color ?? '#6b7280' }};">
+                                                    {{ $cadetBadge->badge->rarity_label ?? 'Badge' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
 
-                        {{-- Contact Information --}}
-                        <div class="bg-gray-50 rounded-xl p-4">
-                            <div class="flex items-center mb-3">
-                                <i class="fas fa-address-book w-5 text-blue-500 mr-2"></i>
-                                <p class="text-gray-700 font-semibold">Contact Information</p>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="flex items-center">
-                                    <i class="fas fa-phone w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Phone:</strong> {{ $cadet?->phone_number ?? 'Not set' }}</span>
+                        {{-- Profile Information --}}
+                        <div class="flex-1 space-y-6">
+                            {{-- Rank and Name --}}
+                            <div class="info-card">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="icon-wrapper gradient-blue">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Rank & Identity</h3>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-envelope w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Email:</strong> {{ $user?->email ?? 'Not set' }}</span>
-                                </div>
+                                @php
+                                    $prefix = '';
+                                    if (trim($cadet?->rank) === 'Lt.M') {
+                                        $prefix = ' PSSTLDM';
+                                    }
+                                @endphp
+                                <p class="text-2xl font-bold text-gray-900">
+                                    {{ ($cadet?->rank ?? 'Unknown') . ' ' . ($user?->name ?? 'No Name') . $prefix }}
+                                </p>
                             </div>
-                        </div>
 
-                        {{-- General Information --}}
-                        <div class="bg-gray-50 rounded-xl p-4">
-                            <div class="flex items-center mb-3">
-                                <i class="fas fa-info-circle w-5 text-purple-500 mr-2"></i>
-                                <p class="text-gray-700 font-semibold">General Information</p>
+                            {{-- Contact Information --}}
+                            <div class="info-card">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="icon-wrapper bg-green-100">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Contact Information</h3>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-green-50 mr-3">
+                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Phone Number</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet?->phone_number ?? 'Not set' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-blue-50 mr-3">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Email Address</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $user?->email ?? 'Not set' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="flex items-center">
-                                    <i class="fas fa-venus-mars w-4 text-pink-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Gender:</strong> {{ $cadet->gender ?? '-' }}</span>
+
+                            {{-- General Information --}}
+                            <div class="info-card">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="icon-wrapper bg-purple-100">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">General Information</h3>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-credit-card w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Bank Account:</strong> {{ $cadet->bank_account_number ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-hashtag w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Service Number:</strong> {{ $cadet->service_number ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-graduation-cap w-4 text-purple-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Matric Number:</strong> {{ $cadet->matric_no ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-university w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Faculty:</strong> {{ $cadet->faculty ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-book w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Course:</strong> {{ $cadet->course ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-calendar-alt w-4 text-orange-500 mr-2"></i>
-                                    <span class="text-sm">
-                                        <strong>Intake Year:</strong>
-                                        @if($cadet->intake_year)
-                                            {{ $cadet->intake_year }} / Intake - {{ $cadet->intake_year - 2011 }}
-                                        @else
-                                            -
-                                        @endif
-                                    </span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chart-line w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Current CGPA:</strong> {{ $cadet->current_cgpa ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-id-card w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>IC Number:</strong> {{ $cadet->ic_number ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-weight w-4 text-red-500 mr-2"></i>
-                                    <span class="text-sm"><strong>BMI:</strong> {{ $cadet->BMI ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-swimmer w-4 text-cyan-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Swimming Qualification:</strong> {{ $cadet->swimming_qualification ?? '-' }}</span>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-pink-50 mr-3">
+                                            <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Gender</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->gender ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-green-50 mr-3">
+                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Bank Account</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->bank_account_number ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-blue-50 mr-3">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Service Number</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->service_number ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-purple-50 mr-3">
+                                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Matric Number</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->matric_no ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-indigo-50 mr-3">
+                                            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Faculty</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->faculty ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-yellow-50 mr-3">
+                                            <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Course</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->course ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-orange-50 mr-3">
+                                            <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Intake Year</p>
+                                            <p class="text-sm font-semibold text-gray-900">
+                                                @if($cadet->intake_year)
+                                                    {{ $cadet->intake_year }} / Intake-{{ $cadet->intake_year - 2011 }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-emerald-50 mr-3">
+                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Current CGPA</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->current_cgpa ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-gray-50 mr-3">
+                                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">IC Number</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->ic_number ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-red-50 mr-3">
+                                            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">BMI</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->BMI ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="icon-wrapper-sm bg-cyan-50 mr-3">
+                                            <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-medium">Swimming Qualification</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->swimming_qualification ?? '-' }}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             {{-- ================================================================ --}}
             {{-- MY INTAKE SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300"
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card"
                 x-data="{ open: false }">
-                <div class="bg-gradient-to-r from-cyan-50 to-teal-50 p-6 border-b border-gray-200 cursor-pointer"
+                <div class="section-header cursor-pointer"
                     @click="open = !open">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center justify-between text-gray-900">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            My Intake
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-cyan mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">My Intake</h2>
+                            </div>
+                            <p class="text-gray-600 ml-13">View all cadets in your intake with their achievements</p>
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200"
+                        <svg class="w-6 h-6 text-gray-400 transform transition-transform duration-300"
                             :class="{ 'rotate-180': open }"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                    </h2>
-                    <p class="text-gray-600">View all cadets in your intake with their achievements</p>
+                    </div>
                 </div>
 
-                <div class="p-6"
+                <div class="p-8"
                     x-show="open"
-                    x-transition>
-                    <div class="overflow-x-auto">
-                        <div class="max-h-[500px] overflow-y-auto">
-                            <table class="min-w-full bg-white">
-                                <thead class="bg-gray-100 sticky top-0">
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0">
+                    <div class="overflow-hidden rounded-xl border border-gray-200">
+                        <div class="max-h-[500px] overflow-y-auto custom-scrollbar">
+                            <table class="data-table">
+                                <thead>
                                     <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">No.</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Service No.</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rank</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Position</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rating</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Total Points</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Badges</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
+                                        <th>No.</th>
+                                        <th>Service No.</th>
+                                        <th>Rank</th>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Rating</th>
+                                        <th>Total Points</th>
+                                        <th>Badges</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody>
                                     @forelse($intakeCadets as $index => $intakeCadet)
-                                        <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $index + 1 }}
+                                        <tr>
+                                            <td class="font-semibold text-gray-700">{{ $index + 1 }}</td>
+                                            <td class="text-gray-900">{{ $intakeCadet->service_number ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    {{ $intakeCadet->rank ?? 'N/A' }}
+                                                </span>
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $intakeCadet->service_number ?? 'N/A' }}
+                                            <td class="font-semibold text-gray-900">{{ $intakeCadet->user->name ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                    {{ $intakeCadet->position ?? 'Normal Cadet' }}
+                                                </span>
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $intakeCadet->rank ?? 'N/A' }}
-                                            </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {{ $intakeCadet->user->name ?? 'N/A' }}
-                                            </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $intakeCadet->position ?? 'Normal Cadet' }}
-                                            </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm">
-                                                <span class="text-xl">{{ $intakeCadet->performanceRating->rating ?? '⭐☆☆☆☆' }}</span>
-                                            </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                                {{ number_format($intakeCadet->performanceRating->total_points ?? 0, 2) }}
-                                            </td>
-                                            <td class="px-4 py-4 whitespace-nowrap">
+                                            <td class="text-2xl">{{ $intakeCadet->performanceRating->rating ?? '⭐☆☆☆☆' }}</td>
+                                            <td class="font-bold text-gray-900">{{ number_format($intakeCadet->performanceRating->total_points ?? 0, 2) }}</td>
+                                            <td>
                                                 <div class="flex items-center space-x-1">
                                                     @forelse($intakeCadet->cadetBadges->take(3) as $cadetBadge)
-                                                    @if($cadetBadge->badge->icon_path)
-                                                        <img src="{{ asset('storage/assets/badges/' . $cadetBadge->badge->icon_path) }}"
-                                                            alt="{{ $cadetBadge->badge->name }}"
-                                                            title="{{ $cadetBadge->badge->name }}"
-                                                            class="badge-icon-mini">
-                                                    @else
-                                                        <span class="text-2xl" title="{{ $cadetBadge->badge->name }}">🏆</span>
-                                                    @endif
+                                                        @if($cadetBadge->badge->icon_path)
+                                                            <img src="{{ asset('storage/assets/badges/' . $cadetBadge->badge->icon_path) }}"
+                                                                alt="{{ $cadetBadge->badge->name }}"
+                                                                title="{{ $cadetBadge->badge->name }}"
+                                                                class="badge-icon-mini">
+                                                        @else
+                                                            <span class="text-2xl" title="{{ $cadetBadge->badge->name }}">🏆</span>
+                                                        @endif
                                                     @empty
                                                         <span class="text-xs text-gray-400">No badges</span>
                                                     @endforelse
                                                     @if($intakeCadet->cadetBadges->count() > 3)
-                                                        <span class="text-xs text-gray-500 ml-1">+{{ $intakeCadet->cadetBadges->count() - 3 }}</span>
+                                                        <span class="text-xs font-semibold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded-full">
+                                                            +{{ $intakeCadet->cadetBadges->count() - 3 }}
+                                                        </span>
                                                     @endif
                                                 </div>
                                             </td>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm">
-                                                <button onclick="openCadetModal({{ $intakeCadet->id }})"
-                                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-xs font-medium transition-colors duration-150">
+                                            <td>
+                                                <button onclick="openCadetModal({{ $intakeCadet->id }})" class="btn-primary">
                                                     View Details
                                                 </button>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="px-4 py-8 text-center text-gray-500">
-                                                No cadets found in your intake.
+                                            <td colspan="9" class="px-4 py-12 text-center">
+                                                <div class="flex flex-col items-center">
+                                                    <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                    </svg>
+                                                    <p class="text-gray-500 text-lg font-medium">No cadets found in your intake.</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforelse
@@ -364,99 +824,101 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {{-- Duty Ranking Card --}}
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
-                        <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            Duty Ranking
-                        </h2>
-                        <p class="text-gray-600">Your performance ranking among cadets</p>
+                <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                    <div class="section-header">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-green mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900">Duty Ranking</h2>
+                        </div>
+                        <p class="text-gray-600 ml-13">Your performance ranking among cadets</p>
                     </div>
 
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-center mb-4">Performance Leaderboard</h3>
-
                         {{-- Sort Form --}}
-                        <div class="mb-1 flex justify-center">
-                            <div>
-                                <select id="sort_order" class="rounded border-gray-300">
-                                    <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Highest First</option>
-                                    <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Lowest First</option>
+                        <div class="mb-6 flex justify-center">
+                            <div class="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+                                <select id="sort_order" class="bg-transparent border-0 text-sm font-medium text-gray-700 focus:ring-0 cursor-pointer">
+                                    <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>🏆 Highest First</option>
+                                    <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>📊 Lowest First</option>
                                 </select>
                             </div>
                         </div>
 
-                        {{-- Leaderboard Bars --}}
-                        <div class="duty-ranking-wrapper">
-                            <div id="duty-ranking-content" class="space-y-4">
+                        {{-- Leaderboard --}}
+                        <div id="duty-ranking-content" class="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">
+                            @php
+                                $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
+                            @endphp
+
+                            @forelse ($dutyCadets as $index => $cadet)
                                 @php
-                                    $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
+                                    $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
+                                    if ($percentage < 50) {
+                                        $ratio = $percentage / 50;
+                                        $r = 255;
+                                        $g = (int)(180 * $ratio);
+                                    } else {
+                                        $ratio = ($percentage - 50) / 50;
+                                        $r = (int)(255 * (1 - $ratio));
+                                        $g = 180;
+                                    }
+                                    $bgColor = "rgb($r, $g, 0)";
                                 @endphp
-                                @forelse ($dutyCadets as $index => $cadet)
-                                    @php
-                                        $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
 
-                                        if ($percentage < 50) {
-                                            $ratio = $percentage / 50;
-                                            $r = 255;
-                                            $g = (int)(180 * $ratio);
-                                        } else {
-                                            $ratio = ($percentage - 50) / 50;
-                                            $r = (int)(255 * (1 - $ratio));
-                                            $g = 180;
-                                        }
-                                        $bgColor = "rgb($r, $g, 0)";
-                                    @endphp
+                                <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
 
-                                    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
-                                        <div class="flex-shrink-0">
-                                            <div class="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
-                                                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                                </svg>
-                                            </div>
+                                    <div class="flex-1 w-full">
+                                        <div class="text-sm font-medium mb-1 text-center sm:text-left">
+                                            #{{ $index + 1 }} - {{ $cadet->user->name ?? '-' }}
                                         </div>
 
-                                        <div class="flex-1 w-full">
-                                            <div class="text-sm font-medium mb-1 text-center sm:text-left">
-                                                #{{ $index + 1 }} - {{ $cadet->user->name ?? '-' }}
-                                            </div>
-
-                                            <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
-                                                <div class="absolute top-0 left-0 h-full rounded-full flex items-center"
-                                                    style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
-                                                    <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
-                                                        {{ $cadet->daily_duty_count }} {{ Str::plural('Day', $cadet->daily_duty_count) }}
-                                                    </span>
-                                                </div>
+                                        <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
+                                            <div class="absolute top-0 left-0 h-full rounded-full flex items-center" style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
+                                                <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
+                                                    {{ $cadet->daily_duty_count }} {{ Str::plural('Day', $cadet->daily_duty_count) }}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                @empty
-                                    <div class="text-center text-gray-500">No cadets available.</div>
-                                @endforelse
-                            </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-12">
+                                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    <p class="text-gray-500 text-lg font-medium">No cadets available.</p>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
 
                 {{-- Tauliah Countdown Card --}}
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
-                        <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                            <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Tauliah Countdown
-                        </h2>
-                        <p class="text-gray-600">Your journey to becoming a commissioned officer</p>
+                <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                    <div class="section-header">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-purple mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900">Tauliah Countdown</h2>
+                        </div>
+                        <p class="text-gray-600 ml-13">Your journey to becoming a commissioned officer</p>
                     </div>
 
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-center mb-4">Commissioning Timeline</h3>
-
+                    <div class="p-8">
                         @php
                             $intakeYear = $cadet->intake_year ?? now()->year;
                             $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
@@ -469,80 +931,114 @@
 
                             $dynamicColor = match (true) {
                                 $progress < 25 => '#3b82f6',
-                                $progress < 50 => '#6366f1',
+                                $progress < 50 => '#8b5cf6',
                                 $progress < 75 => '#ec4899',
-                                default => '#ffd700',
+                                default => '#f59e0b',
                             };
                         @endphp
 
                         @if ($daysLeft > 0)
-                            {{-- Countdown Circle --}}
-                            <div class="flex justify-center">
-                                <div class="relative w-48 h-48 rounded-full flex items-center justify-center"
+                            <div class="flex flex-col items-center">
+                                {{-- Countdown Circle --}}
+                                <div class="countdown-circle mb-6"
                                     style="background: conic-gradient({{ $dynamicColor }} {{ $progressDegrees }}deg, #e5e7eb {{ $progressDegrees }}deg);">
-                                    <div class="absolute bg-white rounded-full w-40 h-40 flex flex-col items-center justify-center">
-                                        <div class="flex items-baseline justify-center space-x-1">
-                                            <div class="text-7xl font-extrabold text-navy-800">
-                                                {{ intval($daysLeft) }}
-                                            </div>
+                                    <div class="countdown-inner">
+                                        <div class="text-6xl font-extrabold text-gray-900">
+                                            {{ intval($daysLeft) }}
                                         </div>
-                                        <div class="text-center text-gray-700 mt-1 text-sm font-medium">
+                                        <div class="text-gray-600 text-sm font-semibold mt-1">
                                             Days Left
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Progress Info --}}
+                                <div class="w-full max-w-md">
+                                    <div class="info-card">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <span class="text-sm font-medium text-gray-600">Progress</span>
+                                            <span class="text-sm font-bold text-gray-900">{{ number_format($progress, 1) }}%</span>
+                                        </div>
+                                        <div class="progress-container h-3">
+                                            <div class="progress-bar" style="width: {{ $progress }}%; background: linear-gradient(90deg, {{ $dynamicColor }}, {{ $dynamicColor }}dd);"></div>
+                                        </div>
+                                        <div class="mt-4 text-center">
+                                            <p class="text-sm text-gray-600">Target Date:</p>
+                                            <p class="text-lg font-bold text-gray-900">{{ $tauliahDate->format('F d, Y') }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @else
                             {{-- Congratulations Message --}}
-                            <div class="flex flex-col items-center text-center mt-1 space-y-4 animate-pulse">
-                                <div class="text-2xl md:text-3xl font-semibold text-gray-800">
-                                    Congratulations on Your Promotion to <span class="text-yellow-600">Lt. Muda!</span>
+                            <div class="flex flex-col items-center text-center space-y-6">
+                                <div class="w-24 h-24 gradient-orange rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                    </svg>
                                 </div>
-                                <div class="text-xl md:text-2xl text-pink-500 font-medium">
-                                    Your service, dedication, and leadership are recognized! 🌟
+                                <div>
+                                    <h3 class="text-3xl font-bold text-gray-900 mb-3">
+                                        Congratulations! 🎉
+                                    </h3>
+                                    <p class="text-xl text-gray-700 mb-2">
+                                        You've been promoted to <span class="font-bold text-yellow-600">Lt. Muda!</span>
+                                    </p>
+                                    <p class="text-gray-600">
+                                        Your service, dedication, and leadership are recognized!
+                                    </p>
                                 </div>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
+
             {{-- ================================================================ --}}
             {{-- INTAKE ABSENCE TRACKING SECTION --}}
             {{-- Only visible for CO, Thana, Zayn positions --}}
             {{-- ================================================================ --}}
             @if(in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn']))
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                <div class="section-header">
                     <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                                <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                                </svg>
-                                <span id="cadet-absence-section-title">Intake Absence Tracking</span>
-                                @if(isset($absentCadets) && !empty($absentCadets))
-                                    <span id="cadet-absence-count-badge" class="ml-3 bg-red-500 text-white text-sm px-3 py-1 rounded-full">
-                                        {{ count($absentCadets) }}
-                                    </span>
-                                @endif
-                            </h2>
-                            <p id="cadet-absence-section-description" class="text-gray-600">Track your intake mates requiring absence documentation</p>
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-red mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 id="cadet-absence-section-title" class="text-2xl font-bold text-gray-900">Intake Absence Tracking</h2>
+                                    @if(isset($absentCadets) && !empty($absentCadets))
+                                        <span id="cadet-absence-count-badge" class="inline-flex items-center mt-1 bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                                            {{ count($absentCadets) }} {{ Str::plural('Cadet', count($absentCadets)) }} Pending
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <p id="cadet-absence-section-description" class="text-gray-600 ml-13">Track your intake mates requiring absence documentation</p>
                         </div>
 
                         {{-- View Toggle --}}
-                        <div class="flex bg-gray-100 rounded-lg p-1">
+                        <div class="flex bg-gray-100 rounded-lg p-1 gap-1">
                             <button 
                                 id="cadet-pending-view-btn"
                                 onclick="toggleCadetAbsenceView('pending')"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                class="btn-toggle active">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
                                 Pending
                             </button>
                             <button 
                                 id="cadet-leaderboard-view-btn"
                                 onclick="toggleCadetAbsenceView('leaderboard')"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900">
-                                <i class="fas fa-chart-bar mr-1"></i>
+                                class="btn-toggle">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
                                 Absence List
                             </button>
                         </div>
@@ -551,31 +1047,31 @@
 
                 <div class="p-6">
                     {{-- Pending Absence Data --}}
-                    <div id="cadet-absence-content" class="space-y-4 max-h-[600px] overflow-y-auto">
+                    <div id="cadet-absence-content" class="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
                         @if(isset($absentCadets) && !empty($absentCadets))
                             @foreach($absentCadets as $cadetData)
-                                <div class="border border-orange-200 rounded-lg overflow-hidden bg-white">
+                                <div class="accordion-item">
                                     <button 
                                         onclick="toggleAbsenceDropdown({{ $cadetData->id }})"
-                                        class="w-full flex justify-between items-center px-4 py-3 bg-orange-50 hover:bg-orange-100 transition-colors duration-200">
+                                        class="accordion-header flex justify-between items-center w-full">
                                         <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <div class="icon-wrapper-sm bg-white">
                                                 <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                                                 </svg>
                                             </div>
                                             <div class="text-left">
                                                 <p class="font-semibold text-gray-900">{{ $cadetData->name }}</p>
-                                                <p class="text-sm text-gray-600">Service: {{ $cadetData->service_number ?? 'N/A' }}</p>
+                                                <p class="text-xs text-gray-600">Service: {{ $cadetData->service_number ?? 'N/A' }}</p>
                                             </div>
                                         </div>
                                         <div class="flex items-center space-x-3">
-                                            <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                            <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
                                                 {{ count($cadetData->pending_absences) }} {{ Str::plural('absence', count($cadetData->pending_absences)) }}
                                             </span>
                                             <svg 
                                                 id="absence-icon-{{ $cadetData->id }}" 
-                                                class="w-5 h-5 text-gray-400 transform transition-transform duration-200" 
+                                                class="w-5 h-5 text-gray-500 transform transition-transform duration-300" 
                                                 fill="none" 
                                                 stroke="currentColor" 
                                                 viewBox="0 0 24 24">
@@ -584,36 +1080,52 @@
                                         </div>
                                     </button>
                                     
-                                    <div id="absence-dropdown-{{ $cadetData->id }}" class="hidden border-t border-orange-200">
-                                        <div class="p-4 space-y-3">
-                                            <h5 class="font-medium text-gray-800 mb-3 flex items-center">
-                                                <i class="fas fa-list mr-2 text-red-500"></i>
+                                    <div id="absence-dropdown-{{ $cadetData->id }}" class="accordion-content hidden">
+                                        <div class="p-5 space-y-3">
+                                            <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                                <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                                </svg>
                                                 Missing Documentation for:
                                             </h5>
                                             
                                             @foreach($cadetData->pending_absences as $absence)
-                                                <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                                <div class="info-card border-l-4 border-red-500">
                                                     <div class="flex justify-between items-start">
                                                         <div class="flex-1">
-                                                            <h6 class="font-semibold text-red-900">{{ $absence->training_title }}</h6>
-                                                            <div class="text-sm text-red-700 space-y-1 mt-2">
-                                                                <div class="flex items-center">
-                                                                    <i class="fas fa-calendar w-4 text-red-500 mr-2"></i>
-                                                                    <span>{{ $absence->training_date }}</span>
+                                                            <h6 class="font-bold text-gray-900 text-base mb-3">{{ $absence->training_title }}</h6>
+                                                            <div class="space-y-2">
+                                                                <div class="flex items-center text-sm text-gray-700">
+                                                                    <div class="icon-wrapper-sm bg-blue-50 mr-2">
+                                                                        <svg class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                                        </svg>
+                                                                    </div>
+                                                                    <span class="font-medium">{{ $absence->training_date }}</span>
                                                                 </div>
-                                                                <div class="flex items-center">
-                                                                    <i class="fas fa-map-marker-alt w-4 text-red-500 mr-2"></i>
-                                                                    <span>{{ $absence->training_location }}</span>
+                                                                <div class="flex items-center text-sm text-gray-700">
+                                                                    <div class="icon-wrapper-sm bg-green-50 mr-2">
+                                                                        <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                                        </svg>
+                                                                    </div>
+                                                                    <span class="font-medium">{{ $absence->training_location }}</span>
                                                                 </div>
-                                                                <div class="flex items-center">
-                                                                    <i class="fas fa-exclamation-triangle w-4 text-orange-500 mr-2"></i>
-                                                                    <span class="text-xs">
-                                                                        Missing: {{ $absence->missing_items }}
-                                                                    </span>
+                                                                <div class="flex items-start text-sm mt-2">
+                                                                    <div class="icon-wrapper-sm bg-orange-50 mr-2 mt-0.5">
+                                                                        <svg class="w-3 h-3 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                                                        </svg>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p class="font-medium text-orange-800">Missing Items:</p>
+                                                                        <p class="text-gray-700">{{ $absence->missing_items }}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium ml-3">
+                                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold ml-3">
                                                             Pending
                                                         </span>
                                                     </div>
@@ -625,60 +1137,70 @@
                             @endforeach
                         @else
                             <div class="text-center py-16">
-                                <div class="mb-6">
-                                    <svg class="w-20 h-20 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <div class="w-20 h-20 gradient-green rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-semibold text-gray-600 mb-3">All Clear!</h3>
-                                <p class="text-gray-500 text-lg">No intake mates have pending absence reasons.</p>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">All Clear!</h3>
+                                <p class="text-gray-600 text-lg">No intake mates have pending absence reasons.</p>
                             </div>
                         @endif
                     </div>
 
                     {{-- Absence Leaderboard --}}
-                    <div id="cadet-absence-leaderboard-content" class="hidden space-y-4 max-h-[600px] overflow-y-auto">
+                    <div id="cadet-absence-leaderboard-content" class="hidden space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
                         @if(isset($absenceLeaderboard) && !empty($absenceLeaderboard))
                             @foreach($absenceLeaderboard as $index => $cadetData)
                                 @php
                                     $attended = $cadetData->total_trainings - $cadetData->absence_count;
+                                    $attendancePercentage = $cadetData->total_trainings > 0 
+                                        ? ($attended / $cadetData->total_trainings) * 100 
+                                        : 0;
                                 @endphp
-                                <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                            </svg>
-                                        </div>
+                                <div class="ranking-item">
+                                    <div class="rank-badge bg-gradient-to-br from-slate-400 to-slate-600 text-white">
+                                        #{{ $index + 1 }}
                                     </div>
-                                    <div class="flex-1 w-full">
-                                        <div class="text-sm font-medium mb-1 text-center sm:text-left">
-                                            #{{ $index + 1 }} - {{ $cadetData->cadet_name }}
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <p class="font-semibold text-gray-900">{{ $cadetData->cadet_name }}</p>
+                                            <span class="text-xs font-semibold px-2 py-1 rounded-full {{ $attendancePercentage >= 80 ? 'bg-green-100 text-green-800' : ($attendancePercentage >= 60 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                                {{ number_format($attendancePercentage, 1) }}% Attendance
+                                            </span>
                                         </div>
-                                        <div class="text-center sm:text-left flex flex-col sm:flex-row gap-1 sm:gap-0">
-                                            <span class="text-sm font-semibold text-gray-800">
-                                                Training Attended: {{ $attended }} / {{ $cadetData->total_trainings }}
-                                            </span>
-                                            <span class="text-sm font-semibold text-red-600 sm:ml-4">
-                                                Total Absence: {{ $cadetData->absence_count }}
-                                            </span>
+                                        <div class="grid grid-cols-2 gap-2 text-sm">
+                                            <div class="info-item py-2">
+                                                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                <span class="font-semibold text-gray-900">{{ $attended }}/{{ $cadetData->total_trainings }}</span>
+                                                <span class="text-gray-600 ml-1">Attended</span>
+                                            </div>
+                                            <div class="info-item py-2">
+                                                <svg class="w-4 h-4 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                                <span class="font-semibold text-gray-900">{{ $cadetData->absence_count }}</span>
+                                                <span class="text-gray-600 ml-1">Absences</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
                         @else
-                            <div class="text-center py-8">
-                                <div class="mb-4">
-                                    <svg class="w-16 h-16 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            <div class="text-center py-16">
+                                <div class="w-20 h-20 gradient-green rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </div>
                                 @if($cadets->count() > 0)
-                                    <h3 class="text-xl font-semibold text-gray-600 mb-2">Perfect Attendance!</h3>
-                                    <p class="text-gray-500">No training absences recorded in your intake.</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Perfect Attendance!</h3>
+                                    <p class="text-gray-600 text-lg">No training absences recorded in your intake.</p>
                                 @else
-                                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Cadets</h3>
-                                    <p class="text-gray-500">No cadets in your intake.</p>
+                                    <h3 class="text-2xl font-bold text-gray-900 mb-2">No Cadets</h3>
+                                    <p class="text-gray-600 text-lg">No cadets in your intake.</p>
                                 @endif
                             </div>
                         @endif
@@ -693,12 +1215,19 @@
     {{-- ================================================================ --}}
     {{-- CADET DETAILS MODAL --}}
     {{-- ================================================================ --}}
-    <div id="cadetModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
+    <div id="cadetModal" class="modal-overlay fixed inset-0 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border w-11/12 max-w-5xl modal-content my-10">
             {{-- Modal Header --}}
-            <div class="flex justify-between items-center pb-3 border-b">
-                <h3 class="text-2xl font-semibold text-gray-900">Cadet Details</h3>
-                <button onclick="closeCadetModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <div class="flex justify-between items-center pb-4 border-b-2 border-gray-200">
+                <div class="flex items-center">
+                    <div class="icon-wrapper gradient-blue mr-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900">Cadet Details</h3>
+                </div>
+                <button onclick="closeCadetModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-lg hover:bg-gray-100">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -706,10 +1235,13 @@
             </div>
 
             {{-- Modal Body --}}
-            <div id="cadetModalContent" class="mt-4">
+            <div id="cadetModalContent" class="mt-6">
                 {{-- Loading spinner --}}
-                <div class="flex justify-center items-center py-12">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                <div class="flex justify-center items-center py-16">
+                    <div class="relative">
+                        <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                        <p class="text-center text-gray-600 mt-4 font-medium">Loading cadet details...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -754,10 +1286,8 @@
                 const countBadge = document.getElementById('cadet-absence-count-badge');
                 
                 if (view === 'pending') {
-                    pendingBtn.classList.add('bg-red-500', 'text-white', 'shadow-sm');
-                    pendingBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
-                    leaderboardBtn.classList.remove('bg-yellow-500', 'text-white', 'shadow-sm');
-                    leaderboardBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                    pendingBtn.classList.add('active');
+                    leaderboardBtn.classList.remove('active');
                     
                     pendingContent.classList.remove('hidden');
                     leaderboardContent.classList.add('hidden');
@@ -767,10 +1297,8 @@
                     if (countBadge) countBadge.classList.remove('hidden');
                     
                 } else if (view === 'leaderboard') {
-                    leaderboardBtn.classList.add('bg-yellow-500', 'text-white', 'shadow-sm');
-                    leaderboardBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
-                    pendingBtn.classList.remove('bg-red-500', 'text-white', 'shadow-sm');
-                    pendingBtn.classList.add('text-gray-600', 'hover:text-gray-900');
+                    leaderboardBtn.classList.add('active');
+                    pendingBtn.classList.remove('active');
                     
                     leaderboardContent.classList.remove('hidden');
                     pendingContent.classList.add('hidden');
