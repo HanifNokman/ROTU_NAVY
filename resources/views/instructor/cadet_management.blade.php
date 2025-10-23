@@ -338,7 +338,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div id="actionButtonsContainer" class="flex space-x-2">
+                            <div id="personnelActionButtonsContainer" class="flex space-x-2">
                                 {{-- Select All Button --}}
                                 <button id="selectAllBtn"
                                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden">
@@ -350,21 +350,26 @@
                                         class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden">
                                     Rank Up Selected (PK → PKK)
                                 </button>
-
-                                {{-- Save Changes Button (Position Management) --}}
-                                <button id="savePositionsBtn"
-                                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium hidden">
-                                    Save Changes
-                                </button>
-
-                                {{-- Mark as Passed Button (Swimming Management) --}}
-                                <button id="markAsPassedBtn"
-                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden"
-                                        disabled>
-                                    Mark Selected as Passed
-                                </button>
                             </div>
                         </div>
+                    </div>
+
+                    {{-- ================================================================ --}}
+                    {{-- ACTION BUTTONS CONTAINER --}}
+                    {{-- ================================================================ --}}
+                    <div id="actionButtonsContainer" class="mb-4 flex justify-end hidden">
+                        {{-- Save Changes Button (Position Management) --}}
+                        <button id="savePositionsBtn"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            Save Changes
+                        </button>
+
+                        {{-- Mark as Passed Button (Swimming Management) --}}
+                        <button id="markAsPassedBtn"
+                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed hidden"
+                                disabled>
+                            Mark Selected as Passed
+                        </button>
                     </div>
 
                     {{-- ================================================================ --}}
@@ -1609,9 +1614,11 @@ function savePositions() {
 function updateSaveButtonVisibility() {
     const savePositionsBtn = document.getElementById('savePositionsBtn');
     if (hasUnsavedPositionChanges) {
-        savePositionsBtn.classList.remove('hidden');
+        savePositionsBtn.disabled = false;
+        savePositionsBtn.classList.remove('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
     } else {
-        savePositionsBtn.classList.add('hidden');
+        savePositionsBtn.disabled = true;
+        savePositionsBtn.classList.add('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
     }
 }
 
