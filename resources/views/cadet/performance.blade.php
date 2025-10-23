@@ -1,64 +1,473 @@
 <x-app-layout>
-    {{-- ================================================================ --}}
-    {{-- PAGE HEADER --}}
-    {{-- ================================================================ --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Performance') }}
         </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* BADGE STYLES */
+    /* ========================================= */
+    .badge-icon-mini {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        transition: transform 0.2s ease;
+    }
+
+    .badge-icon-mini:hover {
+        transform: scale(1.1);
+    }
+
+    .badge-icon-large {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+    }
+
+    .badge-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .gradient-cyan {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    }
+
+    /* ========================================= */
+    /* INFO CARD STYLES */
+    /* ========================================= */
+    .info-card {
+        background: #ffffff;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+
+    .info-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+        transition: background 0.2s ease;
+    }
+
+    .info-item:hover {
+        background: #f3f4f6;
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .icon-wrapper-sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* TABLE STYLES */
+    /* ========================================= */
+    .data-table {
+        min-width: 100%;
+        background: white;
+    }
+
+    .data-table thead {
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .data-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    /* ========================================= */
+    /* PROGRESS BAR STYLES */
+    /* ========================================= */
+    .progress-container {
+        height: 2rem;
+        background: #e5e7eb;
+        border-radius: 9999px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ========================================= */
+    /* BUTTON STYLES */
+    /* ========================================= */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .btn-toggle {
+        padding: 0.625rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-toggle.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-toggle:not(.active) {
+        background: transparent;
+        color: #64748b;
+    }
+
+    .btn-toggle:not(.active):hover {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    /* ========================================= */
+    /* COUNTDOWN CIRCLE */
+    /* ========================================= */
+    .countdown-circle {
+        position: relative;
+        width: 12rem;
+        height: 12rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .countdown-inner {
+        position: absolute;
+        width: 10rem;
+        height: 10rem;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ========================================= */
+    /* ACCORDION STYLES */
+    /* ========================================= */
+    .accordion-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background: white;
+        margin-bottom: 0.75rem;
+    }
+
+    .accordion-header {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background: linear-gradient(to right, #fef3c7 0%, #fde68a 100%);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .accordion-header:hover {
+        background: linear-gradient(to right, #fde68a 0%, #fcd34d 100%);
+    }
+
+    .accordion-content {
+        border-top: 1px solid #e5e7eb;
+        background: #fefce8;
+    }
+
+    /* ========================================= */
+    /* MODAL STYLES */
+    /* ========================================= */
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================= */
+    /* RANKING CARD STYLES */
+    /* ========================================= */
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s ease;
+    }
+
+    .ranking-item:hover {
+        border-color: #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transform: translateX(4px);
+    }
+
+    .rank-badge {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.875rem;
+    }
+
+    /* ========================================= */
+    /* UTILITY CLASSES */
+    /* ========================================= */
+    .text-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .shadow-custom {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
             {{-- ================================================================ --}}
-            {{-- PAGE TITLE SECTION --}}
+            {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
-                    Performance & Achievements
-                </h1>
-                <p class="text-gray-600">Track your progress, rankings, and earned badges</p>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Performance & Achievements</h1>
+                <p class="text-gray-600 text-lg">Track your progress, rankings, and earned badges</p>
             </div>
 
             {{-- ================================================================ --}}
             {{-- PERFORMANCE OVERVIEW SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
+            <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
+                <div class="section-header">
                     <div class="flex items-center">
-                        <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        <h1 class="ml-2 text-2xl font-medium text-gray-900">
-                            Performance Overview
-                        </h1>
+                        <div class="icon-wrapper gradient-blue mr-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Performance Overview</h2>
+                            <p class="text-gray-600 mt-1">View your performance ratings and progress over time</p>
+                        </div>
                     </div>
+                </div>
 
-                    <p class="mt-6 text-gray-500 leading-relaxed">
-                        View your performance ratings and progress over time.
-                    </p>
-
+                <div class="p-8">
                     {{-- ================================================================ --}}
                     {{-- USER PERFORMANCE SUMMARY --}}
                     {{-- ================================================================ --}}
-                    <div class="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-100">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Performance Summary</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-100">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium text-gray-600">Total Points</span>
-                                    <span class="text-2xl font-bold text-blue-600">{{ number_format($userTotalPoints, 0) }}</span>
+                    <div class="info-card bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                            <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Your Performance Summary
+                        </h3>
+
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="icon-wrapper-sm bg-blue-100 mr-4">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                    </svg>
                                 </div>
-                                <div class="mt-2 text-xs text-gray-500">Out of 800 possible points</div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-600">Total Points</div>
+                                    <div class="text-3xl font-bold text-blue-600">{{ number_format($userTotalPoints, 0) }}</div>
+                                    <div class="text-xs text-gray-500 mt-1">Out of 800 possible points</div>
+                                </div>
                             </div>
-                            <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-100">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium text-gray-600">Overall Rating</span>
-                                    <div class="flex items-center">
+
+                            <div class="info-item">
+                                <div class="icon-wrapper-sm bg-yellow-100 mr-4">
+                                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-600">Overall Rating</div>
+                                    <div class="flex items-center mt-1">
                                         @php
                                             $stars = substr_count($userOverallRating, '⭐');
                                         @endphp
@@ -68,8 +477,8 @@
                                             </svg>
                                         @endfor
                                     </div>
+                                    <div class="text-xs text-gray-500 mt-1">{{ $stars }} out of 5 stars</div>
                                 </div>
-                                <div class="mt-2 text-xs text-gray-500 text-right">{{ $stars }} out of 5 stars</div>
                             </div>
                         </div>
                     </div>
@@ -79,14 +488,22 @@
             {{-- ================================================================ --}}
             {{-- OVERALL PERFORMANCE LEADERBOARD --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="p-6 lg:p-8 bg-white">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-6 h-6 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                        <h2 class="text-xl font-semibold text-gray-900">Overall Performance</h2>
+            <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
+                <div class="section-header">
+                    <div class="flex items-center">
+                        <div class="icon-wrapper gradient-orange mr-4">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Overall Performance</h2>
+                            <p class="text-gray-600 mt-1">See how you rank against other cadets</p>
+                        </div>
                     </div>
+                </div>
+
+                <div class="p-8">
 
                     {{-- ================================================================ --}}
                     {{-- LEADERBOARD DATA --}}
@@ -188,14 +605,22 @@
                 {{-- ================================================================ --}}
                 {{-- ATTENDANCE LEADERBOARD --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="p-6 lg:p-8 bg-white">
-                        <div class="flex items-center mb-4">
-                            <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <h2 class="text-xl font-semibold text-gray-900">Attendance</h2>
+                <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
+                    <div class="section-header">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-blue mr-4">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Attendance</h2>
+                                <p class="text-gray-600 mt-1">Track attendance performance rankings</p>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="p-8">
                         
                         {{-- ================================================================ --}}
                         {{-- LEADERBOARD DATA --}}
@@ -292,14 +717,22 @@
                 {{-- ================================================================ --}}
                 {{-- DUTY COUNT LEADERBOARD --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="p-6 lg:p-8 bg-white">
-                        <div class="flex items-center mb-4">
-                            <svg class="w-6 h-6 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <h2 class="text-xl font-semibold text-gray-900">Duty Count</h2>
+                <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
+                    <div class="section-header">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-purple mr-4">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Duty Count</h2>
+                                <p class="text-gray-600 mt-1">Track duty participation rankings</p>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="p-8">
                         
                         {{-- ================================================================ --}}
                         {{-- LEADERBOARD DATA --}}
@@ -402,14 +835,22 @@
                 {{-- ================================================================ --}}
                 {{-- QUIZ OVERALL LEADERBOARD --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="p-6 lg:p-8 bg-white">
-                        <div class="flex items-center mb-4">
-                            <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                            </svg>
-                            <h2 class="text-xl font-semibold text-gray-900">Quiz Overall</h2>
+                <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
+                    <div class="section-header">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-green mr-4">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Quiz Overall</h2>
+                                <p class="text-gray-600 mt-1">Track quiz performance rankings</p>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="p-8">
                         
                         {{-- ================================================================ --}}
                         {{-- LEADERBOARD DATA --}}
@@ -506,14 +947,22 @@
                 {{-- ================================================================ --}}
                 {{-- LEARNING PROGRESS LEADERBOARD --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="p-6 lg:p-8 bg-white">
-                        <div class="flex items-center mb-4">
-                            <svg class="w-6 h-6 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                            <h2 class="text-xl font-semibold text-gray-900">Learning Progress</h2>
+                <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
+                    <div class="section-header">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-cyan mr-4">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Learning Progress</h2>
+                                <p class="text-gray-600 mt-1">Track learning progress rankings</p>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="p-8">
                         
                         {{-- ================================================================ --}}
                         {{-- LEADERBOARD DATA --}}
@@ -611,14 +1060,22 @@
             {{-- ================================================================ --}}
             {{-- QUIZ BY CATEGORY LEADERBOARD --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="p-6 lg:p-8 bg-white">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-6 h-6 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
-                        <h2 class="text-xl font-semibold text-gray-900">Quiz by Category</h2>
+            <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden mb-6">
+                <div class="section-header">
+                    <div class="flex items-center">
+                        <div class="icon-wrapper gradient-red mr-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Quiz by Category</h2>
+                            <p class="text-gray-600 mt-1">Track performance across different quiz categories</p>
+                        </div>
                     </div>
+                </div>
+
+                <div class="p-8">
                     
                     {{-- ================================================================ --}}
                     {{-- CATEGORY LEADERBOARDS GRID --}}
@@ -674,17 +1131,19 @@
             {{-- ================================================================ --}}
             {{-- ACHIEVEMENT BADGES SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-visible shadow-sm sm:rounded-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
+            <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-visible">
+                <div class="section-header">
                     <div class="flex items-center">
-                        <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                        </svg>
-                        <h1 class="ml-2 text-2xl font-medium text-gray-900">
-                            Achievement Badges
-                        </h1>
+                        <div class="icon-wrapper gradient-purple mr-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Achievement Badges</h2>
+                            <p class="text-gray-600 mt-1">Hover over badges to see details. Click unlocked badges to display/hide them on your profile.</p>
+                        </div>
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">Hover over badges to see details. Click unlocked badges to display/hide them on your profile.</p>
                 </div>
 
                 <div class="p-6 lg:p-8">
