@@ -5,40 +5,127 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
-            <!-- Header Section -->
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            {{-- ================================================================ --}}
+            {{-- DASHBOARD HEADER --}}
+            {{-- ================================================================ --}}
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-blue rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
                     Training Schedule Management
                 </h1>
-                <p class="text-gray-600">Manage training sessions and track attendance</p>
+                <p class="text-lg text-gray-600">Manage training sessions and track attendance</p>
             </div>
             
-            <!-- Today's Training Section -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
+            {{-- ================================================================ --}}
+            {{-- TODAY'S TRAINING SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header">
                     <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                                <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                Today's Training Sessions
-                            </h2>
-                            <p class="text-gray-600">Manage attendance for ongoing training sessions</p>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Today's Training Sessions</h3>
                         </div>
-                        <button onclick="openAttendanceListModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition duration-200 flex items-center shadow-lg hover:shadow-xl">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="openAttendanceListModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
-                            Attendance List
+                            <span class="flex-shrink-0">Attendance List</span>
                         </button>
                     </div>
+                    <p class="text-gray-600 ml-13">Manage attendance for ongoing training sessions</p>
                 </div>
                 <div class="p-6">
                     <div class="space-y-4">
@@ -119,25 +206,29 @@
                     </div>
                 </div>
             </div>
-                
-            <!-- Training Calendar Section -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
+
+            {{-- ================================================================ --}}
+            {{-- TRAINING CALENDAR SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                Training Calendar
-                            </h2>
-                            <p class="text-gray-600">View scheduled trainings in calendar format</p>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Training Calendar</h3>
+                            </div>
+                            <p class="text-gray-600 ml-13">View scheduled trainings in calendar format</p>
                         </div>
-                        <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            Add Training
+                            <span class="flex-shrink-0">Add Training</span>
                         </button>
                     </div>
                 </div>
@@ -146,16 +237,20 @@
                 </div>
             </div>
 
-            <!-- Activity Time Table Section with Dynamic Filters -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                        Activity Time Table
-                    </h2>
-                    <p class="text-gray-600">Detailed list of all training sessions and their status</p>
+            {{-- ================================================================ --}}
+            {{-- ACTIVITY TIME TABLE SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-purple mr-3 p-2 rounded-md">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Activity Time Table</h3>
+                    </div>
+                    <p class="text-gray-600 ml-13">Detailed list of all training sessions and their status</p>
                 </div>
                 <div class="p-6">
                     <!-- Filter Form -->
