@@ -321,30 +321,47 @@
         </div>
     </div>
 
-    <!-- ===== ALL MODALS SECTION ===== -->
-    <!-- Create/Edit Training Modal -->
-    <div id="trainingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    {{-- ================================================================ --}}
+    {{-- ALL MODALS SECTION --}}
+    {{-- ================================================================ --}}
+
+    {{-- Create/Edit Training Modal --}}
+    <div id="trainingModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <!-- Header with Close Button -->
-                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300">
+                {{-- Header with Close Button --}}
+                <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
                     <div class="flex justify-between items-center">
-                        <h3 id="modalTitle" class="text-xl font-semibold text-gray-900">Create Training Session</h3>
-                        <button onclick="closeModal()" type="button" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200">
+                        <div class="flex items-center gap-3">
+                            <div class="icon-wrapper gradient-blue">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <h3 id="modalTitle" class="text-2xl font-bold text-gray-900">Create Training Session</h3>
+                        </div>
+                        <button onclick="closeModal()" type="button" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
                 </div>
-                
-                <!-- Form -->
-                <form id="trainingForm" class="p-6 space-y-6">
-                    <input type="hidden" id="trainingId" name="training_id">
-                    
-                    <!-- Basic Information -->
-                    <div class="space-y-4">
-                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Basic Information</h4>
+
+                {{-- Form Content --}}
+                <div class="overflow-y-auto max-h-[calc(90vh-180px)]">
+                    <form id="trainingForm" class="p-6 space-y-6">
+                        <input type="hidden" id="trainingId" name="training_id">
+
+                        {{-- Basic Information --}}
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                            </div>
+                            <div class="h-px bg-gradient-to-r from-blue-200 via-blue-300 to-transparent mb-4"></div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -369,9 +386,15 @@
                         </div>
                     </div>
 
-                    <!-- Participants -->
-                    <div class="space-y-4">
-                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Participants</h4>
+                        {{-- Participants --}}
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                                <h4 class="text-lg font-semibold text-gray-900">Participants</h4>
+                            </div>
+                            <div class="h-px bg-gradient-to-r from-green-200 via-green-300 to-transparent mb-4"></div>
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">Select Cadet Intakes *</label>
@@ -382,9 +405,15 @@
                         </div>
                     </div>
 
-                    <!-- Schedule -->
-                    <div class="space-y-4">
-                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Schedule</h4>
+                        {{-- Schedule --}}
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <h4 class="text-lg font-semibold text-gray-900">Schedule</h4>
+                            </div>
+                            <div class="h-px bg-gradient-to-r from-purple-200 via-purple-300 to-transparent mb-4"></div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Start Date/Time -->
@@ -422,9 +451,15 @@
                         </div>
                     </div>
 
-                    <!-- Status -->
-                    <div class="space-y-4">
-                        <h4 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Status</h4>
+                        {{-- Status --}}
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <h4 class="text-lg font-semibold text-gray-900">Status</h4>
+                            </div>
+                            <div class="h-px bg-gradient-to-r from-orange-200 via-orange-300 to-transparent mb-4"></div>
                         
                         <div class="w-full md:w-1/2">
                             <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Training Status *</label>
@@ -437,38 +472,52 @@
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
-                    <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                        <button type="button" onclick="closeModal()" 
-                            class="px-6 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors duration-200">
-                            Cancel
-                        </button>
-                        <button type="submit" 
-                            class="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200 flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span id="submitText">Create Training</span>
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
+
+                {{-- Form Actions Footer --}}
+                <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal()"
+                        class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
+                        Cancel
+                    </button>
+                    <button type="submit" form="trainingForm"
+                        class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span id="submitText">Create Training</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    {{-- Delete Confirmation Modal --}}
+    <div id="deleteModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-sm w-full">
-                <div class="px-6 py-4">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Delete Training Session</h3>
-                    <p class="text-sm text-gray-600">Are you sure you want to delete this training session? This action cannot be undone.</p>
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 overflow-hidden">
+                <div class="px-6 py-5 bg-gradient-to-r from-red-50 to-orange-50">
+                    <div class="flex items-center gap-3">
+                        <div class="icon-wrapper gradient-red">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Delete Training Session</h3>
+                    </div>
                 </div>
-                <div class="px-6 py-4 bg-gray-50 flex justify-end space-x-3">
-                    <button onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md">
+                <div class="px-6 py-5">
+                    <p class="text-gray-700 leading-relaxed">Are you sure you want to delete this training session? This action cannot be undone and all associated data will be permanently removed.</p>
+                </div>
+                <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex justify-end space-x-3">
+                    <button onclick="closeDeleteModal()" class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
                         Cancel
                     </button>
-                    <button id="confirmDelete" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md">
+                    <button id="confirmDelete" class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
                         Delete
                     </button>
                 </div>
@@ -476,18 +525,25 @@
         </div>
     </div>
 
-<!-- Attendance Modal -->
-<div id="attendanceModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+{{-- Attendance Modal --}}
+<div id="attendanceModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm hidden z-50 transition-opacity duration-300">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Header -->
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col transform transition-all duration-300">
+            {{-- Header --}}
+            <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
                 <div class="flex justify-between items-center">
-                    <div>
-                        <h3 class="text-xl font-semibold text-gray-900">Take Attendance</h3>
-                        <p id="trainingTitle" class="text-sm text-gray-600 mt-1"></p>
+                    <div class="flex items-center gap-3">
+                        <div class="icon-wrapper gradient-green">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Take Attendance</h3>
+                            <p id="trainingTitle" class="text-sm text-gray-600 mt-1"></p>
+                        </div>
                     </div>
-                    <button onclick="closeAttendanceModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100">
+                    <button onclick="closeAttendanceModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 p-2 rounded-full transition-all duration-200 hover:rotate-90">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -516,10 +572,16 @@
                             
                             <!-- Quick Actions -->
                             <div class="flex gap-2">
-                                <button onclick="markAllPresent()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium">
+                                <button onclick="markAllPresent()" class="px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
                                     Mark All Present
                                 </button>
-                                <button onclick="markAllAbsent()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium">
+                                <button onclick="markAllAbsent()" class="px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
                                     Mark All Absent
                                 </button>
                             </div>
@@ -543,10 +605,10 @@
                     </div>
 
                     <!-- Filter Buttons -->
-                    <div class="flex gap-2 mb-4">
-                        <button id="filterAll" class="px-3 py-1 text-sm rounded-md bg-blue-600 text-white border" onclick="setAttendanceFilter('all')">All</button>
-                        <button id="filterPresent" class="px-3 py-1 text-sm rounded-md bg-gray-200 text-gray-700 border" onclick="setAttendanceFilter('present')">Present Only</button>
-                        <button id="filterAbsent" class="px-3 py-1 text-sm rounded-md bg-gray-200 text-gray-700 border" onclick="setAttendanceFilter('absent')">Absent Only</button>
+                    <div class="flex gap-2 mb-4 bg-gray-100 p-1 rounded-lg inline-flex">
+                        <button id="filterAll" class="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white shadow-sm transition-all duration-200" onclick="setAttendanceFilter('all')">All</button>
+                        <button id="filterPresent" class="px-4 py-2 text-sm font-medium rounded-md bg-transparent text-gray-700 hover:bg-white transition-all duration-200" onclick="setAttendanceFilter('present')">Present Only</button>
+                        <button id="filterAbsent" class="px-4 py-2 text-sm font-medium rounded-md bg-transparent text-gray-700 hover:bg-white transition-all duration-200" onclick="setAttendanceFilter('absent')">Absent Only</button>
                     </div>
 
                     <!-- Cadet List -->
@@ -554,7 +616,10 @@
 
                     <!-- Save Button -->
                     <div class="mt-6 text-center">
-                        <button onclick="saveAttendance()" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
+                        <button onclick="saveAttendance()" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 mx-auto">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
                             Save Attendance
                         </button>
                     </div>
@@ -562,11 +627,13 @@
 
                 <!-- Error State -->
                 <div id="attendanceError" class="hidden text-center py-12">
-                    <div class="text-red-500 mb-4">
-                        <i class="fas fa-exclamation-triangle text-4xl"></i>
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
                     </div>
-                    <p class="text-gray-600 mb-4" id="errorMessage">Failed to load cadets</p>
-                    <button onclick="loadCadetsForAttendance(currentTrainingId)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                    <p class="text-gray-700 font-medium mb-4" id="errorMessage">Failed to load cadets</p>
+                    <button onclick="loadCadetsForAttendance(currentTrainingId)" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-200">
                         Try Again
                     </button>
                 </div>
@@ -575,15 +642,22 @@
     </div>
 </div>
 
-<!-- Attendance List Modal -->
-<div id="attendanceListModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 hidden z-50">
+{{-- Attendance List Modal --}}
+<div id="attendanceListModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm hidden z-50 transition-opacity duration-300">
     <div class="min-h-full flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Header -->
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col transform transition-all duration-300">
+            {{-- Header --}}
+            <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-semibold text-gray-900">Attendance Reports</h3>
-                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div class="icon-wrapper gradient-purple">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Attendance Reports</h3>
+                    </div>
+                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 p-2 rounded-full transition-all duration-200 hover:rotate-90">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
