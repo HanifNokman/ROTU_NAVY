@@ -5,25 +5,259 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    .fade-in {
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .category-card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-card.selected {
+        border: 2px solid #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .photo-card {
+        transition: all 0.2s ease;
+        border: 1px solid #e5e7eb;
+    }
+
+    .photo-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .gradient-cyan {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .icon-wrapper-sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* BUTTON STYLES */
+    /* ========================================= */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .filter-btn {
+        padding: 0.625rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 1px solid #e5e7eb;
+        background: white;
+    }
+
+    .filter-btn.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+
+    .filter-btn:not(.active):hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    /* ========================================= */
+    /* INFO CARD STYLES */
+    /* ========================================= */
+    .info-card {
+        background: #ffffff;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+
+    .info-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ========================================= */
+    /* MODAL STYLES */
+    /* ========================================= */
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================= */
+    /* UTILITY CLASSES */
+    /* ========================================= */
+    .text-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .shadow-custom {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- ================================================================ --}}
-            {{-- PAGE HEADER --}}
+            {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="relative text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"/>
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    Gallery
-                </h1>
-                <p class="text-gray-600">Browse and manage photos from training sessions</p>
-                <div class="absolute top-0 right-0">
-                    <a href="{{ route('alumni') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700">
-                        View Alumni
-                    </a>
                 </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Gallery</h1>
+                <p class="text-gray-600 text-lg">Browse and manage photos from training sessions</p>
             </div>
 
             @if(session('success'))
@@ -31,17 +265,32 @@
             @endif
 
             {{-- ================================================================ --}}
-            {{-- MAIN GALLERY CONTENT --}}
+            {{-- MAIN CONTENT CARD --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300">
-                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                        <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
-                        Photo Collection
-                    </h2>
-                    <p class="text-gray-600">View and manage training photos organized by category</p>
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+
+                {{-- Card Header --}}
+                <div class="section-header">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper bg-purple-100 mr-3">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                                    Photo Collection
+                                </h2>
+                            </div>
+                            <p class="text-gray-600">View and manage training photos organized by category</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <a href="{{ route('alumni') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700">
+                                View Alumni
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="p-6">
@@ -52,7 +301,7 @@
                         <div class="flex justify-between items-center">
                             <div class="flex flex-wrap gap-3">
                                 <button onclick="filterByCategory('all')"
-                                       class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white flex items-center gap-2"
+                                       class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center gap-2"
                                        data-category="all">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
@@ -62,7 +311,7 @@
 
                                 @foreach($categories as $category)
                                     <button onclick="filterByCategory('{{ $category->id }}')"
-                                           class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center gap-2"
+                                           class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center gap-2"
                                            data-category="{{ $category->id }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
@@ -92,8 +341,8 @@
                     {{-- ================================================================ --}}
                     {{-- GALLERY STATISTICS --}}
                     {{-- ================================================================ --}}
-                    <div class="mb-6 p-4 bg-blue-50 rounded-lg">
-                        <div class="flex flex-wrap gap-4 text-sm text-blue-800">
+                    <div class="mb-6 p-4 rounded-lg" style="background-color: #e8f4fd; border: 1px solid #3c92d9;">
+                        <div class="flex flex-wrap gap-4 text-sm" style="color: #2c5f8a;">
                             <span><strong>Total Pictures:</strong> <span id="totalPictures">{{ $galleries->count() }}</span></span>
                             <span><strong>Categories:</strong> <span id="totalCategories">{{ $categories->count() }}</span></span>
                             <span><strong>Viewing:</strong> <span id="currentViewText">All Categories</span></span>
@@ -166,7 +415,7 @@
                         </div>
 
                         {{-- ================================================================ --}}
-                        {{-- INDIVIDUAL PHOTOS VIEW --}}
+                        {{-- PHOTO GALLERY GRID (HIDDEN BY DEFAULT) --}}
                         {{-- ================================================================ --}}
                         <div id="photosView" class="hidden">
                             <div class="mb-6">
@@ -561,9 +810,11 @@
             buttons.forEach(btn => {
                 const category = btn.dataset.category;
                 if (category === activeCategory) {
-                    btn.className = 'filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white flex items-center gap-2';
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
                 } else {
-                    btn.className = 'filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center gap-2';
+                    btn.classList.remove('active');
+                    btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
                 }
             });
         }
@@ -641,7 +892,7 @@
                 const descEscaped = photo.description ? photo.description.replace(/'/g, "\\'").replace(/"/g, '&quot;') : '';
                 
                 return `
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                <div class="photo-card bg-white rounded-xl overflow-hidden">
                     <div class="relative h-48 bg-gray-200">
                         ${photo.image_path ?
                             `<img src="{{ asset('') }}${photo.image_path}"
@@ -655,20 +906,20 @@
                             </div>`
                         }
                     </div>
-                    
+
                     <div class="p-4">
                         <h3 class="font-semibold text-lg text-gray-900 mb-2">${photo.title || 'Untitled'}</h3>
-                        ${photo.description ? 
-                            `<p class="text-sm text-gray-600 mb-3">${photo.description.length > 100 ? photo.description.substring(0, 100) + '...' : photo.description}</p>` : 
+                        ${photo.description ?
+                            `<p class="text-sm text-gray-600 mb-3">${photo.description.length > 100 ? photo.description.substring(0, 100) + '...' : photo.description}</p>` :
                             ''
                         }
-                        
+
                         <div class="mb-3">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                 ${photo.category?.name || 'N/A'}
                             </span>
                         </div>
-                        
+
                         <div class="flex gap-2">
                             <button type="button"
                                     onclick="openEditGallery(${photo.id}, '${titleEscaped}', '${descEscaped}', ${photo.gallery_category_id})"
