@@ -205,6 +205,10 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     // Reactivate Cadet
     Route::post('/cadets/{cadet}/reactivate', [CadetManagementController::class, 'reactivate'])->name('cadets.reactivate');
 
+    // Best Cadet and Best Academic Toggle
+    Route::post('/cadets/{cadet}/toggle-best-cadet', [CadetManagementController::class, 'toggleBestCadet'])->name('cadets.toggle-best-cadet');
+    Route::post('/cadets/{cadet}/toggle-best-academic', [CadetManagementController::class, 'toggleBestAcademic'])->name('cadets.toggle-best-academic');
+
     // ------------------------------------------------------------------------
     // Training Management
     // ------------------------------------------------------------------------

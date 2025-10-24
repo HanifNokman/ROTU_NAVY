@@ -2078,6 +2078,8 @@ function renderBestCadets(cadets) {
                 ? `/storage/${cadet.profile_pic}` 
                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(cadet.user_name)}`;
             
+            const isBestCadet = cadet.is_best_cadet || false;
+
             card.innerHTML = `
                 <div class="text-center mb-3">
                     <div class="text-2xl font-bold text-yellow-600 mb-1">#${index + 1}</div>
@@ -2098,6 +2100,12 @@ function renderBestCadets(cadets) {
                         <div class="text-center mt-1">
                             <div class="text-sm font-semibold text-yellow-600">${parseFloat(cadet.current_cgpa || 0).toFixed(2)} CGPA</div>
                         </div>
+                    </div>
+                    <div class="border-t border-yellow-200 pt-2 mt-2">
+                        <button onclick="toggleBestCadet(${cadet.id}, this)"
+                                class="w-full py-2 px-3 rounded-md text-xs font-semibold transition-all ${isBestCadet ? 'bg-yellow-500 text-white hover:bg-yellow-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">
+                            ${isBestCadet ? '★ Best Cadet' : 'Mark as Best Cadet'}
+                        </button>
                     </div>
                 </div>
             `;
@@ -2154,6 +2162,8 @@ function renderBestAcademicCadets(cadets) {
                 ? `/storage/${cadet.profile_pic}` 
                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(cadet.user_name)}`;
             
+            const isBestAcademic = cadet.is_best_academic || false;
+
             card.innerHTML = `
                 <div class="text-center mb-3">
                     <div class="text-2xl font-bold text-green-600 mb-1">#${index + 1}</div>
@@ -2171,6 +2181,12 @@ function renderBestAcademicCadets(cadets) {
                         <div class="text-center mt-1">
                             <div class="text-sm font-semibold text-green-600">${cadet.academic_points || 0} pts</div>
                         </div>
+                    </div>
+                    <div class="border-t border-green-200 pt-2 mt-2">
+                        <button onclick="toggleBestAcademic(${cadet.id}, this)"
+                                class="w-full py-2 px-3 rounded-md text-xs font-semibold transition-all ${isBestAcademic ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">
+                            ${isBestAcademic ? '★ Best Academic' : 'Mark as Best Academic'}
+                        </button>
                     </div>
                 </div>
             `;
@@ -2457,6 +2473,84 @@ function attachSuspendedCadetEventListeners() {
             const cadetName = this.dataset.cadetName;
             showDeleteModal(cadetId, cadetName);
         });
+    });
+}
+
+// ============================================================
+// FUNCTION: Toggle Best Cadet Status
+// ============================================================
+function toggleBestCadet(cadetId, button) {
+    if (!confirm('Are you sure you want to toggle Best Cadet status for this cadet?')) {
+        return;
+    }
+
+    fetch(`/instructor/cadets/${cadetId}/toggle-best-cadet`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const isBestCadet = data.is_best_cadet;
+            button.className = `w-full py-2 px-3 rounded-md text-xs font-semibold transition-all ${isBestCadet ? 'bg-yellow-500 text-white hover:bg-yellow-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+            button.textContent = isBestCadet ? '★ Best Cadet' : 'Mark as Best Cadet';
+
+            // Show success message
+            alert(data.message);
+
+            // Reload the best cadets section
+            const intakeYear = document.getElementById('bestCadetIntakeFilter').value;
+            loadBestCadets(intakeYear);
+        } else {
+            alert('Error: ' + (data.message || 'Failed to update Best Cadet status'));
+        }
+    })
+    .catch(error => {
+        console.error('Error toggling Best Cadet status:', error);
+        alert('Failed to update Best Cadet status. Please try again.');
+    });
+}
+
+// ============================================================
+// FUNCTION: Toggle Best Academic Status
+// ============================================================
+function toggleBestAcademic(cadetId, button) {
+    if (!confirm('Are you sure you want to toggle Best Academic status for this cadet?')) {
+        return;
+    }
+
+    fetch(`/instructor/cadets/${cadetId}/toggle-best-academic`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const isBestAcademic = data.is_best_academic;
+            button.className = `w-full py-2 px-3 rounded-md text-xs font-semibold transition-all ${isBestAcademic ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+            button.textContent = isBestAcademic ? '★ Best Academic' : 'Mark as Best Academic';
+
+            // Show success message
+            alert(data.message);
+
+            // Reload the best academic section
+            const intakeYear = document.getElementById('bestAcademicIntakeFilter').value;
+            loadBestAcademicCadets(intakeYear);
+        } else {
+            alert('Error: ' + (data.message || 'Failed to update Best Academic status'));
+        }
+    })
+    .catch(error => {
+        console.error('Error toggling Best Academic status:', error);
+        alert('Failed to update Best Academic status. Please try again.');
     });
 }
     </script>

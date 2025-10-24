@@ -22,6 +22,8 @@ return new class extends Migration {
             $table->enum('position', ['Normal','CO','Thana','Zayn','PMC'])->default('Normal');
             $table->enum('gender', ['Male','Female'])->nullable();
             $table->enum('cadet_status', ['Active','Suspended','Completed','Inactive'])->default('Active');
+            $table->boolean('is_best_cadet')->default(false);
+            $table->boolean('is_best_academic')->default(false);
             $table->integer('daily_duty_count')->nullable();
             $table->decimal('BMI', 4, 1)->nullable();
             $table->date('BMI_update_date')->nullable();

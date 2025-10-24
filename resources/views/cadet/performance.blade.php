@@ -1229,16 +1229,20 @@
                                         
                                         {{-- Hover Tooltip --}}
                                         <div class="badge-tooltip absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                                            <div class="font-semibold mb-2 text-sm">{{ $unlockedBadge['badge']->name }}</div>
-                                            <div class="mb-2 text-gray-300">{{ $unlockedBadge['badge']->description }}</div>
+                                            <div class="font-semibold mb-2 text-sm text-center">{{ $unlockedBadge['badge']->name }}</div>
+                                            <div class="mb-2 text-gray-300 text-center">{{ $unlockedBadge['badge']->description }}</div>
                                             <div class="pt-2 border-t border-gray-700 space-y-1">
                                                 <div class="flex items-center text-gray-400">
                                                     <i class="fas fa-unlock-alt mr-2"></i>
                                                     <span class="text-xs">{{ $unlockedBadge['badge']->unlock_criteria }}</span>
                                                 </div>
-                                                <div class="flex items-center text-green-400">
+                                                <div class="flex items-center justify-center text-green-400">
                                                     <i class="fas fa-calendar-check mr-2"></i>
                                                     <span class="text-xs">Unlocked: {{ $unlockedBadge['unlocked_at']->format('M d, Y') }}</span>
+                                                </div>
+                                                <div class="flex items-center justify-center text-yellow-400">
+                                                    <i class="fas fa-trophy mr-2"></i>
+                                                    <span class="text-xs">{{ $unlockedBadge['unlock_percentage'] }}% of all cadets</span>
                                                 </div>
                                             </div>
                                             {{-- Arrow --}}
@@ -1317,10 +1321,14 @@
                                                     <div class="badge-tooltip absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
                                                         <div class="font-semibold mb-2 text-sm">{{ $badge->name }}</div>
                                                         <div class="mb-2 text-gray-300">{{ $badge->description }}</div>
-                                                        <div class="pt-2 border-t border-gray-700">
+                                                        <div class="pt-2 border-t border-gray-700 space-y-1">
                                                             <div class="flex items-start text-yellow-400">
                                                                 <i class="fas fa-trophy mr-2 mt-0.5"></i>
                                                                 <span class="text-xs">How to unlock: {{ $badge->unlock_criteria }}</span>
+                                                            </div>
+                                                            <div class="flex items-center text-blue-400">
+                                                                <i class="fas fa-users mr-2"></i>
+                                                                <span class="text-xs">{{ $badge->unlock_percentage }}% of all cadets have this badge</span>
                                                             </div>
                                                         </div>
                                                         {{-- Arrow --}}
