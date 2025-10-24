@@ -261,20 +261,27 @@
         border: none;
     }
 
-    .btn-toggle.active {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    /* Pending button - RED when active */
+    #cadet-pending-view-btn.active {
+        background: #ef4444;
         color: white;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Leaderboard button - YELLOW when active */
+    #cadet-leaderboard-view-btn.active {
+        background: #eab308;
+        color: white;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .btn-toggle:not(.active) {
         background: transparent;
-        color: #64748b;
+        color: #4b5563;
     }
 
     .btn-toggle:not(.active):hover {
-        background: #f1f5f9;
-        color: #334155;
+        color: #111827;
     }
 
     /* ========================================= */
@@ -854,9 +861,9 @@
                                 $maxCount = $dutyCadets->max('daily_duty_count') ?: 1;
                             @endphp
 
-                            @forelse ($dutyCadets as $index => $cadet)
+                            @forelse ($dutyCadets as $index => $dutyCadet)
                                 @php
-                                    $percentage = ($cadet->daily_duty_count / $maxCount) * 100;
+                                    $percentage = ($dutyCadet->daily_duty_count / $maxCount) * 100;
                                     if ($percentage < 50) {
                                         $ratio = $percentage / 50;
                                         $r = 255;
@@ -880,13 +887,13 @@
 
                                     <div class="flex-1 w-full">
                                         <div class="text-sm font-medium mb-1 text-center sm:text-left">
-                                            #{{ $index + 1 }} - {{ $cadet->user->name ?? '-' }}
+                                            #{{ $index + 1 }} - {{ $dutyCadet->user->name ?? '-' }}
                                         </div>
 
                                         <div class="relative h-5 rounded-full bg-gray-200 overflow-hidden">
                                             <div class="absolute top-0 left-0 h-full rounded-full flex items-center" style="width: {{ $percentage }}%; background-color: {{ $bgColor }};">
                                                 <span class="text-white font-semibold text-sm pl-2 whitespace-nowrap">
-                                                    {{ $cadet->daily_duty_count }} {{ Str::plural('Day', $cadet->daily_duty_count) }}
+                                                    {{ $dutyCadet->daily_duty_count }} {{ Str::plural('Day', $dutyCadet->daily_duty_count) }}
                                                 </span>
                                             </div>
                                         </div>
@@ -998,7 +1005,12 @@
             {{-- INTAKE ABSENCE TRACKING SECTION --}}
             {{-- Only visible for CO, Thana, Zayn positions --}}
             {{-- ================================================================ --}}
-            @if(in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn']))
+            @php
+                $allowedPositions = ['CO', 'Thana', 'Zayn'];
+                $cadetPosition = trim($cadet->position ?? '');
+                $canViewAbsence = in_array(strtolower($cadetPosition), array_map('strtolower', $allowedPositions));
+            @endphp
+            @if($canViewAbsence)
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card" x-data="{ open: false }">
                 <div class="section-header" @click="open = !open" style="cursor: pointer;">
                     <div class="flex items-center justify-between mb-2">
