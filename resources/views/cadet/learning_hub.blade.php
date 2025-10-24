@@ -601,170 +601,188 @@
                         </h4>
 
                         <div id="materialsContainer">
-                            @forelse($materials->groupBy('learning_material_category_id') as $grouped)
-                                @foreach($grouped as $material)
-                                    @php
-                                        $materialType = $material->material_type;
-                                        $cadetId = auth()->user()->cadet->id ?? null;
-                                        $isCompleted = $cadetId ? $material->isCompletedBy($cadetId) : false;
-                                        $isStarted = $cadetId ? $material->isStartedBy($cadetId) : false;
-                                    @endphp
-                                    
-                                    <div id="material-{{ $material->id }}" 
-                                        class="border {{ $isCompleted ? 'border-green-300' : 'border-gray-200' }} rounded-lg mb-4 transition-all duration-300"
-                                        data-material-id="{{ $material->id }}"
-                                        data-material-type="{{ $materialType }}"
-                                        data-material-url="{{ $material->file_url }}">
+                            @if(!request()->filled('category'))
+                                <!-- Placeholder when no category selected -->
+                                <div class="text-center py-16 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border-2 border-dashed border-gray-300">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+                                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Select a Category to Begin</h3>
+                                    <p class="text-gray-600 mb-4 max-w-md mx-auto">
+                                        Please choose a category from the dropdown above to view available learning materials.
+                                    </p>
+                                    <svg class="w-8 h-8 text-blue-500 mx-auto animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                    </svg>
+                                </div>
+                            @else
+                                @forelse($materials->groupBy('learning_material_category_id') as $grouped)
+                                    @foreach($grouped as $material)
+                                        @php
+                                            $materialType = $material->material_type;
+                                            $cadetId = auth()->user()->cadet->id ?? null;
+                                            $isCompleted = $cadetId ? $material->isCompletedBy($cadetId) : false;
+                                            $isStarted = $cadetId ? $material->isStartedBy($cadetId) : false;
+                                        @endphp
                                         
-                                        <button 
-                                            id="material-button-{{ $material->id }}"
-                                            onclick="toggleMaterial({{ $material->id }}, '{{ $materialType }}', '{{ addslashes($material->file_url ?? '') }}')"
-                                            class="w-full flex justify-between items-center px-6 py-2 {{ $isCompleted ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-blue-100 hover:bg-blue-200 text-blue-800' }} text-left font-medium text-lg rounded-t-lg transition-colors duration-300">
-                                            <span class="flex items-center gap-2">
-                                                <svg id="checkmark-{{ $material->id }}" 
-                                                    class="w-5 h-5 text-green-600 {{ $isCompleted ? '' : 'hidden' }}" 
-                                                    fill="currentColor" 
-                                                    viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                                </svg>
-                                                {{ $material->title }}
-                                            </span>
-                                            <div class="flex items-center gap-2">
-                                                <span id="completion-badge-{{ $material->id }}" 
-                                                    class="{{ $isCompleted ? '' : 'hidden' }} text-green-700 text-sm font-semibold bg-green-100 px-2 py-1 rounded-full">
-                                                    ✓ Completed
+                                        <div id="material-{{ $material->id }}" 
+                                            class="border {{ $isCompleted ? 'border-green-300' : 'border-gray-200' }} rounded-lg mb-4 transition-all duration-300"
+                                            data-material-id="{{ $material->id }}"
+                                            data-material-type="{{ $materialType }}"
+                                            data-material-url="{{ $material->file_url }}">
+                                            
+                                            <button 
+                                                id="material-button-{{ $material->id }}"
+                                                onclick="toggleMaterial({{ $material->id }}, '{{ $materialType }}', '{{ addslashes($material->file_url ?? '') }}')"
+                                                class="w-full flex justify-between items-center px-6 py-2 {{ $isCompleted ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-blue-100 hover:bg-blue-200 text-blue-800' }} text-left font-medium text-lg rounded-t-lg transition-colors duration-300">
+                                                <span class="flex items-center gap-2">
+                                                    <svg id="checkmark-{{ $material->id }}" 
+                                                        class="w-5 h-5 text-green-600 {{ $isCompleted ? '' : 'hidden' }}" 
+                                                        fill="currentColor" 
+                                                        viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                    {{ $material->title }}
                                                 </span>
-                                                <svg id="chevron-{{ $material->id }}"
-                                                    class="w-5 h-5 transform transition-transform" 
-                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </div>
-                                        </button>
-                                        
-                                        <div id="material-content-{{ $material->id }}" 
-                                            style="display: none;" 
-                                            class="p-4 bg-white rounded-b-lg border-t">
-                                            <div class="flex flex-col md:flex-row gap-4">
-                                                @if($material->file_url && $material->description && in_array($materialType, ['video', 'audio', 'image']))
-                                                    <div class="md:w-[60%]">
-                                                        @if($materialType === 'video')
-                                                            <video id="video-{{ $material->id }}" 
-                                                                controls 
-                                                                class="w-full rounded"
-                                                                data-material-id="{{ $material->id }}">
-                                                                <source src="{{ asset($material->file_url) }}" type="video/mp4">
-                                                            </video>
-                                                        @elseif($materialType === 'audio')
-                                                            <audio id="audio-{{ $material->id }}" 
-                                                                controls 
-                                                                class="w-full"
-                                                                data-material-id="{{ $material->id }}">
-                                                                <source src="{{ asset($material->file_url) }}" type="audio/mpeg">
-                                                            </audio>
-                                                        @elseif($materialType === 'image')
-                                                            <img src="{{ asset($material->file_url) }}" 
-                                                                alt="Material Image" 
-                                                                class="w-full h-auto rounded">
-                                                        @endif
+                                                <div class="flex items-center gap-2">
+                                                    <span id="completion-badge-{{ $material->id }}" 
+                                                        class="{{ $isCompleted ? '' : 'hidden' }} text-green-700 text-sm font-semibold bg-green-100 px-2 py-1 rounded-full">
+                                                        ✓ Completed
+                                                    </span>
+                                                    <svg id="chevron-{{ $material->id }}"
+                                                        class="w-5 h-5 transform transition-transform" 
+                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                            
+                                            <div id="material-content-{{ $material->id }}" 
+                                                style="display: none;" 
+                                                class="p-4 bg-white rounded-b-lg border-t">
+                                                <div class="flex flex-col md:flex-row gap-4">
+                                                    @if($material->file_url && $material->description && in_array($materialType, ['video', 'audio', 'image']))
+                                                        <div class="md:w-[60%]">
+                                                            @if($materialType === 'video')
+                                                                <video id="video-{{ $material->id }}" 
+                                                                    controls 
+                                                                    class="w-full rounded"
+                                                                    data-material-id="{{ $material->id }}">
+                                                                    <source src="{{ asset($material->file_url) }}" type="video/mp4">
+                                                                </video>
+                                                            @elseif($materialType === 'audio')
+                                                                <audio id="audio-{{ $material->id }}" 
+                                                                    controls 
+                                                                    class="w-full"
+                                                                    data-material-id="{{ $material->id }}">
+                                                                    <source src="{{ asset($material->file_url) }}" type="audio/mpeg">
+                                                                </audio>
+                                                            @elseif($materialType === 'image')
+                                                                <img src="{{ asset($material->file_url) }}" 
+                                                                    alt="Material Image" 
+                                                                    class="w-full h-auto rounded">
+                                                            @endif
+                                                        </div>
+                                                        <div class="md:w-[40%] text-gray-700">
+                                                            <p>{{ $material->description }}</p>
+                                                        </div>
+                                                    @elseif($material->file_url && in_array($materialType, ['video', 'audio', 'image']))
+                                                        <div class="w-full flex justify-center">
+                                                            @if($materialType === 'video')
+                                                                <video id="video-{{ $material->id }}" 
+                                                                    controls 
+                                                                    class="max-w-lg w-full rounded"
+                                                                    data-material-id="{{ $material->id }}">
+                                                                    <source src="{{ asset($material->file_url) }}" type="video/mp4">
+                                                                </video>
+                                                            @elseif($materialType === 'audio')
+                                                                <audio id="audio-{{ $material->id }}" 
+                                                                    controls 
+                                                                    class="w-full max-w-lg"
+                                                                    data-material-id="{{ $material->id }}">
+                                                                    <source src="{{ asset($material->file_url) }}" type="audio/mpeg">
+                                                                </audio>
+                                                            @elseif($materialType === 'image')
+                                                                <img src="{{ asset($material->file_url) }}" 
+                                                                    alt="Material Image" 
+                                                                    class="max-w-lg w-full h-auto rounded">
+                                                            @endif
+                                                        </div>
+                                                    @elseif($materialType === 'document' && $material->file_url)
+                                                        <div class="w-full">
+                                                            <a href="{{ asset($material->file_url) }}" 
+                                                            target="_blank"
+                                                            class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors">
+                                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                                </svg>
+                                                                View Document
+                                                            </a>
+                                                            @if($material->description)
+                                                                <p class="mt-4 text-gray-700">{{ $material->description }}</p>
+                                                            @endif
+                                                        </div>
+                                                    @else
+                                                        <div class="w-full text-gray-700">
+                                                            <p>{{ $material->description ?? 'No description available' }}</p>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                
+                                                @if(in_array($materialType, ['video', 'audio']))
+                                                    <div id="progress-indicator-{{ $material->id }}" class="mt-4 hidden">
+                                                        <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
+                                                            <span>Viewing Progress</span>
+                                                            <span id="progress-percentage-{{ $material->id }}">0%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                                            <div id="progress-bar-{{ $material->id }}" 
+                                                                class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                                                                style="width: 0%"></div>
+                                                        </div>
                                                     </div>
-                                                    <div class="md:w-[40%] text-gray-700">
-                                                        <p>{{ $material->description }}</p>
-                                                    </div>
-                                                @elseif($material->file_url && in_array($materialType, ['video', 'audio', 'image']))
-                                                    <div class="w-full flex justify-center">
-                                                        @if($materialType === 'video')
-                                                            <video id="video-{{ $material->id }}" 
-                                                                controls 
-                                                                class="max-w-lg w-full rounded"
-                                                                data-material-id="{{ $material->id }}">
-                                                                <source src="{{ asset($material->file_url) }}" type="video/mp4">
-                                                            </video>
-                                                        @elseif($materialType === 'audio')
-                                                            <audio id="audio-{{ $material->id }}" 
-                                                                controls 
-                                                                class="w-full max-w-lg"
-                                                                data-material-id="{{ $material->id }}">
-                                                                <source src="{{ asset($material->file_url) }}" type="audio/mpeg">
-                                                            </audio>
-                                                        @elseif($materialType === 'image')
-                                                            <img src="{{ asset($material->file_url) }}" 
-                                                                alt="Material Image" 
-                                                                class="max-w-lg w-full h-auto rounded">
-                                                        @endif
-                                                    </div>
-                                                @elseif($materialType === 'document' && $material->file_url)
-                                                    <div class="w-full">
-                                                        <a href="{{ asset($material->file_url) }}" 
-                                                        target="_blank"
-                                                        class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors">
-                                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                                            </svg>
-                                                            View Document
-                                                        </a>
-                                                        @if($material->description)
-                                                            <p class="mt-4 text-gray-700">{{ $material->description }}</p>
-                                                        @endif
-                                                    </div>
-                                                @else
-                                                    <div class="w-full text-gray-700">
-                                                        <p>{{ $material->description ?? 'No description available' }}</p>
+                                                @endif
+
+                                                @if($isStarted || $isCompleted)
+                                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                                        <div class="flex items-center justify-between text-sm">
+                                                            <span class="text-gray-600">
+                                                                @if($isCompleted)
+                                                                    <span class="flex items-center text-green-600">
+                                                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                                        </svg>
+                                                                        Completed
+                                                                    </span>
+                                                                @else
+                                                                    <span class="flex items-center text-blue-600">
+                                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                        </svg>
+                                                                        In Progress
+                                                                    </span>
+                                                                @endif
+                                                            </span>
+                                                            @php
+                                                                $progress = $material->getProgressFor($cadetId);
+                                                            @endphp
+                                                            @if($progress && $progress->started_at)
+                                                                <span class="text-gray-500 text-xs">
+                                                                    Started: {{ $progress->started_at->diffForHumans() }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>
-                                            
-                                            @if(in_array($materialType, ['video', 'audio']))
-                                                <div id="progress-indicator-{{ $material->id }}" class="mt-4 hidden">
-                                                    <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
-                                                        <span>Viewing Progress</span>
-                                                        <span id="progress-percentage-{{ $material->id }}">0%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                                        <div id="progress-bar-{{ $material->id }}" 
-                                                            class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                                                            style="width: 0%"></div>
-                                                    </div>
-                                                </div>
-                                            @endif
-
-                                            @if($isStarted || $isCompleted)
-                                                <div class="mt-4 pt-4 border-t border-gray-200">
-                                                    <div class="flex items-center justify-between text-sm">
-                                                        <span class="text-gray-600">
-                                                            @if($isCompleted)
-                                                                <span class="flex items-center text-green-600">
-                                                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                                                    </svg>
-                                                                    Completed
-                                                                </span>
-                                                            @else
-                                                                <span class="flex items-center text-blue-600">
-                                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                                    </svg>
-                                                                    In Progress
-                                                                </span>
-                                                            @endif
-                                                        </span>
-                                                        @php
-                                                            $progress = $material->getProgressFor($cadetId);
-                                                        @endphp
-                                                        @if($progress && $progress->started_at)
-                                                            <span class="text-gray-500 text-xs">
-                                                                Started: {{ $progress->started_at->diffForHumans() }}
-                                                            </span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            @endif
                                         </div>
-                                    </div>
-                                @endforeach
-                            @empty
-                                <div class="text-center text-gray-500 py-10">No learning materials found.</div>
-                            @endforelse
+                                    @endforeach
+                                @empty
+                                    <div class="text-center text-gray-500 py-10">No learning materials found for this category.</div>
+                                @endforelse
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -2379,15 +2397,33 @@
         }
 
         // Function to filter materials by category
+        // Function to filter materials by category
         function filterMaterials(categoryId) {
             const materialsContainer = document.getElementById('materialsContainer');
-            const materialDropdown = document.getElementById('materialDropdown');
+
+            // If no category selected, show placeholder
+            if (!categoryId) {
+                materialsContainer.innerHTML = `
+                    <div class="text-center py-16 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border-2 border-dashed border-gray-300">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+                            <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Select a Category to Begin</h3>
+                        <p class="text-gray-600 mb-4 max-w-md mx-auto">
+                            Please choose a category from the dropdown above to view available learning materials.
+                        </p>
+                        <svg class="w-8 h-8 text-blue-500 mx-auto animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                        </svg>
+                    </div>
+                `;
+                return;
+            }
 
             // Show loading state
             materialsContainer.innerHTML = '<div class="text-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading materials...</p></div>';
-
-            // Update material dropdown
-            materialDropdown.innerHTML = '<option value="">Choose a material...</option>';
 
             // Fetch materials via AJAX
             fetch(`/api/materials?category=${categoryId}`, {
@@ -2399,7 +2435,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.length === 0) {
-                    materialsContainer.innerHTML = '<div class="text-center text-gray-500 py-10">No learning materials found.</div>';
+                    materialsContainer.innerHTML = '<div class="text-center text-gray-500 py-10">No learning materials found for this category.</div>';
                     return;
                 }
 
@@ -2512,9 +2548,6 @@
                             </div>
                         </div>
                     `;
-
-                    // Add to dropdown
-                    materialDropdown.innerHTML += `<option value="material-${material.id}">${material.title}</option>`;
                 });
 
                 materialsContainer.innerHTML = materialsHTML;
