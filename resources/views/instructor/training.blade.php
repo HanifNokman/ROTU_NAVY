@@ -84,6 +84,34 @@
     .gradient-red {
         background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     }
+
+    /* ========================================= */
+    /* FULLCALENDAR CUSTOMIZATION */
+    /* ========================================= */
+    .fc {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .fc .fc-toolbar {
+        padding: 1rem;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    .fc .fc-button-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .fc .fc-button-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    }
+
+    .fc .fc-button-primary:not(:disabled):active,
+    .fc .fc-button-primary:not(:disabled).fc-button-active {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -207,36 +235,53 @@
                 </div>
             </div>
 
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
             {{-- ================================================================ --}}
-            {{-- TRAINING CALENDAR SECTION --}}
+            {{-- TRAINING CALENDAR --}}
             {{-- ================================================================ --}}
-            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
-                <div class="section-header">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div>
-                            <div class="flex items-center mb-2">
-                                <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <h3 class="text-2xl font-bold text-gray-900">Training Calendar</h3>
-                            </div>
-                            <p class="text-gray-600 ml-13">View scheduled trainings in calendar format</p>
-                        </div>
-                        <button onclick="openCreateModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            <div class="section-header flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                <div>
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-blue mr-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <span class="flex-shrink-0">Add Training</span>
-                        </button>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Training Calendar</h2>
                     </div>
+                    <p class="text-gray-600 ml-13">View scheduled trainings in calendar format</p>
                 </div>
-                <div class="p-6">
-                    <div id="calendar" style="min-height: 500px;"></div>
-                </div>
+
+                {{-- Add Training Button (Header Right-Aligned) --}}
+                <button onclick="openCreateModal()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap mt-4 md:mt-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Add Training</span>
+                </button>
             </div>
 
+            <div class="p-8 pt-4">
+                {{-- Calendar --}}
+                <div id="calendar" style="min-height: 500px;"></div>
+
+                {{-- Empty State (Optional for UI parity with Cadet view) --}}
+                @if(empty($calendarEvents))
+                    <div class="text-center py-16">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">No Training Sessions</h3>
+                        <p class="text-gray-600 text-lg">No training sessions scheduled at the moment.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
             {{-- ================================================================ --}}
             {{-- ACTIVITY TIME TABLE SECTION --}}
             {{-- ================================================================ --}}
