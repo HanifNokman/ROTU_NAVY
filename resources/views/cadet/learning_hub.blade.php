@@ -414,7 +414,7 @@
             <div class="text-center mb-8">
                 <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
                     <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                     </svg>
                 </div>
                 <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Learning Hub</h1>
@@ -846,35 +846,44 @@
     </div>
 
     <!-- Quiz Modal - Fixed Visibility -->
-    <div id="quizModal" 
-        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" 
-        x-data="quizData()" 
+    <div id="quizModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity duration-300"
+        x-data="quizData()"
         :class="{ 'hidden': !window.modalVisible }"
         x-show="window.modalVisible"
         style="display: none;">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 hover:shadow-3xl animate-modalSlideIn">
                 <!-- Quiz Header -->
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200 sticky top-0">
+                <div class="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 p-6 rounded-t-xl sticky top-0 z-10">
                     <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-semibold text-gray-900">Quiz in Progress</h2>
-                            <p class="text-gray-600" x-show="questions.length > 0" x-text="`Question ${currentQuestion + 1} of ${questions.length}`"></p>
+                        <div class="flex items-center">
+                            <div class="bg-white bg-opacity-20 p-3 rounded-lg mr-3 transform hover:scale-110 transition-transform duration-200">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-white tracking-wide">Quiz in Progress</h2>
+                                <p class="text-green-100 text-sm mt-1" x-show="questions.length > 0" x-text="`Question ${currentQuestion + 1} of ${questions.length}`"></p>
+                            </div>
                         </div>
                         <div class="flex items-center gap-4">
-                            <div class="text-right">
-                                <div class="text-lg font-semibold text-red-600" x-text="formatTime(timeRemaining)"></div>
-                                <div class="text-sm text-gray-500">Time Remaining</div>
+                            <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2 text-right">
+                                <div class="text-xl font-bold text-white" x-text="formatTime(timeRemaining)"></div>
+                                <div class="text-xs text-green-100 font-medium">Time Remaining</div>
                             </div>
-                        <button onclick="QuizManager.closeQuiz()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
-                            ×
-                        </button>
+                            <button onclick="QuizManager.closeQuiz()" class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-all duration-200 hover:rotate-90 transform">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
-                    
+
                     <!-- Progress Bar -->
-                    <div class="mt-4 bg-gray-200 rounded-full h-2" x-show="questions.length > 0">
-                        <div class="bg-green-600 h-2 rounded-full transition-all duration-300" 
+                    <div class="mt-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-full h-3 overflow-hidden" x-show="questions.length > 0">
+                        <div class="bg-gradient-to-r from-yellow-300 via-green-300 to-emerald-300 h-3 rounded-full transition-all duration-500 shadow-lg"
                             :style="`width: ${questions.length > 0 ? ((currentQuestion + 1) / questions.length) * 100 : 0}%`"></div>
                     </div>
                 </div>
@@ -886,78 +895,116 @@
                 </div>
 
                 <!-- Quiz Content -->
-                <div class="p-6" x-show="isActive && !showResults && questions.length > 0">
+                <div class="p-8 bg-gradient-to-b from-white to-gray-50" x-show="isActive && !showResults && questions.length > 0">
                     <div x-show="currentQuestion < questions.length">
                         <!-- Question -->
-                        <div class="mb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4" x-text="questions[currentQuestion]?.question_text"></h3>
-                            
-                            <!-- Supporting File -->
-                            <div x-show="questions[currentQuestion]?.file_url" class="mb-4">
-                                <div x-show="isImage(questions[currentQuestion]?.file_url)">
-                                    <img :src="`/${questions[currentQuestion]?.file_url}`" alt="Question Image" class="max-w-md rounded-lg">
+                        <div class="mb-8">
+                            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-l-4 border-emerald-600 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-200">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 bg-emerald-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
+                                        <span x-text="currentQuestion + 1"></span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-semibold text-gray-900 leading-relaxed" x-text="questions[currentQuestion]?.question_text"></h3>
+                                    </div>
                                 </div>
-                                <div x-show="isVideo(questions[currentQuestion]?.file_url)">
-                                    <video controls class="max-w-md rounded-lg">
+                            </div>
+
+                            <!-- Supporting File -->
+                            <div x-show="questions[currentQuestion]?.file_url" class="mt-4">
+                                <div x-show="isImage(questions[currentQuestion]?.file_url)" class="bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
+                                    <p class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        Reference Image
+                                    </p>
+                                    <img :src="`/${questions[currentQuestion]?.file_url}`" alt="Question Image" class="max-w-full rounded-lg shadow-md mx-auto">
+                                </div>
+                                <div x-show="isVideo(questions[currentQuestion]?.file_url)" class="bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
+                                    <p class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                        </svg>
+                                        Reference Video
+                                    </p>
+                                    <video controls class="max-w-full rounded-lg shadow-md mx-auto">
                                         <source :src="`/${questions[currentQuestion]?.file_url}`" type="video/mp4">
                                     </video>
                                 </div>
                                 <div x-show="isDocument(questions[currentQuestion]?.file_url)">
-                                    <a :href="`/${questions[currentQuestion]?.file_url}`" target="_blank" 
-                                    class="inline-flex items-center px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <a :href="`/${questions[currentQuestion]?.file_url}`" target="_blank"
+                                    class="inline-flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 font-semibold">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                         </svg>
-                                        View Document
+                                        View Reference Document
+                                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                        </svg>
                                     </a>
                                 </div>
                             </div>
                         </div>
 
                         <!-- MCQ Options -->
-                        <div x-show="questions[currentQuestion]?.question_type === 'MCQ'" class="space-y-3 mb-6">
+                        <div x-show="questions[currentQuestion]?.question_type === 'MCQ'" class="space-y-3 mb-8 mt-6">
                             <template x-for="[key, value] in Object.entries(questions[currentQuestion]?.shuffled_options || {})" :key="key">
-                                <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                    <input type="radio" 
-                                        :name="`question_${questions[currentQuestion]?.id}`" 
-                                        :value="key" 
+                                <label class="group flex items-start p-4 border-2 border-gray-300 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                                    <input type="radio"
+                                        :name="`question_${questions[currentQuestion]?.id}`"
+                                        :value="key"
                                         @change="updateAnswer(questions[currentQuestion]?.id, key)"
                                         :checked="answers[questions[currentQuestion]?.id] === key"
-                                        class="mr-3 text-green-600 focus:ring-green-500">
-                                    <span x-text="`${key}. ${value}`" class="text-gray-800"></span>
+                                        class="mt-1 mr-4 text-emerald-600 focus:ring-emerald-500 w-5 h-5">
+                                    <span x-text="`${key}. ${value}`" class="text-gray-800 font-medium flex-1 group-hover:text-emerald-900"></span>
                                 </label>
                             </template>
                         </div>
 
                         <!-- Subjective Answer -->
-                        <div x-show="questions[currentQuestion]?.question_type === 'Subjective'" class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Answer:</label>
+                        <div x-show="questions[currentQuestion]?.question_type === 'Subjective'" class="mb-8 mt-6">
+                            <label class="block text-base font-semibold text-gray-800 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                Your Answer:
+                            </label>
                             <textarea :value="answers[questions[currentQuestion]?.id] || ''"
                                     @input="updateAnswer(questions[currentQuestion]?.id, $event.target.value)"
-                                    rows="4" 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                    rows="5"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 hover:border-emerald-400 transition-all duration-200 shadow-sm hover:shadow-md"
                                     placeholder="Type your answer here..."></textarea>
                         </div>
 
                         <!-- Navigation Buttons -->
-                        <div class="flex justify-between items-center">
-                            <button @click="previousQuestion()" 
+                        <div class="flex justify-between items-center pt-4 border-t-2 border-gray-200">
+                            <button @click="previousQuestion()"
                                     :disabled="currentQuestion === 0"
-                                    :class="currentQuestion === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
-                                    class="px-4 py-2 text-white rounded-lg transition duration-200">
+                                    :class="currentQuestion === 0 ? 'bg-gray-300 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'"
+                                    class="px-6 py-3 text-white font-semibold rounded-lg transition-all duration-200 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
                                 Previous
                             </button>
 
-                            <div class="flex gap-2">
-                                <button @click="nextQuestion()" 
+                            <div class="flex gap-3">
+                                <button @click="nextQuestion()"
                                         x-show="currentQuestion < questions.length - 1"
-                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
+                                        class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
                                     Next
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
                                 </button>
-                                
-                                <button @click="submitQuiz()" 
+
+                                <button @click="submitQuiz()"
                                         x-show="currentQuestion === questions.length - 1"
-                                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition duration-200 font-medium">
+                                        class="px-8 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
                                     Submit Quiz
                                 </button>
                             </div>
@@ -977,59 +1024,180 @@
                 </div>
 
                 <!-- Results Screen -->
-                <div x-show="showResults" class="p-6">
-                    <div class="text-center mb-6">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <div x-show="showResults" class="p-8 bg-gradient-to-b from-white to-gray-50">
+                    <!-- Success Animation & Header -->
+                    <div class="text-center mb-8">
+                        <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full mb-6 shadow-lg animate-bounce">
+                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-900">Quiz Completed!</h2>
-                        <p class="text-gray-600 mt-2">Here are your results</p>
+                        <h2 class="text-4xl font-extrabold text-gray-900 mb-3">Quiz Completed!</h2>
+                        <p class="text-lg text-gray-600">Great job! Here's how you performed</p>
                     </div>
 
-                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                            <div>
-                                <div class="text-3xl font-bold text-green-600" x-text="results.score + '%'"></div>
-                                <div class="text-sm text-gray-600">Score</div>
+                    <!-- Score Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <!-- Score Percentage -->
+                        <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 border-2 border-emerald-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-bold text-emerald-800 uppercase tracking-wide">Your Score</h3>
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
                             </div>
-                            <div>
-                                <div class="text-3xl font-bold text-blue-600" x-text="results.correct_answers"></div>
-                                <div class="text-sm text-gray-600">Correct</div>
+                            <div class="text-5xl font-extrabold text-emerald-600 mb-2" x-text="results.score + '%'"></div>
+                            <div class="flex items-center text-sm text-emerald-700">
+                                <span :class="results.score >= 80 ? '' : 'hidden'" class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    Excellent!
+                                </span>
+                                <span :class="results.score >= 60 && results.score < 80 ? '' : 'hidden'">Good work!</span>
+                                <span :class="results.score < 60 ? '' : 'hidden'">Keep practicing!</span>
                             </div>
-                            <div>
-                                <div class="text-3xl font-bold text-gray-600" x-text="results.total_questions"></div>
-                                <div class="text-sm text-gray-600">Total</div>
+                        </div>
+
+                        <!-- Correct Answers -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-bold text-blue-800 uppercase tracking-wide">Correct</h3>
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
                             </div>
+                            <div class="text-5xl font-extrabold text-blue-600 mb-2" x-text="results.correct_answers"></div>
+                            <div class="text-sm text-blue-700">
+                                <span x-text="`Out of ${results.total_questions} questions`"></span>
+                            </div>
+                        </div>
+
+                        <!-- Total Questions -->
+                        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-purple-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-bold text-purple-800 uppercase tracking-wide">Total</h3>
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
+                            <div class="text-5xl font-extrabold text-purple-600 mb-2" x-text="results.total_questions"></div>
+                            <div class="text-sm text-purple-700">Questions answered</div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Message -->
+                    <div class="mb-8 text-center" :class="results.score >= 80 ? 'block' : 'hidden'">
+                        <div class="inline-block bg-gradient-to-r from-yellow-100 to-amber-100 border-2 border-yellow-400 rounded-xl px-6 py-4 shadow-md">
+                            <p class="text-lg font-bold text-yellow-900 flex items-center justify-center gap-2">
+                                <span class="text-2xl">🎉</span>
+                                Outstanding Performance! You've mastered this topic!
+                                <span class="text-2xl">🎉</span>
+                            </p>
                         </div>
                     </div>
 
                     <!-- Review Answers -->
-                    <div class="space-y-4 mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900">Review Your Answers</h3>
+                    <div class="space-y-5 mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                </svg>
+                                Review Your Answers
+                            </h3>
+                            <div class="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-lg font-medium">
+                                <span x-text="results.correct_answers"></span> / <span x-text="results.total_questions"></span> Correct
+                            </div>
+                        </div>
+
                         <template x-for="(result, index) in results.results" :key="index">
-                            <div class="border rounded-lg p-4" :class="result.is_correct ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
-                                <div class="flex items-start justify-between mb-2">
-                                    <h4 class="font-medium text-gray-900" x-text="`Question ${index + 1}`"></h4>
-                                    <span :class="result.is_correct ? 'text-green-600' : 'text-red-600'" 
-                                        class="text-sm font-medium">
+                            <div class="border-2 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1"
+                                :class="result.is_correct ? 'border-emerald-300 bg-gradient-to-br from-emerald-50 to-green-50' : 'border-red-300 bg-gradient-to-br from-red-50 to-pink-50'">
+                                <!-- Question Header -->
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white"
+                                            :class="result.is_correct ? 'bg-emerald-600' : 'bg-red-600'">
+                                            <span x-text="index + 1"></span>
+                                        </div>
+                                        <h4 class="font-bold text-gray-900 text-lg" x-text="`Question ${index + 1}`"></h4>
+                                    </div>
+                                    <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold shadow-sm"
+                                        :class="result.is_correct ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'">
+                                        <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="result.is_correct">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!result.is_correct">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
                                         <span x-text="result.is_correct ? 'Correct' : 'Incorrect'"></span>
                                     </span>
                                 </div>
-                                <p class="text-gray-700 mb-2" x-text="result.question_text"></p>
-                                <div class="text-sm">
-                                    <p><strong>Your answer:</strong> <span x-text="result.user_answer || 'No answer'"></span></p>
-                                    <p><strong>Correct answer:</strong> <span x-text="result.correct_answer" class="text-green-600"></span></p>
+
+                                <!-- Question Text -->
+                                <div class="mb-4 bg-white bg-opacity-60 rounded-lg p-4 border border-gray-200">
+                                    <p class="text-gray-900 font-medium leading-relaxed" x-text="result.question_text"></p>
+                                </div>
+
+                                <!-- Answers -->
+                                <div class="space-y-3">
+                                    <!-- User Answer -->
+                                    <div class="bg-white bg-opacity-80 rounded-lg p-4 border-2"
+                                        :class="result.is_correct ? 'border-emerald-400' : 'border-red-400'">
+                                        <div class="flex items-start gap-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-8 h-8 rounded-full flex items-center justify-center"
+                                                    :class="result.is_correct ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-xs font-bold uppercase tracking-wide mb-1"
+                                                    :class="result.is_correct ? 'text-emerald-700' : 'text-red-700'">Your Answer</p>
+                                                <p class="text-gray-900 font-medium" x-text="result.user_answer || 'No answer provided'"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Correct Answer (if wrong) -->
+                                    <div x-show="!result.is_correct" class="bg-emerald-50 rounded-lg p-4 border-2 border-emerald-400">
+                                        <div class="flex items-start gap-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-xs font-bold text-emerald-700 uppercase tracking-wide mb-1">Correct Answer</p>
+                                                <p class="text-emerald-900 font-bold" x-text="result.correct_answer"></p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </template>
                     </div>
 
-                    <div class="text-center">
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4 justify-center pt-4 border-t-2 border-gray-200">
                         <button onclick="QuizManager.closeQuiz()"
-                                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
+                                class="px-8 py-3.5 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
                             Close Quiz
+                        </button>
+                        <button onclick="QuizManager.closeQuiz(); setTimeout(() => openQuizSelectionModal(), 300);"
+                                class="px-8 py-3.5 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Take Another Quiz
                         </button>
                     </div>
                 </div>
@@ -1038,26 +1206,26 @@
     </div>
 
     <!-- Quiz Selection Modal -->
-    <div id="quizSelectionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div id="quizSelectionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full transform transition-all">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full transform transition-all duration-300 hover:shadow-3xl animate-modalSlideIn">
                 <!-- Header with gradient background -->
-                <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl">
+                <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl sticky top-0 z-10">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center">
-                            <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-3">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="bg-white bg-opacity-20 p-3 rounded-lg mr-3 transform hover:scale-110 transition-transform duration-200">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-white">Test Your Knowledge</h2>
-                                <p class="text-purple-100 text-sm">Choose your quiz preferences</p>
+                                <h2 class="text-2xl font-bold text-white tracking-wide">Test Your Knowledge</h2>
+                                <p class="text-purple-100 text-sm mt-1">Choose your quiz preferences and challenge yourself</p>
                             </div>
                         </div>
-                        <button onclick="closeQuizSelectionModal()" 
-                                class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="closeQuizSelectionModal()"
+                                class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-all duration-200 hover:rotate-90 transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
@@ -1065,34 +1233,39 @@
                 </div>
 
                 <!-- Content -->
-                <div class="p-6 space-y-6">
-                    <!-- Category Selection -->
-                    <div class="space-y-3">
-                        <label for="quizSelectionCategory" class="flex items-center text-sm font-semibold text-gray-700">
-                            <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                            </svg>
-                            Select Topic
-                        </label>
-                        <select id="quizSelectionCategory" 
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
-                            <option value="">Practice Mode (All Topics)</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                <div class="p-8 space-y-8 bg-gradient-to-b from-white to-gray-50">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Category Selection -->
+                        <div class="space-y-3 group">
+                            <label for="quizSelectionCategory" class="flex items-center text-sm font-semibold text-gray-800">
+                                <div class="bg-purple-100 p-1.5 rounded-md mr-2 group-hover:bg-purple-200 transition-colors duration-200">
+                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                </div>
+                                Select Topic
+                            </label>
+                            <select id="quizSelectionCategory"
+                                    class="w-full px-4 py-3.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white hover:border-purple-400 transition-all duration-200 text-gray-700 font-medium shadow-sm hover:shadow-md cursor-pointer">
+                                <option value="">Practice Mode (All Topics)</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <!-- Difficulty Selection -->
-                    <div class="space-y-3">
-                        <label for="quizSelectionDifficulty" class="flex items-center text-sm font-semibold text-gray-700">
-                            <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                            Select Difficulty
-                        </label>
-                        <select id="quizSelectionDifficulty"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 hover:bg-white transition duration-200 text-gray-700 font-medium">
+                        <!-- Difficulty Selection -->
+                        <div class="space-y-3 group">
+                            <label for="quizSelectionDifficulty" class="flex items-center text-sm font-semibold text-gray-800">
+                                <div class="bg-purple-100 p-1.5 rounded-md mr-2 group-hover:bg-purple-200 transition-colors duration-200">
+                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                Select Difficulty
+                            </label>
+                            <select id="quizSelectionDifficulty"
+                                    class="w-full px-4 py-3.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white hover:border-purple-400 transition-all duration-200 text-gray-700 font-medium shadow-sm hover:shadow-md cursor-pointer">
                             @php
                                 $selectedCategory = request('category');
                                 // For practice mode (empty category), unlock all difficulties
@@ -1114,38 +1287,68 @@
                         </select>
                     </div>
 
+                    </div>
+
                     <!-- Info Box -->
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                    <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-300 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                         <div class="flex items-start">
                             <div class="flex-shrink-0">
-                                <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
+                                <div class="bg-blue-100 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="ml-3">
-                                <h4 class="text-sm font-semibold text-blue-900 mb-1">Quiz Guidelines</h4>
-                                <ul class="text-xs text-blue-800 space-y-1">
-                                    <li>• Timer starts immediately when quiz begins</li>
-                                    <li>• Questions are randomly selected from the chosen topic</li>
-                                    <li>• Navigate freely between questions before submitting</li>
-                                    <li>• Quiz auto-submits when time expires</li>
+                            <div class="ml-4 flex-1">
+                                <h4 class="text-base font-bold text-blue-900 mb-2 flex items-center">
+                                    Quiz Guidelines
+                                    <span class="ml-2 text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">Important</span>
+                                </h4>
+                                <ul class="text-sm text-blue-800 space-y-2">
+                                    <li class="flex items-start">
+                                        <svg class="w-4 h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Timer starts immediately when quiz begins
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="w-4 h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Questions are randomly selected from the chosen topic
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="w-4 h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Navigate freely between questions before submitting
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="w-4 h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Quiz auto-submits when time expires
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex gap-3 pt-2">
-                        <button onclick="closeQuizSelectionModal()" 
-                                class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition duration-200 border border-gray-300">
+                    <div class="flex gap-4 pt-4">
+                        <button onclick="closeQuizSelectionModal()"
+                                class="flex-1 px-6 py-3.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition-all duration-200 border-2 border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                             Cancel
                         </button>
-                        <button onclick="startQuiz()" 
-                                class="flex-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg transform hover:scale-105 transition duration-200 flex items-center justify-center gap-2">
+                        <button onclick="startQuiz()"
+                                class="flex-[2] px-8 py-3.5 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             Start Quiz
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -1154,9 +1357,9 @@
     </div>
 
     <!-- My Scores Modal -->
-    <div id="myScoresModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div id="myScoresModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 hover:shadow-3xl animate-modalSlideIn">
                 <!-- Header -->
                 <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl sticky top-0 z-10">
                     <div class="flex justify-between items-center">
@@ -1868,192 +2071,180 @@
 
             showResults(results) {
                 const modal = document.getElementById('quizModal');
-                
+
                 // Apply proper modal styling
-                modal.style.position = 'fixed';
-                modal.style.top = '0';
-                modal.style.left = '0';
-                modal.style.right = '0';
-                modal.style.bottom = '0';
-                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
                 modal.style.display = 'flex';
-                modal.style.alignItems = 'center';
-                modal.style.justifyContent = 'center';
-                modal.style.padding = '1rem';
-                modal.style.zIndex = '50';
-                
+
+                const performanceMsg = results.score >= 80 ? `
+                    <div class="mb-8 text-center">
+                        <div class="inline-block bg-gradient-to-r from-yellow-100 to-amber-100 border-2 border-yellow-400 rounded-xl px-6 py-4 shadow-md">
+                            <p class="text-lg font-bold text-yellow-900 flex items-center justify-center gap-2">
+                                <span class="text-2xl">🎉</span>
+                                Outstanding Performance! You've mastered this topic!
+                                <span class="text-2xl">🎉</span>
+                            </p>
+                        </div>
+                    </div>
+                ` : '';
+
                 const resultsHTML = `
-                    <div style="
-                        background: white;
-                        border-radius: 0.75rem;
-                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-                        max-width: 56rem;
-                        width: 100%;
-                        max-height: 90vh;
-                        overflow-y: auto;
-                        margin: auto;
-                    ">
-                        <div style="padding: 1.5rem;">
-                            <!-- Success Header -->
-                            <div style="text-align: center; margin-bottom: 1.5rem;">
-                                <div style="
-                                    display: inline-flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    width: 4rem;
-                                    height: 4rem;
-                                    background: #dcfce7;
-                                    border-radius: 50%;
-                                    margin-bottom: 1rem;
-                                ">
-                                    <svg style="width: 2rem; height: 2rem; color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300">
+                        <div class="p-8 bg-gradient-to-b from-white to-gray-50">
+                            <!-- Success Animation & Header -->
+                            <div class="text-center mb-8">
+                                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full mb-6 shadow-lg animate-bounce">
+                                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <h2 style="
-                                    font-size: 1.5rem;
-                                    font-weight: bold;
-                                    color: #111827;
-                                    margin: 0 0 0.5rem 0;
-                                ">Quiz Completed!</h2>
-                                <p style="
-                                    color: #6b7280;
-                                    margin: 0;
-                                ">Here are your results</p>
+                                <h2 class="text-4xl font-extrabold text-gray-900 mb-3">Quiz Completed!</h2>
+                                <p class="text-lg text-gray-600">Great job! Here's how you performed</p>
                             </div>
 
-                            <!-- Score Display -->
-                            <div style="
-                                background: #f9fafb;
-                                border-radius: 0.5rem;
-                                padding: 1.5rem;
-                                margin-bottom: 1.5rem;
-                            ">
-                                <div style="
-                                    display: grid;
-                                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                                    gap: 1rem;
-                                    text-align: center;
-                                ">
-                                    <div>
-                                        <div style="
-                                            font-size: 1.875rem;
-                                            font-weight: bold;
-                                            color: #059669;
-                                        ">${results.score}%</div>
-                                        <div style="
-                                            font-size: 0.875rem;
-                                            color: #6b7280;
-                                        ">Score</div>
+                            <!-- Score Summary Cards -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <!-- Score Percentage -->
+                                <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 border-2 border-emerald-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h3 class="text-sm font-bold text-emerald-800 uppercase tracking-wide">Your Score</h3>
+                                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
                                     </div>
-                                    <div>
-                                        <div style="
-                                            font-size: 1.875rem;
-                                            font-weight: bold;
-                                            color: #2563eb;
-                                        ">${results.correct_answers}</div>
-                                        <div style="
-                                            font-size: 0.875rem;
-                                            color: #6b7280;
-                                        ">Correct</div>
+                                    <div class="text-5xl font-extrabold text-emerald-600 mb-2">${results.score}%</div>
+                                    <div class="flex items-center text-sm text-emerald-700">
+                                        ${results.score >= 80 ? `
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                            Excellent!
+                                        ` : results.score >= 60 ? 'Good work!' : 'Keep practicing!'}
                                     </div>
-                                    <div>
-                                        <div style="
-                                            font-size: 1.875rem;
-                                            font-weight: bold;
-                                            color: #6b7280;
-                                        ">${results.total_questions}</div>
-                                        <div style="
-                                            font-size: 0.875rem;
-                                            color: #6b7280;
-                                        ">Total</div>
+                                </div>
+
+                                <!-- Correct Answers -->
+                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h3 class="text-sm font-bold text-blue-800 uppercase tracking-wide">Correct</h3>
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
                                     </div>
+                                    <div class="text-5xl font-extrabold text-blue-600 mb-2">${results.correct_answers}</div>
+                                    <div class="text-sm text-blue-700">Out of ${results.total_questions} questions</div>
+                                </div>
+
+                                <!-- Total Questions -->
+                                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-purple-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h3 class="text-sm font-bold text-purple-800 uppercase tracking-wide">Total</h3>
+                                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-5xl font-extrabold text-purple-600 mb-2">${results.total_questions}</div>
+                                    <div class="text-sm text-purple-700">Questions answered</div>
                                 </div>
                             </div>
 
-                            <!-- Review Answers Section -->
+                            <!-- Performance Message -->
+                            ${performanceMsg}
+
+                            <!-- Review Answers -->
                             ${results.results && results.results.length > 0 ? `
-                                <div style="margin-bottom: 1.5rem;">
-                                    <h3 style="
-                                        font-size: 1.125rem;
-                                        font-weight: 600;
-                                        color: #111827;
-                                        margin: 0 0 1rem 0;
-                                    ">Review Your Answers</h3>
-                                    <div style="max-height: 300px; overflow-y: auto; padding-right: 0.5rem;">
-                                        ${results.results.map((result, index) => `
-                                            <div style="
-                                                border: 2px solid ${result.is_correct ? '#dcfce7' : '#fee2e2'};
-                                                background: ${result.is_correct ? '#f0fdf4' : '#fef2f2'};
-                                                border-radius: 0.5rem;
-                                                padding: 1rem;
-                                                margin-bottom: 1rem;
-                                            ">
-                                                <div style="
-                                                    display: flex;
-                                                    justify-content: space-between;
-                                                    align-items: flex-start;
-                                                    margin-bottom: 0.5rem;
-                                                ">
-                                                    <h4 style="
-                                                        font-weight: 500;
-                                                        color: #111827;
-                                                        margin: 0;
-                                                    ">Question ${index + 1}</h4>
-                                                    <span style="
-                                                        font-size: 0.875rem;
-                                                        font-weight: 500;
-                                                        color: ${result.is_correct ? '#059669' : '#dc2626'};
-                                                        padding: 0.25rem 0.5rem;
-                                                        background: ${result.is_correct ? '#dcfce7' : '#fee2e2'};
-                                                        border-radius: 0.25rem;
-                                                    ">
-                                                        ${result.is_correct ? '✓ Correct' : '✗ Incorrect'}
-                                                    </span>
-                                                </div>
-                                                <p style="
-                                                    color: #374151;
-                                                    margin: 0 0 0.75rem 0;
-                                                    font-weight: 500;
-                                                ">${result.question_text}</p>
-                                                <div style="font-size: 0.875rem; line-height: 1.5;">
-                                                    <p style="margin: 0 0 0.25rem 0;">
-                                                        <strong>Your answer:</strong> 
-                                                        <span style="color: ${result.is_correct ? '#059669' : '#dc2626'};">
-                                                            ${result.user_answer || 'No answer provided'}
-                                                        </span>
-                                                    </p>
-                                                    <p style="margin: 0;">
-                                                        <strong>Correct answer:</strong> 
-                                                        <span style="color: #059669; font-weight: 500;">
-                                                            ${result.correct_answer}
-                                                        </span>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        `).join('')}
+                                <div class="space-y-5 mb-8">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                            <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                            </svg>
+                                            Review Your Answers
+                                        </h3>
+                                        <div class="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-lg font-medium">
+                                            ${results.correct_answers} / ${results.total_questions} Correct
+                                        </div>
                                     </div>
+
+                                    ${results.results.map((result, index) => `
+                                        <div class="border-2 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 ${result.is_correct ? 'border-emerald-300 bg-gradient-to-br from-emerald-50 to-green-50' : 'border-red-300 bg-gradient-to-br from-red-50 to-pink-50'}">
+                                            <!-- Question Header -->
+                                            <div class="flex items-start justify-between mb-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${result.is_correct ? 'bg-emerald-600' : 'bg-red-600'}">
+                                                        ${index + 1}
+                                                    </div>
+                                                    <h4 class="font-bold text-gray-900 text-lg">Question ${index + 1}</h4>
+                                                </div>
+                                                <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold shadow-sm ${result.is_correct ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}">
+                                                    <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${result.is_correct ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"/>
+                                                    </svg>
+                                                    ${result.is_correct ? 'Correct' : 'Incorrect'}
+                                                </span>
+                                            </div>
+
+                                            <!-- Question Text -->
+                                            <div class="mb-4 bg-white bg-opacity-60 rounded-lg p-4 border border-gray-200">
+                                                <p class="text-gray-900 font-medium leading-relaxed">${result.question_text}</p>
+                                            </div>
+
+                                            <!-- Answers -->
+                                            <div class="space-y-3">
+                                                <!-- User Answer -->
+                                                <div class="bg-white bg-opacity-80 rounded-lg p-4 border-2 ${result.is_correct ? 'border-emerald-400' : 'border-red-400'}">
+                                                    <div class="flex items-start gap-3">
+                                                        <div class="flex-shrink-0">
+                                                            <div class="w-8 h-8 rounded-full flex items-center justify-center ${result.is_correct ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-1">
+                                                            <p class="text-xs font-bold uppercase tracking-wide mb-1 ${result.is_correct ? 'text-emerald-700' : 'text-red-700'}">Your Answer</p>
+                                                            <p class="text-gray-900 font-medium">${result.user_answer || 'No answer provided'}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Correct Answer (if wrong) -->
+                                                ${!result.is_correct ? `
+                                                    <div class="bg-emerald-50 rounded-lg p-4 border-2 border-emerald-400">
+                                                        <div class="flex items-start gap-3">
+                                                            <div class="flex-shrink-0">
+                                                                <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700">
+                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                    </svg>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-1">
+                                                                <p class="text-xs font-bold text-emerald-700 uppercase tracking-wide mb-1">Correct Answer</p>
+                                                                <p class="text-emerald-900 font-bold">${result.correct_answer}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    `).join('')}
                                 </div>
                             ` : ''}
 
                             <!-- Action Buttons -->
-                            <div style="
-                                text-align: center;
-                                padding-top: 1.5rem;
-                                border-top: 1px solid #e5e7eb;
-                            ">
-                                <button onclick="QuizManager.closeQuiz()" style="
-                                    padding: 0.75rem 1.5rem;
-                                    background: #2563eb;
-                                    color: white;
-                                    border: none;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
-                                    transition: background 0.2s;
-                                    font-weight: 500;
-                                    font-size: 1rem;
-                                " onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                            <div class="flex gap-4 justify-center pt-4 border-t-2 border-gray-200">
+                                <button onclick="QuizManager.closeQuiz()" class="px-8 py-3.5 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
                                     Close Quiz
+                                </button>
+                                <button onclick="QuizManager.closeQuiz(); setTimeout(() => openQuizSelectionModal(), 300);" class="px-8 py-3.5 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                    Take Another Quiz
                                 </button>
                             </div>
                         </div>
@@ -2643,9 +2834,254 @@
 
         function openMyScoresModal() {
             const modal = document.getElementById('myScoresModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-            }
+            if (!modal) return;
+
+            // Show modal with loading state
+            modal.classList.remove('hidden');
+
+            // Show loading state
+            modal.innerHTML = `
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-8">
+                        <div class="text-center py-16">
+                            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+                            <p class="text-gray-600 text-lg">Loading your scores...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Fetch fresh scores data
+            fetch('/api/cadet/top-scores', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                renderMyScoresModal(data);
+            })
+            .catch(error => {
+                console.error('Error fetching scores:', error);
+                modal.innerHTML = `
+                    <div class="flex items-center justify-center min-h-screen p-4">
+                        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-8">
+                            <div class="text-center py-16">
+                                <svg class="w-16 h-16 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Error Loading Scores</h3>
+                                <p class="text-gray-600 mb-4">Could not load your quiz scores. Please try again.</p>
+                                <button onclick="closeMyScoresModal()" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition duration-200">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderMyScoresModal(scores) {
+            const modal = document.getElementById('myScoresModal');
+            if (!modal) return;
+
+            const hasScores = scores && scores.length > 0;
+            const avgScore = hasScores ? (scores.reduce((sum, s) => sum + parseFloat(s.score_percentage), 0) / scores.length).toFixed(1) : 0;
+            const excellentScores = hasScores ? scores.filter(s => parseFloat(s.score_percentage) >= 80).length : 0;
+
+            const modalHTML = `
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 hover:shadow-3xl animate-modalSlideIn">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-6 rounded-t-xl sticky top-0 z-10">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="bg-white bg-opacity-20 p-3 rounded-lg mr-3 transform hover:scale-110 transition-transform duration-200">
+                                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-white tracking-wide">My Quiz Performance</h2>
+                                        <p class="text-purple-100 text-sm mt-1">Track your progress and top scores by category</p>
+                                    </div>
+                                </div>
+                                <button onclick="closeMyScoresModal()"
+                                        class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-all duration-200 hover:rotate-90 transform">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-8 bg-gradient-to-b from-white to-gray-50">
+                            ${!hasScores ? `
+                                <!-- Empty State -->
+                                <div class="text-center py-16">
+                                    <div class="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                                        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-3">No Quiz Scores Yet</h3>
+                                    <p class="text-gray-600 mb-6 text-lg">Start taking quizzes to track your progress and see your performance here!</p>
+                                    <button onclick="closeMyScoresModal(); openQuizSelectionModal();"
+                                            class="px-8 py-3.5 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M9 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Take Your First Quiz
+                                    </button>
+                                </div>
+                            ` : `
+                                <!-- Summary Stats -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                    <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-purple-300 shadow-md hover:shadow-lg transition-shadow duration-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h3 class="text-sm font-bold text-purple-800 uppercase tracking-wide">Categories</h3>
+                                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="text-4xl font-extrabold text-purple-600">${scores.length}</div>
+                                        <div class="text-sm text-purple-700 mt-1">Completed</div>
+                                    </div>
+
+                                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-300 shadow-md hover:shadow-lg transition-shadow duration-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h3 class="text-sm font-bold text-blue-800 uppercase tracking-wide">Average</h3>
+                                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                            </svg>
+                                        </div>
+                                        <div class="text-4xl font-extrabold text-blue-600">${avgScore}%</div>
+                                        <div class="text-sm text-blue-700 mt-1">Overall Score</div>
+                                    </div>
+
+                                    <div class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl p-6 border-2 border-yellow-300 shadow-md hover:shadow-lg transition-shadow duration-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h3 class="text-sm font-bold text-yellow-800 uppercase tracking-wide">Excellent</h3>
+                                            <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="text-4xl font-extrabold text-yellow-600">${excellentScores}</div>
+                                        <div class="text-sm text-yellow-700 mt-1">Scores ≥80%</div>
+                                    </div>
+                                </div>
+
+                                <!-- Score Cards -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    ${scores.map(score => {
+                                        const percentage = parseFloat(score.score_percentage);
+                                        const isExcellent = percentage >= 80;
+                                        const isPassed = percentage >= 60;
+                                        const circumference = 2 * 3.14159 * 38;
+                                        const offset = circumference * (1 - percentage / 100);
+                                        const strokeColor = isExcellent ? '#10b981' : (isPassed ? '#f59e0b' : '#ef4444');
+
+                                        return `
+                                            <div class="bg-white rounded-xl p-6 border-2 border-gray-300 hover:border-purple-500 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                                <!-- Category Header -->
+                                                <div class="flex justify-between items-start mb-4">
+                                                    <div class="flex-1">
+                                                        <h4 class="font-bold text-gray-900 text-xl mb-2">${score.category_name || 'General Quiz'}</h4>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold ${
+                                                                score.difficulty === 'easy' ? 'bg-green-100 text-green-800 ring-2 ring-green-300' :
+                                                                score.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-300' :
+                                                                'bg-red-100 text-red-800 ring-2 ring-red-300'
+                                                            }">
+                                                                ${score.difficulty === 'easy' ? '🟢' : score.difficulty === 'medium' ? '🟡' : '🔴'}
+                                                                ${score.difficulty.charAt(0).toUpperCase() + score.difficulty.slice(1)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Score Circle -->
+                                                    <div class="flex flex-col items-center">
+                                                        <div class="relative w-24 h-24">
+                                                            <svg class="w-24 h-24 transform -rotate-90">
+                                                                <circle cx="48" cy="48" r="38" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                                                                <circle cx="48" cy="48" r="38"
+                                                                        stroke="${strokeColor}"
+                                                                        stroke-width="8"
+                                                                        fill="none"
+                                                                        stroke-dasharray="${circumference}"
+                                                                        stroke-dashoffset="${offset}"
+                                                                        stroke-linecap="round"
+                                                                        class="transition-all duration-500"/>
+                                                            </svg>
+                                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                                <span class="text-2xl font-extrabold ${
+                                                                    isExcellent ? 'text-green-600' :
+                                                                    isPassed ? 'text-yellow-600' : 'text-red-600'
+                                                                }">${Math.round(percentage)}%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Stats -->
+                                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 text-center shadow-sm border-2 border-blue-200 hover:shadow-md transition-shadow duration-200">
+                                                        <div class="text-3xl font-extrabold text-blue-600">${score.correct_answers}</div>
+                                                        <div class="text-sm text-blue-800 font-semibold mt-1">Correct</div>
+                                                    </div>
+                                                    <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 text-center shadow-sm border-2 border-gray-300 hover:shadow-md transition-shadow duration-200">
+                                                        <div class="text-3xl font-extrabold text-gray-700">${score.total_questions}</div>
+                                                        <div class="text-sm text-gray-600 font-semibold mt-1">Total</div>
+                                                    </div>
+                                                </div>
+
+                                                ${isExcellent ? `
+                                                    <div class="mb-3 text-center">
+                                                        <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-2 border-green-300 shadow-sm">
+                                                            ⭐ Excellent Performance
+                                                        </span>
+                                                    </div>
+                                                ` : isPassed ? `
+                                                    <div class="mb-3 text-center">
+                                                        <span class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border-2 border-yellow-300 shadow-sm">
+                                                            ✓ Passed
+                                                        </span>
+                                                    </div>
+                                                ` : ''}
+
+                                                <!-- Date -->
+                                                <div class="flex items-center justify-center text-sm text-gray-600 pt-3 border-t-2 border-gray-200">
+                                                    <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span class="font-semibold">Completed:</span>
+                                                    <span class="ml-1">${new Date(score.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+
+                                <!-- Action Button -->
+                                <div class="mt-8 text-center">
+                                    <button onclick="closeMyScoresModal(); openQuizSelectionModal();"
+                                            class="px-8 py-3.5 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                        </svg>
+                                        Take Another Quiz
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.innerHTML = modalHTML;
         }
 
         function closeMyScoresModal() {
