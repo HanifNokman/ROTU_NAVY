@@ -35,14 +35,14 @@ class LearningHubController extends Controller
                 ->where('status', 'active');
         })->get();
 
-        // FIXED: Always fetch materials, filtered by category if provided
-        $materialsQuery = LearningMaterial::with('category');
-        
+        // Only fetch materials if a category is selected
+        $materials = collect();
         if ($request->filled('category')) {
-            $materialsQuery->where('learning_material_category_id', $request->category);
+            $materials = LearningMaterial::with('category')
+                ->where('learning_material_category_id', $request->category)
+                ->latest()
+                ->get();
         }
-        
-        $materials = $materialsQuery->latest()->get();
 
         $cadet = auth()->user()->cadet;
         $topScores = [];
