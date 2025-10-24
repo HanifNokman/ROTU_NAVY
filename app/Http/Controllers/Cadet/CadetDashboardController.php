@@ -85,7 +85,11 @@ class CadetDashboardController extends Controller
 
         $absentCadets = [];
         $absenceLeaderboard = [];
-        if (in_array($cadet->position ?? '', ['CO', 'Thana', 'Zayn'])) {
+        $allowedPositions = ['CO', 'Thana', 'Zayn'];
+        $cadetPosition = trim($cadet->position ?? '');
+
+        // Case-insensitive check for allowed positions
+        if (in_array(strtolower($cadetPosition), array_map('strtolower', $allowedPositions))) {
             $absentCadets = $this->getAbsenceDataForIntake($cadet->intake_year);
             $absenceLeaderboard = $this->getAbsenceLeaderboardForIntake($cadet->intake_year);
         }

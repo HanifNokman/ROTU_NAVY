@@ -101,15 +101,15 @@
                 $hasNotifications = $pendingUsersCount > 0 || $applicationsCount > 0;
 
             } elseif ($user->role === 'cadet') {
-                $cadet = App\Models\Cadet::where('user_id', $user->id)->first();
-                $profilePicture = $cadet?->profile_pic;
-                
+                $layoutCadet = App\Models\Cadet::where('user_id', $user->id)->first();
+                $profilePicture = $layoutCadet?->profile_pic;
+
                 $hasNotifications = false;
-                
-                if ($cadet) {
+
+                if ($layoutCadet) {
                     $pendingAbsences = DB::table('training_attendances')
                         ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
-                        ->where('training_attendances.cadet_id', $cadet->id)
+                        ->where('training_attendances.cadet_id', $layoutCadet->id)
                         ->where('training_attendances.present', false)
                         ->where('trainings.status', 'Completed')
                         ->where(function($q) {
