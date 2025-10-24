@@ -726,9 +726,9 @@
             {{-- ================================================================ --}}
             {{-- PENDING ABSENCE REASONS SECTION --}}
             {{-- ================================================================ --}}
-            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
-                
-                <div class="section-header">
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden" x-data="{ open: false }">
+
+                <div class="section-header" @click="open = !open" style="cursor: pointer;">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center mb-2">
                             <div class="icon-wrapper gradient-red mr-3 p-2 rounded-md">
@@ -745,39 +745,46 @@
                                 @endif
                             </h3>
                         </div>
-                        
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                            <div class="flex bg-gray-100 rounded-lg p-1 self-stretch sm:self-auto">
-                                <button id="pending-view-btn" onclick="toggleAbsenceView('pending')" class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm flex-1 sm:flex-none">
-                                    <i class="fas fa-exclamation-triangle mr-1"></i>
-                                    <span class="hidden sm:inline">Pending</span>
-                                    <span class="sm:hidden">Pending</span>
-                                </button>
-                                <button id="leaderboard-view-btn" onclick="toggleAbsenceView('leaderboard')" class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 flex-1 sm:flex-none">
-                                    <i class="fas fa-chart-bar mr-1"></i>
-                                    <span class="hidden sm:inline">Absence List</span>
-                                    <span class="sm:hidden">List</span>
-                                </button>
-                            </div>
-
-                            <div id="absence-filter-container" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                                <label for="absence-intake-filter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
-                                <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm w-full sm:w-auto">
-                                    <option value="">All Intakes</option>
-                                    @foreach ($intakeOptions as $option)
-                                        <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
-                                            {{ $option['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
                     <p id="absence-section-description" class="text-gray-600 ml-13">Cadets with training absences requiring documentation</p>
                 </div>
 
-                <div class="p-6">
-                    
+                <div class="p-6"
+                    x-show="open"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0">
+
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+                        <div class="flex bg-gray-100 rounded-lg p-1 self-stretch sm:self-auto">
+                            <button id="pending-view-btn" onclick="toggleAbsenceView('pending')" class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white shadow-sm flex-1 sm:flex-none">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                <span class="hidden sm:inline">Pending</span>
+                                <span class="sm:hidden">Pending</span>
+                            </button>
+                            <button id="leaderboard-view-btn" onclick="toggleAbsenceView('leaderboard')" class="px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 flex-1 sm:flex-none">
+                                <i class="fas fa-chart-bar mr-1"></i>
+                                <span class="hidden sm:inline">Absence List</span>
+                                <span class="sm:hidden">List</span>
+                            </button>
+                        </div>
+
+                        <div id="absence-filter-container" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                            <label for="absence-intake-filter" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Intake:</label>
+                            <select id="absence-intake-filter" class="rounded-md border-gray-300 shadow-sm text-sm w-full sm:w-auto">
+                                <option value="">All Intakes</option>
+                                @foreach ($intakeOptions as $option)
+                                    <option value="{{ $option['year'] }}" {{ ($selectedAbsenceIntake ?? '') == $option['year'] ? 'selected' : '' }}>
+                                        {{ $option['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <div id="absence-loading" class="hidden text-center py-4">
                         <div class="inline-flex items-center">
                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1044,6 +1051,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
     {{-- ================================================================ --}}
     {{-- JAVASCRIPT --}}
