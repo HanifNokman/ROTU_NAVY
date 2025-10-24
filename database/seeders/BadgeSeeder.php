@@ -17,8 +17,8 @@ class BadgeSeeder extends Seeder
             // Welcome Badge
             [
                 'id' => 1,
-                'name' => 'Welcome to ROTU NAVY',
-                'icon_path' => 'Welcome to ROTU NAVY.png',
+                'name' => 'Cadet Induction',
+                'icon_path' => 'Welcome Badge.png',
                 'description' => 'Welcome aboard! Your journey begins here',
                 'unlock_criteria' => 'Automatically unlocked on first login',
                 'category' => 'overall',
@@ -230,7 +230,7 @@ class BadgeSeeder extends Seeder
             [
                 'id' => 23,
                 'name' => 'Commissioned Officer',
-                'icon_path' => 'Commissioned Officer.png',
+                'icon_path' => 'Commissioned Badge.png',
                 'description' => 'Promoted to Leftenan Muda (Lt M)',
                 'unlock_criteria' => 'Achieve promotion to Lt M rank',
                 'category' => 'overall',
@@ -255,6 +255,17 @@ class BadgeSeeder extends Seeder
                 'unlock_criteria' => 'Selected by instructor as Best Academic and achieve Lt.M rank',
                 'category' => 'academic',
                 'rarity_level' => 5,
+            ],
+
+            // Physical Fitness Badge
+            [
+                'id' => 26,
+                'name' => 'Aquatic Warrior',
+                'icon_path' => 'Aquatic Warrior.png',
+                'description' => 'Successfully passed swimming qualification test',
+                'unlock_criteria' => 'Pass the swimming qualification test',
+                'category' => 'overall',
+                'rarity_level' => 4,
             ],
         ];
 

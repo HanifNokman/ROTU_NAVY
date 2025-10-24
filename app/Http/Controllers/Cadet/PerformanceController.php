@@ -184,19 +184,32 @@ class PerformanceController extends Controller
             ->get()
             ->keyBy('badge_id');
 
+        // Calculate unlock percentages for all badges
+        $totalCadets = Cadet::count();
+        $badgeUnlockCounts = CadetBadge::select('badge_id', DB::raw('count(*) as unlock_count'))
+            ->groupBy('badge_id')
+            ->pluck('unlock_count', 'badge_id');
+
         // Separate unlocked and unlockable badges
         $unlocked = [];
         $unlockable = [];
 
         foreach ($allBadges as $badge) {
+            $unlockCount = $badgeUnlockCounts[$badge->id] ?? 0;
+            $unlockPercentage = $totalCadets > 0 ? round(($unlockCount / $totalCadets) * 100, 1) : 0;
+
             if (isset($unlockedBadges[$badge->id])) {
                 $unlocked[] = [
                     'badge' => $badge,
                     'unlocked_at' => $unlockedBadges[$badge->id]->unlocked_at,
-                    'is_displayed' => $unlockedBadges[$badge->id]->is_displayed
+                    'is_displayed' => $unlockedBadges[$badge->id]->is_displayed,
+                    'unlock_percentage' => $unlockPercentage,
+                    'unlock_count' => $unlockCount
                 ];
             } else {
                 $unlockable[] = $badge;
+                $badge->unlock_percentage = $unlockPercentage;
+                $badge->unlock_count = $unlockCount;
             }
         }
 
@@ -223,6 +236,10 @@ class PerformanceController extends Controller
                 case 'overall':
                     // Auto-unlock welcome badge for all cadets
                     if ($badge->name === 'Welcome to ROTU NAVY') {
+                        $shouldUnlock = true;
+                    }
+                    // Swimming qualification badge
+                    elseif ($badge->name === 'Aquatic Warrior' && $cadet->swimming_qualification === 'Pass') {
                         $shouldUnlock = true;
                     }
                     // Promotion badges based on rank
