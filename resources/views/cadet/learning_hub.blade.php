@@ -579,7 +579,7 @@
                             <select id="categorySelect" name="category"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
                                     onchange="filterMaterials(this.value)">
-                                <option value="">All Categories</option>
+                                <option value="">Select Category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" @selected(request('category') == $category->id)>
                                         {{ $category->name }}
