@@ -29,6 +29,7 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.2,
                 'BMI' => 22.5,
                 'swimming_qualification' => 'Pass',
+                'is_best_cadet' => true,  // Sample: Best Cadet for Intake 2022
             ],
             [
                 'user_id' => User::where('email', 'ahmad.faiz11@rotunavy.com')->first()->id,
@@ -59,6 +60,7 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.5,
                 'BMI' => 21.8,
                 'swimming_qualification' => 'In Progress',
+                'is_best_academic' => true,  // Sample: Best Academic for Intake 2022 (highest CGPA)
             ],
             [
                 'user_id' => User::where('email', 'mohd.hafiz11@rotunavy.com')->first()->id,
@@ -106,6 +108,7 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.1,
                 'BMI' => 22.9,
                 'swimming_qualification' => 'Pass',
+                'is_best_cadet' => true,  // Sample: Best Cadet for Intake 2023 (not commissioned yet, no badge)
             ],
             [
                 'user_id' => User::where('email', 'zulkifli.hassan12@rotunavy.com')->first()->id,
@@ -136,6 +139,7 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.4,
                 'BMI' => 21.5,
                 'swimming_qualification' => 'In Progress',
+                'is_best_academic' => true,  // Sample: Best Academic for Intake 2023 (highest CGPA, not commissioned yet)
             ],
             [
                 'user_id' => User::where('email', 'ismail.yusof12@rotunavy.com')->first()->id,
