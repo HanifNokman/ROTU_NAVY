@@ -1094,7 +1094,7 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
     // ================================================================
     // GET QUIZ RESULTS
     // ================================================================
-    
+
     public function getQuizResults(Request $request)
     {
         $request->validate([
@@ -1115,6 +1115,44 @@ private function checkCommonVariations($correctAnswer, $userAnswer)
             'success' => true,
             'results' => $results
         ]);
+    }
+
+    // ================================================================
+    // GET TOP SCORES (AJAX)
+    // ================================================================
+
+    public function getTopScores()
+    {
+        $cadet = auth()->user()->cadet;
+
+        if (!$cadet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cadet profile not found.'
+            ], 404);
+        }
+
+        $topScores = CadetQuizScore::where('cadet_id', $cadet->id)
+            ->with('category')
+            ->get()
+            ->groupBy('learning_material_category_id')
+            ->map(function ($scores) {
+                return $scores->sortByDesc('score_percentage')->first();
+            })
+            ->sortByDesc('score_percentage')
+            ->values()
+            ->map(function ($score) {
+                return [
+                    'category_name' => $score->category->name ?? 'General Quiz',
+                    'difficulty' => $score->difficulty,
+                    'score_percentage' => $score->score_percentage,
+                    'correct_answers' => $score->correct_answers,
+                    'total_questions' => $score->total_questions,
+                    'completed_at' => $score->completed_at->toISOString()
+                ];
+            });
+
+        return response()->json($topScores);
     }
 
     /**

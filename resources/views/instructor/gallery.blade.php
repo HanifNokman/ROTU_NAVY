@@ -242,6 +242,77 @@
     .shadow-custom {
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
+
+    /* ========================================= */
+    /* ADDITIONAL ANIMATIONS */
+    /* ========================================= */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+
+    .photo-card {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .photo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .photo-card:hover::before {
+        left: 100%;
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .photo-card:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -520,30 +591,55 @@
     </div>
 
     {{-- ================================================================ --}}
-    {{-- IMAGE PREVIEW MODAL --}}
+    {{-- IMAGE PREVIEW MODAL - ENHANCED LIGHTBOX --}}
     {{-- ================================================================ --}}
-    <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center">
-        <div class="relative max-w-4xl max-h-full p-4 w-full">
-            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full p-2">
+    <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center transition-all duration-300 backdrop-blur-sm overflow-y-auto" style="animation: fadeIn 0.3s ease-in-out;">
+        <div class="relative max-w-5xl w-full p-4 my-8">
+            {{-- Close Button --}}
+            <button onclick="closeImageModal()" class="fixed top-6 right-6 text-white hover:text-gray-300 z-20 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
 
-            <div class="flex flex-col items-center">
-                <img id="previewImage" src="" alt="" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg">
+            {{-- Download Button --}}
+            <a id="downloadButton" href="#" download class="fixed top-6 right-24 text-white hover:text-gray-300 z-20 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+            </a>
 
-                <div class="bg-white rounded-lg p-4 mt-4 max-w-md w-full">
-                    <h3 id="previewTitle" class="text-lg font-semibold text-gray-900 mb-2"></h3>
-                    <p id="previewDescription" class="text-sm text-gray-600 mb-3"></p>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-500">
-                            <strong>Instructor:</strong> <span id="previewInstructor"></span>
-                        </span>
-                        <span class="px-2 py-1 rounded-full text-xs font-medium" style="background-color: #e8f4fd; color: #2c5f8a;" id="previewCategory"></span>
+            <div class="flex flex-col items-center">
+                {{-- Image Container with Loading State --}}
+                <div class="relative w-full flex items-center justify-center mb-4">
+                    <div id="imageLoader" class="absolute inset-0 flex items-center justify-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
                     </div>
-                    <div class="mt-2 text-xs text-gray-400">
-                        <strong>Upload Date:</strong> <span id="previewDate"></span>
+                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[60vh] object-contain rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'" onerror="document.getElementById('imageLoader').style.display='none'">
+                </div>
+
+                {{-- Info Card --}}
+                <div class="bg-white rounded-xl p-6 mt-4 max-w-2xl w-full shadow-2xl">
+                    <div class="flex items-start justify-between mb-3">
+                        <h3 id="previewTitle" class="text-xl font-bold text-gray-900 flex-1"></h3>
+                        <span class="ml-3 px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;" id="previewCategory"></span>
+                    </div>
+
+                    <p id="previewDescription" class="text-sm text-gray-600 mb-4 leading-relaxed"></p>
+
+                    <div class="border-t border-gray-200 pt-4 space-y-2">
+                        <div class="flex items-center text-sm text-gray-700">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <strong class="mr-2">Instructor:</strong> <span id="previewInstructor" class="text-gray-600"></span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-700">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <strong class="mr-2">Upload Date:</strong> <span id="previewDate" class="text-gray-600"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -551,60 +647,103 @@
     </div>
 
     {{-- ================================================================ --}}
-    {{-- ADD PICTURE MODAL --}}
+    {{-- ADD PICTURE MODAL - ENHANCED --}}
     {{-- ================================================================ --}}
-    <div id="galleryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="galleryModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full hidden z-50 backdrop-blur-sm transition-all duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Add Gallery Item</h3>
-                        <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full transform transition-all duration-300 scale-95 hover:scale-100" style="animation: slideIn 0.3s ease-out;">
+                <div class="p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Add Gallery Item</h3>
+                        </div>
+                        <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600 transition-all duration-200 hover:rotate-90 transform">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
-                    
-                    <form action="{{ route('instructor.gallery.store') }}" method="POST" enctype="multipart/form-data">
+
+                    <form action="{{ route('instructor.gallery.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                         @csrf
-                        <div class="mb-4">
-                            <label for="gallery_title" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                            <input type="text" id="gallery_title" name="title" required 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div>
+                            <label for="gallery_title" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                                Title
+                            </label>
+                            <input type="text" id="gallery_title" name="title" required
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                   placeholder="Enter picture title">
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="gallery_description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+
+                        <div>
+                            <label for="gallery_description" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                                </svg>
+                                Description
+                            </label>
                             <textarea id="gallery_description" name="description" rows="3"
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                                      placeholder="Enter picture description (optional)"></textarea>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="gallery_category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+
+                        <div>
+                            <label for="gallery_category" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                                Category
+                            </label>
                             <select id="gallery_category" name="gallery_category_id" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <option value="">Select Category</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="gallery_image" class="block text-sm font-medium text-gray-700 mb-2">Image</label>
-                            <input type="file" id="gallery_image" name="image" required accept=".jpg,.jpeg,.png,.gif,.webp"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <p class="text-xs text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)</p>
+
+                        <div>
+                            <label for="gallery_image" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                Image
+                            </label>
+                            <div class="relative">
+                                <input type="file" id="gallery_image" name="image" required accept=".jpg,.jpeg,.png,.gif,.webp"
+                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                       onchange="previewGalleryImage(event)">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2 flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)
+                            </p>
+                            <div id="imagePreviewContainer" class="hidden mt-3">
+                                <img id="imagePreview" src="" alt="Preview" class="w-full h-48 object-cover rounded-lg border-2 border-gray-200">
+                            </div>
                         </div>
-                        
-                        <div class="flex justify-end gap-3">
-                            <button type="button" onclick="closeGalleryModal()" 
-                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                            <button type="button" onclick="closeGalleryModal()"
+                                    class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium">
                                 Cancel
                             </button>
-                            <button type="submit" 
-                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
+                            <button type="submit"
+                                    class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition duration-200 font-medium shadow-lg flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
                                 Add Picture
                             </button>
                         </div>
@@ -886,49 +1025,68 @@
         {{-- ================================================================ --}}
         function populatePhotosGrid(photos) {
             const grid = document.getElementById('galleryGrid');
-            
+
             grid.innerHTML = photos.map(photo => {
                 const titleEscaped = (photo.title || 'Untitled').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const descEscaped = photo.description ? photo.description.replace(/'/g, "\\'").replace(/"/g, '&quot;') : '';
-                
+
                 return `
-                <div class="photo-card bg-white rounded-xl overflow-hidden">
-                    <div class="relative h-48 bg-gray-200">
+                <div class="photo-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 group cursor-pointer"
+                         onclick="openImageModal('{{ asset('') }}${photo.image_path}', '${titleEscaped}', '${descEscaped}', '${photo.instructor?.name || 'Unknown'}', '${photo.category?.name || 'N/A'}', '${formatDate(photo.created_at)}')">
                         ${photo.image_path ?
                             `<img src="{{ asset('') }}${photo.image_path}"
                                  alt="${titleEscaped}"
-                                 class="w-full h-full object-cover cursor-pointer"
-                                 onclick="openImageModal('{{ asset('') }}${photo.image_path}', '${titleEscaped}', '${descEscaped}', '${photo.instructor?.name || 'Unknown'}', '${photo.category?.name || 'N/A'}', '${formatDate(photo.created_at)}')">` :
-                            `<div class="w-full h-full flex items-center justify-center text-gray-400">
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                 loading="lazy">
+                             <div class="image-overlay">
                                 <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                                </svg>
+                             </div>` :
+                            `<div class="w-full h-full flex items-center justify-center text-gray-400">
+                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                             </div>`
                         }
                     </div>
 
-                    <div class="p-4">
-                        <h3 class="font-semibold text-lg text-gray-900 mb-2">${photo.title || 'Untitled'}</h3>
-                        ${photo.description ?
-                            `<p class="text-sm text-gray-600 mb-3">${photo.description.length > 100 ? photo.description.substring(0, 100) + '...' : photo.description}</p>` :
-                            ''
-                        }
-
-                        <div class="mb-3">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="font-bold text-lg text-gray-900 flex-1 leading-tight">${photo.title || 'Untitled'}</h3>
+                            <span class="ml-2 px-2.5 py-1 rounded-full text-xs font-semibold" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;">
                                 ${photo.category?.name || 'N/A'}
                             </span>
                         </div>
 
-                        <div class="flex gap-2">
+                        ${photo.description ?
+                            `<p class="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">${photo.description}</p>` :
+                            `<p class="text-sm text-gray-400 italic mb-4">No description</p>`
+                        }
+
+                        <div class="flex items-center text-xs text-gray-500 mb-4">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            ${formatDate(photo.created_at)}
+                        </div>
+
+                        <div class="flex gap-2 pt-3 border-t border-gray-100">
                             <button type="button"
-                                    onclick="openEditGallery(${photo.id}, '${titleEscaped}', '${descEscaped}', ${photo.gallery_category_id})"
-                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm flex-1">
+                                    onclick="event.stopPropagation(); openEditGallery(${photo.id}, '${titleEscaped}', '${descEscaped}', ${photo.gallery_category_id})"
+                                    class="flex-1 flex items-center justify-center px-3 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
                                 Edit
                             </button>
                             <button type="button"
-                                    onclick="openDeleteGallery(${photo.id}, '${titleEscaped}')"
-                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm flex-1">
+                                    onclick="event.stopPropagation(); openDeleteGallery(${photo.id}, '${titleEscaped}')"
+                                    class="flex-1 flex items-center justify-center px-3 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
                                 Delete
                             </button>
                         </div>
@@ -982,23 +1140,64 @@
         }
 
         {{-- ================================================================ --}}
-        {{-- IMAGE PREVIEW MODAL --}}
+        {{-- IMAGE PREVIEW MODAL - ENHANCED --}}
         {{-- ================================================================ --}}
         function openImageModal(imageSrc, title, description, instructor, category, uploadDate) {
+            const modal = document.getElementById('imagePreviewModal');
+            const imageLoader = document.getElementById('imageLoader');
+
+            // Show loader
+            imageLoader.style.display = 'flex';
+
+            // Set image and details
             document.getElementById('previewImage').src = imageSrc;
             document.getElementById('previewTitle').textContent = title;
             document.getElementById('previewDescription').textContent = description || 'No description available.';
             document.getElementById('previewInstructor').textContent = instructor;
             document.getElementById('previewCategory').textContent = category;
             document.getElementById('previewDate').textContent = uploadDate;
-            document.getElementById('imagePreviewModal').classList.remove('hidden');
+
+            // Set download button
+            const downloadBtn = document.getElementById('downloadButton');
+            downloadBtn.href = imageSrc;
+            downloadBtn.download = title + '.jpg';
+
+            // Show modal with animation
+            modal.classList.remove('hidden');
+            modal.style.animation = 'fadeIn 0.3s ease-in-out';
 
             document.body.style.overflow = 'hidden';
         }
 
         function closeImageModal() {
-            document.getElementById('imagePreviewModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            const modal = document.getElementById('imagePreviewModal');
+            modal.style.animation = 'fadeOut 0.2s ease-in-out';
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 200);
+        }
+
+        {{-- ================================================================ --}}
+        {{-- IMAGE PREVIEW FUNCTION FOR ADD GALLERY MODAL --}}
+        {{-- ================================================================ --}}
+        function previewGalleryImage(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const preview = document.getElementById('imagePreview');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                    previewContainer.style.animation = 'fadeIn 0.3s ease-in-out';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.classList.add('hidden');
+            }
         }
 
         {{-- ================================================================ --}}

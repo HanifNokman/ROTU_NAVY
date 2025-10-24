@@ -125,6 +125,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/quiz/start', [CadetLearningHubController::class, 'startQuiz'])->name('api.quiz.start');
     Route::post('/api/quiz/submit', [CadetLearningHubController::class, 'submitQuiz'])->name('api.quiz.submit');
     Route::post('/api/quiz/results', [CadetLearningHubController::class, 'getQuizResults'])->name('api.quiz.results');
+    Route::get('/api/cadet/top-scores', [CadetLearningHubController::class, 'getTopScores'])->name('api.cadet.top-scores');
     Route::get('/api/materials', [CadetLearningHubController::class, 'getMaterials'])->name('api.materials');
     Route::get('/api/instructors', [CadetLearningHubController::class, 'getInstructors'])->name('api.instructors');
     Route::get('/api/instructor/{instructor}', [CadetLearningHubController::class, 'getInstructor'])->name('api.instructor');
