@@ -5,43 +5,357 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
+    <style>
+    /* ========================================= */
+    /* CUSTOM SCROLLBAR STYLES */
+    /* ========================================= */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9;
+    }
+
+    /* ========================================= */
+    /* CARD & ANIMATION STYLES */
+    /* ========================================= */
+    .dashboard-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e7eb;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    .section-header {
+        padding: 1.75rem;
+        border-bottom: 2px solid #f3f4f6;
+        background: linear-gradient(to right, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    .fade-in {
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .category-card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-card.selected {
+        border: 2px solid #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .photo-card {
+        transition: all 0.2s ease;
+        border: 1px solid #e5e7eb;
+    }
+
+    .photo-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
+    }
+
+    /* ========================================= */
+    /* GRADIENT BACKGROUNDS */
+    /* ========================================= */
+    .gradient-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gradient-blue {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    }
+
+    .gradient-orange {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .gradient-cyan {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    }
+
+    /* ========================================= */
+    /* ICON STYLES */
+    /* ========================================= */
+    .icon-wrapper {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .icon-wrapper-sm {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ========================================= */
+    /* BUTTON STYLES */
+    /* ========================================= */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .filter-btn {
+        padding: 0.625rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 1px solid #e5e7eb;
+        background: white;
+    }
+
+    .filter-btn.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+
+    .filter-btn:not(.active):hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    /* ========================================= */
+    /* INFO CARD STYLES */
+    /* ========================================= */
+    .info-card {
+        background: #ffffff;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+
+    .info-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ========================================= */
+    /* MODAL STYLES */
+    /* ========================================= */
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================= */
+    /* UTILITY CLASSES */
+    /* ========================================= */
+    .text-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .shadow-custom {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ========================================= */
+    /* ADDITIONAL ANIMATIONS */
+    /* ========================================= */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+
+    .photo-card {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .photo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+        z-index: 1;
+    }
+
+    .photo-card:hover::before {
+        left: 100%;
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        z-index: 2;
+    }
+
+    .photo-card:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    </style>
+
+    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- PAGE HEADER --}}
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Account & New Cadet Intake Verification
-                </h1>
-                <p class="text-gray-600">Review and approve pending account registrations and cadet applications</p>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Account & New Cadet Intake Verification</h1>
+                <p class="text-gray-600 text-lg">Review and approve pending account registrations and cadet applications</p>
             </div>
-
             {{-- CADET APPLICATION SECTION --}}
             @if($applications->count() > 0)
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300 mt-6">
-
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
                 {{-- Section Header --}}
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 border-b border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                                <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="section-header">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <div class="icon-wrapper gradient-green mr-3">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                 </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">
                                 Cadet Application | Intake - {{ date('Y') - 2011 }} ({{ date('Y') }})
-                            </h2>
-                            <p class="text-gray-600">Review cadet applications for the current year intake</p>
+                            </h3>
                         </div>
-                        <button id="toggleSelectionMode" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center">
+
+                        {{-- Toggle Button --}}
+                        <button id="toggleSelectionMode" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
                             <span id="toggleButtonText">Start Selection</span>
                         </button>
                     </div>
+                    <p class="text-gray-600">Review cadet applications for the current year intake</p>
                 </div>
 
                 <div class="p-6">
@@ -262,14 +576,17 @@
             @endif
 
             {{-- VERIFICATION SECTION --}}
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border-0 hover:shadow-2xl transition-all duration-300 mt-6">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
-                    <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
-                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Pending Accounts
-                    </h2>
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                {{-- Section Header --}}
+                <div class="section-header">
+                    <div class="flex items-center mb-2">
+                        <div class="icon-wrapper gradient-blue mr-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Pending Accounts</h3>
+                    </div>
                     <p class="text-gray-600">Review registration requests by role and take appropriate actions</p>
                 </div>
 
