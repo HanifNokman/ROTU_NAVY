@@ -32,6 +32,8 @@ class Cadet extends Model
         'service_number',
         'cadet_status',
         'daily_duty_count',
+        'is_best_cadet',
+        'is_best_academic',
     ];
 
     protected $hidden = [
@@ -45,6 +47,8 @@ class Cadet extends Model
         'swimming_pass_date' => 'datetime',
         'current_cgpa' => 'decimal:2',
         'BMI' => 'decimal:1',
+        'is_best_cadet' => 'boolean',
+        'is_best_academic' => 'boolean',
     ];
 
     // Relationships

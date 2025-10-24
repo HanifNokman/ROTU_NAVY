@@ -265,6 +265,8 @@ class CadetManagementController extends Controller
                     'profile_pic' => $cadet->profile_pic,
                     'total_points' => $cadet->performanceRating->total_points ?? 0,
                     'rating' => $cadet->performanceRating->rating ?? '⭐☆☆☆☆',
+                    'current_cgpa' => $cadet->current_cgpa ?? 0,
+                    'is_best_cadet' => $cadet->is_best_cadet ?? false,
                 ];
             });
 
@@ -300,6 +302,7 @@ class CadetManagementController extends Controller
                     'profile_pic' => $cadet->profile_pic,
                     'current_cgpa' => $cadet->current_cgpa,
                     'academic_points' => $cadet->performanceRating->academic_points ?? 0,
+                    'is_best_academic' => $cadet->is_best_academic ?? false,
                 ];
             });
 
@@ -784,10 +787,20 @@ class CadetManagementController extends Controller
         ]);
 
         try {
-            $updatedCount = Cadet::whereIn('id', $request->cadet_ids)
+            $cadetsToUpdate = Cadet::whereIn('id', $request->cadet_ids)
                 ->where('intake_year', $request->intake_year)
                 ->where('rank', 'PK')
-                ->update(['rank' => 'PKK']);
+                ->get();
+
+            $updatedCount = 0;
+            foreach ($cadetsToUpdate as $cadet) {
+                $cadet->rank = 'PKK';
+                $cadet->save();
+
+                // Unlock Midshipman badge
+                $this->checkAndUnlockPromotionBadge($cadet, 'PKK');
+                $updatedCount++;
+            }
 
             return response()->json([
                 'success' => true,
@@ -933,6 +946,259 @@ class CadetManagementController extends Controller
     }
 
     // ================================================================
+    // TOGGLE: Best Cadet Status
+    // ================================================================
+    public function toggleBestCadet(Request $request, $cadetId)
+    {
+        try {
+            $cadet = Cadet::findOrFail($cadetId);
+
+            // If setting to true, remove Best Cadet status and badge from all other cadets in the same intake
+            if (!$cadet->is_best_cadet) {
+                // Find other cadets with Best Cadet status in the same intake
+                $previousBestCadets = Cadet::where('intake_year', $cadet->intake_year)
+                    ->where('id', '!=', $cadet->id)
+                    ->where('is_best_cadet', true)
+                    ->get();
+
+                // Remove status and badge from previous Best Cadets
+                foreach ($previousBestCadets as $previousCadet) {
+                    $previousCadet->is_best_cadet = false;
+                    $previousCadet->save();
+
+                    // Remove the badge
+                    $this->removeBestCadetBadge($previousCadet);
+                }
+
+                // Set this cadet as Best Cadet
+                $cadet->is_best_cadet = true;
+                $cadet->save();
+
+                // Check and unlock badge (only if Lt.M rank)
+                $this->checkAndUnlockBestCadetBadge($cadet);
+
+                $message = $cadet->rank === 'Lt.M'
+                    ? 'Cadet marked as Best Cadet and badge awarded!'
+                    : 'Cadet marked as Best Cadet! Badge will be awarded upon promotion to Lt.M.';
+
+                return response()->json([
+                    'success' => true,
+                    'is_best_cadet' => true,
+                    'message' => $message
+                ]);
+            } else {
+                // Remove Best Cadet status and badge
+                $cadet->is_best_cadet = false;
+                $cadet->save();
+
+                // Remove the badge
+                $this->removeBestCadetBadge($cadet);
+
+                return response()->json([
+                    'success' => true,
+                    'is_best_cadet' => false,
+                    'message' => 'Best Cadet status and badge removed successfully!'
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error toggling Best Cadet status', [
+                'cadet_id' => $cadetId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update Best Cadet status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // TOGGLE: Best Academic Status
+    // ================================================================
+    public function toggleBestAcademic(Request $request, $cadetId)
+    {
+        try {
+            $cadet = Cadet::findOrFail($cadetId);
+
+            // If setting to true, remove Best Academic status and badge from all other cadets in the same intake
+            if (!$cadet->is_best_academic) {
+                // Find other cadets with Best Academic status in the same intake
+                $previousBestAcademics = Cadet::where('intake_year', $cadet->intake_year)
+                    ->where('id', '!=', $cadet->id)
+                    ->where('is_best_academic', true)
+                    ->get();
+
+                // Remove status and badge from previous Best Academics
+                foreach ($previousBestAcademics as $previousCadet) {
+                    $previousCadet->is_best_academic = false;
+                    $previousCadet->save();
+
+                    // Remove the badge
+                    $this->removeBestAcademicBadge($previousCadet);
+                }
+
+                // Set this cadet as Best Academic
+                $cadet->is_best_academic = true;
+                $cadet->save();
+
+                // Check and unlock badge (only if Lt.M rank)
+                $this->checkAndUnlockBestAcademicBadge($cadet);
+
+                $message = $cadet->rank === 'Lt.M'
+                    ? 'Cadet marked as Best Academic and badge awarded!'
+                    : 'Cadet marked as Best Academic! Badge will be awarded upon promotion to Lt.M.';
+
+                return response()->json([
+                    'success' => true,
+                    'is_best_academic' => true,
+                    'message' => $message
+                ]);
+            } else {
+                // Remove Best Academic status and badge
+                $cadet->is_best_academic = false;
+                $cadet->save();
+
+                // Remove the badge
+                $this->removeBestAcademicBadge($cadet);
+
+                return response()->json([
+                    'success' => true,
+                    'is_best_academic' => false,
+                    'message' => 'Best Academic status and badge removed successfully!'
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error toggling Best Academic status', [
+                'cadet_id' => $cadetId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update Best Academic status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ================================================================
+    // HELPER: Check and unlock Best Cadet badge (requires Lt.M rank)
+    // ================================================================
+    private function checkAndUnlockBestCadetBadge($cadet)
+    {
+        // Only unlock badge if cadet is Lt.M rank
+        if ($cadet->rank !== 'Lt.M') {
+            return;
+        }
+
+        $badge = \App\Models\Badge::where('name', 'Best Cadet')->first();
+
+        if ($badge) {
+            $existingBadge = \App\Models\CadetBadge::where('cadet_id', $cadet->id)
+                ->where('badge_id', $badge->id)
+                ->first();
+
+            if (!$existingBadge) {
+                \App\Models\CadetBadge::create([
+                    'cadet_id' => $cadet->id,
+                    'badge_id' => $badge->id,
+                    'unlocked_at' => now(),
+                    'is_displayed' => true
+                ]);
+            }
+        }
+    }
+
+    // ================================================================
+    // HELPER: Remove Best Cadet badge
+    // ================================================================
+    private function removeBestCadetBadge($cadet)
+    {
+        $badge = \App\Models\Badge::where('name', 'Best Cadet')->first();
+
+        if ($badge) {
+            \App\Models\CadetBadge::where('cadet_id', $cadet->id)
+                ->where('badge_id', $badge->id)
+                ->delete();
+        }
+    }
+
+    // ================================================================
+    // HELPER: Check and unlock Best Academic badge (requires Lt.M rank)
+    // ================================================================
+    private function checkAndUnlockBestAcademicBadge($cadet)
+    {
+        // Only unlock badge if cadet is Lt.M rank
+        if ($cadet->rank !== 'Lt.M') {
+            return;
+        }
+
+        $badge = \App\Models\Badge::where('name', 'Best Academic')->first();
+
+        if ($badge) {
+            $existingBadge = \App\Models\CadetBadge::where('cadet_id', $cadet->id)
+                ->where('badge_id', $badge->id)
+                ->first();
+
+            if (!$existingBadge) {
+                \App\Models\CadetBadge::create([
+                    'cadet_id' => $cadet->id,
+                    'badge_id' => $badge->id,
+                    'unlocked_at' => now(),
+                    'is_displayed' => true
+                ]);
+            }
+        }
+    }
+
+    // ================================================================
+    // HELPER: Remove Best Academic badge
+    // ================================================================
+    private function removeBestAcademicBadge($cadet)
+    {
+        $badge = \App\Models\Badge::where('name', 'Best Academic')->first();
+
+        if ($badge) {
+            \App\Models\CadetBadge::where('cadet_id', $cadet->id)
+                ->where('badge_id', $badge->id)
+                ->delete();
+        }
+    }
+
+    // ================================================================
+    // HELPER: Check and unlock promotion badge
+    // ================================================================
+    private function checkAndUnlockPromotionBadge($cadet, $rank)
+    {
+        $badgeName = null;
+
+        if ($rank === 'PKK') {
+            $badgeName = 'Midshipman';
+        } elseif ($rank === 'Lt.M') {
+            $badgeName = 'Commissioned Officer';
+        }
+
+        if ($badgeName) {
+            $badge = \App\Models\Badge::where('name', $badgeName)->first();
+
+            if ($badge) {
+                $existingBadge = \App\Models\CadetBadge::where('cadet_id', $cadet->id)
+                    ->where('badge_id', $badge->id)
+                    ->first();
+
+                if (!$existingBadge) {
+                    \App\Models\CadetBadge::create([
+                        'cadet_id' => $cadet->id,
+                        'badge_id' => $badge->id,
+                        'unlocked_at' => now(),
+                        'is_displayed' => true
+                    ]);
+                }
+            }
+        }
+    }
+
+    // ================================================================
     // UTILITY: Recursively delete directory
     // ================================================================
     private function deleteDirectory($dir)
@@ -946,7 +1212,7 @@ class CadetManagementController extends Controller
             $path = $dir . DIRECTORY_SEPARATOR . $file;
             is_dir($path) ? $this->deleteDirectory($path) : unlink($path);
         }
-        
+
         return rmdir($dir);
     }
 }
