@@ -248,78 +248,99 @@
                         </div>
 
                         {{-- Allowance Calculation Summary --}}
-                        <div class="bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 rounded-xl border border-gray-200 p-8">
-                            <div class="flex items-left justify-left mb-6">
-                                <div class="icon-wrapper bg-green-100 mr-3">
-                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                    </svg>
+                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200">
+                                <div class="flex items-center">
+                                    <div class="icon-wrapper bg-green-100 mr-3">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-900">Allowance Calculation</h3>
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-900">Allowance Calculation</h3>
                             </div>
-                            
-                            <div class="space-y-4">
-                                {{-- Hourly Calculation --}}
-                                <div class="bg-white rounded-lg p-6 border border-gray-200">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <p class="text-sm font-semibold text-gray-700">Hourly Training Allowance</p>
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                                            Hourly Rate
-                                        </span>
+
+                            <div class="p-6">
+                                {{-- Summary Stats Grid --}}
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    {{-- Hourly Summary --}}
+                                    <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-semibold text-green-700 uppercase tracking-wide">Hourly Training</span>
+                                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="text-2xl font-bold text-green-900 mb-1">{{ $totalHours }} hrs</div>
+                                        <div class="text-xs text-green-700">@ RM 8.00/hr</div>
                                     </div>
-                                    <div class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <p class="text-center text-gray-700 font-mono text-lg">
-                                            <span class="font-bold text-green-700">{{ $totalHours }}</span> 
-                                            <span class="text-gray-500 mx-2">×</span> 
-                                            <span class="font-bold text-green-700">RM 8.00</span>
-                                            <span class="text-gray-500 mx-2">=</span>
-                                            <span class="font-bold text-green-700">RM {{ number_format($hourlyAllowance, 2) }}</span>
-                                        </p>
-                                        <p class="text-center text-xs text-gray-500 mt-2">
-                                            Total Hours × Hourly Rate = Hourly Allowance
-                                        </p>
+
+                                    {{-- Daily Summary --}}
+                                    <div class="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-semibold text-blue-700 uppercase tracking-wide">Daily Training</span>
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="text-2xl font-bold text-blue-900 mb-1">{{ $totalDays }} days</div>
+                                        <div class="text-xs text-blue-700">@ RM 50.00/day</div>
                                     </div>
-                                </div>
-                                
-                                {{-- Daily Calculation --}}
-                                <div class="bg-white rounded-lg p-6 border border-gray-200">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <p class="text-sm font-semibold text-gray-700">Daily Training Allowance</p>
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                                            Daily Rate
-                                        </span>
-                                    </div>
-                                    <div class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <p class="text-center text-gray-700 font-mono text-lg">
-                                            <span class="font-bold text-blue-700">{{ $totalDays }}</span> 
-                                            <span class="text-gray-500 mx-2">×</span> 
-                                            <span class="font-bold text-blue-700">RM 50.00</span>
-                                            <span class="text-gray-500 mx-2">=</span>
-                                            <span class="font-bold text-blue-700">RM {{ number_format($dailyAllowance, 2) }}</span>
-                                        </p>
-                                        <p class="text-center text-xs text-gray-500 mt-2">
-                                            Total Days × Daily Rate = Daily Allowance
-                                        </p>
+
+                                    {{-- Total Summary --}}
+                                    <div class="bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg p-4 border-2 border-emerald-600 shadow-md">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-semibold text-white uppercase tracking-wide">Total Earned</span>
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                            </svg>
+                                        </div>
+                                        <div class="text-2xl font-bold text-white mb-1">RM {{ number_format($totalAllowance, 2) }}</div>
+                                        <div class="text-xs text-emerald-100">This period</div>
                                     </div>
                                 </div>
-                                
-                                {{-- Total Calculation --}}
-                                <div class="bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg p-6 shadow-lg">
-                                    <p class="text-white text-sm font-semibold mb-4 text-center opacity-90">Total Allowance Calculation</p>
-                                    <div class="mb-4 p-4 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
-                                        <p class="text-center text-white font-mono text-lg">
-                                            <span class="font-bold">RM {{ number_format($hourlyAllowance, 2) }}</span>
-                                            <span class="mx-2">+</span>
-                                            <span class="font-bold">RM {{ number_format($dailyAllowance, 2) }}</span>
-                                            <span class="mx-2">=</span>
-                                            <span class="font-bold text-2xl">RM {{ number_format($totalAllowance, 2) }}</span>
-                                        </p>
-                                        <p class="text-center text-xs text-white opacity-75 mt-2">
-                                            Hourly Allowance + Daily Allowance = Total Allowance
-                                        </p>
-                                    </div>
-                                    <div class="text-center">
-                                        <p class="text-white text-xs opacity-75">Combined earnings for selected period</p>
+
+                                {{-- Calculation Breakdown --}}
+                                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                                    <h4 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                        Calculation Breakdown
+                                    </h4>
+
+                                    <div class="space-y-3">
+                                        {{-- Hourly Row --}}
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-600">Hourly Training:</span>
+                                            <span class="font-mono text-gray-900">
+                                                <span class="font-semibold text-green-700">{{ $totalHours }}</span> hrs ×
+                                                <span class="font-semibold text-green-700">RM 8.00</span> =
+                                                <span class="font-bold text-green-700">RM {{ number_format($hourlyAllowance, 2) }}</span>
+                                            </span>
+                                        </div>
+
+                                        {{-- Daily Row --}}
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-600">Daily Training:</span>
+                                            <span class="font-mono text-gray-900">
+                                                <span class="font-semibold text-blue-700">{{ $totalDays }}</span> days ×
+                                                <span class="font-semibold text-blue-700">RM 50.00</span> =
+                                                <span class="font-bold text-blue-700">RM {{ number_format($dailyAllowance, 2) }}</span>
+                                            </span>
+                                        </div>
+
+                                        <div class="border-t-2 border-gray-300 my-2"></div>
+
+                                        {{-- Total Row --}}
+                                        <div class="flex items-center justify-between text-base bg-white rounded-md p-3 border border-gray-200">
+                                            <span class="font-semibold text-gray-900">Total Allowance:</span>
+                                            <span class="font-mono">
+                                                <span class="text-gray-600">RM {{ number_format($hourlyAllowance, 2) }}</span> +
+                                                <span class="text-gray-600">RM {{ number_format($dailyAllowance, 2) }}</span> =
+                                                <span class="text-2xl font-bold text-green-600">RM {{ number_format($totalAllowance, 2) }}</span>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
