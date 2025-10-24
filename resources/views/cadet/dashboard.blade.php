@@ -740,38 +740,38 @@
                     x-transition:enter-end="opacity-100 transform translate-y-0">
                     <div class="overflow-hidden rounded-xl border border-gray-200">
                         <div class="max-h-[500px] overflow-y-auto custom-scrollbar">
-                            <table class="data-table">
+                            <table class="data-table text-sm">
                                 <thead>
                                     <tr>
-                                        <th>No.</th>
-                                        <th>Service No.</th>
-                                        <th>Rank</th>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Rating</th>
-                                        <th>Total Points</th>
-                                        <th>Badges</th>
-                                        <th>Action</th>
+                                        <th class="text-xs">No.</th>
+                                        <th class="text-xs">Service No.</th>
+                                        <th class="text-xs">Rank</th>
+                                        <th class="text-xs">Name</th>
+                                        <th class="text-xs">Position</th>
+                                        <th class="text-xs">Rating</th>
+                                        <th class="text-xs">Total Points</th>
+                                        <th class="text-xs">Badges</th>
+                                        <th class="text-xs">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($intakeCadets as $index => $intakeCadet)
                                         <tr>
-                                            <td class="font-semibold text-gray-700">{{ $index + 1 }}</td>
-                                            <td class="text-gray-900">{{ $intakeCadet->service_number ?? 'N/A' }}</td>
+                                            <td class="font-semibold text-gray-700 text-xs">{{ $index + 1 }}</td>
+                                            <td class="text-gray-900 text-xs">{{ $intakeCadet->service_number ?? 'N/A' }}</td>
                                             <td>
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                     {{ $intakeCadet->rank ?? 'N/A' }}
                                                 </span>
                                             </td>
-                                            <td class="font-semibold text-gray-900">{{ $intakeCadet->user->name ?? 'N/A' }}</td>
+                                            <td class="font-semibold text-gray-900 text-xs">{{ $intakeCadet->user->name ?? 'N/A' }}</td>
                                             <td>
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                                     {{ $intakeCadet->position ?? 'Normal Cadet' }}
                                                 </span>
                                             </td>
-                                            <td class="text-2xl">{{ $intakeCadet->performanceRating->rating ?? '⭐☆☆☆☆' }}</td>
-                                            <td class="font-bold text-gray-900">{{ number_format($intakeCadet->performanceRating->total_points ?? 0, 2) }}</td>
+                                            <td class="text-lg">{{ $intakeCadet->performanceRating->rating ?? '⭐☆☆☆☆' }}</td>
+                                            <td class="font-bold text-gray-900 text-xs">{{ number_format($intakeCadet->performanceRating->total_points ?? 0, 2) }}</td>
                                             <td>
                                                 <div class="flex items-center space-x-1">
                                                     @forelse($intakeCadet->cadetBadges->take(3) as $cadetBadge)
@@ -781,7 +781,7 @@
                                                                 title="{{ $cadetBadge->badge->name }}"
                                                                 class="badge-icon-mini">
                                                         @else
-                                                            <span class="text-2xl" title="{{ $cadetBadge->badge->name }}">🏆</span>
+                                                            <span class="text-lg" title="{{ $cadetBadge->badge->name }}">🏆</span>
                                                         @endif
                                                     @empty
                                                         <span class="text-xs text-gray-400">No badges</span>
@@ -793,8 +793,8 @@
                                                     @endif
                                                 </div>
                                             </td>
-                                            <td>
-                                                <button onclick="openCadetModal({{ $intakeCadet->id }})" class="btn-primary">
+                                            <td class="pl-4">
+                                                <button onclick="openCadetModal({{ $intakeCadet->id }})" class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
                                                     View Details
                                                 </button>
                                             </td>
