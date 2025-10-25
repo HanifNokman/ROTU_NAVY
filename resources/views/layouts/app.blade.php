@@ -107,6 +107,7 @@
                 $hasNotifications = false;
 
                 if ($layoutCadet) {
+                    // Check for pending absences that need reasoning (completed trainings)
                     $pendingAbsences = DB::table('training_attendances')
                         ->join('trainings', 'training_attendances.training_id', '=', 'trainings.id')
                         ->where('training_attendances.cadet_id', $layoutCadet->id)
@@ -119,8 +120,42 @@
                               ->orWhere('training_attendances.file_url', '');
                         })
                         ->exists();
-                    
-                    $hasNotifications = $pendingAbsences;
+
+                    // Check for ongoing/recent trainings that need attendance marking
+                    $intakeNumber = $layoutCadet->intake_year - 2011;
+                    $intakeStr = "Intake - " . $intakeNumber;
+                    $now = now();
+                    $today = $now->toDateString();
+                    $yesterday = $now->copy()->subDay()->toDateString();
+
+                    $pendingAttendance = DB::table('trainings')
+                        ->join('training_attendances', 'trainings.id', '=', 'training_attendances.training_id')
+                        ->where('training_attendances.cadet_id', $layoutCadet->id)
+                        ->where('training_attendances.present', false)
+                        ->whereNull('training_attendances.absence_reason')
+                        ->where(function ($query) use ($intakeStr) {
+                            $query->where('trainings.involvement', 'LIKE', "%{$intakeStr}%")
+                                ->orWhereNull('trainings.involvement')
+                                ->orWhere('trainings.involvement', '');
+                        })
+                        ->where(function ($q) use ($today, $yesterday, $now) {
+                            $q->where(function ($subQ) use ($today) {
+                                $subQ->whereDate('trainings.start_datetime', $today);
+                            })
+                            ->orWhere(function ($subQ) use ($yesterday) {
+                                $subQ->whereDate('trainings.start_datetime', $yesterday);
+                            })
+                            ->orWhere(function ($subQ) use ($now) {
+                                $subQ->where('trainings.start_datetime', '<', $now->copy()->startOfDay())
+                                    ->where(function ($endQ) use ($now) {
+                                        $endQ->whereNull('trainings.end_datetime')
+                                            ->orWhere('trainings.end_datetime', '>=', $now->copy()->startOfDay());
+                                    });
+                            });
+                        })
+                        ->exists();
+
+                    $hasNotifications = $pendingAbsences || $pendingAttendance;
                 }
             }
 
