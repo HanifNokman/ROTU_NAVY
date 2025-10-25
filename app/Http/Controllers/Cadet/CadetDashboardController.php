@@ -163,6 +163,7 @@ class CadetDashboardController extends Controller
                 'learning_progress_points' => $cadet->performanceRating->learning_progress_points ?? 0,
                 'duty_points' => $cadet->performanceRating->duty_points ?? 0,
                 'academic_points' => $cadet->performanceRating->academic_points ?? 0,
+                'position_bonus_points' => $cadet->performanceRating->position_bonus_points ?? 0,
                 'is_best_cadet' => $cadet->is_best_cadet ?? false,
                 'is_best_academic' => $cadet->is_best_academic ?? false,
                 'badges' => $cadet->cadetBadges->map(function($cadetBadge) {

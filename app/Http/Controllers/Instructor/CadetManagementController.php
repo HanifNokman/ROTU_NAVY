@@ -668,10 +668,10 @@ class CadetManagementController extends Controller
         try {
             $positions = $request->positions;
             $intakeYear = $request->intake_year;
-            
+
             $specialPositions = ['CO', 'Thana', 'Zayn', 'PMC'];
             $positionCounts = array_count_values($positions);
-            
+
             foreach ($specialPositions as $position) {
                 if (isset($positionCounts[$position]) && $positionCounts[$position] > 1) {
                     return response()->json([
@@ -680,18 +680,37 @@ class CadetManagementController extends Controller
                     ], 422);
                 }
             }
-            
+
             foreach ($positions as $cadetId => $position) {
-                Cadet::where('id', $cadetId)
-                     ->where('intake_year', $intakeYear)
-                     ->update(['position' => $position]);
+                $cadet = Cadet::where('id', $cadetId)
+                             ->where('intake_year', $intakeYear)
+                             ->first();
+
+                if ($cadet) {
+                    // Update position
+                    $cadet->position = $position;
+                    $cadet->save();
+
+                    // Update performance rating bonus points automatically
+                    $performanceRating = PerformanceRating::where('cadet_id', $cadetId)->first();
+
+                    if ($performanceRating) {
+                        $performanceRating->updatePositionBonusPoints();
+
+                        Log::info('Updated bonus points for cadet', [
+                            'cadet_id' => $cadetId,
+                            'position' => $position,
+                            'bonus_points' => $performanceRating->position_bonus_points
+                        ]);
+                    }
+                }
             }
-            
+
             return response()->json([
                 'success' => true,
-                'message' => 'Positions updated successfully'
+                'message' => 'Positions and bonus points updated successfully'
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Error updating positions: ' . $e->getMessage());
             return response()->json([

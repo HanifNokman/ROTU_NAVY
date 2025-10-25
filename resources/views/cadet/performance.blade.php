@@ -418,20 +418,204 @@
             {{-- ================================================================ --}}
             {{-- PERFORMANCE OVERVIEW SECTION --}}
             {{-- ================================================================ --}}
-            <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden">
-                <div class="section-header">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper gradient-blue mr-3">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden"
+                x-data="{ performanceOpen: true }">
+                <div class="section-header cursor-pointer"
+                    @click="performanceOpen = !performanceOpen">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-blue mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">Performance Overview</h2>
+                            </div>
+                            <p class="text-gray-600 ml-13">View your performance ratings and progress over time</p>
+                        </div>
+                        <div class="flex items-center ml-6">
+                            <svg class="w-6 h-6 text-gray-400 transform transition-transform duration-300"
+                                :class="{ 'rotate-180': performanceOpen }"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-900">Performance Overview</h2>
                     </div>
-                    <p class="text-gray-600 ml-13">View your performance ratings and progress over time</p>
                 </div>
 
-                <div class="p-8">
+                <div class="p-8"
+                    x-show="performanceOpen"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 transform translate-y-0"
+                    x-transition:leave-end="opacity-0 transform -translate-y-2">
+                    {{-- ================================================================ --}}
+                    {{-- POINT DISTRIBUTION OVERVIEW --}}
+                    {{-- ================================================================ --}}
+                    @php
+                        $performanceRating = $performanceRatings->first();
+                        $attendancePoints = $performanceRating->attendance_points ?? 0;
+                        $quizPoints = $performanceRating->quiz_points ?? 0;
+                        $learningPoints = $performanceRating->learning_progress_points ?? 0;
+                        $dutyPoints = $performanceRating->duty_points ?? 0;
+                        $academicPoints = $performanceRating->academic_points ?? 0;
+                        $bonusPoints = $performanceRating->position_bonus_points ?? 0;
+
+                        $totalPoints = $attendancePoints + $quizPoints + $learningPoints + $dutyPoints + $academicPoints + $bonusPoints;
+
+                        $attendancePercent = $totalPoints > 0 ? ($attendancePoints / $totalPoints) * 100 : 0;
+                        $quizPercent = $totalPoints > 0 ? ($quizPoints / $totalPoints) * 100 : 0;
+                        $learningPercent = $totalPoints > 0 ? ($learningPoints / $totalPoints) * 100 : 0;
+                        $dutyPercent = $totalPoints > 0 ? ($dutyPoints / $totalPoints) * 100 : 0;
+                        $academicPercent = $totalPoints > 0 ? ($academicPoints / $totalPoints) * 100 : 0;
+                        $bonusPercent = $totalPoints > 0 ? ($bonusPoints / $totalPoints) * 100 : 0;
+                    @endphp
+
+                    <div class="info-card bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200 mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                            </svg>
+                            Point Distribution Overview
+                        </h3>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {{-- Progress Bars --}}
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm font-medium mb-2">
+                                        <span class="text-blue-700">Attendance</span>
+                                        <span class="text-gray-900">{{ number_format($attendancePoints, 2) }} pts ({{ number_format($attendancePercent, 1) }}%)</span>
+                                    </div>
+                                    <div class="progress-container h-6">
+                                        <div class="progress-bar gradient-blue" style="width: {{ $attendancePercent }}%">
+                                            <span class="text-white text-xs font-semibold px-3"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between text-sm font-medium mb-2">
+                                        <span class="text-green-700">Quiz</span>
+                                        <span class="text-gray-900">{{ number_format($quizPoints, 2) }} pts ({{ number_format($quizPercent, 1) }}%)</span>
+                                    </div>
+                                    <div class="progress-container h-6">
+                                        <div class="progress-bar gradient-green" style="width: {{ $quizPercent }}%">
+                                            <span class="text-white text-xs font-semibold px-3"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between text-sm font-medium mb-2">
+                                        <span class="text-cyan-700">Learning Progress</span>
+                                        <span class="text-gray-900">{{ number_format($learningPoints, 2) }} pts ({{ number_format($learningPercent, 1) }}%)</span>
+                                    </div>
+                                    <div class="progress-container h-6">
+                                        <div class="progress-bar gradient-cyan" style="width: {{ $learningPercent }}%">
+                                            <span class="text-white text-xs font-semibold px-3"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between text-sm font-medium mb-2">
+                                        <span class="text-purple-700">Duty</span>
+                                        <span class="text-gray-900">{{ number_format($dutyPoints, 2) }} pts ({{ number_format($dutyPercent, 1) }}%)</span>
+                                    </div>
+                                    <div class="progress-container h-6">
+                                        <div class="progress-bar gradient-purple" style="width: {{ $dutyPercent }}%">
+                                            <span class="text-white text-xs font-semibold px-3"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between text-sm font-medium mb-2">
+                                        <span class="text-orange-700">Academic</span>
+                                        <span class="text-gray-900">{{ number_format($academicPoints, 2) }} pts ({{ number_format($academicPercent, 1) }}%)</span>
+                                    </div>
+                                    <div class="progress-container h-6">
+                                        <div class="progress-bar gradient-orange" style="width: {{ $academicPercent }}%">
+                                            <span class="text-white text-xs font-semibold px-3"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if($bonusPoints > 0)
+                                <div>
+                                    <div class="flex justify-between text-sm font-medium mb-2">
+                                        <span class="text-yellow-700 flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                            Position Bonus
+                                        </span>
+                                        <span class="text-gray-900 font-bold">{{ number_format($bonusPoints, 2) }} pts ({{ number_format($bonusPercent, 1) }}%)</span>
+                                    </div>
+                                    <div class="progress-container h-6">
+                                        <div class="progress-bar bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600" style="width: {{ $bonusPercent }}%">
+                                            <span class="text-white text-xs font-semibold px-3"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+
+                            {{-- Summary Stats --}}
+                            <div class="flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="relative inline-block">
+                                        <svg class="w-64 h-64 transform -rotate-90">
+                                            @php
+                                                $categories = [
+                                                    ['percent' => $attendancePercent, 'color' => '#3b82f6'],
+                                                    ['percent' => $quizPercent, 'color' => '#10b981'],
+                                                    ['percent' => $learningPercent, 'color' => '#06b6d4'],
+                                                    ['percent' => $dutyPercent, 'color' => '#8b5cf6'],
+                                                    ['percent' => $academicPercent, 'color' => '#f59e0b'],
+                                                    ['percent' => $bonusPercent, 'color' => '#eab308'],
+                                                ];
+
+                                                $radius = 90;
+                                                $circumference = 2 * pi() * $radius;
+                                                $currentOffset = 0;
+                                            @endphp
+
+                                            @foreach($categories as $category)
+                                                @if($category['percent'] > 0)
+                                                    @php
+                                                        $strokeDasharray = ($category['percent'] / 100) * $circumference;
+                                                        $strokeDashoffset = -$currentOffset;
+                                                        $currentOffset += $strokeDasharray;
+                                                    @endphp
+                                                    <circle cx="128" cy="128" r="{{ $radius }}"
+                                                        stroke="{{ $category['color'] }}"
+                                                        stroke-width="32"
+                                                        fill="none"
+                                                        stroke-dasharray="{{ $strokeDasharray }} {{ $circumference }}"
+                                                        stroke-dashoffset="{{ $strokeDashoffset }}"
+                                                        class="transition-all duration-1000"/>
+                                                @endif
+                                            @endforeach
+                                        </svg>
+
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center">
+                                                <div class="text-4xl font-extrabold text-gray-900">{{ number_format($totalPoints, 0) }}</div>
+                                                <div class="text-sm text-gray-600 font-medium">Total Points</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {{-- ================================================================ --}}
                     {{-- USER PERFORMANCE SUMMARY --}}
                     {{-- ================================================================ --}}
