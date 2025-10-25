@@ -463,6 +463,29 @@
                                 <img src="{{ $cadet?->profile_pic ? asset('storage/' . $cadet->profile_pic) : asset('images/default.png') }}"
                                     alt="Profile Picture"
                                     class="w-32 h-44 sm:w-48 sm:h-64 md:w-56 md:h-80 object-cover rounded-2xl shadow-lg border-4 border-white">
+
+                                {{-- Best Cadet/Academic Banner --}}
+                                @if($cadet->is_best_cadet || $cadet->is_best_academic)
+                                    <div class="absolute -top-3 -left-3 -right-3 flex flex-col gap-1">
+                                        @if($cadet->is_best_cadet)
+                                            <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center justify-center space-x-2 border-2 border-yellow-300">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                </svg>
+                                                <span class="font-bold text-xs sm:text-sm">BEST CADET</span>
+                                            </div>
+                                        @endif
+                                        @if($cadet->is_best_academic)
+                                            <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center justify-center space-x-2 border-2 border-blue-300">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                                                </svg>
+                                                <span class="font-bold text-xs sm:text-sm">BEST ACADEMIC</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
                                 <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
                                     <div class="w-12 h-12 gradient-blue rounded-full flex items-center justify-center">
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -476,16 +499,13 @@
                             @if($cadet->cadetBadges && $cadet->cadetBadges->count() > 0)
                                 <div class="flex-1 lg:w-full lg:max-w-[14rem] md:max-w-[16rem] space-y-2 max-h-[176px] sm:max-h-[256px] md:max-h-[320px] lg:max-h-none overflow-y-auto custom-scrollbar">
                                     @php
-                                        // Define rarity order (higher number = higher priority/rarity)
-                                        $rarityOrder = ['Platinum' => 5, 'Gold' => 4, 'Silver' => 3, 'Bronze' => 2, 'Standard' => 1];
-                                        
-                                        // Sort badges by rarity (descending - highest first)
-                                        $sortedBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) use ($rarityOrder) {
-                                            $rarity = $cadetBadge->badge->rarity_label ?? 'Standard';
-                                            return $rarityOrder[$rarity] ?? 0;
+                                        // Sort badges by rarity level (descending - highest first)
+                                        // Rarity levels: 6=Legendary (Best Cadet/Academic), 5=Platinum, 4=Gold, 3=Silver, 2=Bronze, 1=Standard
+                                        $sortedBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
+                                            return $cadetBadge->badge->rarity_level ?? 0;
                                         });
                                     @endphp
-                                    
+
                                     @foreach($sortedBadges as $cadetBadge)
                                         <div class="bg-white rounded-lg p-2 sm:p-3 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 flex items-center space-x-2 sm:space-x-3">
                                             @if($cadetBadge->badge->icon_path)
@@ -1442,19 +1462,47 @@
                 badgesHtml = '<p class="text-center text-gray-500 py-8">No badges unlocked yet.</p>';
             }
             
+            // Build recognition banners HTML
+            let recognitionBannersHtml = '';
+            if (cadet.is_best_cadet || cadet.is_best_academic) {
+                recognitionBannersHtml = '<div class="flex flex-wrap gap-2 mb-3">';
+                if (cadet.is_best_cadet) {
+                    recognitionBannersHtml += `
+                        <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center space-x-2 border-2 border-yellow-300">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            <span class="font-bold text-sm">BEST CADET</span>
+                        </div>
+                    `;
+                }
+                if (cadet.is_best_academic) {
+                    recognitionBannersHtml += `
+                        <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center space-x-2 border-2 border-blue-300">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                            </svg>
+                            <span class="font-bold text-sm">BEST ACADEMIC</span>
+                        </div>
+                    `;
+                }
+                recognitionBannersHtml += '</div>';
+            }
+
             modalContent.innerHTML = `
                 <div class="space-y-6">
                     {{-- Profile Section --}}
                     <div class="flex flex-col md:flex-row gap-6">
                         <div class="flex-shrink-0">
-                            <img src="${cadet.profile_pic}" 
+                            <img src="${cadet.profile_pic}"
                                 alt="${cadet.name}"
                                 class="w-32 h-40 md:w-40 md:h-52 object-cover border rounded-md">
                         </div>
-                        
+
                         <div class="flex-1 space-y-4">
+                            ${recognitionBannersHtml}
                             <div>
-                                <h4 class="text-xl font-bold text-gray-900">${cadet.rank} ${cadet.name}</h4>
+                                <h4 class="text-xl font-bold text-gray-900">${cadet.rank} ${cadet.name}${cadet.rank === 'Lt.M' ? ' PSSTLDM' : ''}</h4>
                                 <p class="text-sm text-gray-600">${cadet.position}</p>
                             </div>
                             
