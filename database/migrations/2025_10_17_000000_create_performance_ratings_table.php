@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('learning_progress_points', 5, 2)->default(0);
             $table->decimal('duty_points', 5, 2)->default(0);
             $table->decimal('academic_points', 5, 2)->default(0);
+            $table->decimal('position_bonus_points', 5, 2)->default(0);
             $table->decimal('total_points', 5, 2)->default(0);
             $table->enum('rating', ['⭐☆☆☆☆', '⭐⭐☆☆☆', '⭐⭐⭐☆☆', '⭐⭐⭐⭐☆', '⭐⭐⭐⭐⭐'])->default('⭐☆☆☆☆');
             $table->timestamps();

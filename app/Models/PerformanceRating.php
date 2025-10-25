@@ -16,6 +16,7 @@ class PerformanceRating extends Model
         'learning_progress_points',
         'duty_points',
         'academic_points',
+        'position_bonus_points',
         'total_points',
         'rating',
         'updated_at'
@@ -27,6 +28,7 @@ class PerformanceRating extends Model
         'learning_progress_points' => 'decimal:2',
         'duty_points' => 'decimal:2',
         'academic_points' => 'decimal:2',
+        'position_bonus_points' => 'decimal:2',
         'total_points' => 'decimal:2',
         'updated_at' => 'datetime'
     ];
@@ -48,7 +50,8 @@ class PerformanceRating extends Model
                              $this->quiz_points +
                              $this->learning_progress_points +
                              $this->duty_points +
-                             $this->academic_points;
+                             $this->academic_points +
+                             $this->position_bonus_points;
 
         $this->rating = $this->calculateRating();
         $this->updated_at = now();
@@ -243,6 +246,26 @@ class PerformanceRating extends Model
     }
 
     /**
+     * Update position bonus points based on cadet's position
+     * CO = +50 points
+     * Rankholder (Thana, Zayn, PMC) = +30 points
+     */
+    public function updatePositionBonusPoints()
+    {
+        $position = $this->cadet->position ?? null;
+
+        if ($position === 'CO') {
+            $this->position_bonus_points = 50.00; // CO Intake bonus
+        } elseif (in_array($position, ['Thana', 'Zayn', 'PMC'])) {
+            $this->position_bonus_points = 30.00; // Rankholder bonus
+        } else {
+            $this->position_bonus_points = 0.00; // Normal cadet, no bonus
+        }
+
+        $this->calculateAndUpdateTotal();
+    }
+
+    /**
      * Update all points and recalculate total
      */
     public function updateAllPoints()
@@ -252,6 +275,7 @@ class PerformanceRating extends Model
         $this->updateLearningProgressPoints();
         $this->updateDutyPoints();
         $this->updateAcademicPoints();
+        $this->updatePositionBonusPoints();
     }
 
     /**
@@ -267,6 +291,7 @@ class PerformanceRating extends Model
                 'learning_progress_points' => 0,
                 'duty_points' => 0,
                 'academic_points' => 0,
+                'position_bonus_points' => 0,
                 'total_points' => 0,
                 'rating' => '⭐☆☆☆☆',
                 'updated_at' => now()

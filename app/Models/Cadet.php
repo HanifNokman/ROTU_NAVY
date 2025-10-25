@@ -392,6 +392,7 @@ class Cadet extends Model
                 'learning_progress_points' => 0,
                 'duty_points' => 0,
                 'academic_points' => 0,
+                'position_bonus_points' => 0,
                 'total_points' => 0,
                 'rating' => '⭐☆☆☆☆',
                 'updated_at' => now()
