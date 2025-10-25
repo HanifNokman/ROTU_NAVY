@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 id="legacy-gallery-header" class="font-semibold text-xl leading-tight transition-colors duration-500" style="color: #1f2937;">
             {{ __('Legacy Gallery') }}
         </h2>
     </x-slot>
@@ -99,7 +99,11 @@
     /* ========================================= */
     /* GOLDEN GLOW HOVER EFFECT */
     /* ========================================= */
-    .group:hover .relative.p-6 {
+    .portrait-frame {
+        transition: box-shadow 0.4s ease-in-out;
+    }
+
+    .group:hover .portrait-frame {
         box-shadow:
             inset 0 0 30px rgba(0,0,0,0.5),
             inset 0 4px 10px rgba(255,215,0,0.3),
@@ -108,9 +112,9 @@
             0 0 0 3px #5d4037,
             0 0 0 10px #b8860b,
             0 0 0 12px #3e2723,
-            0 0 35px rgba(212,175,55,0.8),
-            0 0 50px rgba(218,165,32,0.6),
-            0 0 70px rgba(255,215,0,0.4) !important;
+            0 0 20px rgba(212,175,55,0.5),
+            0 0 30px rgba(218,165,32,0.35),
+            0 0 45px rgba(255,215,0,0.25) !important;
     }
     </style>
 
@@ -337,12 +341,12 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                        <div class="flex flex-wrap justify-center gap-16 max-w-7xl mx-auto">
                             @foreach($cadets as $cadet)
                                 {{-- Regal Portrait Frame --}}
-                                <div class="relative group" style="perspective: 1500px;">
+                                <div class="relative group flex-shrink-0" style="perspective: 1500px; width: 320px;">
                                     {{-- Outer Gilded Frame --}}
-                                    <div class="relative p-6 rounded-lg shadow-2xl transition-all duration-500"
+                                    <div class="portrait-frame relative p-4 rounded-lg shadow-2xl"
                                          style="background: linear-gradient(145deg, #b8860b 0%, #daa520 25%, #8b6914 50%, #daa520 75%, #b8860b 100%);
                                                 box-shadow:
                                                     inset 0 0 30px rgba(0,0,0,0.5),
@@ -353,40 +357,39 @@
                                                     0 0 0 10px #b8860b,
                                                     0 0 0 12px #3e2723,
                                                     0 0 20px rgba(212,175,55,0.4);
-                                                border: 2px solid #d4af37;
-                                                transition: box-shadow 0.3s ease-in-out;">
+                                                border: 2px solid #d4af37;">
 
                                         {{-- Ornate Corners --}}
-                                        <div class="absolute top-2 left-2 w-8 h-8 border-t-4 border-l-4 border-yellow-400 opacity-70"></div>
-                                        <div class="absolute top-2 right-2 w-8 h-8 border-t-4 border-r-4 border-yellow-400 opacity-70"></div>
-                                        <div class="absolute bottom-2 left-2 w-8 h-8 border-b-4 border-l-4 border-yellow-400 opacity-70"></div>
-                                        <div class="absolute bottom-2 right-2 w-8 h-8 border-b-4 border-r-4 border-yellow-400 opacity-70"></div>
+                                        <div class="absolute top-1 left-1 w-6 h-6 border-t-3 border-l-3 border-yellow-400 opacity-70"></div>
+                                        <div class="absolute top-1 right-1 w-6 h-6 border-t-3 border-r-3 border-yellow-400 opacity-70"></div>
+                                        <div class="absolute bottom-1 left-1 w-6 h-6 border-b-3 border-l-3 border-yellow-400 opacity-70"></div>
+                                        <div class="absolute bottom-1 right-1 w-6 h-6 border-b-3 border-r-3 border-yellow-400 opacity-70"></div>
 
                                         {{-- Middle Mahogany Frame --}}
-                                        <div class="relative p-4 rounded"
+                                        <div class="relative p-3 rounded"
                                              style="background: linear-gradient(145deg, #4e342e 0%, #5d4037 50%, #3e2723 100%);
                                                     box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.5);">
 
                                             {{-- Inner Velvet Mat --}}
-                                            <div class="relative border-4 rounded"
+                                            <div class="relative border-3 rounded"
                                                  style="border-color: #8b4513;
                                                         background: linear-gradient(to bottom, #2c1810 0%, #1a0f0a 100%);
                                                         box-shadow: inset 0 0 30px rgba(0,0,0,0.8), inset 0 4px 6px rgba(0,0,0,0.6);">
 
                                                 {{-- Canvas Background --}}
-                                                <div class="p-6" style="background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 50%, #ebe6d9 100%);">
+                                                <div class="p-4" style="background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 50%, #ebe6d9 100%);">
 
                                                     {{-- Award Ribbon Banner at Top --}}
                                                     @if($cadet->is_best_cadet)
-                                                        <div class="mb-4">
-                                                            <div class="px-6 py-2 rounded"
+                                                        <div class="mb-3">
+                                                            <div class="px-4 py-1.5 rounded"
                                                                  style="background: linear-gradient(135deg, #c9b037 0%, #f4d03f 50%, #c9b037 100%);
                                                                         box-shadow:
                                                                             0 4px 15px rgba(201,176,55,0.5),
                                                                             inset 0 2px 4px rgba(255,255,255,0.4),
                                                                             inset 0 -2px 4px rgba(0,0,0,0.2);
                                                                         border: 2px solid #8b6914;">
-                                                                <p class="text-sm font-black tracking-widest text-center"
+                                                                <p class="text-xs font-black tracking-widest text-center"
                                                                    style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
                                                                           color: #2c1810;
                                                                           text-shadow: 1px 1px 2px rgba(255,255,255,0.4), 0 0 8px rgba(255,215,0,0.3);
@@ -397,15 +400,15 @@
                                                         </div>
                                                     @endif
                                                     @if($cadet->is_best_academic)
-                                                        <div class="mb-4">
-                                                            <div class="px-6 py-2 rounded"
+                                                        <div class="mb-3">
+                                                            <div class="px-4 py-1.5 rounded"
                                                                  style="background: linear-gradient(135deg, #c9b037 0%, #f4d03f 50%, #c9b037 100%);
                                                                         box-shadow:
                                                                             0 4px 15px rgba(201,176,55,0.5),
                                                                             inset 0 2px 4px rgba(255,255,255,0.4),
                                                                             inset 0 -2px 4px rgba(0,0,0,0.2);
                                                                         border: 2px solid #8b6914;">
-                                                                <p class="text-sm font-black tracking-widest text-center"
+                                                                <p class="text-xs font-black tracking-widest text-center"
                                                                    style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
                                                                           color: #2c1810;
                                                                           text-shadow: 1px 1px 2px rgba(255,255,255,0.4), 0 0 8px rgba(255,215,0,0.3);
@@ -417,19 +420,19 @@
                                                     @endif
 
                                                     {{-- Profile Picture with Ornate Border --}}
-                                                    <div class="relative mb-4">
+                                                    <div class="relative mb-3">
                                                         {{-- Decorative outer glow --}}
-                                                        <div class="absolute -inset-2 rounded-lg"
+                                                        <div class="absolute -inset-1.5 rounded-lg"
                                                              style="background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(184,134,11,0.3));
-                                                                    filter: blur(8px);"></div>
+                                                                    filter: blur(6px);"></div>
 
-                                                        <div class="relative mx-auto w-56 h-72 rounded overflow-hidden shadow-2xl"
-                                                             style="border: 6px solid;
+                                                        <div class="relative mx-auto rounded overflow-hidden shadow-2xl"
+                                                             style="width: 160px; height: 208px; border: 4px solid;
                                                                     border-image: linear-gradient(135deg, #d4af37 0%, #f9d84b 50%, #d4af37 100%) 1;
                                                                     box-shadow:
-                                                                        0 8px 20px rgba(0,0,0,0.5),
-                                                                        inset 0 0 40px rgba(212,175,55,0.15),
-                                                                        0 0 30px rgba(212,175,55,0.2);">
+                                                                        0 6px 16px rgba(0,0,0,0.5),
+                                                                        inset 0 0 30px rgba(212,175,55,0.15),
+                                                                        0 0 20px rgba(212,175,55,0.2);">
                                                             @if($cadet->profile_pic)
                                                                 <img src="{{ asset('storage/' . $cadet->profile_pic) }}"
                                                                      alt="{{ $cadet->user->name }}"
@@ -438,7 +441,7 @@
                                                             @else
                                                                 <div class="w-full h-full flex items-center justify-center"
                                                                      style="background: linear-gradient(135deg, #f5f1e8, #ebe6d9);">
-                                                                    <svg class="w-24 h-24 text-amber-800 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <svg class="w-16 h-16 text-amber-800 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                                     </svg>
                                                                 </div>
@@ -447,36 +450,40 @@
                                                     </div>
 
                                                     {{-- Name and Service Number --}}
-                                                    <div class="text-center space-y-2">
+                                                    <div class="text-center space-y-1.5">
                                                         {{-- Decorative ribbon --}}
-                                                        <div class="flex items-center justify-center gap-2 mb-2">
-                                                            <div style="width: 30px; height: 1px; background: linear-gradient(to right, transparent, #8b6914);"></div>
-                                                            <div style="width: 4px; height: 4px; background: #d4af37; border-radius: 50%;"></div>
-                                                            <div style="width: 30px; height: 1px; background: linear-gradient(to left, transparent, #8b6914);"></div>
+                                                        <div class="flex items-center justify-center gap-1.5 mb-1.5">
+                                                            <div style="width: 20px; height: 1px; background: linear-gradient(to right, transparent, #8b6914);"></div>
+                                                            <div style="width: 3px; height: 3px; background: #d4af37; border-radius: 50%;"></div>
+                                                            <div style="width: 20px; height: 1px; background: linear-gradient(to left, transparent, #8b6914);"></div>
                                                         </div>
 
                                                         {{-- Name Plaque --}}
-                                                        <div class="inline-block px-6 py-3 rounded-sm relative"
+                                                        <div class="inline-block px-4 py-2 rounded-sm relative"
                                                              style="background: linear-gradient(to bottom, #d4af37 0%, #f9d84b 50%, #d4af37 100%);
                                                                     box-shadow:
                                                                         inset 0 2px 4px rgba(255,255,255,0.4),
                                                                         inset 0 -2px 4px rgba(0,0,0,0.3),
-                                                                        0 4px 12px rgba(0,0,0,0.5);
-                                                                    border: 2px solid #b8860b;">
-                                                            <h4 class="text-xl font-bold tracking-wide"
+                                                                        0 3px 10px rgba(0,0,0,0.5);
+                                                                    border: 2px solid #b8860b;
+                                                                    max-width: 260px;">
+                                                            <h4 class="cadet-name font-bold tracking-wide"
+                                                                data-name="Lt.M {{ strtoupper($cadet->user->name) }} PSSTLDM"
                                                                 style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
                                                                        color: #3e2723;
                                                                        text-shadow:
                                                                            1px 1px 2px rgba(255,255,255,0.5),
                                                                            0 0 10px rgba(255,215,0,0.3);
-                                                                       letter-spacing: 0.05em;">
+                                                                       letter-spacing: 0.05em;
+                                                                       line-height: 1.3;
+                                                                       font-size: 16px;">
                                                                 Lt.M {{ strtoupper($cadet->user->name) }} PSSTLDM
                                                             </h4>
                                                         </div>
 
                                                         {{-- Service Number --}}
-                                                        <div class="mt-2">
-                                                            <p class="text-sm font-semibold tracking-wide"
+                                                        <div class="mt-1.5">
+                                                            <p class="text-xs font-semibold tracking-wide"
                                                                style="font-family: 'Times New Roman', serif;
                                                                       color: #5d4037;
                                                                       letter-spacing: 0.1em;">
@@ -511,6 +518,49 @@
     </div>
 
     <script>
+        // Function to adjust name font size to fit in 2 lines
+        function adjustNameFontSize() {
+            const nameElements = document.querySelectorAll('.cadet-name');
+
+            nameElements.forEach(nameEl => {
+                const text = nameEl.getAttribute('data-name') || nameEl.textContent;
+                const textLength = text.length;
+
+                // Calculate font size based on text length
+                let fontSize;
+                if (textLength <= 25) {
+                    fontSize = 16; // Large font for short names
+                } else if (textLength <= 30) {
+                    fontSize = 15;
+                } else if (textLength <= 35) {
+                    fontSize = 14;
+                } else if (textLength <= 40) {
+                    fontSize = 13;
+                } else if (textLength <= 45) {
+                    fontSize = 12;
+                } else {
+                    fontSize = 11; // Smallest font for very long names
+                }
+
+                nameEl.style.fontSize = fontSize + 'px';
+
+                // Check if it exceeds 2 lines and adjust further if needed
+                setTimeout(() => {
+                    const lineHeight = parseFloat(getComputedStyle(nameEl).lineHeight);
+                    const actualHeight = nameEl.scrollHeight;
+                    const maxHeight = lineHeight * 2.1; // Allow for 2 lines plus small buffer
+
+                    if (actualHeight > maxHeight && fontSize > 10) {
+                        // Reduce font size further if still exceeding 2 lines
+                        nameEl.style.fontSize = (fontSize - 1) + 'px';
+                    }
+                }, 10);
+            });
+        }
+
+        // Run on page load and after view toggle
+        document.addEventListener('DOMContentLoaded', adjustNameFontSize);
+
         function toggleView(view) {
             const alumniBtn = document.getElementById('alumni-btn');
             const halloffameBtn = document.getElementById('halloffame-btn');
@@ -521,6 +571,9 @@
             const pageIcon = document.getElementById('page-icon');
             const iconSvg = document.getElementById('icon-svg');
             const pageBackground = document.getElementById('page-background');
+            const mainContent = document.querySelector('main');
+            const headerElement = document.querySelector('header');
+            const legacyGalleryHeader = document.getElementById('legacy-gallery-header');
 
             if (view === 'alumni') {
                 // Update buttons
@@ -549,6 +602,20 @@
                 // Update background to light gray
                 pageBackground.style.background = 'linear-gradient(to bottom right, rgb(249, 250, 251), rgb(229, 231, 235))';
 
+                // Reset main content and header background
+                if (mainContent) {
+                    mainContent.style.background = '';
+                }
+                if (headerElement) {
+                    headerElement.style.background = '';
+                    headerElement.style.boxShadow = '';
+                }
+
+                // Reset Legacy Gallery header to black
+                if (legacyGalleryHeader) {
+                    legacyGalleryHeader.style.color = '#1f2937'; // Dark gray/black
+                }
+
                 // Update icon to book
                 pageIcon.className = 'inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4';
                 iconSvg.setAttribute('fill', 'none');
@@ -567,6 +634,8 @@
                 setTimeout(() => {
                     halloffameContent.classList.remove('content-hidden');
                     halloffameContent.classList.add('content-visible');
+                    // Adjust font sizes after content is visible
+                    setTimeout(adjustNameFontSize, 100);
                 }, 50);
 
                 // Update title
@@ -575,6 +644,20 @@
 
                 // Update background to dark color matching side nav (#2e313c)
                 pageBackground.style.background = '#2e313c';
+
+                // Update main content and header background to match side nav
+                if (mainContent) {
+                    mainContent.style.background = '#2e313c';
+                }
+                if (headerElement) {
+                    headerElement.style.background = '#25272f'; // Darker shade for header
+                    headerElement.style.boxShadow = '0 2px 4px 0 rgba(0, 0, 0, 0.4)';
+                }
+
+                // Update Legacy Gallery header to golden
+                if (legacyGalleryHeader) {
+                    legacyGalleryHeader.style.color = '#d4af37'; // Golden color
+                }
 
                 // Update text colors for Hall of Fame
                 pageTitle.style.color = '#fef3c7';
