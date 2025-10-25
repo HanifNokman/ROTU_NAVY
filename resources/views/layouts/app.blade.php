@@ -83,7 +83,7 @@
         </style>
     </head>
     
-    <body class="font-sans antialiased bg-gray-100">
+    <body class="font-sans antialiased bg-gray-100 overflow-hidden">
         {{-- ================================================================ --}}
         {{-- USER DATA AND NOTIFICATIONS SETUP --}}
         {{-- ================================================================ --}}
@@ -752,7 +752,7 @@
                     {{-- ================================================================ --}}
                     {{-- MAIN CONTENT AREA --}}
                     {{-- ================================================================ --}}
-                    <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
+                    <div class="flex-1 flex flex-col h-screen overflow-hidden">
                         @isset($header)
                             <header class="bg-white shadow flex-shrink-0 w-full flex justify-end">
                                 <div class="w-full max-w-7xl py-6 px-4 sm:px-6 lg:px-8 flex justify-end">
