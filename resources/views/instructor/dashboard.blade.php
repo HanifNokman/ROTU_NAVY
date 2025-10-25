@@ -570,43 +570,6 @@
                                 @endforelse
                             </div>
                         </div>
-
-                        {{-- ================================================================ --}}
-                        {{-- DUTY INCREMENT MODAL --}}
-                        {{-- ================================================================ --}}
-                        <div x-show="$store.modal.open" x-cloak x-transition class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" @click.self="$store.modal.open = false; $store.modal.selected = []">
-                            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto relative">
-                                
-                                <button @click="$store.modal.open = false; $store.modal.selected = []" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">
-                                    ×
-                                </button>
-
-                                <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
-                                <p class="text-center text-gray-600 mb-4">Intake - {{ $selectedDutyIntakeYear - 2011 }}</p>
-
-                                <form method="POST" action="{{ route('instructor.incrementDuty') }}">
-                                    @csrf
-                                    <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
-                                    <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
-
-                                    <div id="modal-cadet-list" class="space-y-2 max-h-[315px] overflow-y-auto border p-2 rounded mb-4">
-                                        <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
-                                            <div class="flex items-center justify-between border p-2 rounded">
-                                                <span x-text="cadet.name + ' (' + cadet.service_number + ')'"></span>
-                                                <input type="checkbox" x-model="$store.modal.selected" :value="cadet.id" name="cadet_ids[]">
-                                            </div>
-                                        </template>
-                                    </div>
-
-                                    <div class="text-center">
-                                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2" :disabled="$store.modal.selected.length === 0">
-                                            <i class="fas fa-plus"></i>
-                                            <span>Add Duty Count</span>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 {{-- ================================================================ --}}
@@ -1053,6 +1016,44 @@
         </div>
     </div>
     </div>
+
+    {{-- ================================================================ --}}
+    {{-- DUTY INCREMENT MODAL --}}
+    {{-- ================================================================ --}}
+    <div x-show="$store.modal.open" x-cloak x-transition class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999]" @click.self="$store.modal.open = false; $store.modal.selected = []">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto relative">
+
+            <button @click="$store.modal.open = false; $store.modal.selected = []" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                ×
+            </button>
+
+            <h2 class="text-xl font-bold mb-4 text-center pr-8">Select Cadets on Duty</h2>
+            <p class="text-center text-gray-600 mb-4">Intake - {{ $selectedDutyIntakeYear - 2011 }}</p>
+
+            <form method="POST" action="{{ route('instructor.incrementDuty') }}">
+                @csrf
+                <input type="hidden" name="duty_intake_year" value="{{ $selectedDutyIntakeYear }}">
+                <input type="hidden" name="sort_order" value="{{ $sortOrder }}">
+
+                <div id="modal-cadet-list" class="space-y-2 max-h-[315px] overflow-y-auto border p-2 rounded mb-4">
+                    <template x-for="cadet in $store.modal.cadets" :key="cadet.id">
+                        <div class="flex items-center justify-between border p-2 rounded">
+                            <span x-text="cadet.name + ' (' + cadet.service_number + ')'"></span>
+                            <input type="checkbox" x-model="$store.modal.selected" :value="cadet.id" name="cadet_ids[]">
+                        </div>
+                    </template>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-flex items-center gap-2" :disabled="$store.modal.selected.length === 0">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Duty Count</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {{-- ================================================================ --}}
     {{-- JAVASCRIPT --}}
     {{-- ================================================================ --}}
