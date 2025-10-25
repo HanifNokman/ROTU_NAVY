@@ -148,8 +148,8 @@ class CadetDashboardController extends Controller
                 'rank' => $cadet->rank ?? 'N/A',
                 'service_number' => $cadet->service_number ?? 'N/A',
                 'position' => $cadet->position ?? 'Normal Cadet',
-                'profile_pic' => $cadet->profile_pic 
-                    ? asset('storage/' . $cadet->profile_pic) 
+                'profile_pic' => $cadet->profile_pic
+                    ? asset('storage/' . $cadet->profile_pic)
                     : asset('images/default.png'),
                 'matric_no' => $cadet->matric_no ?? 'N/A',
                 'faculty' => $cadet->faculty ?? 'N/A',
@@ -163,6 +163,8 @@ class CadetDashboardController extends Controller
                 'learning_progress_points' => $cadet->performanceRating->learning_progress_points ?? 0,
                 'duty_points' => $cadet->performanceRating->duty_points ?? 0,
                 'academic_points' => $cadet->performanceRating->academic_points ?? 0,
+                'is_best_cadet' => $cadet->is_best_cadet ?? false,
+                'is_best_academic' => $cadet->is_best_academic ?? false,
                 'badges' => $cadet->cadetBadges->map(function($cadetBadge) {
                     return [
                         'name' => $cadetBadge->badge->name,

@@ -80,11 +80,12 @@ class Badge extends Model
     public function getRarityLabelAttribute()
     {
         $rarities = [
-            1 => 'Standard',
-            2 => 'Bronze',
-            3 => 'Silver',
-            4 => 'Gold',
-            5 => 'Platinum'
+            1 => 'Common',
+            2 => 'Uncommon',
+            3 => 'Rare',
+            4 => 'Epic',
+            5 => 'Legendary',
+            6 => 'Mythic'
         ];
 
         return $rarities[$this->rarity_level] ?? 'Unknown';
@@ -96,11 +97,12 @@ class Badge extends Model
     public function getRarityColorAttribute()
     {
         $colors = [
-            1 => '#6B7280',      // Standard - neutral gray
-            2 => '#D97706',      // Bronze - warm brown/amber
-            3 => '#94A3B8',      // Silver - metallic silver
-            4 => '#EAB308',      // Gold - bright gold
-            5 => '#22D3EE'       // Platinum - cool platinum blue
+            1 => '#9CA3AF',      // Common - gray
+            2 => '#22C55E',      // Uncommon - vibrant green
+            3 => '#3B82F6',      // Rare - bright blue
+            4 => '#9333EA',      // Epic - deep purple
+            5 => '#FBBF24',      // Legendary - bright gold
+            6 => '#DC2626'       // Mythic - deep red
         ];
 
         return $colors[$this->rarity_level] ?? '#6B7280';

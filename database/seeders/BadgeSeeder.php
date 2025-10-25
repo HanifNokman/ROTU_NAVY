@@ -237,7 +237,7 @@ class BadgeSeeder extends Seeder
                 'rarity_level' => 5,
             ],
 
-            // Special Award Badges
+            // Special Award Badges (Legendary Rarity - Higher than Platinum)
             [
                 'id' => 24,
                 'name' => 'Best Cadet',
@@ -245,7 +245,7 @@ class BadgeSeeder extends Seeder
                 'description' => 'Recognized as the best overall cadet',
                 'unlock_criteria' => 'Selected by instructor as Best Cadet and achieve Lt.M rank',
                 'category' => 'overall',
-                'rarity_level' => 5,
+                'rarity_level' => 6,
             ],
             [
                 'id' => 25,
@@ -254,7 +254,7 @@ class BadgeSeeder extends Seeder
                 'description' => 'Recognized for outstanding academic excellence',
                 'unlock_criteria' => 'Selected by instructor as Best Academic and achieve Lt.M rank',
                 'category' => 'academic',
-                'rarity_level' => 5,
+                'rarity_level' => 6,
             ],
 
             // Physical Fitness Badge

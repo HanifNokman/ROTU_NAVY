@@ -356,7 +356,7 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <a href="{{ route('alumni') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700">
-                                View Alumni
+                                Legacy Gallery
                             </a>
                         </div>
                     </div>
