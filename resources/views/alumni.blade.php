@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Alumni') }}
+            {{ __('Legacy Gallery') }}
         </h2>
     </x-slot>
 
@@ -72,6 +72,46 @@
     .gradient-green {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
+
+    /* ========================================= */
+    /* TRANSITION EFFECTS FOR TOGGLE */
+    /* ========================================= */
+    .content-transition {
+        transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+    }
+
+    .content-hidden {
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
+        position: absolute;
+        visibility: hidden;
+    }
+
+    .content-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        position: relative;
+        visibility: visible;
+    }
+
+    /* ========================================= */
+    /* GOLDEN GLOW HOVER EFFECT */
+    /* ========================================= */
+    .group:hover .relative.p-6 {
+        box-shadow:
+            inset 0 0 30px rgba(0,0,0,0.5),
+            inset 0 4px 10px rgba(255,215,0,0.3),
+            inset 0 -4px 10px rgba(0,0,0,0.4),
+            0 15px 45px rgba(0,0,0,0.7),
+            0 0 0 3px #5d4037,
+            0 0 0 10px #b8860b,
+            0 0 0 12px #3e2723,
+            0 0 35px rgba(212,175,55,0.8),
+            0 0 50px rgba(218,165,32,0.6),
+            0 0 70px rgba(255,215,0,0.4) !important;
+    }
     </style>
 
     <div id="page-background" class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen transition-all duration-500">
@@ -101,7 +141,7 @@
             </div>
 
             <!-- Alumni Content Card -->
-            <div id="alumni-content" class="dashboard-card bg-white rounded-xl overflow-hidden">
+            <div id="alumni-content" class="dashboard-card bg-white rounded-xl overflow-hidden content-transition content-visible">
                 <div class="section-header">
                     <div class="flex items-center mb-2">
                         <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
@@ -250,7 +290,7 @@
             </div>
 
             <!-- Hall of Fame Content -->
-            <div id="halloffame-content" class="hidden space-y-16">
+            <div id="halloffame-content" class="space-y-16 content-transition content-hidden">
                     @forelse($hallOfFameByIntake as $intake => $cadets)
                     <div>
                         {{-- Naval Intake Header --}}
@@ -302,7 +342,7 @@
                                 {{-- Regal Portrait Frame --}}
                                 <div class="relative group" style="perspective: 1500px;">
                                     {{-- Outer Gilded Frame --}}
-                                    <div class="relative p-6 rounded-lg shadow-2xl transform transition-transform duration-500 hover:scale-105"
+                                    <div class="relative p-6 rounded-lg shadow-2xl transition-all duration-500"
                                          style="background: linear-gradient(145deg, #b8860b 0%, #daa520 25%, #8b6914 50%, #daa520 75%, #b8860b 100%);
                                                 box-shadow:
                                                     inset 0 0 30px rgba(0,0,0,0.5),
@@ -313,7 +353,8 @@
                                                     0 0 0 10px #b8860b,
                                                     0 0 0 12px #3e2723,
                                                     0 0 20px rgba(212,175,55,0.4);
-                                                border: 2px solid #d4af37;">
+                                                border: 2px solid #d4af37;
+                                                transition: box-shadow 0.3s ease-in-out;">
 
                                         {{-- Ornate Corners --}}
                                         <div class="absolute top-2 left-2 w-8 h-8 border-t-4 border-l-4 border-yellow-400 opacity-70"></div>
@@ -486,9 +527,14 @@
                 alumniBtn.className = 'px-6 py-3 rounded-lg font-semibold transition-all duration-200 bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg';
                 halloffameBtn.className = 'px-6 py-3 rounded-lg font-semibold transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-gray-300';
 
-                // Update content
-                alumniContent.classList.remove('hidden');
-                halloffameContent.classList.add('hidden');
+                // Update content with smooth transitions
+                halloffameContent.classList.remove('content-visible');
+                halloffameContent.classList.add('content-hidden');
+
+                setTimeout(() => {
+                    alumniContent.classList.remove('content-hidden');
+                    alumniContent.classList.add('content-visible');
+                }, 50);
 
                 // Update title
                 pageTitle.textContent = 'Alumni';
@@ -514,16 +560,21 @@
                 halloffameBtn.className = 'px-6 py-3 rounded-lg font-semibold transition-all duration-200 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg';
                 alumniBtn.className = 'px-6 py-3 rounded-lg font-semibold transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-gray-300';
 
-                // Update content
-                halloffameContent.classList.remove('hidden');
-                alumniContent.classList.add('hidden');
+                // Update content with smooth transitions
+                alumniContent.classList.remove('content-visible');
+                alumniContent.classList.add('content-hidden');
+
+                setTimeout(() => {
+                    halloffameContent.classList.remove('content-hidden');
+                    halloffameContent.classList.add('content-visible');
+                }, 50);
 
                 // Update title
                 pageTitle.textContent = 'Hall of Fame';
                 pageDescription.textContent = 'Honoring Excellence Across Generations';
 
-                // Update background to wooden gallery
-                pageBackground.style.background = 'linear-gradient(135deg, #3e2723 0%, #5d4037 100%)';
+                // Update background to dark color matching side nav (#2e313c)
+                pageBackground.style.background = '#2e313c';
 
                 // Update text colors for Hall of Fame
                 pageTitle.style.color = '#fef3c7';
