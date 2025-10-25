@@ -74,13 +74,13 @@
     }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div id="page-background" class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen transition-all duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
             <!-- Header Section -->
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div id="page-icon" class="inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4">
+                    <svg id="icon-svg" class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                 </div>
@@ -249,83 +249,210 @@
                 </div>
             </div>
 
-            <!-- Hall of Fame Content Card -->
-            <div id="halloffame-content" class="dashboard-card bg-white rounded-xl overflow-hidden hidden">
-                <div class="section-header" style="background: linear-gradient(to right, #fef3c7 0%, #fde68a 100%);">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper bg-gradient-to-r from-yellow-400 to-yellow-600 mr-3 p-2 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Hall of Fame</h3>
-                    </div>
-                    <p class="text-gray-600 ml-13">Celebrating excellence: Best Cadets and Best Academics by intake</p>
-                </div>
-
-                <div class="p-6">
+            <!-- Hall of Fame Content -->
+            <div id="halloffame-content" class="hidden space-y-16">
                     @forelse($hallOfFameByIntake as $intake => $cadets)
-                    <div class="mb-8">
-                        <div class="bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg border-2 border-yellow-200 p-6">
-                            <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                Intake - {{ $intake - 2011 }} ({{ $intake }})
-                            </h4>
+                    <div>
+                        {{-- Naval Intake Header --}}
+                        <div class="text-center mb-12">
+                            <div class="inline-block relative">
+                                {{-- Naval Rope Border Top --}}
+                                <div class="flex items-center justify-center gap-3 mb-3">
+                                    <div style="width: 100px; height: 3px; background: repeating-linear-gradient(90deg, #c9b037 0px, #c9b037 10px, transparent 10px, transparent 15px); opacity: 0.8;"></div>
+                                    <svg class="w-8 h-8" style="fill: #c9b037; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" viewBox="0 0 24 24">
+                                        <path d="M12,2C10.89,2 10,2.9 10,4C10,4.54 10.23,5.03 10.6,5.38C9.5,6.1 9,7.41 9,8.66C9,9.66 9.27,10.66 9.82,11.54C8.71,12.32 8,13.57 8,15C8,16.11 8.45,17.11 9.18,17.83C8.45,18.55 8,19.55 8,20.66C8,21.4 8.18,22.08 8.5,22.68L10.5,21.32C10.18,20.89 10,20.39 10,19.86C10,18.76 10.89,17.86 12,17.86C13.11,17.86 14,18.76 14,19.86C14,20.39 13.82,20.89 13.5,21.32L15.5,22.68C15.82,22.08 16,21.4 16,20.66C16,19.55 15.55,18.55 14.82,17.83C15.55,17.11 16,16.11 16,15C16,13.57 15.29,12.32 14.18,11.54C14.73,10.66 15,9.66 15,8.66C15,7.41 14.5,6.1 13.4,5.38C13.77,5.03 14,4.54 14,4C14,2.9 13.11,2 12,2M12,4.86C12.41,4.86 12.75,5.2 12.75,5.61C12.75,6.03 12.41,6.36 12,6.36C11.59,6.36 11.25,6.03 11.25,5.61C11.25,5.2 11.59,4.86 12,4.86M12,9.14C12.69,9.14 13.25,9.7 13.25,10.39C13.25,11.08 12.69,11.64 12,11.64C11.31,11.64 10.75,11.08 10.75,10.39C10.75,9.7 11.31,9.14 12,9.14M12,13.93C12.83,13.93 13.5,14.6 13.5,15.43C13.5,16.26 12.83,16.93 12,16.93C11.17,16.93 10.5,16.26 10.5,15.43C10.5,14.6 11.17,13.93 12,13.93Z"/>
+                                    </svg>
+                                    <div style="width: 100px; height: 3px; background: repeating-linear-gradient(90deg, #c9b037 0px, #c9b037 10px, transparent 10px, transparent 15px); opacity: 0.8;"></div>
+                                </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                @foreach($cadets as $cadet)
-                                    <div class="bg-white rounded-lg p-5 shadow-lg border-2 {{ $cadet->is_best_cadet ? 'border-yellow-400' : 'border-blue-400' }}">
-                                        <div class="flex items-start space-x-4">
-                                            {{-- Profile Picture --}}
-                                            <div class="flex-shrink-0">
-                                                <div class="w-24 h-32 bg-gray-200 rounded-lg overflow-hidden">
-                                                    @if($cadet->profile_pic)
-                                                        <img src="{{ asset('storage/' . $cadet->profile_pic) }}"
-                                                             alt="{{ $cadet->user->name }}"
-                                                             class="w-full h-full object-cover">
-                                                    @else
-                                                        <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                            </svg>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            </div>
+                                {{-- Naval Banner --}}
+                                <div class="relative inline-block px-8 py-3"
+                                     style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1e3a8a 100%);
+                                            border: 3px solid #c9b037;
+                                            box-shadow:
+                                                0 6px 20px rgba(0,0,0,0.6),
+                                                inset 0 2px 4px rgba(255,255,255,0.2),
+                                                inset 0 -2px 4px rgba(0,0,0,0.3);">
 
-                                            {{-- Cadet Info --}}
-                                            <div class="flex-1">
-                                                {{-- Recognition Badges --}}
-                                                <div class="flex flex-wrap gap-2 mb-3">
+                                    {{-- Corner Decorations --}}
+                                    <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-yellow-300"></div>
+                                    <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-yellow-300"></div>
+                                    <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-yellow-300"></div>
+                                    <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-yellow-300"></div>
+
+                                    <h3 class="text-3xl font-bold text-yellow-100 tracking-widest relative z-10"
+                                        style="font-family: 'Times New Roman', serif;
+                                               text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 15px rgba(201,176,55,0.4);
+                                               letter-spacing: 0.2em;">
+                                        INTAKE {{ $intake - 2011 }} · {{ $intake }}
+                                    </h3>
+                                </div>
+
+                                {{-- Naval Rope Border Bottom --}}
+                                <div class="flex items-center justify-center gap-2 mt-3">
+                                    <div style="width: 60px; height: 2px; background: repeating-linear-gradient(90deg, #c9b037 0px, #c9b037 8px, transparent 8px, transparent 12px); opacity: 0.7;"></div>
+                                    <div style="width: 8px; height: 8px; background: #c9b037; border-radius: 50%; box-shadow: 0 0 8px rgba(201,176,55,0.6);"></div>
+                                    <div style="width: 60px; height: 2px; background: repeating-linear-gradient(90deg, #c9b037 0px, #c9b037 8px, transparent 8px, transparent 12px); opacity: 0.7;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                            @foreach($cadets as $cadet)
+                                {{-- Regal Portrait Frame --}}
+                                <div class="relative group" style="perspective: 1500px;">
+                                    {{-- Outer Gilded Frame --}}
+                                    <div class="relative p-6 rounded-lg shadow-2xl transform transition-transform duration-500 hover:scale-105"
+                                         style="background: linear-gradient(145deg, #b8860b 0%, #daa520 25%, #8b6914 50%, #daa520 75%, #b8860b 100%);
+                                                box-shadow:
+                                                    inset 0 0 30px rgba(0,0,0,0.5),
+                                                    inset 0 4px 10px rgba(255,215,0,0.3),
+                                                    inset 0 -4px 10px rgba(0,0,0,0.4),
+                                                    0 15px 45px rgba(0,0,0,0.7),
+                                                    0 0 0 3px #5d4037,
+                                                    0 0 0 10px #b8860b,
+                                                    0 0 0 12px #3e2723,
+                                                    0 0 20px rgba(212,175,55,0.4);
+                                                border: 2px solid #d4af37;">
+
+                                        {{-- Ornate Corners --}}
+                                        <div class="absolute top-2 left-2 w-8 h-8 border-t-4 border-l-4 border-yellow-400 opacity-70"></div>
+                                        <div class="absolute top-2 right-2 w-8 h-8 border-t-4 border-r-4 border-yellow-400 opacity-70"></div>
+                                        <div class="absolute bottom-2 left-2 w-8 h-8 border-b-4 border-l-4 border-yellow-400 opacity-70"></div>
+                                        <div class="absolute bottom-2 right-2 w-8 h-8 border-b-4 border-r-4 border-yellow-400 opacity-70"></div>
+
+                                        {{-- Middle Mahogany Frame --}}
+                                        <div class="relative p-4 rounded"
+                                             style="background: linear-gradient(145deg, #4e342e 0%, #5d4037 50%, #3e2723 100%);
+                                                    box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.5);">
+
+                                            {{-- Inner Velvet Mat --}}
+                                            <div class="relative border-4 rounded"
+                                                 style="border-color: #8b4513;
+                                                        background: linear-gradient(to bottom, #2c1810 0%, #1a0f0a 100%);
+                                                        box-shadow: inset 0 0 30px rgba(0,0,0,0.8), inset 0 4px 6px rgba(0,0,0,0.6);">
+
+                                                {{-- Canvas Background --}}
+                                                <div class="p-6" style="background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 50%, #ebe6d9 100%);">
+
+                                                    {{-- Award Ribbon Banner at Top --}}
                                                     @if($cadet->is_best_cadet)
-                                                        <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1 rounded-lg shadow flex items-center space-x-1 text-xs font-bold">
-                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                                            </svg>
-                                                            <span>BEST CADET</span>
+                                                        <div class="mb-4">
+                                                            <div class="px-6 py-2 rounded"
+                                                                 style="background: linear-gradient(135deg, #c9b037 0%, #f4d03f 50%, #c9b037 100%);
+                                                                        box-shadow:
+                                                                            0 4px 15px rgba(201,176,55,0.5),
+                                                                            inset 0 2px 4px rgba(255,255,255,0.4),
+                                                                            inset 0 -2px 4px rgba(0,0,0,0.2);
+                                                                        border: 2px solid #8b6914;">
+                                                                <p class="text-sm font-black tracking-widest text-center"
+                                                                   style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+                                                                          color: #2c1810;
+                                                                          text-shadow: 1px 1px 2px rgba(255,255,255,0.4), 0 0 8px rgba(255,215,0,0.3);
+                                                                          letter-spacing: 0.15em;">
+                                                                    ⭐ BEST CADET
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     @endif
                                                     @if($cadet->is_best_academic)
-                                                        <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-3 py-1 rounded-lg shadow flex items-center space-x-1 text-xs font-bold">
-                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-                                                            </svg>
-                                                            <span>BEST ACADEMIC</span>
+                                                        <div class="mb-4">
+                                                            <div class="px-6 py-2 rounded"
+                                                                 style="background: linear-gradient(135deg, #c9b037 0%, #f4d03f 50%, #c9b037 100%);
+                                                                        box-shadow:
+                                                                            0 4px 15px rgba(201,176,55,0.5),
+                                                                            inset 0 2px 4px rgba(255,255,255,0.4),
+                                                                            inset 0 -2px 4px rgba(0,0,0,0.2);
+                                                                        border: 2px solid #8b6914;">
+                                                                <p class="text-sm font-black tracking-widest text-center"
+                                                                   style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+                                                                          color: #2c1810;
+                                                                          text-shadow: 1px 1px 2px rgba(255,255,255,0.4), 0 0 8px rgba(255,215,0,0.3);
+                                                                          letter-spacing: 0.15em;">
+                                                                    ⭐ BEST ACADEMIC
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     @endif
-                                                </div>
 
-                                                {{-- Name and Details --}}
-                                                <h5 class="text-lg font-bold text-gray-900">Lt. M {{ $cadet->user->name }} PSSTLDM</h5>
-                                                <p class="text-sm text-gray-600 mt-1">{{ $cadet->position ?? 'Cadet' }}</p>
-                                                <p class="text-xs text-gray-500 mt-1">Service No: {{ $cadet->service_number ?? 'N/A' }}</p>
+                                                    {{-- Profile Picture with Ornate Border --}}
+                                                    <div class="relative mb-4">
+                                                        {{-- Decorative outer glow --}}
+                                                        <div class="absolute -inset-2 rounded-lg"
+                                                             style="background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(184,134,11,0.3));
+                                                                    filter: blur(8px);"></div>
+
+                                                        <div class="relative mx-auto w-56 h-72 rounded overflow-hidden shadow-2xl"
+                                                             style="border: 6px solid;
+                                                                    border-image: linear-gradient(135deg, #d4af37 0%, #f9d84b 50%, #d4af37 100%) 1;
+                                                                    box-shadow:
+                                                                        0 8px 20px rgba(0,0,0,0.5),
+                                                                        inset 0 0 40px rgba(212,175,55,0.15),
+                                                                        0 0 30px rgba(212,175,55,0.2);">
+                                                            @if($cadet->profile_pic)
+                                                                <img src="{{ asset('storage/' . $cadet->profile_pic) }}"
+                                                                     alt="{{ $cadet->user->name }}"
+                                                                     class="w-full h-full object-cover"
+                                                                     style="filter: sepia(5%) contrast(108%) brightness(102%);">
+                                                            @else
+                                                                <div class="w-full h-full flex items-center justify-center"
+                                                                     style="background: linear-gradient(135deg, #f5f1e8, #ebe6d9);">
+                                                                    <svg class="w-24 h-24 text-amber-800 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                                    </svg>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Name and Service Number --}}
+                                                    <div class="text-center space-y-2">
+                                                        {{-- Decorative ribbon --}}
+                                                        <div class="flex items-center justify-center gap-2 mb-2">
+                                                            <div style="width: 30px; height: 1px; background: linear-gradient(to right, transparent, #8b6914);"></div>
+                                                            <div style="width: 4px; height: 4px; background: #d4af37; border-radius: 50%;"></div>
+                                                            <div style="width: 30px; height: 1px; background: linear-gradient(to left, transparent, #8b6914);"></div>
+                                                        </div>
+
+                                                        {{-- Name Plaque --}}
+                                                        <div class="inline-block px-6 py-3 rounded-sm relative"
+                                                             style="background: linear-gradient(to bottom, #d4af37 0%, #f9d84b 50%, #d4af37 100%);
+                                                                    box-shadow:
+                                                                        inset 0 2px 4px rgba(255,255,255,0.4),
+                                                                        inset 0 -2px 4px rgba(0,0,0,0.3),
+                                                                        0 4px 12px rgba(0,0,0,0.5);
+                                                                    border: 2px solid #b8860b;">
+                                                            <h4 class="text-xl font-bold tracking-wide"
+                                                                style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+                                                                       color: #3e2723;
+                                                                       text-shadow:
+                                                                           1px 1px 2px rgba(255,255,255,0.5),
+                                                                           0 0 10px rgba(255,215,0,0.3);
+                                                                       letter-spacing: 0.05em;">
+                                                                Lt.M {{ strtoupper($cadet->user->name) }} PSSTLDM
+                                                            </h4>
+                                                        </div>
+
+                                                        {{-- Service Number --}}
+                                                        <div class="mt-2">
+                                                            <p class="text-sm font-semibold tracking-wide"
+                                                               style="font-family: 'Times New Roman', serif;
+                                                                      color: #5d4037;
+                                                                      letter-spacing: 0.1em;">
+                                                                Service No: {{ $cadet->service_number }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+
+                                        {{-- Gilded Frame Shine Effect --}}
+                                        <div class="absolute inset-0 rounded-lg pointer-events-none"
+                                             style="background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.2) 100%);"></div>
                                     </div>
-                                @endforeach
-                            </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                     @empty
@@ -350,6 +477,9 @@
             const halloffameContent = document.getElementById('halloffame-content');
             const pageTitle = document.getElementById('page-title');
             const pageDescription = document.getElementById('page-description');
+            const pageIcon = document.getElementById('page-icon');
+            const iconSvg = document.getElementById('icon-svg');
+            const pageBackground = document.getElementById('page-background');
 
             if (view === 'alumni') {
                 // Update buttons
@@ -363,6 +493,22 @@
                 // Update title
                 pageTitle.textContent = 'Alumni';
                 pageDescription.textContent = 'Meet our alumni and their achievements after ROTU NAVY training';
+
+                // Reset title styles for Alumni
+                pageTitle.style.color = '';
+                pageTitle.style.textShadow = '';
+                pageTitle.style.fontFamily = '';
+                pageDescription.style.color = '';
+
+                // Update background to light gray
+                pageBackground.style.background = 'linear-gradient(to bottom right, rgb(249, 250, 251), rgb(229, 231, 235))';
+
+                // Update icon to book
+                pageIcon.className = 'inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4';
+                iconSvg.setAttribute('fill', 'none');
+                iconSvg.setAttribute('stroke', 'currentColor');
+                iconSvg.setAttribute('viewBox', '0 0 24 24');
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>';
             } else if (view === 'halloffame') {
                 // Update buttons
                 halloffameBtn.className = 'px-6 py-3 rounded-lg font-semibold transition-all duration-200 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg';
@@ -374,7 +520,23 @@
 
                 // Update title
                 pageTitle.textContent = 'Hall of Fame';
-                pageDescription.textContent = 'Celebrating excellence: Best Cadets and Best Academics by intake';
+                pageDescription.textContent = 'Honoring Excellence Across Generations';
+
+                // Update background to wooden gallery
+                pageBackground.style.background = 'linear-gradient(135deg, #3e2723 0%, #5d4037 100%)';
+
+                // Update text colors for Hall of Fame
+                pageTitle.style.color = '#fef3c7';
+                pageTitle.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+                pageTitle.style.fontFamily = 'Georgia, serif';
+                pageDescription.style.color = '#fde68a';
+
+                // Update icon to trophy/star
+                pageIcon.className = 'inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-2xl shadow-lg mb-4';
+                iconSvg.setAttribute('fill', 'currentColor');
+                iconSvg.removeAttribute('stroke');
+                iconSvg.setAttribute('viewBox', '0 0 20 20');
+                iconSvg.innerHTML = '<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>';
             }
         }
     </script>
