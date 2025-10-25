@@ -350,7 +350,7 @@
                                                                           color: #2c1810;
                                                                           text-shadow: 1px 1px 2px rgba(255,255,255,0.4), 0 0 8px rgba(255,215,0,0.3);
                                                                           letter-spacing: 0.15em;">
-                                                                    ⭐ BEST CADET
+                                                                    BEST CADET
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -369,7 +369,7 @@
                                                                           color: #2c1810;
                                                                           text-shadow: 1px 1px 2px rgba(255,255,255,0.4), 0 0 8px rgba(255,215,0,0.3);
                                                                           letter-spacing: 0.15em;">
-                                                                    ⭐ BEST ACADEMIC
+                                                                    BEST ACADEMIC
                                                                 </p>
                                                             </div>
                                                         </div>
