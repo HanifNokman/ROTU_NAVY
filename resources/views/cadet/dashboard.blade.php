@@ -723,7 +723,16 @@
                                         </div>
                                         <div>
                                             <p class="text-xs text-gray-500 font-medium">Swimming Qualification</p>
-                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet->swimming_qualification ?? '-' }}</p>
+                                            <div class="flex items-center">
+                                                <span class="text-sm font-semibold text-gray-900 flex-1">
+                                                    {{ $cadet->swimming_qualification ?? '-' }}
+                                                </span>
+                                                @if(!empty($cadet->swimming_pass_date))
+                                                    <span class="text-xs text-gray-500">
+                                                        ({{ \Carbon\Carbon::parse($cadet->swimming_pass_date)->format('d M Y') }})
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
