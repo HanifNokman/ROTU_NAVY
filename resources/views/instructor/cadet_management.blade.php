@@ -93,6 +93,36 @@
     }
 
     /* ========================================= */
+    /* DROPDOWN ANIMATION STYLES */
+    /* ========================================= */
+    .section-content-dropdown {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .section-content-dropdown.show {
+        max-height: 5000px;
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .section-content-dropdown:not(.show) > div {
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+
+    .section-content-dropdown.show > div {
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 0.3s ease-in 0.1s, transform 0.3s ease-in 0.1s;
+    }
+
+    .chevron-icon {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ========================================= */
     /* EXISTING STYLES */
     /* ========================================= */
     #duty-ranking-content {
@@ -245,7 +275,8 @@
                     </button>
                 </div>
                 
-                <div id="activeCadetSection" class="p-6">
+                <div id="activeCadetSection" class="section-content-dropdown show">
+                    <div class="p-6">
                     {{-- ================================================================ --}}
                     {{-- SEARCH BAR --}}
                     {{-- ================================================================ --}}
@@ -434,6 +465,7 @@
                         {{ $cadets->appends(request()->query())->links() }}
                     </div>
 
+                    </div>
                 </div>
             </div>
 
@@ -463,7 +495,8 @@
                     </button>
                 </div>
                 
-                <div id="bestCadetSection" class="p-6 hidden">
+                <div id="bestCadetSection" class="section-content-dropdown">
+                    <div class="p-6">
                     <div class="mb-4 flex justify-end">
                         <select id="bestCadetIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @foreach($recentIntakes as $intake)
@@ -517,6 +550,7 @@
                             </div>
                         @endforelse
                     </div>
+                    </div>
                 </div>
             </div>
 
@@ -546,7 +580,8 @@
                     </button>
                 </div>
                 
-                <div id="bestAcademicSection" class="p-6 hidden">
+                <div id="bestAcademicSection" class="section-content-dropdown">
+                    <div class="p-6">
                     <div class="mb-4 flex justify-end">
                         <select id="bestAcademicIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @foreach($recentIntakes as $intake)
@@ -597,6 +632,7 @@
                             </div>
                         @endforelse
                     </div>
+                    </div>
                 </div>
             </div>
 
@@ -626,7 +662,8 @@
                     </button>
                 </div>
                 
-                <div id="suspendedSection" class="p-6 hidden">
+                <div id="suspendedSection" class="section-content-dropdown">
+                    <div class="p-6">
                     <div class="mb-4 flex justify-end">
                         <select id="suspendedIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @foreach($recentIntakes as $intake)
@@ -689,6 +726,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -860,12 +898,30 @@
             const section = document.getElementById(sectionId);
             const chevron = document.querySelector(`[onclick="toggleSection('${sectionId}')"] .chevron-icon`);
 
-            if (section.classList.contains('hidden')) {
-                section.classList.remove('hidden');
-                if (chevron) chevron.classList.add('rotate-180');
-            } else {
-                section.classList.add('hidden');
+            if (section.classList.contains('show')) {
+                section.classList.remove('show');
                 if (chevron) chevron.classList.remove('rotate-180');
+            } else {
+                section.classList.add('show');
+                if (chevron) chevron.classList.add('rotate-180');
+
+                // Load content when opening specific sections
+                if (sectionId === 'bestCadetSection') {
+                    const intakeYear = document.getElementById('bestCadetIntakeFilter')?.value;
+                    if (intakeYear) {
+                        loadBestCadets(intakeYear);
+                    }
+                } else if (sectionId === 'bestAcademicSection') {
+                    const intakeYear = document.getElementById('bestAcademicIntakeFilter')?.value;
+                    if (intakeYear) {
+                        loadBestAcademicCadets(intakeYear);
+                    }
+                } else if (sectionId === 'suspendedSection') {
+                    const intakeYear = document.getElementById('suspendedIntakeFilter')?.value;
+                    if (intakeYear) {
+                        loadSuspendedCadets(intakeYear);
+                    }
+                }
             }
         };
 

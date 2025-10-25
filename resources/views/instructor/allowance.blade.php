@@ -84,6 +84,28 @@
     .gradient-orange {
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     }
+
+    /* ========================================= */
+    /* DROPDOWN ANIMATION STYLES */
+    /* ========================================= */
+    .training-details {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-out,
+                    transform 0.3s ease-out;
+    }
+
+    .training-details.show {
+        max-height: 3000px;
+        opacity: 1;
+        transform: translateY(0);
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-in,
+                    transform 0.3s ease-in;
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -234,7 +256,7 @@
                                     </div>
                                 
                                     {{-- Training Details (Hidden by default) --}}
-                                    <div class="hidden training-details" id="details-{{ $training->id }}">
+                                    <div class="training-details" id="details-{{ $training->id }}">
                                         
                                         {{-- Intake Filter --}}
                                         <div class="px-3 sm:px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
@@ -405,17 +427,17 @@
             const detailsDiv = document.getElementById(`details-${trainingId}`);
             const arrow = document.getElementById(`arrow-${trainingId}`);
 
-            const isCurrentlyOpen = detailsDiv && !detailsDiv.classList.contains('hidden');
+            const isCurrentlyOpen = detailsDiv && detailsDiv.classList.contains('show');
 
             document.querySelectorAll('.training-details').forEach(function(div) {
-                div.classList.add('hidden');
+                div.classList.remove('show');
             });
             document.querySelectorAll('.training-arrow').forEach(function(arrow) {
                 arrow.style.transform = 'rotate(0deg)';
             });
 
             if (!isCurrentlyOpen && detailsDiv) {
-                detailsDiv.classList.remove('hidden');
+                detailsDiv.classList.add('show');
                 if (arrow) arrow.style.transform = 'rotate(180deg)';
 
                 if (!loadedTrainings.has(trainingId)) {
