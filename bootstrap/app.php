@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Add badge checking middleware to web group
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckCadetBadges::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

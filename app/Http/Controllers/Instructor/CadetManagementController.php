@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\BadgeHelper;
 
 class CadetManagementController extends Controller
 {
@@ -1094,18 +1095,8 @@ class CadetManagementController extends Controller
         $badge = \App\Models\Badge::where('name', 'Best Cadet')->first();
 
         if ($badge) {
-            $existingBadge = \App\Models\CadetBadge::where('cadet_id', $cadet->id)
-                ->where('badge_id', $badge->id)
-                ->first();
-
-            if (!$existingBadge) {
-                \App\Models\CadetBadge::create([
-                    'cadet_id' => $cadet->id,
-                    'badge_id' => $badge->id,
-                    'unlocked_at' => now(),
-                    'is_displayed' => true
-                ]);
-            }
+            // Use BadgeHelper to award badge - this will trigger the modal automatically
+            BadgeHelper::awardBadge($cadet->id, $badge->id);
         }
     }
 
@@ -1136,18 +1127,8 @@ class CadetManagementController extends Controller
         $badge = \App\Models\Badge::where('name', 'Best Academic')->first();
 
         if ($badge) {
-            $existingBadge = \App\Models\CadetBadge::where('cadet_id', $cadet->id)
-                ->where('badge_id', $badge->id)
-                ->first();
-
-            if (!$existingBadge) {
-                \App\Models\CadetBadge::create([
-                    'cadet_id' => $cadet->id,
-                    'badge_id' => $badge->id,
-                    'unlocked_at' => now(),
-                    'is_displayed' => true
-                ]);
-            }
+            // Use BadgeHelper to award badge - this will trigger the modal automatically
+            BadgeHelper::awardBadge($cadet->id, $badge->id);
         }
     }
 
@@ -1182,18 +1163,8 @@ class CadetManagementController extends Controller
             $badge = \App\Models\Badge::where('name', $badgeName)->first();
 
             if ($badge) {
-                $existingBadge = \App\Models\CadetBadge::where('cadet_id', $cadet->id)
-                    ->where('badge_id', $badge->id)
-                    ->first();
-
-                if (!$existingBadge) {
-                    \App\Models\CadetBadge::create([
-                        'cadet_id' => $cadet->id,
-                        'badge_id' => $badge->id,
-                        'unlocked_at' => now(),
-                        'is_displayed' => true
-                    ]);
-                }
+                // Use BadgeHelper to award badge - this will trigger the modal automatically
+                BadgeHelper::awardBadge($cadet->id, $badge->id);
             }
         }
     }

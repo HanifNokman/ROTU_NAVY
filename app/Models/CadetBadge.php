@@ -13,12 +13,14 @@ class CadetBadge extends Model
         'cadet_id',
         'badge_id',
         'unlocked_at',
-        'is_displayed'
+        'is_displayed',
+        'modal_shown'
     ];
 
     protected $casts = [
         'unlocked_at' => 'datetime',
-        'is_displayed' => 'boolean'
+        'is_displayed' => 'boolean',
+        'modal_shown' => 'boolean'
     ];
 
     /**

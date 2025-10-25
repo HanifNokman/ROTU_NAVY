@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Cadet;
 use App\Models\Instructor;
+use App\Models\PerformanceRating;
 
 class PersonalInfoController extends Controller
 {
@@ -64,6 +65,7 @@ class PersonalInfoController extends Controller
                 $cadet = new Cadet(['user_id' => $user->id]);
             }
             $oldBMI = $cadet->BMI;
+            $oldCGPA = $cadet->current_cgpa;
 
             // Only update fields present in the request, preserve others
             foreach ($validated as $key => $value) {
@@ -78,6 +80,12 @@ class PersonalInfoController extends Controller
             }
 
             $cadet->save();
+
+            // Update performance rating if CGPA changed
+            if (array_key_exists('current_cgpa', $validated) && $validated['current_cgpa'] != $oldCGPA) {
+                $performanceRating = PerformanceRating::getOrCreateForCadet($cadet->id);
+                $performanceRating->updateAcademicPoints();
+            }
 
         } elseif ($user->role === 'instructor') {
             $validated = $request->validate([
