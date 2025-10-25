@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('cadet_id')->constrained()->onDelete('cascade');
             $table->foreignId('badge_id')->constrained()->onDelete('cascade');
             $table->timestamp('unlocked_at');
-            $table->boolean('is_displayed')->default(false); // For display badges feature
+            $table->boolean('is_displayed')->default(false); // For profile badge display preference
+            $table->boolean('modal_shown')->default(false); // Track if unlock modal has been shown
             $table->timestamps();
 
             $table->unique(['cadet_id', 'badge_id']); // Prevent duplicate badges

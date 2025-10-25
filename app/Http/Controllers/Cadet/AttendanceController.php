@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cadet;
 use App\Models\Training;
 use App\Models\TrainingAttendance;
+use App\Models\PerformanceRating;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -348,9 +349,15 @@ class AttendanceController extends Controller
                     $this->safeLog('info', '========================================');
                     $this->safeLog('info', 'SUCCESS - ATTENDANCE SAVED');
                     $this->safeLog('info', 'Record ID: ' . $attendance->id);
+
+                    // Update performance rating after attendance is marked
+                    $performanceRating = PerformanceRating::getOrCreateForCadet($cadet->id);
+                    $performanceRating->updateAttendancePoints();
+                    $this->safeLog('info', 'Performance rating updated');
+
                     $this->safeLog('info', '======================================== END');
-                    
-                    return redirect()->back()->with('success', 
+
+                    return redirect()->back()->with('success',
                         'Attendance marked successfully! Location verified within ' . self::GEOFENCE_RADIUS . 'm radius.'
                     );
                 } else {

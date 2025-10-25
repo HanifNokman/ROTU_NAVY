@@ -18,6 +18,7 @@ use App\Http\Controllers\Cadet\TrainingController as CadetTrainingController;
 use App\Http\Controllers\Instructor\AllowanceController;
 use App\Http\Controllers\Cadet\AttendanceController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\Api\BadgeController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -49,11 +50,30 @@ Route::get('/logout-and-landing', function () {
 // ============================================================================
 
 Route::middleware(['auth'])->group(function () {
-    
+
+    // ------------------------------------------------------------------------
+    // Badge API Routes
+    // ------------------------------------------------------------------------
+
+    Route::get('/api/badges/pending', [BadgeController::class, 'getPendingBadges'])
+        ->name('api.badges.pending');
+
+    Route::post('/api/badges/{cadetBadgeId}/mark-displayed', [BadgeController::class, 'markAsDisplayed'])
+        ->name('api.badges.mark-displayed');
+
+    // Testing route - remove in production or protect with admin middleware
+    Route::post('/api/badges/trigger-test', [BadgeController::class, 'triggerTestBadge'])
+        ->name('api.badges.trigger-test');
+
+    // Badge test page - remove in production
+    Route::get('/badge-test', function () {
+        return view('badge-test');
+    })->name('badge.test');
+
     // ------------------------------------------------------------------------
     // Content Management Routes
     // ------------------------------------------------------------------------
-    
+
     Route::post('/content-management/update', [ContentManagementController::class, 'update'])
         ->name('content.update');
 
