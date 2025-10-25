@@ -213,14 +213,15 @@
     .section-toggle {
         cursor: pointer;
         user-select: none;
+        transition: background-color 0.2s ease;
     }
 
     .section-toggle:hover {
-        /* No background change on hover */
+        background: linear-gradient(to right, #f1f5f9 0%, #e0e7ff 100%);
     }
 
     .dropdown-icon {
-        transition: transform 0.3s ease;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .dropdown-icon.rotated {
@@ -230,12 +231,20 @@
     .section-content {
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.3s ease-out;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-out,
+                    transform 0.3s ease-out;
     }
 
     .section-content.expanded {
         max-height: 5000px;
-        transition: max-height 0.5s ease-in;
+        opacity: 1;
+        transform: translateY(0);
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-in,
+                    transform 0.3s ease-in;
     }
 
     /* ========================================= */

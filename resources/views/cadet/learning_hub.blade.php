@@ -311,6 +311,47 @@
     }
 
     /* ========================================= */
+    /* DROPDOWN ANIMATION STYLES */
+    /* ========================================= */
+    #progress-content {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-out,
+                    transform 0.3s ease-out;
+    }
+
+    #progress-content.show {
+        max-height: 2000px;
+        opacity: 1;
+        transform: translateY(0);
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-in,
+                    transform 0.3s ease-in;
+    }
+
+    .material-content {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-out,
+                    transform 0.3s ease-out;
+    }
+
+    .material-content.show {
+        max-height: 3000px;
+        opacity: 1;
+        transform: translateY(0);
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s ease-in,
+                    transform 0.3s ease-in;
+    }
+
+    /* ========================================= */
     /* ACCORDION STYLES */
     /* ========================================= */
     .accordion-item {
@@ -458,7 +499,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="progress-content" class="hidden transition-all duration-300 ease-in-out">
+                <div id="progress-content">
                     <div class="p-6">
                         <!-- Overall Progress Bar -->
                         <div class="mb-6">
@@ -518,12 +559,12 @@
                     const content = document.getElementById('progress-content');
                     const chevron = document.getElementById('progress-chevron');
 
-                    if (content.classList.contains('hidden')) {
-                        content.classList.remove('hidden');
-                        chevron.classList.add('rotate-180');
-                    } else {
-                        content.classList.add('hidden');
+                    if (content.classList.contains('show')) {
+                        content.classList.remove('show');
                         chevron.classList.remove('rotate-180');
+                    } else {
+                        content.classList.add('show');
+                        chevron.classList.add('rotate-180');
                     }
                 }
             </script>
@@ -659,9 +700,8 @@
                                                 </div>
                                             </button>
                                             
-                                            <div id="material-content-{{ $material->id }}" 
-                                                style="display: none;" 
-                                                class="p-4 bg-white rounded-b-lg border-t">
+                                            <div id="material-content-{{ $material->id }}"
+                                                class="material-content p-4 bg-white rounded-b-lg border-t">
                                                 <div class="flex flex-col md:flex-row gap-4">
                                                     @if($material->file_url && $material->description && in_array($materialType, ['video', 'audio', 'image']))
                                                         <div class="md:w-[60%]">
@@ -2540,7 +2580,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <div id="material-content-${material.id}" style="display: none;" class="p-4 bg-white rounded-b-lg border-t">
+                            <div id="material-content-${material.id}" class="material-content p-4 bg-white rounded-b-lg border-t">
                                 <div class="flex flex-col md:flex-row gap-4">
                                     ${contentHTML}
                                 </div>
@@ -3341,47 +3381,47 @@
        // Material accordion toggle (CORRECTED VERSION)
         let currentOpenMaterial = null;
 
-        function toggleMaterial(materialId, materialType, fileUrl) {    
+        function toggleMaterial(materialId, materialType, fileUrl) {
             const contentDiv = document.getElementById(`material-content-${materialId}`);
             const chevron = document.getElementById(`chevron-${materialId}`);
-            
+
             console.log('   Content div found:', contentDiv ? 'YES ✓' : 'NO ✗');
             console.log('   Chevron found:', chevron ? 'YES ✓' : 'NO ✗');
-            
+
             if (!contentDiv) {
                 console.error('❌ Content div not found for material:', materialId);
                 console.error('   Looking for ID:', `material-content-${materialId}`);
                 return;
             }
-            
+
             // Check if this material is already open
-            const isCurrentlyOpen = contentDiv.style.display === 'block';
-            
+            const isCurrentlyOpen = contentDiv.classList.contains('show');
+
             if (isCurrentlyOpen) {
                 console.log('🔽 Closing material');
                 // Close it
-                contentDiv.style.display = 'none';
+                contentDiv.classList.remove('show');
                 if (chevron) chevron.classList.remove('rotate-180');
                 currentOpenMaterial = null;
                 LearningProgressTracker.cleanup(materialId);
             } else {
                 console.log('🔼 Opening material');
-                
+
                 // Close previously open material
                 if (currentOpenMaterial !== null && currentOpenMaterial !== materialId) {
                     console.log('   Closing previous material:', currentOpenMaterial);
                     const prevContent = document.getElementById(`material-content-${currentOpenMaterial}`);
                     const prevChevron = document.getElementById(`chevron-${currentOpenMaterial}`);
-                    if (prevContent) prevContent.style.display = 'none';
+                    if (prevContent) prevContent.classList.remove('show');
                     if (prevChevron) prevChevron.classList.remove('rotate-180');
                     LearningProgressTracker.cleanup(currentOpenMaterial);
                 }
-                
+
                 // Open new material
-                contentDiv.style.display = 'block';
+                contentDiv.classList.add('show');
                 if (chevron) chevron.classList.add('rotate-180');
                 currentOpenMaterial = materialId;
-                
+
                 // Initialize tracking after a short delay
                 console.log('⏱️ Scheduling tracker initialization...');
                 setTimeout(() => {
