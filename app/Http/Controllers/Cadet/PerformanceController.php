@@ -199,7 +199,8 @@ class PerformanceController extends Controller
                     'unlocked_at' => $unlockedBadges[$badge->id]->unlocked_at,
                     'is_displayed' => $unlockedBadges[$badge->id]->is_displayed,
                     'unlock_percentage' => $unlockPercentage,
-                    'unlock_count' => $unlockCount
+                    'unlock_count' => $unlockCount,
+                    'rarity_level' => $badge->rarity_level
                 ];
             } else {
                 $unlockable[] = $badge;
@@ -208,10 +209,29 @@ class PerformanceController extends Controller
             }
         }
 
+        // Sort unlocked badges: Rarest first (5 -> 1)
+        usort($unlocked, function($a, $b) {
+            return $b['rarity_level'] <=> $a['rarity_level'];
+        });
+
+        // Sort unlockable badges: Least rare first (1 -> 5)
+        usort($unlockable, function($a, $b) {
+            return $a->rarity_level <=> $b->rarity_level;
+        });
+
+        // Limit displayed badges to maximum 8, sorted by rarity (rarest first)
+        $displayedBadges = collect($displayBadges)
+            ->sortByDesc(function($cadetBadge) {
+                return $cadetBadge->badge->rarity_level;
+            })
+            ->take(8)
+            ->values()
+            ->all();
+
         return [
             'unlocked' => $unlocked,
             'unlockable' => $unlockable,
-            'display' => $displayBadges
+            'display' => $displayedBadges
         ];
     }
 
@@ -239,11 +259,32 @@ class PerformanceController extends Controller
             return response()->json(['error' => 'Badge not unlocked'], 404);
         }
 
+        // Check if trying to display but already at 8 badge limit
+        if (!$cadetBadge->is_displayed) {
+            $currentDisplayedCount = CadetBadge::where('cadet_id', $cadet->id)
+                ->where('is_displayed', true)
+                ->count();
+
+            if ($currentDisplayedCount >= 8) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'limit_reached',
+                    'message' => 'You can only display a maximum of 8 badges. Please disable one before adding another.'
+                ], 400);
+            }
+        }
+
         $cadetBadge->toggleDisplay();
+
+        // Get updated count
+        $displayedCount = CadetBadge::where('cadet_id', $cadet->id)
+            ->where('is_displayed', true)
+            ->count();
 
         return response()->json([
             'success' => true,
-            'is_displayed' => $cadetBadge->is_displayed
+            'is_displayed' => $cadetBadge->is_displayed,
+            'displayed_count' => $displayedCount
         ]);
     }
 }

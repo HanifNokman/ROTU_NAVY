@@ -1127,7 +1127,20 @@
                         </div>
                         <h2 class="text-2xl font-bold text-gray-900">Achievement Badges</h2>
                     </div>
-                    <p class="text-gray-600 ml-13">Hover over badges to see details. Click unlocked badges to display/hide them on your profile.</p>
+                    <div class="ml-13 space-y-2">
+                        <p class="text-gray-600">Hover over badges to see details. Click unlocked badges to display/hide them on your profile.</p>
+                        <div class="flex items-center gap-3">
+                            <div class="inline-flex items-center px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg">
+                                <svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="text-sm font-medium text-blue-800">
+                                    <span id="badge-counter">{{ count($badgesData['display']) }}</span>/8 badges displayed
+                                </span>
+                            </div>
+                            <span class="text-xs text-gray-500 italic">Maximum 8 badges can be displayed at a time</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="p-6 lg:p-8">
@@ -1415,9 +1428,16 @@
                     badge_id: badgeId
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            .then(response => {
+                // Handle both success and error responses
+                return response.json().then(data => ({
+                    ok: response.ok,
+                    status: response.status,
+                    data: data
+                }));
+            })
+            .then(({ok, status, data}) => {
+                if (ok && data.success) {
                     // Find the badge card element
                     const badgeCard = document.querySelector(`[data-badge-id="${badgeId}"]`);
                     if (badgeCard) {
@@ -1456,8 +1476,17 @@
                             }
                         }
                     }
+
+                    // Update the badge counter
+                    const badgeCounter = document.getElementById('badge-counter');
+                    if (badgeCounter && data.displayed_count !== undefined) {
+                        badgeCounter.textContent = data.displayed_count;
+                    }
+                } else if (data.error === 'limit_reached') {
+                    // Show custom alert for limit reached
+                    alert(data.message || 'You can only display a maximum of 8 badges. Please disable one before adding another.');
                 } else {
-                    alert('Error toggling badge display');
+                    alert(data.message || 'Error toggling badge display');
                 }
             })
             .catch(error => {

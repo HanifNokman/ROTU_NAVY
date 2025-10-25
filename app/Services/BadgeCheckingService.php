@@ -102,6 +102,7 @@ class BadgeCheckingService
                         $allCategoriesPassed = true;
 
                         if ($badge->name === 'Strategic Mind') {
+                            // Check if all categories passed at hard difficulty with 80%+
                             foreach ($categories as $category) {
                                 $hardScore = CadetQuizScore::where('cadet_id', $cadet->id)
                                     ->where('learning_material_category_id', $category->id)
@@ -116,13 +117,15 @@ class BadgeCheckingService
                             // Require minimum quiz attempts for category-based badges
                             $shouldUnlock = $allCategoriesPassed && $totalQuizAttempts >= ($categories->count());
                         } elseif ($badge->name === 'Tactical Expert') {
+                            // Check if all categories passed at medium OR hard difficulty with 80%+
+                            // (Hard difficulty qualifies for medium badge too)
                             foreach ($categories as $category) {
-                                $mediumScore = CadetQuizScore::where('cadet_id', $cadet->id)
+                                $qualifyingScore = CadetQuizScore::where('cadet_id', $cadet->id)
                                     ->where('learning_material_category_id', $category->id)
-                                    ->where('difficulty', 'medium')
+                                    ->whereIn('difficulty', ['medium', 'hard'])
                                     ->where('score_percentage', '>=', 80)
                                     ->first();
-                                if (!$mediumScore) {
+                                if (!$qualifyingScore) {
                                     $allCategoriesPassed = false;
                                     break;
                                 }
