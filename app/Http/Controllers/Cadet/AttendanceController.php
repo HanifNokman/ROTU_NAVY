@@ -493,8 +493,13 @@ class AttendanceController extends Controller
             $attendance->updated_at = Carbon::now();
             
             $saved = $attendance->save();
-            
+
             if ($saved) {
+                // Update performance rating after absence reasoning is submitted
+                $performanceRating = PerformanceRating::getOrCreateForCadet($cadet->id);
+                $performanceRating->updateAttendancePoints();
+                $this->safeLog('info', 'Performance rating updated');
+
                 $this->safeLog('info', 'SUCCESS - ABSENCE SUBMITTED');
                 $this->safeLog('info', '======================================== END');
                 return redirect()->back()->with('success', 'Absence reason and supporting documentation submitted successfully!');
