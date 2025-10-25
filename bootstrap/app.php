@@ -15,6 +15,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\CheckCadetBadges::class,
         ]);
+
+        // Trust ngrok and other proxies for mobile testing
+        $middleware->trustProxies(at: '*');
+        $middleware->trustHosts(at: [
+            'localhost',
+            '*.ngrok-free.app',
+            '*.ngrok.io',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

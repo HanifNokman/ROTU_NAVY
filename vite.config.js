@@ -8,4 +8,10 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: '0.0.0.0', // Allow external access
+        hmr: {
+            host: 'localhost', // Will be overridden by APP_URL in production
+        },
+    },
 });
