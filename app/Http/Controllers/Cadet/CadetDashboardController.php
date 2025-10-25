@@ -21,11 +21,15 @@ class CadetDashboardController extends Controller
             ->with([
                 'cadetBadges' => function($query) {
                     $query->where('is_displayed', true)
-                        ->with('badge')
-                        ->orderBy('unlocked_at', 'desc');
+                        ->with('badge');
                 }
             ])
             ->firstOrFail();
+
+        // Sort displayed badges by rarity (rarest first) and limit to 8
+        $cadet->cadetBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
+            return $cadetBadge->badge->rarity_level;
+        })->take(8)->values();
 
         $intakeYear = $cadet->intake_year ?? now()->year;
         $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
@@ -56,11 +60,17 @@ class CadetDashboardController extends Controller
                 'performanceRating',
                 'cadetBadges' => function($query) {
                     $query->where('is_displayed', true)
-                        ->with('badge')
-                        ->orderBy('unlocked_at', 'desc');
+                        ->with('badge');
                 }
             ])
             ->get()
+            ->map(function($intakeCadet) {
+                // Sort each cadet's badges by rarity (rarest first) and limit to 8
+                $intakeCadet->cadetBadges = $intakeCadet->cadetBadges->sortByDesc(function($cadetBadge) {
+                    return $cadetBadge->badge->rarity_level;
+                })->take(8)->values();
+                return $intakeCadet;
+            })
             ->sortBy(function($cadet) {
                 // Define position priority
                 $positionOrder = [
@@ -121,10 +131,14 @@ class CadetDashboardController extends Controller
             'performanceRating',
             'cadetBadges' => function($query) {
                 $query->where('is_displayed', true)
-                    ->with('badge')
-                    ->orderBy('unlocked_at', 'desc');
+                    ->with('badge');
             }
         ])->findOrFail($cadetId);
+
+        // Sort displayed badges by rarity (rarest first) and limit to 8
+        $cadet->cadetBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
+            return $cadetBadge->badge->rarity_level;
+        })->take(8)->values();
 
         return response()->json([
             'success' => true,
