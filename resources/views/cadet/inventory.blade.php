@@ -890,6 +890,8 @@
         </div>
     </div>
 
+    {{-- Mobile Bottom Spacer --}}
+    <div class="block md:hidden h-20"></div>
     {{-- ================================================================ --}}
     {{-- JAVASCRIPT - UNIFORM SIZE MANAGEMENT --}}
     {{-- ================================================================ --}}
@@ -1266,7 +1268,6 @@
                 icon.classList.add('rotated');
             }
         }
-
         // Sections are collapsed by default (no auto-expand on page load)
     </script>
 </x-app-layout>
