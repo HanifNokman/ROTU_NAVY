@@ -137,6 +137,15 @@
                     height: 1.25rem !important;
                 }
 
+                /* Keep sidebar section headers small on mobile */
+                nav h3.text-xs,
+                .text-xs.font-semibold.text-gray-400.uppercase,
+                h3.text-xs.font-semibold {
+                    font-size: 0.625rem !important;
+                    line-height: 0.875rem !important;
+                    letter-spacing: 0.05em !important;
+                }
+
                 /* Reduce button padding */
                 .btn-primary {
                     padding: 10px 20px !important;
@@ -153,29 +162,104 @@
                     grid-template-columns: 1fr !important;
                 }
 
-                /* Modal optimization */
-                .modal-content {
-                    margin: 1rem !important;
+                /* ========================================= */
+                /* MODAL MOBILE OPTIMIZATION */
+                /* ========================================= */
+
+                /* Modal overlays - only style, don't force display */
+                .fixed.inset-0.bg-black.bg-opacity-50,
+                .fixed.inset-0.bg-gray-600.bg-opacity-50,
+                .fixed.inset-0[style*="background"]:not([style*="display: none"]) {
+                    overflow-y: auto !important;
+                    padding: 1rem !important;
+                }
+
+                /* Center modal content when visible (not forcing display) */
+                .fixed.inset-0:not([style*="display: none"]) {
+                    align-items: center !important;
+                    justify-content: center !important;
+                }
+
+                /* Modal containers */
+                .modal-content,
+                .fixed.inset-0 > div:not(.fixed),
+                .bg-white.rounded-lg.shadow-xl,
+                .relative.bg-white.rounded-lg {
+                    margin: 1rem auto !important;
                     max-width: calc(100vw - 2rem) !important;
                     padding: 1rem !important;
+                    width: 100% !important;
                 }
 
-                /* Modal overlay - ensure proper sizing */
-                .modal-overlay {
-                    padding: 1rem !important;
+                /* Modal headers */
+                .modal-content h2,
+                .modal-content h3,
+                .bg-white.rounded-lg h2,
+                .bg-white.rounded-lg h3 {
+                    font-size: 1.125rem !important;
+                    margin-bottom: 0.75rem !important;
                 }
 
-                /* Fixed modals - ensure they don't overflow */
-                .fixed.inset-0 {
-                    overflow-y: auto !important;
+                /* Modal close button (X) */
+                .modal-content button[type="button"]:first-child,
+                .absolute.top-4.right-4,
+                button.absolute {
+                    position: absolute !important;
+                    top: 0.75rem !important;
+                    right: 0.75rem !important;
+                    padding: 0.5rem !important;
+                    width: 2rem !important;
+                    height: 2rem !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    border-radius: 0.375rem !important;
+                    background: #f3f4f6 !important;
+                    z-index: 10 !important;
+                }
+
+                .modal-content button[type="button"]:first-child:hover,
+                button.absolute:hover {
+                    background: #e5e7eb !important;
+                }
+
+                .modal-content button[type="button"]:first-child svg,
+                button.absolute svg {
+                    width: 1.25rem !important;
+                    height: 1.25rem !important;
                 }
 
                 /* Modal buttons - ensure they fit */
-                .modal-content button,
+                .modal-content button:not(.absolute),
                 .modal-content .btn-primary,
                 .modal-content .btn-secondary {
                     font-size: 0.875rem !important;
                     padding: 0.5rem 1rem !important;
+                }
+
+                /* Modal action buttons container */
+                .modal-content .flex.justify-end,
+                .modal-content .flex.space-x-3,
+                .bg-white.rounded-lg .flex.justify-end {
+                    flex-direction: column !important;
+                    gap: 0.5rem !important;
+                }
+
+                .modal-content .flex.justify-end button,
+                .modal-content .flex.space-x-3 button {
+                    width: 100% !important;
+                }
+
+                /* Modal forms */
+                .modal-content input,
+                .modal-content select,
+                .modal-content textarea {
+                    font-size: 0.875rem !important;
+                    width: 100% !important;
+                }
+
+                .modal-content label {
+                    font-size: 0.875rem !important;
                 }
 
                 /* Prevent text overflow */
@@ -254,6 +338,15 @@
                 h1 {
                     font-size: 1.5rem !important;
                     line-height: 2rem !important;
+                }
+
+                /* Keep sidebar section headers small */
+                nav h3.text-xs,
+                .text-xs.font-semibold.text-gray-400.uppercase,
+                h3.text-xs.font-semibold {
+                    font-size: 0.625rem !important;
+                    line-height: 0.875rem !important;
+                    letter-spacing: 0.05em !important;
                 }
 
                 .section-header {
@@ -796,7 +889,7 @@
                         {{-- MOBILE BOTTOM SECTION --}}
                         {{-- ================================================================ --}}
                         <div class="border-t border-[#373a46] mt-auto pt-3">
-                            <div class="px-3 pb-2 flex flex-col space-y-3">
+                            <div class="px-3 pb-2 flex flex-col space-y-2">
                                 @if(Auth::user()->role === 'instructor')
                                     <div class="relative">
                                         <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full text-sm py-2.5">
@@ -823,11 +916,11 @@
                                     </div>
                                 @endif
 
-                                <a href="{{ url('/') }}" class="flex items-center justify-center py-2 hover:transform hover:scale-105 transition-transform">
+                                <a href="{{ url('/') }}" class="flex items-center justify-center py-1 hover:transform hover:scale-105 transition-transform">
                                     @if(View::exists('components.application-logo'))
-                                        <x-application-logo class="h-8 w-auto fill-current text-white" />
+                                        <x-application-logo class="h-24 w-auto fill-current text-white mt-0" />
                                     @else
-                                        <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
+                                        <div class="h-24 w-24 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
                                     @endif
                                 </a>
 
@@ -1077,11 +1170,11 @@
                                         </div>
                                     @endif
 
-                                    <a href="{{ url('/') }}" class="flex items-center justify-center mt-0 hover:transform hover:scale-105 transition-transform">
+                                    <a href="{{ url('/') }}" class="flex items-center justify-center mt-0 mb-4 hover:transform hover:scale-105 transition-transform">
                                         @if(View::exists('components.application-logo'))
-                                            <x-application-logo class="h-8 w-auto fill-current text-white" />
+                                            <x-application-logo class="h-32 w-auto fill-current text-white" />
                                         @else
-                                            <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
+                                            <div class="h-32 w-32 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
                                         @endif
                                     </a>
 

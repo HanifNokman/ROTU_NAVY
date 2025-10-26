@@ -93,6 +93,164 @@
     .gradient-red {
         background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        /* Page header */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Filter section responsiveness */
+        .flex.flex-col.lg\\:flex-row {
+            flex-direction: column !important;
+        }
+
+        .flex.flex-wrap.items-center.gap-4 {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            width: 100% !important;
+        }
+
+        .flex.flex-col label {
+            font-size: 0.875rem !important;
+        }
+
+        .flex.flex-col select,
+        .flex.flex-col input {
+            width: 100% !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Action buttons */
+        .flex.flex-col.gap-3 {
+            width: 100% !important;
+        }
+
+        .flex.flex-col.gap-3 button,
+        .flex.gap-3 button {
+            width: 100% !important;
+            justify-content: center !important;
+            font-size: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+        }
+
+        /* Uniform size summary grid */
+        .grid.grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.5rem !important;
+        }
+
+        /* Equipment loan status toggle */
+        .flex.rounded-md.shadow-sm {
+            width: 100% !important;
+        }
+
+        .flex.rounded-md.shadow-sm button {
+            flex: 1 !important;
+            font-size: 0.75rem !important;
+            padding: 0.5rem !important;
+        }
+
+        /* Table responsiveness */
+        .overflow-x-auto {
+            border-radius: 0.5rem !important;
+        }
+
+        table {
+            font-size: 0.75rem !important;
+        }
+
+        table th,
+        table td {
+            padding: 0.5rem 0.375rem !important;
+            white-space: nowrap !important;
+        }
+
+        /* Size cards */
+        .bg-white.rounded-lg.p-4 {
+            padding: 0.75rem !important;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem !important;
+        }
+
+        /* Modal responsiveness */
+        .relative.top-20.mx-auto {
+            top: 1rem !important;
+            margin: 1rem !important;
+            width: calc(100% - 2rem) !important;
+            max-width: none !important;
+        }
+
+        /* Icon wrapper sizes */
+        .icon-wrapper {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .icon-wrapper svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        /* Further text size reduction */
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .section-header h3 {
+            font-size: 1.125rem !important;
+        }
+
+        /* Single column for size display */
+        .grid.grid-cols-2 {
+            grid-template-columns: 1fr !important;
+        }
+
+        /* Smaller filter selects */
+        .flex.flex-col select {
+            font-size: 0.8125rem !important;
+            padding: 0.5rem !important;
+        }
+
+        /* Compact buttons */
+        button {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+        }
+
+        /* Table adjustments */
+        table {
+            font-size: 0.6875rem !important;
+        }
+
+        table th,
+        table td {
+            padding: 0.375rem 0.25rem !important;
+        }
+
+        /* Modal further compact */
+        .relative.top-20.mx-auto {
+            padding: 0.75rem !important;
+        }
+
+        .relative.top-20.mx-auto h3 {
+            font-size: 1rem !important;
+        }
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">

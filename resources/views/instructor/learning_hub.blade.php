@@ -88,6 +88,133 @@
     .gradient-red {
         background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        /* Page header */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Filter and action buttons container */
+        .mb-6.flex.flex-col {
+            gap: 1rem !important;
+        }
+
+        .flex.flex-row.space-x-4.items-center {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            width: 100% !important;
+            gap: 0.75rem !important;
+        }
+
+        .flex.flex-row.space-x-4.items-center > div {
+            width: 100% !important;
+        }
+
+        .flex.gap-2 {
+            width: 100% !important;
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+
+        .flex.gap-2 button {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 0.625rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Quiz filters */
+        #quizCategoryFilter,
+        #quizTypeFilter {
+            width: 100% !important;
+        }
+
+        /* Section headers with buttons */
+        .flex.justify-between.items-center {
+            flex-direction: column !important;
+            gap: 1rem !important;
+            align-items: flex-start !important;
+        }
+
+        .flex.justify-between.items-center button,
+        .flex.justify-between.items-center a {
+            width: 100% !important;
+            justify-content: center !important;
+            font-size: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+        }
+
+        /* Grid layouts - single column on mobile */
+        .grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+
+        /* Icon wrapper sizes */
+        .icon-wrapper {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .icon-wrapper svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+
+        /* Content cards */
+        .dashboard-card {
+            margin: 0 !important;
+        }
+
+        /* Module/lesson items */
+        .space-y-4 > div,
+        .space-y-3 > div {
+            padding: 0.75rem !important;
+        }
+
+        /* Modals */
+        .fixed.inset-0 > div {
+            margin: 1rem !important;
+            max-width: calc(100vw - 2rem) !important;
+            padding: 1rem !important;
+        }
+
+        /* Form inputs */
+        input, select, textarea {
+            font-size: 0.875rem !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .section-header h3 {
+            font-size: 1.125rem !important;
+        }
+
+        button, a.btn {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+        }
+
+        .fixed.inset-0 > div {
+            margin: 0.5rem !important;
+            max-width: calc(100vw - 1rem) !important;
+        }
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">

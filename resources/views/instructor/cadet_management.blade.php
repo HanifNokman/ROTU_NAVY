@@ -223,9 +223,312 @@
         gap: 0.75rem;
     }
 
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
     @media (max-width: 640px) {
         .info-grid {
             grid-template-columns: 1fr;
+        }
+
+        /* Page header */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Filter section - full width stacking */
+        .flex.flex-wrap {
+            flex-direction: column !important;
+            gap: 1rem !important;
+        }
+
+        .flex.flex-wrap > div {
+            width: 100% !important;
+        }
+
+        .flex.flex-wrap select,
+        .flex.flex-wrap input {
+            width: 100% !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Information Type section - override parent flex-col */
+        .mb-6.flex.flex-col.space-y-4 > div:last-child {
+            width: 100% !important;
+        }
+
+        .mb-6.flex.flex-col.space-y-4 > div:last-child > label {
+            font-size: 0.875rem !important;
+            margin-bottom: 0.75rem !important;
+            font-weight: 600 !important;
+        }
+
+        /* Information Type buttons container */
+        .flex.space-x-2.flex-wrap,
+        div.flex.space-x-2.flex-wrap.gap-y-2 {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 0.625rem !important;
+            width: 100% !important;
+            justify-content: flex-start !important;
+        }
+
+        .info-type-btn {
+            flex: 0 0 calc((100% - 1.25rem) / 3) !important;
+            min-width: calc((100% - 1.25rem) / 3) !important;
+            max-width: calc((100% - 1.25rem) / 3) !important;
+            padding: 0.75rem 0.5rem !important;
+            font-size: 0.875rem !important;
+            text-align: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            font-weight: 500 !important;
+            border-radius: 0.5rem !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .info-type-btn:active {
+            transform: scale(0.98) !important;
+        }
+
+        /* Personnel mode container - better mobile layout */
+        #personnelModeContainer .flex.items-center.justify-between {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 1rem !important;
+        }
+
+        /* Mode radio buttons */
+        #personnelModeContainer .flex.items-center.space-x-4 {
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 1rem !important;
+        }
+
+        #personnelModeContainer label.text-sm.font-medium {
+            width: 100% !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        /* Action buttons container - side by side layout */
+        #personnelActionButtonsContainer {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 0.625rem !important;
+            width: 100% !important;
+            margin-top: 0.5rem !important;
+        }
+
+        #personnelActionButtonsContainer button {
+            flex: 1 !important;
+            justify-content: center !important;
+            padding: 1rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            white-space: nowrap !important;
+            text-align: center !important;
+            display: flex !important;
+            align-items: center !important;
+            min-height: 3rem !important;
+            line-height: 1.25rem !important;
+        }
+
+        #personnelActionButtonsContainer button svg {
+            flex-shrink: 0 !important;
+            margin-right: 0.5rem !important;
+        }
+
+        /* For very long button text, allow wrapping */
+        #personnelActionButtonsContainer button span {
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        /* Cadet Intake dropdown */
+        select {
+            width: 100% !important;
+        }
+
+        /* Cadet cards */
+        .flex.flex-col.md\\:flex-row {
+            flex-direction: column !important;
+        }
+
+        /* Profile pictures */
+        .w-32.h-44 {
+            width: 8rem !important;
+            height: 11rem !important;
+        }
+
+        /* Badge display */
+        .grid.grid-cols-3 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.375rem !important;
+        }
+
+        /* Icon wrapper sizes */
+        .icon-wrapper {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .icon-wrapper svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+
+        /* Table container - ensure horizontal scrolling */
+        .overflow-x-auto {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            width: 100% !important;
+            display: block !important;
+            position: relative !important;
+            border-radius: 0.5rem !important;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Show scroll hint only on cadet table */
+        #cadetTableContainer::after {
+            content: '← Scroll →' !important;
+            position: absolute !important;
+            bottom: 0.5rem !important;
+            right: 0.5rem !important;
+            background: rgba(59, 130, 246, 0.9) !important;
+            color: white !important;
+            padding: 0.25rem 0.5rem !important;
+            border-radius: 0.25rem !important;
+            font-size: 0.625rem !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
+        }
+
+        /* Don't override table width - let min-w-full work */
+        table.min-w-full {
+            font-size: 0.875rem !important;
+        }
+
+        table.min-w-full th,
+        table.min-w-full td {
+            padding: 0.75rem 1rem !important;
+            white-space: nowrap !important;
+        }
+
+        table.min-w-full th {
+            font-weight: 600 !important;
+        }
+
+        /* Grid-based table (cadet management) - enable horizontal scrolling */
+        #cadetTableContainer {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            overflow-y: visible !important;
+        }
+
+        /* Wrapper for synchronized scrolling */
+        #cadetTableContainer > div {
+            min-width: 600px !important;
+        }
+
+        #cadetTableContainer .grid.grid-cols-5 {
+            display: grid !important;
+            grid-template-columns: repeat(5, 1fr) !important;
+            width: 100% !important;
+            gap: 0.5rem !important;
+        }
+
+        #cadetTableContainer .grid.grid-cols-5 > div {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            min-width: 0 !important;
+        }
+
+        /* Table body - only vertical scroll, no horizontal */
+        #cadetTableBody {
+            overflow-x: visible !important;
+            overflow-y: auto !important;
+        }
+
+        /* Fix dropdown white area */
+        .section-content-dropdown {
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        .section-content-dropdown > div {
+            background: white !important;
+        }
+
+        /* Modals */
+        .fixed.inset-0 > div {
+            margin: 1rem !important;
+            max-width: calc(100vw - 2rem) !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .section-header h3 {
+            font-size: 1.125rem !important;
+        }
+
+        .w-32.h-44 {
+            width: 7rem !important;
+            height: 9.5rem !important;
+        }
+
+        .grid.grid-cols-3 {
+            grid-template-columns: 1fr !important;
+        }
+
+        /* Information Type buttons - adjust for very small screens */
+        .flex.space-x-2.flex-wrap {
+            gap: 0.5rem !important;
+        }
+
+        .info-type-btn {
+            font-size: 0.75rem !important;
+            padding: 0.625rem 1rem !important;
+        }
+
+        /* Action buttons - adjust padding for small screens */
+        #personnelActionButtonsContainer button {
+            font-size: 0.75rem !important;
+            padding: 0.75rem 0.5rem !important;
+        }
+
+        #personnelActionButtonsContainer button svg {
+            width: 1rem !important;
+            height: 1rem !important;
+        }
+
+        table.min-w-full {
+            font-size: 0.8125rem !important;
+        }
+
+        table.min-w-full th,
+        table.min-w-full td {
+            padding: 0.625rem 0.75rem !important;
+        }
+
+        /* Adjust scroll hint */
+        .overflow-x-auto::after {
+            font-size: 0.5625rem !important;
+            padding: 0.2rem 0.4rem !important;
         }
     }
     </style>

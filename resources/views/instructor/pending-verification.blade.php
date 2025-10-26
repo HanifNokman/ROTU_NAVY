@@ -315,6 +315,200 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        /* Page header */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Section headers - better mobile layout */
+        .section-header {
+            padding: 1rem !important;
+        }
+
+        .section-header .flex.items-center.justify-between {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+
+        .section-header h3 {
+            font-size: 1.25rem !important;
+            line-height: 1.75rem !important;
+        }
+
+        /* Start Selection button */
+        .section-header button {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Application Overview section */
+        .grid.grid-cols-1.md\\:grid-cols-3 {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+        }
+
+        /* Pagination */
+        #regularPagination,
+        #selectionPagination {
+            flex-direction: column !important;
+            gap: 1rem !important;
+            align-items: stretch !important;
+        }
+
+        #regularPagination .text-sm,
+        #selectionPagination .text-sm {
+            text-align: center !important;
+            font-size: 0.75rem !important;
+        }
+
+        #regularPagination .flex.gap-2,
+        #selectionPagination .flex.gap-2 {
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+        }
+
+        #regularPagination button,
+        #selectionPagination button {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+            min-width: 80px !important;
+        }
+
+        #regularPageNumbers button,
+        #selectionPageNumbers button {
+            min-width: 40px !important;
+            padding: 0.5rem !important;
+        }
+
+        /* Pending Accounts section */
+        .flex.items-center.justify-between.mb-4 {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 1rem !important;
+        }
+
+        /* Accept All / Reject All buttons */
+        .flex.items-center.justify-between.mb-4 > .flex.gap-2 {
+            width: 100% !important;
+            flex-direction: row !important;
+            gap: 0.5rem !important;
+        }
+
+        .flex.items-center.justify-between.mb-4 > .flex.gap-2 form {
+            flex: 1 !important;
+        }
+
+        .flex.items-center.justify-between.mb-4 > .flex.gap-2 button {
+            width: 100% !important;
+            font-size: 0.75rem !important;
+            padding: 0.75rem 0.5rem !important;
+            justify-content: center !important;
+        }
+
+        .flex.items-center.justify-between.mb-4 > .flex.gap-2 button svg {
+            width: 1rem !important;
+            height: 1rem !important;
+            margin-right: 0.25rem !important;
+        }
+
+        /* Category cards - stack on mobile for better readability */
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+        }
+
+        .category-card {
+            padding: 1rem !important;
+        }
+
+        .category-card h3 {
+            font-size: 1.125rem !important;
+        }
+
+        .category-card .text-5xl {
+            font-size: 2.5rem !important;
+        }
+
+        /* Application cards */
+        .space-y-4 > div {
+            padding: 1rem !important;
+        }
+
+        /* User info section */
+        .flex.flex-col.md\\:flex-row {
+            flex-direction: column !important;
+        }
+
+        /* Profile pictures */
+        .w-32.h-44 {
+            width: 8rem !important;
+            height: 11rem !important;
+        }
+
+        /* Buttons - stack vertically */
+        .flex.gap-2 {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+
+        .flex.gap-2 button {
+            width: 100% !important;
+            font-size: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+        }
+
+        /* Modals */
+        .fixed.inset-0 > div {
+            margin: 1rem !important;
+            max-width: calc(100vw - 2rem) !important;
+            padding: 1rem !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        /* Single column for categories */
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+            grid-template-columns: 1fr !important;
+        }
+
+        .category-card {
+            padding: 1rem !important;
+        }
+
+        .w-32.h-44 {
+            width: 7rem !important;
+            height: 9.5rem !important;
+        }
+
+        button {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+        }
+
+        .fixed.inset-0 > div {
+            margin: 0.5rem !important;
+            max-width: calc(100vw - 1rem) !important;
+        }
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
