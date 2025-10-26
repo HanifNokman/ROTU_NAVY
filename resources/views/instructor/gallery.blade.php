@@ -313,6 +313,109 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        /* Page header */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Section header with buttons */
+        .section-header .flex.items-center.justify-between {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+
+        .section-header .flex.items-center.space-x-4 {
+            width: 100% !important;
+        }
+
+        .section-header .flex.items-center.space-x-4 a {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 0.625rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Filter buttons container */
+        .flex.justify-between.items-center {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 1rem !important;
+        }
+
+        .flex.flex-wrap.gap-3 {
+            justify-content: center !important;
+        }
+
+        .filter-btn {
+            flex: 1 1 auto !important;
+            min-width: fit-content !important;
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.75rem !important;
+        }
+
+        /* Category cards - 2 columns on mobile */
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.75rem !important;
+        }
+
+        .category-card {
+            padding: 1rem !important;
+        }
+
+        /* Photo gallery grid - 2 columns on mobile */
+        .grid.grid-cols-2.sm\\:grid-cols-3.lg\\:grid-cols-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.5rem !important;
+        }
+
+        /* General buttons */
+        button:not(.filter-btn) {
+            font-size: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+        }
+
+        /* Modals */
+        .fixed.inset-0 > div {
+            margin: 1rem !important;
+            max-width: calc(100vw - 2rem) !important;
+        }
+
+        /* Photo cards */
+        .photo-card {
+            padding: 0.5rem !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        /* Single column for categories and gallery */
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3,
+        .grid.grid-cols-2.sm\\:grid-cols-3.lg\\:grid-cols-4 {
+            grid-template-columns: 1fr !important;
+        }
+
+        button {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+        }
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">

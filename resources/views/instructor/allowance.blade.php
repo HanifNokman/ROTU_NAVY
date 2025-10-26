@@ -96,15 +96,91 @@
         transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                     opacity 0.3s ease-out,
                     transform 0.3s ease-out;
+        display: block;
     }
 
     .training-details.show {
-        max-height: 3000px;
-        opacity: 1;
-        transform: translateY(0);
+        max-height: 5000px !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
         transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                     opacity 0.3s ease-in,
                     transform 0.3s ease-in;
+        overflow: visible !important;
+    }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        /* Page header */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Icon wrapper sizes */
+        .icon-wrapper {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .icon-wrapper svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+
+        /* Dropdown content sections - remove white padding */
+        .training-details {
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
+        .training-details > div {
+            padding: 0.75rem !important;
+            background: white !important;
+        }
+
+        /* Table responsive */
+        table {
+            font-size: 0.75rem !important;
+        }
+
+        table th,
+        table td {
+            padding: 0.5rem 0.375rem !important;
+        }
+
+        /* Filters and selects */
+        select {
+            font-size: 0.875rem !important;
+            padding: 0.5rem !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .section-header h3 {
+            font-size: 1.125rem !important;
+        }
+
+        table {
+            font-size: 0.6875rem !important;
+        }
+
+        table th,
+        table td {
+            padding: 0.375rem 0.25rem !important;
+        }
     }
     </style>
 
@@ -340,20 +416,23 @@
         function initializeEventListeners() {
             const yearSelect = document.getElementById('year');
             const monthSelect = document.getElementById('month');
-            
+
             if (yearSelect) {
                 yearSelect.removeEventListener('change', filterTrainingsAjax);
                 yearSelect.addEventListener('change', filterTrainingsAjax);
             }
-            
+
             if (monthSelect) {
                 monthSelect.removeEventListener('change', filterTrainingsAjax);
                 monthSelect.addEventListener('change', filterTrainingsAjax);
             }
 
+            // Use event delegation on the container
             const trainingContainer = document.getElementById('training-list-container');
             if (trainingContainer) {
+                // Remove old listener first
                 trainingContainer.removeEventListener('click', handleTrainingClick);
+                // Add new listener
                 trainingContainer.addEventListener('click', handleTrainingClick);
             }
         }
@@ -427,8 +506,13 @@
             const detailsDiv = document.getElementById(`details-${trainingId}`);
             const arrow = document.getElementById(`arrow-${trainingId}`);
 
-            const isCurrentlyOpen = detailsDiv && detailsDiv.classList.contains('show');
+            if (!detailsDiv) {
+                return;
+            }
 
+            const isCurrentlyOpen = detailsDiv.classList.contains('show');
+
+            // Close all other training details
             document.querySelectorAll('.training-details').forEach(function(div) {
                 div.classList.remove('show');
             });
@@ -436,7 +520,8 @@
                 arrow.style.transform = 'rotate(0deg)';
             });
 
-            if (!isCurrentlyOpen && detailsDiv) {
+            // Open this training detail if it was closed
+            if (!isCurrentlyOpen) {
                 detailsDiv.classList.add('show');
                 if (arrow) arrow.style.transform = 'rotate(180deg)';
 

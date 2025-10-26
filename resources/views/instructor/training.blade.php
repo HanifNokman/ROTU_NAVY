@@ -112,6 +112,104 @@
     .fc .fc-button-primary:not(:disabled).fc-button-active {
         background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        /* Page header */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Section header with button */
+        .flex.justify-between.items-center {
+            flex-direction: column !important;
+            gap: 1rem !important;
+            align-items: flex-start !important;
+        }
+
+        .flex.justify-between.items-center button {
+            width: 100% !important;
+            justify-content: center !important;
+            font-size: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+        }
+
+        /* Calendar mobile optimization (inherited from app.blade.php) */
+        .fc .fc-toolbar {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+            padding: 0.75rem !important;
+        }
+
+        .fc .fc-toolbar-chunk {
+            width: 100% !important;
+            justify-content: center !important;
+        }
+
+        .fc .fc-button {
+            font-size: 0.75rem !important;
+            padding: 0.375rem 0.625rem !important;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1rem !important;
+        }
+
+        /* Training list responsive */
+        .space-y-4 > div {
+            padding: 0.75rem !important;
+        }
+
+        /* Icon wrapper sizes */
+        .icon-wrapper {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .icon-wrapper svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+
+        /* Modals */
+        .fixed.inset-0 > div {
+            margin: 1rem !important;
+            max-width: calc(100vw - 2rem) !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .section-header h3 {
+            font-size: 1.125rem !important;
+        }
+
+        .fc .fc-button {
+            font-size: 0.625rem !important;
+            padding: 0.25rem 0.5rem !important;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 0.875rem !important;
+        }
+
+        button {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+        }
+    }
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">

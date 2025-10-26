@@ -186,9 +186,140 @@
         gap: 0.75rem;
     }
 
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
     @media (max-width: 640px) {
         .info-grid {
             grid-template-columns: 1fr;
+        }
+
+        /* Dashboard header responsive */
+        .text-center.mb-8 h1 {
+            font-size: 1.875rem !important;
+            padding: 0 1rem;
+        }
+
+        .text-center.mb-8 p {
+            font-size: 0.875rem !important;
+            padding: 0 1rem;
+        }
+
+        /* Card spacing */
+        .dashboard-card {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* Personal profile section */
+        .flex.flex-col.lg\\:flex-row {
+            flex-direction: column !important;
+        }
+
+        /* Profile picture container */
+        .flex.flex-row.lg\\:flex-col {
+            flex-direction: row !important;
+            align-items: flex-start !important;
+        }
+
+        /* Filters and controls responsive */
+        .flex.justify-center select {
+            font-size: 0.875rem !important;
+            padding: 0.5rem !important;
+        }
+
+        /* Duty ranking and CGPA cards */
+        .grid.grid-cols-1.lg\\:grid-cols-2 {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+
+        /* Add duty button */
+        .bg-green-600.hover\\:bg-green-700 {
+            padding: 0.5rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        .bg-green-600.hover\\:bg-green-700 span {
+            display: inline !important;
+        }
+
+        /* Absence section filters */
+        .flex.flex-col.sm\\:flex-row.items-start {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+
+        .flex.flex-col.sm\\:flex-row.items-start select {
+            width: 100% !important;
+        }
+
+        /* Absence toggle buttons */
+        .flex.bg-gray-100.rounded-lg.p-1 {
+            width: 100% !important;
+        }
+
+        .flex.bg-gray-100.rounded-lg.p-1 button {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.25rem !important;
+        }
+
+        /* Modal adjustments */
+        .bg-white.p-6.rounded-lg.shadow-lg {
+            margin: 1rem !important;
+            padding: 1rem !important;
+            max-width: calc(100vw - 2rem) !important;
+        }
+
+        /* Scrollable content areas */
+        #duty-ranking-content,
+        #cgpa-content,
+        #absence-content {
+            max-height: 300px !important;
+        }
+    }
+
+    /* Extra small devices (Honor X9a - 360px-412px) */
+    @media (max-width: 400px) {
+        /* Further reduce text sizes */
+        .text-center.mb-8 h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .section-header h3 {
+            font-size: 1.125rem !important;
+        }
+
+        /* Compact filters */
+        .flex.justify-center {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+
+        .flex.justify-center select {
+            width: 100% !important;
+        }
+
+        /* Smaller icons */
+        .icon-wrapper {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .icon-wrapper svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+
+        /* Compact info items */
+        .info-item {
+            padding: 0.5rem !important;
+            font-size: 0.75rem !important;
+        }
+
+        /* Reduce absence section toggle buttons */
+        .flex.bg-gray-100.rounded-lg.p-1 button span {
+            font-size: 0.625rem !important;
         }
     }
     </style>
