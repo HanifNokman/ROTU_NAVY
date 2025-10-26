@@ -453,7 +453,7 @@
                                 </div>
                                 <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Personal Profile</h2>
                             </div>
-                            <p class="text-gray-600 text-xs sm:text-sm ml-9 sm:ml-13 hidden sm:block">Your profile information and details</p>
+                            <p class="text-gray-600 ml-13">Your profile information and service details</p>
                         </div>
                         <div class="flex items-center ml-2 sm:ml-6 flex-shrink-0">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transform transition-transform duration-300"
