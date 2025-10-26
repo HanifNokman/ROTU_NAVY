@@ -405,7 +405,7 @@
     }
     </style>
 
-    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="py-4 sm:py-8 pb-8 sm:pb-12 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
@@ -1445,7 +1445,7 @@
                                                 </div>
                                                 <div class="flex items-center justify-center text-yellow-400">
                                                     <i class="fas fa-trophy mr-2"></i>
-                                                    <span class="text-xs">{{ $unlockedBadge['unlock_percentage'] }}% of all cadets</span>
+                                                    <span class="text-xs">{{ $unlockedBadge['unlock_count'] }} cadets unlocked this badge ({{ $unlockedBadge['unlock_percentage'] }}%)</span>
                                                 </div>
                                             </div>
                                             {{-- Arrow --}}
@@ -1531,7 +1531,7 @@
                                                             </div>
                                                             <div class="flex items-center text-blue-400">
                                                                 <i class="fas fa-users mr-2"></i>
-                                                                <span class="text-xs">{{ $badge->unlock_percentage }}% of all cadets have this badge</span>
+                                                                <span class="text-xs">{{ $badge->unlock_count }} cadets unlocked this badge ({{ $badge->unlock_percentage }}%)</span>
                                                             </div>
                                                         </div>
                                                         {{-- Arrow --}}

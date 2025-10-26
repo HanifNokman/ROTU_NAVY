@@ -336,19 +336,25 @@
         max-height: 0;
         overflow: hidden;
         opacity: 0;
+        padding: 0 !important;
+        border: 0 !important;
         transform: translateY(-10px);
         transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                     opacity 0.3s ease-out,
-                    transform 0.3s ease-out;
+                    transform 0.3s ease-out,
+                    padding 0.3s ease-out;
     }
 
     .material-content.show {
         max-height: 3000px;
         opacity: 1;
+        padding: 1rem !important;
         transform: translateY(0);
         transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                     opacity 0.3s ease-in,
-                    transform 0.3s ease-in;
+                    transform 0.3s ease-in,
+                    padding 0.3s ease-in;
+        border-top: 1px solid #e5e7eb !important;
     }
 
     /* ========================================= */
@@ -457,7 +463,7 @@
     }
     </style>
 
-    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="py-4 sm:py-8 pb-8 sm:pb-12 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}

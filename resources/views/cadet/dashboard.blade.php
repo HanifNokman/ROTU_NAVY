@@ -420,7 +420,7 @@
     }
     </style>
 
-    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="py-4 sm:py-8 pb-8 sm:pb-12 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
@@ -789,7 +789,7 @@
                     x-transition:enter-start="opacity-0 transform -translate-y-2"
                     x-transition:enter-end="opacity-100 transform translate-y-0">
                     <div class="overflow-hidden rounded-xl border border-gray-200">
-                        <div class="max-h-[500px] overflow-y-auto custom-scrollbar">
+                        <div class="max-h-[500px] overflow-y-auto overflow-x-auto custom-scrollbar">
                             <table class="data-table text-sm">
                                 <thead>
                                     <tr>
