@@ -1142,6 +1142,8 @@
                             </div>
                         @endif
                     </div>
+                      {{-- Mobile Bottom Spacer --}}
+                    <div class="block md:hidden h-20"></div>
                 </div>
             </div>
         </div>
@@ -1184,9 +1186,6 @@
             </form>
         </div>
     </div>
-
-    {{-- Mobile Bottom Spacer --}}
-    <div class="block md:hidden h-20"></div>
 
     {{-- ================================================================ --}}
     {{-- JAVASCRIPT --}}
