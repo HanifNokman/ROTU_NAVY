@@ -397,45 +397,51 @@
     .shadow-custom {
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
+
+    @media (max-width: 640px) {
+        .dashboard-card:hover {
+            transform: none !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
             {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Performance & Achievements</h1>
-                <p class="text-gray-600 text-lg">Track your progress, rankings, and earned badges</p>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Performance & Achievements</h1>
+                <p class="text-gray-600 text-sm sm:text-lg px-2">Track your progress, rankings, and earned badges</p>
             </div>
 
             {{-- ================================================================ --}}
             {{-- PERFORMANCE OVERVIEW SECTION --}}
             {{-- ================================================================ --}}
-            <div class="dashboard-card bg-white rounded-2xl shadow-custom overflow-hidden"
+            <div class="dashboard-card bg-white rounded-xl sm:rounded-2xl shadow-custom overflow-hidden"
                 x-data="{ performanceOpen: true }">
                 <div class="section-header cursor-pointer"
                     @click="performanceOpen = !performanceOpen">
                     <div class="flex items-center justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center mb-2">
-                                <div class="icon-wrapper gradient-blue mr-3">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center mb-1 sm:mb-2">
+                                <div class="icon-wrapper gradient-blue mr-2 sm:mr-3">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                     </svg>
                                 </div>
-                                <h2 class="text-2xl font-bold text-gray-900">Performance Overview</h2>
+                                <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Performance Overview</h2>
                             </div>
-                            <p class="text-gray-600 ml-13">View your performance ratings and progress over time</p>
+                            <p class="text-gray-600 text-xs sm:text-base ml-9 sm:ml-13 hidden sm:block">View your performance ratings and progress over time</p>
                         </div>
-                        <div class="flex items-center ml-6">
-                            <svg class="w-6 h-6 text-gray-400 transform transition-transform duration-300"
+                        <div class="flex items-center ml-2 sm:ml-6 flex-shrink-0">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transform transition-transform duration-300"
                                 :class="{ 'rotate-180': performanceOpen }"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -444,7 +450,7 @@
                     </div>
                 </div>
 
-                <div class="p-8"
+                <div class="p-4 sm:p-8"
                     x-show="performanceOpen"
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 transform -translate-y-2"

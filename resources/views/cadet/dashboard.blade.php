@@ -404,45 +404,59 @@
     .shadow-custom {
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        .info-grid {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+        }
+
+        .dashboard-card:hover {
+            transform: none !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
             {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Cadet Dashboard</h1>
-                <p class="text-gray-600 text-lg">Your personal overview and performance metrics</p>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Cadet Dashboard</h1>
+                <p class="text-gray-600 text-sm sm:text-lg px-2">Your personal overview and performance metrics</p>
             </div>
 
             {{-- ================================================================ --}}
             {{-- PROFILE SECTION --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card"
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl sm:rounded-2xl dashboard-card"
                 x-data="{ open: false }">
                 <div class="section-header cursor-pointer"
                     @click="open = !open">
                     <div class="flex items-center justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center mb-2">
-                                <div class="icon-wrapper bg-blue-100 mr-3">
-                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center mb-1 sm:mb-2">
+                                <div class="icon-wrapper bg-blue-100 mr-2 sm:mr-3">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                 </div>
-                                <h2 class="text-2xl font-bold text-gray-900">Personal Profile</h2>
+                                <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Personal Profile</h2>
                             </div>
-                            <p class="text-gray-600 ml-13">Your profile information and details</p>
+                            <p class="text-gray-600 text-xs sm:text-sm ml-9 sm:ml-13 hidden sm:block">Your profile information and details</p>
                         </div>
-                        <div class="flex items-center ml-6">
-                            <svg class="w-6 h-6 text-gray-400 transform transition-transform duration-300"
+                        <div class="flex items-center ml-2 sm:ml-6 flex-shrink-0">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transform transition-transform duration-300"
                                 :class="{ 'rotate-180': open }"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -451,44 +465,44 @@
                     </div>
                 </div>
 
-                <div class="p-8"
+                <div class="p-4 sm:p-8"
                     x-show="open"
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 transform -translate-y-2"
                     x-transition:enter-end="opacity-100 transform translate-y-0">
-                    <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="flex flex-col lg:flex-row gap-4 sm:gap-8">
                         {{-- Profile Picture & Badges Section --}}
-                        <div class="flex flex-row lg:flex-col items-start lg:items-start space-x-4 lg:space-x-0 lg:space-y-4">
+                        <div class="flex flex-row lg:flex-col items-start space-x-3 sm:space-x-4 lg:space-x-0 lg:space-y-4">
                             <div class="relative flex-shrink-0">
                                 <img src="{{ $cadet?->profile_pic ? asset('storage/' . $cadet->profile_pic) : asset('images/default.png') }}"
                                     alt="Profile Picture"
-                                    class="w-32 h-44 sm:w-48 sm:h-64 md:w-56 md:h-80 object-cover rounded-2xl shadow-lg border-4 border-white">
+                                    class="w-24 h-32 sm:w-40 sm:h-56 md:w-56 md:h-80 object-cover rounded-xl sm:rounded-2xl shadow-lg border-2 sm:border-4 border-white">
 
                                 {{-- Best Cadet/Academic Banner --}}
                                 @if($cadet->is_best_cadet || $cadet->is_best_academic)
-                                    <div class="absolute -top-3 -left-3 -right-3 flex flex-col gap-1">
+                                    <div class="absolute -top-2 sm:-top-3 -left-2 sm:-left-3 -right-2 sm:-right-3 flex flex-col gap-0.5 sm:gap-1">
                                         @if($cadet->is_best_cadet)
-                                            <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center justify-center space-x-2 border-2 border-yellow-300">
-                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg shadow-lg flex items-center justify-center space-x-1 sm:space-x-2 border border-yellow-300 sm:border-2">
+                                                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                 </svg>
-                                                <span class="font-bold text-xs sm:text-sm">BEST CADET</span>
+                                                <span class="font-bold text-xs">BEST CADET</span>
                                             </div>
                                         @endif
                                         @if($cadet->is_best_academic)
-                                            <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center justify-center space-x-2 border-2 border-blue-300">
-                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg shadow-lg flex items-center justify-center space-x-1 sm:space-x-2 border border-blue-300 sm:border-2">
+                                                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
                                                 </svg>
-                                                <span class="font-bold text-xs sm:text-sm">BEST ACADEMIC</span>
+                                                <span class="font-bold text-xs">BEST ACADEMIC</span>
                                             </div>
                                         @endif
                                     </div>
                                 @endif
 
-                                <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
-                                    <div class="w-12 h-12 gradient-blue rounded-full flex items-center justify-center">
-                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="absolute -bottom-1.5 -right-1.5 sm:-bottom-2 sm:-right-2 bg-white rounded-full p-1.5 sm:p-2 shadow-lg">
+                                    <div class="w-8 h-8 sm:w-12 sm:h-12 gradient-blue rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>
                                     </div>
@@ -497,7 +511,7 @@
 
                             {{-- Displayed Badges --}}
                             @if($cadet->cadetBadges && $cadet->cadetBadges->count() > 0)
-                                <div class="flex-1 lg:w-full lg:max-w-[14rem] md:max-w-[16rem] space-y-2 max-h-[176px] sm:max-h-[256px] md:max-h-[320px] lg:max-h-none overflow-y-auto custom-scrollbar">
+                                <div class="flex-1 lg:w-full lg:max-w-[14rem] md:max-w-[16rem] space-y-1.5 sm:space-y-2 max-h-[128px] sm:max-h-[224px] md:max-h-[320px] lg:max-h-none overflow-y-auto custom-scrollbar">
                                     @php
                                         // Sort badges by rarity level (descending - highest first)
                                         // Rarity levels: 6=Legendary (Best Cadet/Academic), 5=Platinum, 4=Gold, 3=Silver, 2=Bronze, 1=Standard
@@ -528,16 +542,16 @@
                         </div>
 
                         {{-- Profile Information --}}
-                        <div class="flex-1 space-y-6">
+                        <div class="flex-1 space-y-3 sm:space-y-6">
                             {{-- Rank and Name --}}
                             <div class="info-card">
-                                <div class="flex items-center gap-3 mb-4">
+                                <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                                     <div class="icon-wrapper gradient-blue">
-                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                                         </svg>
                                     </div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Rank & Identity</h3>
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900">Rank & Identity</h3>
                                 </div>
                                 @php
                                     $prefix = '';
@@ -545,42 +559,42 @@
                                         $prefix = ' PSSTLDM';
                                     }
                                 @endphp
-                                <p class="text-2xl font-bold text-gray-900">
+                                <p class="text-lg sm:text-2xl font-bold text-gray-900 break-words">
                                     {{ ($cadet?->rank ?? 'Unknown') . ' ' . ($user?->name ?? 'No Name') . $prefix }}
                                 </p>
                             </div>
 
                             {{-- Contact Information --}}
                             <div class="info-card">
-                                <div class="flex items-center gap-3 mb-4">
+                                <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                                     <div class="icon-wrapper bg-green-100">
-                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>
                                     </div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Contact Information</h3>
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900">Contact Information</h3>
                                 </div>
-                                <div class="space-y-3">
+                                <div class="space-y-2 sm:space-y-3">
                                     <div class="info-item">
-                                        <div class="icon-wrapper-sm bg-green-50 mr-3">
-                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="icon-wrapper-sm bg-green-50 mr-2 sm:mr-3">
+                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                             </svg>
                                         </div>
-                                        <div>
+                                        <div class="min-w-0 flex-1">
                                             <p class="text-xs text-gray-500 font-medium">Phone Number</p>
-                                            <p class="text-sm font-semibold text-gray-900">{{ $cadet?->phone_number ?? 'Not set' }}</p>
+                                            <p class="text-sm font-semibold text-gray-900 truncate">{{ $cadet?->phone_number ?? 'Not set' }}</p>
                                         </div>
                                     </div>
                                     <div class="info-item">
-                                        <div class="icon-wrapper-sm bg-blue-50 mr-3">
-                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="icon-wrapper-sm bg-blue-50 mr-2 sm:mr-3">
+                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                                             </svg>
                                         </div>
-                                        <div>
+                                        <div class="min-w-0 flex-1">
                                             <p class="text-xs text-gray-500 font-medium">Email Address</p>
-                                            <p class="text-sm font-semibold text-gray-900">{{ $user?->email ?? 'Not set' }}</p>
+                                            <p class="text-sm font-semibold text-gray-900 truncate">{{ $user?->email ?? 'Not set' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -588,13 +602,13 @@
 
                             {{-- General Information --}}
                             <div class="info-card">
-                                <div class="flex items-center gap-3 mb-4">
+                                <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                                     <div class="icon-wrapper bg-purple-100">
-                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                     </div>
-                                    <h3 class="text-lg font-semibold text-gray-900">General Information</h3>
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900">General Information</h3>
                                 </div>
                                 <div class="info-grid">
                                     <div class="info-item">

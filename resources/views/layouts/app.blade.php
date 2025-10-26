@@ -31,15 +31,15 @@
         {{-- CUSTOM STYLES --}}
         {{-- ================================================================ --}}
         <style>
-            [x-cloak] { 
-                display: none !important; 
+            [x-cloak] {
+                display: none !important;
             }
-            
+
             :root {
                 --gradient-primary: linear-gradient(135deg, #3c92d9, #2980b9);
                 --shadow-primary: 0 10px 30px rgba(60, 146, 217, 0.3);
             }
-            
+
             .btn-primary {
                 background: var(--gradient-primary);
                 padding: 12px 28px;
@@ -55,16 +55,16 @@
                 overflow: visible;
                 cursor: pointer;
             }
-            
+
             .btn-primary:hover {
                 transform: translateY(-1px);
                 box-shadow: 0 6px 20px rgba(60, 146, 217, 0.4);
             }
-            
+
             .btn-primary::after {
                 display: none !important;
             }
-            
+
             .notification-badge {
                 position: absolute;
                 top: -4px;
@@ -77,7 +77,7 @@
                 z-index: 999;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             }
-            
+
             .mobile-menu-notification {
                 position: absolute;
                 top: -2px;
@@ -89,6 +89,348 @@
                 border-radius: 50%;
                 z-index: 999;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            }
+
+            /* ========================================= */
+            /* MOBILE RESPONSIVE OPTIMIZATIONS */
+            /* ========================================= */
+            @media (max-width: 640px) {
+                /* Prevent horizontal scroll */
+                body {
+                    overflow-x: hidden;
+                }
+
+                /* Main content wrapper - add bottom padding to prevent cutoff */
+                main {
+                    padding-bottom: 3rem !important;
+                }
+
+                /* Optimize card spacing for mobile */
+                .dashboard-card {
+                    margin-bottom: 1rem;
+                }
+
+                /* Reduce section header padding */
+                .section-header {
+                    padding: 1.25rem 1rem !important;
+                }
+
+                /* Optimize table for mobile - make scrollable */
+                .data-table {
+                    font-size: 0.875rem;
+                }
+
+                .data-table th,
+                .data-table td {
+                    padding: 0.75rem 0.5rem !important;
+                    white-space: nowrap;
+                }
+
+                /* Icon wrapper sizes */
+                .icon-wrapper {
+                    width: 2rem !important;
+                    height: 2rem !important;
+                }
+
+                .icon-wrapper svg {
+                    width: 1.25rem !important;
+                    height: 1.25rem !important;
+                }
+
+                /* Reduce button padding */
+                .btn-primary {
+                    padding: 10px 20px !important;
+                    font-size: 0.875rem !important;
+                }
+
+                /* Optimize info cards */
+                .info-card {
+                    padding: 1rem !important;
+                }
+
+                /* Grid optimizations */
+                .info-grid {
+                    grid-template-columns: 1fr !important;
+                }
+
+                /* Modal optimization */
+                .modal-content {
+                    margin: 1rem !important;
+                    max-width: calc(100vw - 2rem) !important;
+                    padding: 1rem !important;
+                }
+
+                /* Modal overlay - ensure proper sizing */
+                .modal-overlay {
+                    padding: 1rem !important;
+                }
+
+                /* Fixed modals - ensure they don't overflow */
+                .fixed.inset-0 {
+                    overflow-y: auto !important;
+                }
+
+                /* Modal buttons - ensure they fit */
+                .modal-content button,
+                .modal-content .btn-primary,
+                .modal-content .btn-secondary {
+                    font-size: 0.875rem !important;
+                    padding: 0.5rem 1rem !important;
+                }
+
+                /* Prevent text overflow */
+                h1 {
+                    font-size: 1.875rem !important;
+                    line-height: 2.25rem !important;
+                }
+
+                h2 {
+                    font-size: 1.5rem !important;
+                    line-height: 2rem !important;
+                }
+
+                h3 {
+                    font-size: 1.25rem !important;
+                    line-height: 1.75rem !important;
+                }
+
+                /* Countdown circle - smaller for mobile */
+                .countdown-circle {
+                    width: 10rem !important;
+                    height: 10rem !important;
+                }
+
+                .countdown-inner {
+                    width: 8.5rem !important;
+                    height: 8.5rem !important;
+                }
+
+                /* Accordion optimization */
+                .accordion-header {
+                    padding: 0.875rem 1rem !important;
+                    font-size: 0.875rem !important;
+                }
+
+                /* Progress container */
+                .progress-container {
+                    height: 1.5rem !important;
+                }
+
+                /* Badge icons */
+                .badge-icon-mini {
+                    width: 24px !important;
+                    height: 24px !important;
+                }
+
+                .badge-icon-large {
+                    width: 40px !important;
+                    height: 40px !important;
+                }
+
+                /* Ranking items */
+                .ranking-item {
+                    gap: 0.5rem !important;
+                    padding: 0.625rem !important;
+                }
+
+                .rank-badge {
+                    width: 2rem !important;
+                    height: 2rem !important;
+                    font-size: 0.75rem !important;
+                }
+            }
+
+            /* Extra small devices (Honor X9a in portrait - 360px width) */
+            @media (max-width: 400px) {
+                .data-table {
+                    font-size: 0.8125rem;
+                }
+
+                .data-table th,
+                .data-table td {
+                    padding: 0.5rem 0.375rem !important;
+                }
+
+                h1 {
+                    font-size: 1.5rem !important;
+                    line-height: 2rem !important;
+                }
+
+                .section-header {
+                    padding: 1rem 0.75rem !important;
+                }
+
+                .modal-content {
+                    margin: 0.5rem !important;
+                    max-width: calc(100vw - 1rem) !important;
+                    padding: 1rem !important;
+                }
+            }
+
+            /* ========================================= */
+            /* INSTRUCTOR-SPECIFIC MOBILE OPTIMIZATIONS */
+            /* ========================================= */
+            @media (max-width: 640px) {
+                /* Duty ranking and CGPA content areas */
+                #duty-ranking-content,
+                #cgpa-content {
+                    max-height: 250px !important;
+                }
+
+                /* Dropdown sections for cadet management */
+                .section-content-dropdown {
+                    padding: 1rem !important;
+                }
+
+                /* Filter forms - stack inputs vertically */
+                .filter-form select,
+                .filter-form input {
+                    width: 100% !important;
+                }
+
+                /* Cadet cards - full width on mobile */
+                .cadet-card {
+                    width: 100% !important;
+                }
+
+                /* Badge display optimizations */
+                .badge-display {
+                    gap: 0.375rem !important;
+                }
+
+                /* Profile pictures - responsive sizing */
+                .profile-pic-instructor {
+                    width: 8rem !important;
+                    height: 11rem !important;
+                }
+
+                /* Info items - reduce padding */
+                .info-item {
+                    padding: 0.5rem !important;
+                    font-size: 0.875rem !important;
+                }
+
+                .info-item svg {
+                    width: 1rem !important;
+                    height: 1rem !important;
+                }
+
+                /* Filter buttons - stack on mobile */
+                .filter-buttons {
+                    flex-direction: column !important;
+                    gap: 0.5rem !important;
+                }
+
+                .filter-buttons button,
+                .filter-buttons select {
+                    width: 100% !important;
+                }
+
+                /* Action buttons in tables */
+                .action-buttons {
+                    flex-direction: column !important;
+                    gap: 0.25rem !important;
+                }
+
+                .action-buttons button {
+                    width: 100% !important;
+                    font-size: 0.75rem !important;
+                    padding: 0.375rem 0.75rem !important;
+                }
+
+                /* Stats cards */
+                .stats-card {
+                    padding: 1rem !important;
+                }
+
+                .stats-card h3 {
+                    font-size: 1.125rem !important;
+                }
+
+                .stats-card .stat-value {
+                    font-size: 1.5rem !important;
+                }
+
+                /* Calendar view on training page */
+                .fc-toolbar {
+                    flex-direction: column !important;
+                    gap: 0.5rem !important;
+                }
+
+                .fc-toolbar-chunk {
+                    display: flex !important;
+                    justify-content: center !important;
+                    width: 100% !important;
+                }
+
+                .fc-button {
+                    font-size: 0.75rem !important;
+                    padding: 0.375rem 0.625rem !important;
+                }
+
+                /* Pending verification steps */
+                .verification-step {
+                    padding: 0.75rem !important;
+                }
+
+                /* Gallery grid */
+                .gallery-grid {
+                    grid-template-columns: repeat(2, 1fr) !important;
+                    gap: 0.5rem !important;
+                }
+
+                /* Form groups in instructor pages */
+                .form-group {
+                    margin-bottom: 0.75rem !important;
+                }
+
+                .form-group label {
+                    font-size: 0.875rem !important;
+                    margin-bottom: 0.25rem !important;
+                }
+
+                .form-group input,
+                .form-group select,
+                .form-group textarea {
+                    font-size: 0.875rem !important;
+                    padding: 0.5rem !important;
+                }
+
+                /* Bulk action controls */
+                .bulk-actions {
+                    flex-direction: column !important;
+                    gap: 0.5rem !important;
+                }
+
+                .bulk-actions > * {
+                    width: 100% !important;
+                }
+            }
+
+            @media (max-width: 400px) {
+                /* Extra compact for very small screens */
+                #duty-ranking-content,
+                #cgpa-content {
+                    max-height: 200px !important;
+                }
+
+                .profile-pic-instructor {
+                    width: 7rem !important;
+                    height: 9.5rem !important;
+                }
+
+                .gallery-grid {
+                    grid-template-columns: 1fr !important;
+                }
+
+                .fc-button {
+                    font-size: 0.625rem !important;
+                    padding: 0.25rem 0.5rem !important;
+                }
+
+                .stats-card .stat-value {
+                    font-size: 1.25rem !important;
+                }
             }
         </style>
     </head>
@@ -263,9 +605,9 @@
                     x-transition:leave="transition ease-in duration-150"
                     x-transition:leave-start="opacity-100 translate-x-0"
                     x-transition:leave-end="opacity-0 translate-x-full"
-                    class="fixed top-0 right-0 w-72 h-full bg-[#2e313c] shadow-lg flex flex-col justify-between z-50 border-l border-[#373a46] sm:hidden text-white"
+                    class="fixed top-0 right-0 w-[85vw] max-w-sm h-full bg-[#2e313c] shadow-2xl flex flex-col justify-between z-50 border-l border-[#373a46] sm:hidden text-white overflow-y-auto"
                 >
-                    <div class="flex flex-col h-full space-y-4 px-3 pt-3">
+                    <div class="flex flex-col h-full space-y-3 px-4 pt-4 pb-4">
                         <div class="flex justify-end">
                             <button @click="sidebarOpen = false" class="text-white hover:text-gray-400">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -279,31 +621,31 @@
                         {{-- ================================================================ --}}
                         <x-dropdown align="right" width="full" contentClasses="py-1 bg-white text-black border border-gray-300">
                             <x-slot name="trigger">
-                                <div class="flex items-center gap-3 border-b border-[#373a46] pb-4 cursor-pointer hover:bg-[#373a46] transition-colors rounded-md px-2 py-1 w-full">
+                                <div class="flex items-center gap-2 border-b border-[#373a46] pb-3 cursor-pointer hover:bg-[#373a46] transition-colors rounded-lg px-2 py-2 w-full">
                                     @if($avatarSrc)
                                         <img src="{{ $avatarSrc }}"
                                              alt="Profile"
-                                             class="w-10 h-10 rounded-full object-cover"
+                                             class="w-10 h-10 rounded-full object-cover flex-shrink-0"
                                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm" style="display: none;">
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0" style="display: none;">
                                             {{ $initials }}
                                         </div>
                                     @else
-                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
                                             {{ $initials }}
                                         </div>
                                     @endif
-                                    <div class="flex flex-col flex-1 min-w-0">
+                                    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
                                         <div class="font-semibold text-sm leading-tight truncate text-white">{{ Auth::user()->name }}</div>
                                         <div class="text-xs text-gray-400 leading-tight truncate">{{ Auth::user()->email }}</div>
                                     </div>
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                     </svg>
                                 </div>
                             </x-slot>
                             <x-slot name="content">
-                                <x-dropdown-link href="{{ route('profile.edit') }}" class="flex items-center text-black hover:bg-gray-100 transition-colors">
+                                <x-dropdown-link href="{{ route('profile.edit') }}" class="flex items-center text-black hover:bg-gray-100 transition-colors px-4 py-2">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
@@ -315,14 +657,14 @@
                         {{-- ================================================================ --}}
                         {{-- MOBILE NAVIGATION LINKS --}}
                         {{-- ================================================================ --}}
-                        <nav class="flex flex-col space-y-2">
-                            <a href="{{ route('dashboard') }}" 
-                               class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ (Auth::user()->role === 'instructor' && request()->routeIs('instructor.dashboard')) || (Auth::user()->role === 'cadet' && request()->routeIs('cadet.dashboard')) ? 'text-[#3c92d9]' : 'text-white hover:text-[#3c92d9]' }}">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <nav class="flex flex-col space-y-1 flex-1 overflow-y-auto">
+                            <a href="{{ route('dashboard') }}"
+                               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ (Auth::user()->role === 'instructor' && request()->routeIs('instructor.dashboard')) || (Auth::user()->role === 'cadet' && request()->routeIs('cadet.dashboard')) ? 'bg-[#3c92d9] bg-opacity-20 text-[#3c92d9] border-l-4 border-[#3c92d9]' : 'text-white hover:bg-[#373a46]' }}">
+                                <svg class="w-5 h-5 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
                                 </svg>
-                                Dashboard
+                                <span class="truncate">Dashboard</span>
                             </a>
 
                             @if(isset($instructor) && $instructor && $instructor->expertise === 'Admin')
@@ -453,51 +795,51 @@
                         {{-- ================================================================ --}}
                         {{-- MOBILE BOTTOM SECTION --}}
                         {{-- ================================================================ --}}
-                        <div class="border-t border-[#373a46] mt-1">
-                            <div class="p-2 flex flex-col space-y-0">
+                        <div class="border-t border-[#373a46] mt-auto pt-3">
+                            <div class="px-3 pb-2 flex flex-col space-y-3">
                                 @if(Auth::user()->role === 'instructor')
                                     <div class="relative">
-                                        <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
+                                        <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full text-sm py-2.5">
                                             @if($hasNotifications)
                                                 <div class="notification-badge"></div>
                                             @endif
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                             </svg>
-                                            Pending Application
+                                            <span class="truncate">Pending Application</span>
                                         </a>
                                     </div>
                                 @elseif(Auth::user()->role === 'cadet')
                                     <div class="relative">
-                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full">
+                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full text-sm py-2.5">
                                             @if($hasNotifications)
                                                 <div class="notification-badge"></div>
                                             @endif
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
-                                            Attendance
+                                            <span class="truncate">Attendance</span>
                                         </a>
                                     </div>
                                 @endif
 
-                                <a href="{{ url('/') }}" class="flex items-center justify-center mt-4 hover:transform hover:scale-105 transition-transform">
+                                <a href="{{ url('/') }}" class="flex items-center justify-center py-2 hover:transform hover:scale-105 transition-transform">
                                     @if(View::exists('components.application-logo'))
                                         <x-application-logo class="h-8 w-auto fill-current text-white" />
                                     @else
-                                        <div class="h-6 w-6 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-xs">LOGO</div>
+                                        <div class="h-8 w-8 flex items-center justify-center bg-[#313541] rounded-full text-white font-bold text-sm">LOGO</div>
                                     @endif
                                 </a>
 
                                 <form method="POST" action="{{ route('logout') }}" x-ref="logoutFormMobile">
                                     @csrf
-                                    <button type="button" 
-                                            @click="currentLogoutForm = $refs.logoutFormMobile; showLogoutModal = true" 
-                                            class="flex items-center justify-center w-full py-3 px-5 text-[#ec6c6c] font-semibold rounded-2xl hover:text-white">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button type="button"
+                                            @click="currentLogoutForm = $refs.logoutFormMobile; showLogoutModal = true"
+                                            class="flex items-center justify-center w-full py-2.5 px-4 text-[#ec6c6c] font-semibold rounded-lg hover:bg-[#373a46] hover:text-white transition-colors text-sm">
+                                        <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
                                         </svg>
-                                        Log Out
+                                        <span class="truncate">Log Out</span>
                                     </button>
                                 </form>
                             </div>
@@ -765,15 +1107,15 @@
                     <div class="flex-1 flex flex-col h-screen overflow-hidden">
                         @isset($header)
                             <header class="bg-white shadow flex-shrink-0 w-full flex justify-end">
-                                <div class="w-full max-w-7xl py-6 px-4 sm:px-6 lg:px-8 flex justify-end">
+                                <div class="w-full max-w-7xl py-4 px-3 sm:py-6 sm:px-6 lg:px-8 flex justify-end">
                                     <div class="text-left w-full">
                                         {{ $header }}
                                     </div>
                                 </div>
                             </header>
                         @endisset
-                    
-                        <main class="flex-1 p-6 overflow-y-auto">
+
+                        <main class="flex-1 p-3 sm:p-6 overflow-y-auto">
                             {{ $slot }}
                         </main>
                     </div>

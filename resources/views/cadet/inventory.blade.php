@@ -276,24 +276,63 @@
         border-left: 4px solid #ef4444;
         color: #991b1b;
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        .dashboard-card:hover {
+            transform: none !important;
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            transform: none !important;
+        }
+
+        /* Fix filter dropdown width */
+        #uniform_type_filter {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Make buttons full width on mobile */
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            justify-content: center;
+            padding: 0.625rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Section headers - truncate long text */
+        .section-header h3 {
+            font-size: 1.125rem !important;
+        }
+
+        /* Description text - hide on very small screens */
+        .section-header p {
+            font-size: 0.75rem !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
             {{-- PAGE HEADER --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-blue rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-blue rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-3">
+                <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 px-2">
                     My Inventory
                 </h1>
-                <p class="text-lg text-gray-600">Manage your uniform sizes and equipment loans</p>
+                <p class="text-sm sm:text-lg text-gray-600 px-2">Manage your uniform sizes and equipment loans</p>
             </div>
 
             {{-- ================================================================ --}}
@@ -340,13 +379,13 @@
             {{-- ================================================================ --}}
             {{-- UNIFORM SIZES SECTION --}}
             {{-- ================================================================ --}}
-            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
-                
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden shadow-lg">
+
                 {{-- Section Header --}}
                 <div class="section-header section-toggle" onclick="toggleSection('uniformSizes')">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center mb-2">
-                            <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
+                        <div class="flex items-center mb-1 sm:mb-2">
+                            <div class="icon-wrapper gradient-blue mr-2 sm:mr-3 p-2 rounded-md">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
@@ -502,33 +541,34 @@
                 
                 {{-- Section Header --}}
                 <div class="section-header section-toggle" onclick="toggleSection('availableItems')">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center mb-2">
-                            <div class="icon-wrapper gradient-purple mr-3 p-2 rounded-md">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="flex items-center mb-1 sm:mb-2 flex-1 min-w-0">
+                            <div class="icon-wrapper gradient-purple mr-2 sm:mr-3 p-2 rounded-md flex-shrink-0">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900">Available Items</h3>
+                            <h3 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Available Items</h3>
                         </div>
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
                             <button
                                 id="selectItemsBtn"
                                 type="button"
                                 onclick="openBorrowModal()"
                                 disabled
-                                class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
-                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-initial whitespace-nowrap text-xs sm:text-sm px-3 sm:px-4 py-2">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
-                                Borrow Selected Items
+                                <span class="hidden sm:inline">Borrow Selected Items</span>
+                                <span class="sm:hidden">Borrow Items</span>
                             </button>
-                            <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="availableItems-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dropdown-icon flex-shrink-0" id="availableItems-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </div>
-                    <p class="text-gray-600 ml-13">Select items to borrow</p>
+                    <p class="text-gray-600 text-xs sm:text-base ml-9 sm:ml-13 hidden sm:block">Select items to borrow</p>
                 </div>
 
                 <div class="section-content" id="availableItems-content">

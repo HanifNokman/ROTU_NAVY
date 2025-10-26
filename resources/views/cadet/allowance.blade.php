@@ -125,49 +125,55 @@
     .animate-spin {
         animation: spin 1s linear infinite;
     }
+
+    @media (max-width: 640px) {
+        .dashboard-card:hover {
+            transform: none !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
             {{-- ================================================================ --}}
             {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-green rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-green rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Allowance Estimation</h1>
-                <p class="text-gray-600 text-lg">Calculate your training allowances and compensation</p>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Allowance Estimation</h1>
+                <p class="text-gray-600 text-sm sm:text-lg px-2">Calculate your training allowances and compensation</p>
             </div>
 
             {{-- ================================================================ --}}
             {{-- MAIN CONTENT CARD --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
-                
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl sm:rounded-2xl dashboard-card">
+
                 {{-- Card Header --}}
                 <div class="section-header">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper bg-green-100 mr-3">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center mb-1 sm:mb-2">
+                        <div class="icon-wrapper bg-green-100 mr-2 sm:mr-3">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-900">Training Records & Allowances</h2>
+                        <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Training Records & Allowances</h2>
                     </div>
-                    <p class="text-gray-600 ml-13">View your training participation and calculate earned allowances</p>
+                    <p class="text-gray-600 text-xs sm:text-base ml-9 sm:ml-13 hidden sm:block">View your training participation and calculate earned allowances</p>
                 </div>
 
                 {{-- Card Body --}}
-                <div class="p-8">
-                    
+                <div class="p-4 sm:p-8">
+
                     {{-- ================================================================ --}}
                     {{-- FILTER FORM --}}
                     {{-- ================================================================ --}}
-                    <form id="allowance-filter-form" class="mb-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <form id="allowance-filter-form" class="mb-4 sm:mb-8">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                             <div>
                                 <label for="year" class="block text-sm font-semibold text-gray-700 mb-2">Year</label>
                                 <select name="year" id="year" class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:ring-opacity-20 transition-colors duration-200">

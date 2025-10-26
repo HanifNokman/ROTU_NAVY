@@ -444,22 +444,33 @@
     .shadow-custom {
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
+
+    @media (max-width: 640px) {
+        .dashboard-card:hover,
+        .ranking-item:hover {
+            transform: none !important;
+        }
+
+        .btn-primary:hover {
+            transform: none !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
             {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Learning Hub</h1>
-                <p class="text-gray-600 text-lg">Access educational materials and resources</p>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Learning Hub</h1>
+                <p class="text-gray-600 text-sm sm:text-lg px-2">Access educational materials and resources</p>
             </div>
 
             <!-- Progress Overview Section - Collapsible -->
@@ -588,23 +599,25 @@
                         </div>
 
                         <!-- Right side: Action Buttons -->
-                        <div class="flex gap-2">
+                        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                             <button onclick="openMyScoresModal()"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm whitespace-nowrap">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                 </svg>
-                                View My Scores
+                                <span class="hidden sm:inline">View My Scores</span>
+                                <span class="sm:hidden">My Scores</span>
                             </button>
 
                             <button onclick="openQuizSelectionModal()"
-                                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center gap-2 text-sm">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="bg-purple-600 hover:bg-purple-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm whitespace-nowrap">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                Test Your Knowledge
+                                <span class="hidden sm:inline">Test Your Knowledge</span>
+                                <span class="sm:hidden">Take Quiz</span>
                             </button>
                         </div>
                     </div>
@@ -674,26 +687,27 @@
                                             data-material-type="{{ $materialType }}"
                                             data-material-url="{{ $material->file_url }}">
                                             
-                                            <button 
+                                            <button
                                                 id="material-button-{{ $material->id }}"
                                                 onclick="toggleMaterial({{ $material->id }}, '{{ $materialType }}', '{{ addslashes($material->file_url ?? '') }}')"
-                                                class="w-full flex justify-between items-center px-6 py-2 {{ $isCompleted ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-blue-100 hover:bg-blue-200 text-blue-800' }} text-left font-medium text-lg rounded-t-lg transition-colors duration-300">
-                                                <span class="flex items-center gap-2">
-                                                    <svg id="checkmark-{{ $material->id }}" 
-                                                        class="w-5 h-5 text-green-600 {{ $isCompleted ? '' : 'hidden' }}" 
-                                                        fill="currentColor" 
+                                                class="w-full flex justify-between items-center px-3 sm:px-6 py-2 sm:py-3 {{ $isCompleted ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-blue-100 hover:bg-blue-200 text-blue-800' }} text-left font-medium text-sm sm:text-lg rounded-t-lg transition-colors duration-300">
+                                                <span class="flex items-center gap-1 sm:gap-2 flex-1 min-w-0 pr-2">
+                                                    <svg id="checkmark-{{ $material->id }}"
+                                                        class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0 {{ $isCompleted ? '' : 'hidden' }}"
+                                                        fill="currentColor"
                                                         viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                                     </svg>
-                                                    {{ $material->title }}
+                                                    <span class="truncate">{{ $material->title }}</span>
                                                 </span>
-                                                <div class="flex items-center gap-2">
-                                                    <span id="completion-badge-{{ $material->id }}" 
-                                                        class="{{ $isCompleted ? '' : 'hidden' }} text-green-700 text-sm font-semibold bg-green-100 px-2 py-1 rounded-full">
-                                                        ✓ Completed
+                                                <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                                                    <span id="completion-badge-{{ $material->id }}"
+                                                        class="{{ $isCompleted ? '' : 'hidden' }} text-green-700 text-xs sm:text-sm font-semibold bg-green-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
+                                                        <span class="hidden sm:inline">✓ Completed</span>
+                                                        <span class="sm:hidden">✓</span>
                                                     </span>
                                                     <svg id="chevron-{{ $material->id }}"
-                                                        class="w-5 h-5 transform transition-transform" 
+                                                        class="w-4 h-4 sm:w-5 sm:h-5 transform transition-transform flex-shrink-0"
                                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                                     </svg>
