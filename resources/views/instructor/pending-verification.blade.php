@@ -477,6 +477,87 @@
             max-width: calc(100vw - 2rem) !important;
             padding: 1rem !important;
         }
+
+        /* Selection Mode Step Navigation */
+        .mb-6.bg-gray-50 {
+            padding: 0.75rem !important;
+        }
+
+        /* Step navigation buttons container */
+        .flex.items-center.justify-between.mb-4 {
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+        }
+
+        .flex.items-center.justify-between.mb-4 > button {
+            width: 100% !important;
+            justify-content: center !important;
+            font-size: 0.875rem !important;
+            padding: 0.625rem 1rem !important;
+        }
+
+        /* Step title and description */
+        .flex.items-center.justify-between.mb-4 > .text-center {
+            width: 100% !important;
+            order: -1 !important;
+        }
+
+        .flex.items-center.justify-between.mb-4 > .text-center h3 {
+            font-size: 1rem !important;
+            margin-bottom: 0.25rem !important;
+        }
+
+        .flex.items-center.justify-between.mb-4 > .text-center p {
+            font-size: 0.75rem !important;
+        }
+
+        /* Progress steps - make horizontal scrollable */
+        .flex.justify-between.items-center.mt-6 {
+            overflow-x: auto !important;
+            gap: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Progress step circles - reduce size */
+        .flex.justify-between.items-center.mt-6 > div {
+            min-width: 60px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .flex.justify-between.items-center.mt-6 > div > div:first-child {
+            width: 2rem !important;
+            height: 2rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        .flex.justify-between.items-center.mt-6 > div > .text-xs {
+            font-size: 0.625rem !important;
+            white-space: nowrap !important;
+        }
+
+        /* Progress connector lines */
+        .flex.justify-between.items-center.mt-6 > .flex-1 {
+            min-width: 1rem !important;
+            max-width: 1.5rem !important;
+        }
+
+        /* Filter section in selection mode */
+        .mb-4.flex.justify-between.items-center > .flex.items-center.gap-4 {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            width: 100% !important;
+            gap: 0.75rem !important;
+        }
+
+        .mb-4.flex.justify-between.items-center > .flex.items-center.gap-4 > div {
+            width: 100% !important;
+        }
+
+        .mb-4.flex.justify-between.items-center > .flex.items-center.gap-4 select,
+        .mb-4.flex.justify-between.items-center > .flex.items-center.gap-4 input {
+            width: 100% !important;
+        }
     }
 
     /* Extra small devices (Honor X9a - 360px-412px) */
