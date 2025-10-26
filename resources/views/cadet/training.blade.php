@@ -165,22 +165,39 @@
     .fc .fc-button-primary:not(:disabled).fc-button-active {
         background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        .dashboard-card:hover {
+            transform: none !important;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.125rem !important;
+        }
+
+        .fc .fc-daygrid-day-number {
+            font-size: 0.875rem !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
                 {{-- ================================================================ --}}
                 {{-- HEADER SECTION --}}
                 {{-- ================================================================ --}}
-                <div class="text-center mb-8">
-                    <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center mb-4 sm:mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
+                        <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Training Schedule</h1>
-                    <p class="text-gray-600 text-lg">View your upcoming training sessions and schedule</p>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Training Schedule</h1>
+                    <p class="text-gray-600 text-sm sm:text-lg px-2">View your upcoming training sessions and schedule</p>
                 </div>
 
                 {{-- ================================================================ --}}
@@ -206,31 +223,31 @@
                 {{-- ================================================================ --}}
                 {{-- CALENDAR VIEW --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                <div class="bg-white overflow-hidden shadow-lg rounded-xl sm:rounded-2xl dashboard-card">
                     <div class="section-header">
-                        <div class="flex items-center mb-2">
-                            <div class="icon-wrapper gradient-blue mr-3">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center mb-1 sm:mb-2">
+                            <div class="icon-wrapper gradient-blue mr-2 sm:mr-3">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                             </div>
-                            <h2 class="text-2xl font-bold text-gray-900">Training Calendar</h2>
+                            <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Training Calendar</h2>
                         </div>
-                        <p class="text-gray-600 ml-13">Visual overview of your training schedule</p>
+                        <p class="text-gray-600 text-xs sm:text-base ml-9 sm:ml-13 hidden sm:block">Visual overview of your training schedule</p>
                     </div>
 
-                    <div class="p-8">
+                    <div class="p-4 sm:p-8">
                         <div id="calendar"></div>
 
                         @if(empty($calendarEvents))
-                            <div class="text-center py-16">
-                                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="text-center py-8 sm:py-16">
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-2">No Training Sessions</h3>
-                                <p class="text-gray-600 text-lg">No training sessions scheduled for your intake with the current filters.</p>
+                                <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 px-2">No Training Sessions</h3>
+                                <p class="text-gray-600 text-sm sm:text-lg px-2">No training sessions scheduled for your intake with the current filters.</p>
                             </div>
                         @endif
                     </div>
@@ -239,15 +256,15 @@
                 {{-- ================================================================ --}}
                 {{-- TRAINING SESSIONS TABLE --}}
                 {{-- ================================================================ --}}
-                <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+                <div class="bg-white overflow-hidden shadow-lg rounded-xl sm:rounded-2xl dashboard-card">
                     <div class="section-header">
-                        <div class="flex items-center mb-2">
-                            <div class="icon-wrapper gradient-green mr-3">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center mb-1 sm:mb-2">
+                            <div class="icon-wrapper gradient-green mr-2 sm:mr-3">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                             </div>
-                            <h2 class="text-2xl font-bold text-gray-900">Training Sessions</h2>
+                            <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Training Sessions</h2>
                         </div>
                         <p class="text-gray-600 ml-13">Detailed list of all training sessions</p>
                     </div>

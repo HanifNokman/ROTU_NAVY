@@ -315,22 +315,30 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
+    @media (max-width: 640px) {
+        .category-card:hover,
+        .photo-card:hover,
+        .dashboard-card:hover {
+            transform: none !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
             {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Gallery</h1>
-                <p class="text-gray-600 text-lg">Browse photos and memories from training sessions</p>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Gallery</h1>
+                <p class="text-gray-600 text-sm sm:text-lg px-2">Browse photos and memories from training sessions</p>
             </div>
 
             {{-- ================================================================ --}}
@@ -354,9 +362,10 @@
                             </div>
                             <p class="text-gray-600">View training photos organized by category</p>
                         </div>
-                        <div class="flex items-center space-x-4">
-                            <a href="{{ route('alumni') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700">
-                                Legacy Gallery
+                        <div class="flex items-center space-x-2 sm:space-x-4">
+                            <a href="{{ route('alumni') }}" class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700 whitespace-nowrap">
+                                <span class="hidden sm:inline">Legacy Gallery</span>
+                                <span class="sm:hidden">Legacy</span>
                             </a>
                         </div>
                     </div>
@@ -368,17 +377,17 @@
                     {{-- ================================================================ --}}
                     {{-- CATEGORY FILTER BUTTONS --}}
                     {{-- ================================================================ --}}
-                    <div class="mb-6">
-                        <div class="flex flex-wrap gap-3">
+                    <div class="mb-4 sm:mb-6">
+                        <div class="flex flex-wrap gap-2 sm:gap-3">
                             <button onclick="filterByCategory('all')"
-                                   class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                   class="filter-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
                                    data-category="all">
                                 All
                             </button>
 
                             @foreach($categories as $category)
                                 <button onclick="filterByCategory('{{ $category->id }}')"
-                                       class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                       class="filter-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
                                        data-category="{{ $category->id }}">
                                     {{ $category->name }}
                                 </button>
@@ -389,8 +398,8 @@
                     {{-- ================================================================ --}}
                     {{-- GALLERY STATISTICS --}}
                     {{-- ================================================================ --}}
-                    <div class="mb-6 p-4 rounded-lg" style="background-color: #e8f4fd; border: 1px solid #3c92d9;">
-                        <div class="flex flex-wrap gap-4 text-sm" style="color: #2c5f8a;">
+                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg" style="background-color: #e8f4fd; border: 1px solid #3c92d9;">
+                        <div class="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm" style="color: #2c5f8a;">
                             <span><strong>Total Pictures:</strong> <span id="totalPictures">{{ $galleries->count() }}</span></span>
                             <span><strong>Categories:</strong> <span id="totalCategories">{{ $categories->count() }}</span></span>
                             <span><strong>Filtered Pictures:</strong> <span id="filteredPictures">{{ $galleries->count() }}</span></span>
@@ -418,7 +427,7 @@
                         @endphp
 
                         @if($categories->count() > 0)
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                                 @foreach($categories as $index => $category)
                                     @php
                                         $categoryGalleries = $galleriesByCategory->get($category->id, collect());
@@ -466,18 +475,19 @@
                     {{-- PHOTO GALLERY GRID (HIDDEN BY DEFAULT) --}}
                     {{-- ================================================================ --}}
                     <div id="photoGallery" class="hidden">
-                        <div class="mb-6">
-                            <button onclick="showCategoryOverview()" class="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="mb-4 sm:mb-6">
+                            <button onclick="showCategoryOverview()" class="flex items-center px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 text-sm">
+                                <svg class="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
-                                Back to Categories
+                                <span class="hidden sm:inline">Back to Categories</span>
+                                <span class="sm:hidden">Back</span>
                             </button>
                         </div>
 
-                        <div id="currentCategoryHeader" class="mb-6"></div>
+                        <div id="currentCategoryHeader" class="mb-4 sm:mb-6"></div>
 
-                        <div id="photosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+                        <div id="photosGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6"></div>
                     </div>
 
                     {{-- ================================================================ --}}
@@ -508,51 +518,54 @@
     {{-- IMAGE PREVIEW MODAL - ENHANCED LIGHTBOX --}}
     {{-- ================================================================ --}}
     <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center transition-all duration-300 backdrop-blur-sm overflow-y-auto" style="animation: fadeIn 0.3s ease-in-out;">
-        <div class="relative max-w-5xl w-full p-4 my-8">
-            {{-- Close Button --}}
-            <button onclick="closeImageModal()" class="fixed top-6 right-6 text-white hover:text-gray-300 z-20 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+        <div class="relative max-w-5xl w-full p-2 sm:p-4 my-4 sm:my-8">
+            {{-- Modal Action Buttons Container --}}
+            <div class="fixed top-3 right-3 sm:top-6 sm:right-6 z-20 flex gap-2">
+                {{-- Download Button --}}
+                <a id="downloadButton" href="#" download class="text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 sm:p-3 transition-all duration-200 transform hover:scale-110">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                </a>
 
-            {{-- Download Button --}}
-            <a id="downloadButton" href="#" download class="fixed top-6 right-24 text-white hover:text-gray-300 z-20 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                </svg>
-            </a>
+                {{-- Close Button --}}
+                <button onclick="closeImageModal()" class="text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 sm:p-3 transition-all duration-200 transform hover:scale-110">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
 
             <div class="flex flex-col items-center">
                 {{-- Image Container with Loading State --}}
-                <div class="relative w-full flex items-center justify-center mb-4">
+                <div class="relative w-full flex items-center justify-center mb-2 sm:mb-4">
                     <div id="imageLoader" class="absolute inset-0 flex items-center justify-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                        <div class="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-t-2 border-b-2 border-white"></div>
                     </div>
-                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[60vh] object-contain rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'" onerror="document.getElementById('imageLoader').style.display='none'">
+                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[50vh] sm:max-h-[60vh] object-contain rounded-lg sm:rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'" onerror="document.getElementById('imageLoader').style.display='none'">
                 </div>
 
                 {{-- Info Card --}}
-                <div class="bg-white rounded-xl p-6 mt-4 max-w-2xl w-full shadow-2xl">
-                    <div class="flex items-start justify-between mb-3">
-                        <h3 id="previewTitle" class="text-xl font-bold text-gray-900 flex-1"></h3>
-                        <span class="ml-3 px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;" id="previewCategory"></span>
+                <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 mt-2 sm:mt-4 max-w-2xl w-full shadow-2xl">
+                    <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+                        <h3 id="previewTitle" class="text-base sm:text-xl font-bold text-gray-900 flex-1 min-w-0 truncate"></h3>
+                        <span class="flex-shrink-0 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold shadow-sm whitespace-nowrap" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;" id="previewCategory"></span>
                     </div>
 
-                    <p id="previewDescription" class="text-sm text-gray-600 mb-4 leading-relaxed"></p>
+                    <p id="previewDescription" class="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-4 leading-relaxed"></p>
 
-                    <div class="border-t border-gray-200 pt-4 space-y-2">
-                        <div class="flex items-center text-sm text-gray-700">
-                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="border-t border-gray-200 pt-2 sm:pt-4 space-y-1 sm:space-y-2">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-700">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            <strong class="mr-2">Instructor:</strong> <span id="previewInstructor" class="text-gray-600"></span>
+                            <strong class="mr-1 sm:mr-2 flex-shrink-0">Instructor:</strong> <span id="previewInstructor" class="text-gray-600 truncate"></span>
                         </div>
-                        <div class="flex items-center text-sm text-gray-700">
-                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-700">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            <strong class="mr-2">Upload Date:</strong> <span id="previewDate" class="text-gray-600"></span>
+                            <strong class="mr-1 sm:mr-2 flex-shrink-0">Upload Date:</strong> <span id="previewDate" class="text-gray-600"></span>
                         </div>
                     </div>
                 </div>

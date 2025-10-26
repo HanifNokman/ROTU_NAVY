@@ -324,43 +324,58 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ========================================= */
+    @media (max-width: 640px) {
+        .category-card:hover,
+        .photo-card:hover,
+        .dashboard-card:hover {
+            transform: none !important;
+        }
+
+        #map {
+            height: 250px !important;
+        }
+    }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
 
             {{-- ================================================================ --}}
             {{-- PAGE TITLE SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Attendance Portal</h1>
-                <p class="text-gray-600 text-lg">Mark your attendance and manage absence records</p>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Attendance Portal</h1>
+                <p class="text-gray-600 text-sm sm:text-lg px-2">Mark your attendance and manage absence records</p>
             </div>
             {{-- ================================================================ --}}
             {{-- TODAY'S TRAINING SESSIONS --}}
             {{-- ================================================================ --}}
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card">
+            <div class="bg-white overflow-hidden shadow-lg rounded-xl sm:rounded-2xl dashboard-card">
 
                 {{-- Section Header --}}
                 <div class="section-header">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper gradient-green mr-3">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center mb-1 sm:mb-2">
+                        <div class="icon-wrapper gradient-green mr-2 sm:mr-3">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Current Training Sessions</h3>
+                        <h3 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">Current Training Sessions</h3>
                     </div>
-                    <p class="text-gray-600">Mark your attendance for active training sessions</p>
+                    <p class="text-gray-600 text-xs sm:text-base hidden sm:block">Mark your attendance for active training sessions</p>
                 </div>
 
                 {{-- Section Content --}}
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                     @if(isset($todaysTrainings) && $todaysTrainings->count() > 0)
                         <div class="grid gap-6">
                             @foreach($todaysTrainings as $training)
@@ -370,34 +385,36 @@
                                         ->first();
                                 @endphp
 
-                                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-2xl hover:border-blue-300 transition-all duration-300 transform hover:-translate-y-1">
+                                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl hover:border-blue-300 transition-all duration-300">
 
                                     {{-- Training Header --}}
-                                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-                                        <div class="flex items-start justify-between">
-                                            <div class="flex-1">
-                                                <h3 class="text-xl font-bold text-white mb-1">{{ $training->title }}</h3>
-                                                <div class="flex flex-wrap gap-3 mt-2">
-                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white bg-opacity-20 text-white backdrop-blur-sm">
-                                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 sm:px-6 sm:py-4">
+                                        <div class="flex items-start justify-between flex-wrap sm:flex-nowrap gap-2">
+                                            <div class="flex-1 min-w-0">
+                                                <h3 class="text-base sm:text-xl font-bold text-white mb-1 truncate">{{ $training->title }}</h3>
+                                                <div class="flex flex-wrap gap-2 mt-2">
+                                                    <span class="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold bg-white bg-opacity-20 text-white backdrop-blur-sm">
+                                                        <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                                         </svg>
+                                                        <span class="truncate">
                                                         @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
                                                             {{ $training->start_datetime->format('M d') }} - {{ $training->end_datetime->format('M d, Y') }}
                                                         @else
                                                             {{ $training->formatted_start_date }}
                                                         @endif
+                                                        </span>
                                                     </span>
                                                     @if($training->start_datetime->isToday())
-                                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-500 text-white">
-                                                            <span class="w-2 h-2 bg-white rounded-full mr-1.5 animate-pulse"></span>
+                                                        <span class="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold bg-green-500 text-white">
+                                                            <span class="w-2 h-2 bg-white rounded-full mr-1.5 animate-pulse flex-shrink-0"></span>
                                                             Live Today
                                                         </span>
                                                     @endif
                                                 </div>
                                             </div>
-                                            <div class="ml-4">
-                                                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold shadow-lg
+                                            <div class="flex-shrink-0">
+                                                <span class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg
                                                     {{ $training->status === 'Active' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white' }}">
                                                     {{ $training->status }}
                                                 </span>
@@ -406,25 +423,25 @@
                                     </div>
 
                                     {{-- Training Details --}}
-                                    <div class="p-6">
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                            <div class="flex items-start space-x-3">
-                                                <div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                                    <i class="fas fa-map-marker-alt text-red-600"></i>
+                                    <div class="p-4 sm:p-6">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                                            <div class="flex items-start space-x-2 sm:space-x-3">
+                                                <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fas fa-map-marker-alt text-red-600 text-sm sm:text-base"></i>
                                                 </div>
-                                                <div>
+                                                <div class="min-w-0 flex-1">
                                                     <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Location</div>
-                                                    <div class="text-sm font-bold text-gray-900 mt-0.5">{{ $training->location }}</div>
+                                                    <div class="text-sm font-bold text-gray-900 mt-0.5 truncate">{{ $training->location }}</div>
                                                 </div>
                                             </div>
 
-                                            <div class="flex items-start space-x-3">
-                                                <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                                    <i class="fas fa-clock text-green-600"></i>
+                                            <div class="flex items-start space-x-2 sm:space-x-3">
+                                                <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fas fa-clock text-green-600 text-sm sm:text-base"></i>
                                                 </div>
-                                                <div>
+                                                <div class="min-w-0 flex-1">
                                                     <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Time</div>
-                                                    <div class="text-sm font-bold text-gray-900 mt-0.5">
+                                                    <div class="text-sm font-bold text-gray-900 mt-0.5 break-words">
                                                         {{ $training->formatted_start_time }}
                                                         @if($training->end_datetime)
                                                             - {{ $training->end_datetime->format('h:i A') }}
@@ -434,13 +451,13 @@
                                             </div>
 
                                             @if($training->involvement)
-                                                <div class="flex items-start space-x-3">
-                                                    <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                                        <i class="fas fa-users text-purple-600"></i>
+                                                <div class="flex items-start space-x-2 sm:space-x-3">
+                                                    <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                        <i class="fas fa-users text-purple-600 text-sm sm:text-base"></i>
                                                     </div>
-                                                    <div>
+                                                    <div class="min-w-0 flex-1">
                                                         <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Involvement</div>
-                                                        <div class="text-sm font-bold text-gray-900 mt-0.5">{{ $training->involvement }}</div>
+                                                        <div class="text-sm font-bold text-gray-900 mt-0.5 truncate">{{ $training->involvement }}</div>
                                                     </div>
                                                 </div>
                                             @endif
