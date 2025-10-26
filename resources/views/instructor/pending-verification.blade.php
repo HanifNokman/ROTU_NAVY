@@ -999,6 +999,9 @@
         </div>
     </div>
 
+    {{-- Mobile Bottom Spacer --}}
+    <div class="block md:hidden h-20"></div>
+
     <script>
         const applications = @json($applications);
         let filteredApplications = [...applications];

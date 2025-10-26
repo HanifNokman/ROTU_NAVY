@@ -447,6 +447,9 @@
         </div>
     </div>
 
+    {{-- Mobile Bottom Spacer --}}
+    <div class="block md:hidden h-20"></div>
+
     {{-- External JavaScript --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
     <script>

@@ -864,23 +864,26 @@
     </div>
 </div>
 
+    {{-- Mobile Bottom Spacer --}}
+    <div class="block md:hidden h-20"></div>
+    
     <!-- Modal Styles -->
     <style>
-/* Ensure notifications don't affect layout */
-.toast-notification {
-    position: fixed !important;
-    z-index: 9999 !important;
-    pointer-events: none;
-}
+    /* Ensure notifications don't affect layout */
+    .toast-notification {
+        position: fixed !important;
+        z-index: 9999 !important;
+        pointer-events: none;
+    }
 
-.toast-notification.show {
-    pointer-events: auto;
-}
+    .toast-notification.show {
+        pointer-events: auto;
+    }
 
-/* Prevent any top spacing issues */
-body > div:first-child {
-    margin-top: 0 !important;
-}
+    /* Prevent any top spacing issues */
+    body > div:first-child {
+        margin-top: 0 !important;
+    }
 
     /* Consistent modal styles */
     .modal-backdrop {
@@ -920,38 +923,38 @@ body > div:first-child {
     }
 
     /* Enhanced checkbox styling */
-input[type="checkbox"]:checked + span {
-    color: #1d4ed8;
-    font-weight: 600;
-}
+    input[type="checkbox"]:checked + span {
+        color: #1d4ed8;
+        font-weight: 600;
+    }
 
-input[type="checkbox"]:checked {
-    background-color: #2563eb;
-    border-color: #2563eb;
-}
+    input[type="checkbox"]:checked {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
 
-/* Better form focus states */
-.form-input:focus {
-    outline: none;
-    ring: 2px;
-    ring-color: #3b82f6;
-    border-color: #3b82f6;
-}
+    /* Better form focus states */
+    .form-input:focus {
+        outline: none;
+        ring: 2px;
+        ring-color: #3b82f6;
+        border-color: #3b82f6;
+    }
 
-/* Loading state for submit button */
-.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
+    /* Loading state for submit button */
+    .loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
 
-.loading svg {
-    animation: spin 1s linear infinite;
-}
+    .loading svg {
+        animation: spin 1s linear infinite;
+    }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
     </style>
 
     @push('styles')
