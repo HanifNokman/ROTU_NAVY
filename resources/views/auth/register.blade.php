@@ -397,52 +397,73 @@
                 flex-direction: column;
                 min-height: 100vh;
             }
-            
+
             .illustration-panel {
                 display: none;
             }
-            
+
             .mobile-bottom-nav {
                 display: block;
             }
-            
+
             .form-panel {
                 flex: 1;
                 min-height: calc(100vh - 120px);
                 padding: 1.5rem;
                 padding-bottom: 140px;
-                background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                background: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
             }
-            
+
             .form-panel::before {
                 width: 280px;
                 height: 280px;
                 opacity: 0.06;
             }
-            
+
             .form-content {
                 max-width: 500px;
-                background: rgba(255, 255, 255, 0.95);
+                background: white;
                 padding: 2rem;
                 border-radius: 20px;
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                 backdrop-filter: blur(20px);
                 margin: 0 auto;
+                position: relative;
             }
-            
+
+            .form-content::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 500px;
+                height: 500px;
+                background-image: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                opacity: 0.06;
+                z-index: 1;
+                pointer-events: none;
+            }
+
             .form-title {
                 font-size: 2rem;
             }
-            
+
             .form-subtitle {
                 font-size: 1rem;
             }
-            
+
             .form-grid {
                 grid-template-columns: 1fr;
                 gap: 0;
             }
-            
+
             .account-type-toggle {
                 flex-direction: column;
                 gap: 0.75rem;
@@ -456,37 +477,60 @@
             .form-panel {
                 padding: 1rem;
                 padding-bottom: 140px;
+                background: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
             }
-            
+
             .form-panel::before {
                 width: 220px;
                 height: 220px;
                 opacity: 0.05;
             }
-            
+
             .form-content {
+                background: white;
                 padding: 1.5rem;
                 border-radius: 16px;
+                position: relative;
             }
-            
+
+            .form-content::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 500px;
+                height: 500px;
+                background-image: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                opacity: 0.05;
+                z-index: 1;
+                pointer-events: none;
+            }
+
             .form-title {
                 font-size: 1.75rem;
             }
-            
+
             .form-input {
                 padding: 0.875rem;
                 font-size: 0.95rem;
             }
-            
+
             .btn-primary {
                 padding: 0.875rem;
                 font-size: 1rem;
             }
-            
+
             .account-type-toggle {
                 gap: 0.5rem;
             }
-            
+
             .toggle-option {
                 padding: 0.625rem;
                 font-size: 0.8rem;

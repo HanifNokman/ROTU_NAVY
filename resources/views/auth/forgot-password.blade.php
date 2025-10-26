@@ -357,7 +357,10 @@
                 min-height: calc(100vh - 120px);
                 padding: 1.5rem;
                 padding-bottom: 140px;
-                background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                background: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
             }
             
             .form-panel::before {
@@ -368,12 +371,30 @@
             
             .form-content {
                 max-width: 400px;
-                background: rgba(255, 255, 255, 0.95);
+                background: white;
                 padding: 2rem;
                 border-radius: 20px;
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                 backdrop-filter: blur(20px);
                 margin: 0 auto;
+                position: relative;
+            }
+
+            .form-content::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 500px;
+                height: 500px;
+                background-image: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                opacity: 0.06;
+                z-index: 1;
+                pointer-events: none;
             }
             
             .form-title {
@@ -392,6 +413,10 @@
             .form-panel {
                 padding: 1rem;
                 padding-bottom: 140px;
+                background: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
             }
             
             .form-panel::before {
@@ -401,8 +426,27 @@
             }
             
             .form-content {
+                background: white;
                 padding: 1.5rem;
                 border-radius: 16px;
+                position: relative;
+            }
+
+            .form-content::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 500px;
+                height: 500px;
+                background-image: url('storage/assets/logo/PSS-LOGO.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                opacity: 0.05;
+                z-index: 1;
+                pointer-events: none;
             }
             
             .form-title {
