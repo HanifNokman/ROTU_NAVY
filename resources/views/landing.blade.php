@@ -1560,6 +1560,11 @@
 
             .nav-links.active {
                 display: flex;
+                list-style-type: disc;
+            }
+
+            .nav-links.active li {
+                padding-left: 1rem;
             }
 
             .mobile-menu-toggle {
