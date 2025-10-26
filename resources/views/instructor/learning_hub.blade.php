@@ -104,16 +104,32 @@
             padding: 0 1rem;
         }
 
+        /* Reduce header margin */
+        .text-center.mb-8 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        /* Reduce section header padding */
+        .section-header {
+            padding: 1rem !important;
+        }
+
+        /* Reduce content padding */
+        .p-6 {
+            padding: 1rem !important;
+        }
+
         /* Filter and action buttons container */
         .mb-6.flex.flex-col {
-            gap: 1rem !important;
+            gap: 0.75rem !important;
+            margin-bottom: 1rem !important;
         }
 
         .flex.flex-row.space-x-4.items-center {
             flex-direction: column !important;
             align-items: stretch !important;
             width: 100% !important;
-            gap: 0.75rem !important;
+            gap: 0.5rem !important;
         }
 
         .flex.flex-row.space-x-4.items-center > div {
@@ -129,21 +145,153 @@
         .flex.gap-2 button {
             width: 100% !important;
             justify-content: center !important;
-            padding: 0.625rem 1rem !important;
+            padding: 0.75rem 1rem !important;
             font-size: 0.875rem !important;
+            flex-direction: row !important;
+            align-items: center !important;
         }
 
-        /* Quiz filters */
+        /* Make plus icons more visible */
+        .flex.gap-2 button svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+            stroke-width: 2.5 !important;
+        }
+
+        /* Ensure Add Quiz Question button icon stays horizontal */
+        .bg-gradient-to-r.from-purple-600 {
+            flex-direction: row !important;
+            align-items: center !important;
+        }
+
+        /* Category filters */
+        #category,
         #quizCategoryFilter,
         #quizTypeFilter {
             width: 100% !important;
         }
 
+        /* Filter sections */
+        .mb-6.flex.items-center {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.5rem !important;
+        }
+
+        .mb-6.flex.items-center label {
+            width: 100% !important;
+        }
+
         /* Section headers with buttons */
-        .flex.justify-between.items-center {
+        .section-header .flex.justify-between.items-center {
             flex-direction: column !important;
             gap: 1rem !important;
             align-items: flex-start !important;
+        }
+
+        /* Keep modal headers horizontal */
+        .fixed.inset-0 .flex.justify-between.items-center {
+            flex-direction: row !important;
+            align-items: center !important;
+        }
+
+        /* Material buttons in header */
+        .bg-blue-600,
+        .bg-green-600 {
+            flex-direction: row !important;
+            align-items: center !important;
+        }
+
+        /* Modal close buttons - ensure they're touchable */
+        .fixed.inset-0 button.rounded-full {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            padding: 0.75rem !important;
+            transition: background-color 0.2s ease !important;
+        }
+
+        /* Disable hover effects on close buttons for mobile */
+        .fixed.inset-0 button.rounded-full:hover {
+            transform: none !important;
+            rotate: 0deg !important;
+        }
+
+        /* Modal close button icons */
+        .fixed.inset-0 button.rounded-full svg {
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+        }
+
+        /* Modal container improvements */
+        .fixed.inset-0 > div {
+            padding: 0.5rem !important;
+        }
+
+        /* Modal content max width and scrolling */
+        .fixed.inset-0 .bg-white {
+            max-width: calc(100vw - 1rem) !important;
+            max-height: calc(100vh - 1rem) !important;
+        }
+
+        /* Modal header padding */
+        .fixed.inset-0 .px-6.py-5 {
+            padding: 1rem !important;
+        }
+
+        /* Modal body padding */
+        .fixed.inset-0 .p-6 {
+            padding: 1rem !important;
+            max-height: calc(100vh - 10rem);
+            overflow-y: auto;
+        }
+
+        /* Modal title text size */
+        .fixed.inset-0 h3,
+        .fixed.inset-0 h2 {
+            font-size: 1.125rem !important;
+        }
+
+        /* Form inputs in modals */
+        .fixed.inset-0 input[type="text"],
+        .fixed.inset-0 input[type="file"],
+        .fixed.inset-0 input[type="number"],
+        .fixed.inset-0 select,
+        .fixed.inset-0 textarea {
+            font-size: 1rem !important;
+        }
+
+        /* Modal buttons */
+        .fixed.inset-0 button[type="submit"],
+        .fixed.inset-0 button[type="button"] {
+            padding: 0.75rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Modal button container */
+        .fixed.inset-0 .flex.justify-end,
+        .fixed.inset-0 .flex.justify-center {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+
+        .fixed.inset-0 .flex.justify-end button,
+        .fixed.inset-0 .flex.justify-center button {
+            width: 100% !important;
+        }
+
+        /* Table scrolling improvements */
+        .overflow-x-auto {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Table responsive adjustments */
+        .border.border-gray-200.rounded-lg {
+            border-radius: 0.5rem !important;
+        }
+
+        /* Ensure tables maintain minimum width for scrolling */
+        .min-w-max {
+            min-width: max-content;
         }
 
         .flex.justify-between.items-center button,
@@ -248,50 +396,49 @@
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-xl overflow-hidden">
                 <div class="section-header">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Learning Materials Management</h3>
-                    </div>
-                    <p class="text-gray-600 ml-13">Manage educational materials and learning resources for cadets</p>
-                </div>
-                
-                <div class="p-6 text-gray-900">
-                    {{-- ================================================================ --}}
-                    {{-- FILTER AND ACTION BUTTONS --}}
-                    {{-- ================================================================ --}}
-                    <div class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 overflow-x-auto items-center justify-between">
-                        <div class="flex flex-row space-x-4 items-center flex-shrink-0 flex-wrap">
-                            <div class="flex items-center gap-2">
-                                <label for="category" class="text-sm font-medium text-gray-700">Filter by Category:</label>
-                                <select name="category" id="category" onchange="filterMaterials(this.value)" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="" selected disabled>Select Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Learning Materials Management</h3>
                             </div>
+                            <p class="text-gray-600 ml-13">Manage educational materials and learning resources for cadets</p>
                         </div>
-
                         <div class="flex gap-2">
-                            <button onclick="openMaterialModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            <button onclick="openMaterialModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                                 </svg>
                                 Add Materials
                             </button>
-                            <button onclick="openCategoryModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            <button onclick="openCategoryModal()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                                 </svg>
                                 Add Category
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <div class="p-6 text-gray-900">
+                    {{-- ================================================================ --}}
+                    {{-- FILTER --}}
+                    {{-- ================================================================ --}}
+                    <div class="mb-6 flex items-center gap-4">
+                        <label for="category" class="text-sm font-medium text-gray-700">Filter by Category:</label>
+                        <select name="category" id="category" onchange="filterMaterials(this.value)" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="" selected disabled>Select Category</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     {{-- ================================================================ --}}
@@ -299,69 +446,70 @@
                     {{-- ================================================================ --}}
                     <div x-data="materialManagement()">
                         <div class="border border-gray-200 rounded-lg overflow-hidden">
-                            <div class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
-                                <div class="px-6 py-3">
-                                    <div class="grid grid-cols-4 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <div>Title & Description</div>
-                                        <div>Category</div>
-                                        <div>File</div>
-                                        <div>Actions</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="overflow-y-auto bg-white" style="max-height: 400px;" id="materialsContainer">
-                                @forelse($materials as $material)
-                                <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4" data-material-id="{{ $material->id }}">
-                                    <div class="grid grid-cols-4 gap-4 items-center">
-                                        <div class="text-sm text-gray-900">
-                                            <div class="font-medium">{{ $material->title }}</div>
-                                            @if($material->description)
-                                                <p class="text-sm text-gray-500 mt-1">{{ Str::limit($material->description, 100) }}</p>
-                                            @endif
-                                        </div>
-                                        <div class="text-sm text-gray-900">
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                {{ $material->category->name ?? 'N/A' }}
-                                            </span>
-                                        </div>
-                                        <div class="text-sm text-gray-900">
-                                            @if($material->file_url)
-                                                <a href="{{ asset($material->file_url) }}" target="_blank" 
-                                                class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                                    View File
-                                                </a>
-                                            @else 
-                                                <span class="text-gray-400">No file</span> 
-                                            @endif
-                                        </div>
-                                        <div class="text-sm font-medium">
-                                            <div class="flex gap-2">
-                                                <button type="button"
-                                                        @click="openEdit({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}', description: '{{ addslashes($material->description ?? '') }}', learning_material_category_id: {{ $material->learning_material_category_id }} })"
-                                                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                                    Edit
-                                                </button>
-                                                <button type="button"
-                                                        @click="openDelete({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}' })"
-                                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                @empty
-                                <div class="px-6 py-8 text-center">
-                                    <div class="text-sm text-gray-500">
-                                        @if(request()->filled('category'))
-                                            No learning materials found in this category.
-                                        @else
-                                            Please select a category to view learning materials.
-                                        @endif
-                                    </div>
-                                </div>
-                                @endforelse
+                            <div class="overflow-x-auto" style="max-height: 400px; overflow-y: auto;">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50 sticky top-0 z-10">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Title & Description</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">File</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="materialsContainer">
+                                        @forelse($materials as $material)
+                                        <tr class="hover:bg-gray-50 transition-colors duration-200" data-material-id="{{ $material->id }}">
+                                            <td class="px-6 py-4 text-sm text-gray-900">
+                                                <div class="font-medium">{{ $material->title }}</div>
+                                                @if($material->description)
+                                                    <p class="text-sm text-gray-500 mt-1">{{ Str::limit($material->description, 100) }}</p>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                    {{ $material->category->name ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                                @if($material->file_url)
+                                                    <a href="{{ asset($material->file_url) }}" target="_blank"
+                                                    class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                                        View File
+                                                    </a>
+                                                @else
+                                                    <span class="text-gray-400">No file</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
+                                                <div class="flex gap-2">
+                                                    <button type="button"
+                                                            @click="openEdit({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}', description: '{{ addslashes($material->description ?? '') }}', learning_material_category_id: {{ $material->learning_material_category_id }} })"
+                                                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                                        Edit
+                                                    </button>
+                                                    <button type="button"
+                                                            @click="openDelete({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}' })"
+                                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="4" class="px-6 py-8 text-center">
+                                                <div class="text-sm text-gray-500">
+                                                    @if(request()->filled('category'))
+                                                        No learning materials found in this category.
+                                                    @else
+                                                        Please select a category to view learning materials.
+                                                    @endif
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
@@ -499,8 +647,8 @@
                             <p class="text-gray-600 ml-13">Create and manage quiz questions for cadets</p>
                         </div>
                         <button onclick="openQuizModal()" class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
                             Add Quiz Question
                         </button>
@@ -531,28 +679,31 @@
                     {{-- QUIZ QUESTIONS TABLE --}}
                     {{-- ================================================================ --}}
                     <div class="border border-gray-200 rounded-lg overflow-hidden" x-data="quizManagement()">
-                        <div class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
-                            <div class="px-6 py-3">
-                                <div class="grid grid-cols-6 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <div class="col-span-2">Question</div>
-                                    <div>Type</div>
-                                    <div>Category</div>
-                                    <div>Status</div>
-                                    <div>Actions</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="overflow-y-auto bg-white" style="max-height: 350px;" id="quizQuestionsContainer">
-                            <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
-                                <div class="text-sm text-gray-500">
-                                    @if(request()->filled('quiz_category'))
-                                        No quiz questions found in this category.
-                                    @else
-                                        Please select a category to view quiz questions.
-                                    @endif
-                                </div>
-                            </div>
+                        <div class="overflow-x-auto" style="max-height: 350px; overflow-y: auto;">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50 sticky top-0 z-10">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Question</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Category</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="quizQuestionsContainer">
+                                    <tr id="quizQuestionsPlaceholder">
+                                        <td colspan="5" class="px-6 py-8 text-center">
+                                            <div class="text-sm text-gray-500">
+                                                @if(request()->filled('quiz_category'))
+                                                    No quiz questions found in this category.
+                                                @else
+                                                    Please select a category to view quiz questions.
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
 
                         {{-- ================================================================ --}}
@@ -1241,11 +1392,13 @@
             .then(data => {
                 if (data.materials.length === 0) {
                     container.innerHTML = `
-                        <div class="px-6 py-8 text-center">
-                            <div class="text-sm text-gray-500">
-                                ${categoryId ? 'No learning materials found in this category.' : 'No learning materials available.'}
-                            </div>
-                        </div>
+                        <tr>
+                            <td colspan="4" class="px-6 py-8 text-center">
+                                <div class="text-sm text-gray-500">
+                                    ${categoryId ? 'No learning materials found in this category.' : 'No learning materials available.'}
+                                </div>
+                            </td>
+                        </tr>
                     `;
                     return;
                 }
@@ -1261,36 +1414,34 @@
                         : '<span class="text-gray-400">No file</span>';
 
                     materialsHTML += `
-                        <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4" data-material-id="${material.id}">
-                            <div class="grid grid-cols-4 gap-4 items-center">
-                                <div class="text-sm text-gray-900">
-                                    <div class="font-medium">${material.title}</div>
-                                    ${description}
+                        <tr class="hover:bg-gray-50 transition-colors duration-200" data-material-id="${material.id}">
+                            <td class="px-6 py-4 text-sm text-gray-900">
+                                <div class="font-medium">${material.title}</div>
+                                ${description}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    ${material.category_name}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                ${fileLink}
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
+                                <div class="flex gap-2">
+                                    <button type="button"
+                                            onclick='openEditMaterial(${material.id}, "${material.escaped_title}", "${material.escaped_description}", ${material.learning_material_category_id})'
+                                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                        Edit
+                                    </button>
+                                    <button type="button"
+                                            onclick='openDeleteMaterial(${material.id}, "${material.escaped_title}")'
+                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                        Delete
+                                    </button>
                                 </div>
-                                <div class="text-sm text-gray-900">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                        ${material.category_name}
-                                    </span>
-                                </div>
-                                <div class="text-sm text-gray-900">
-                                    ${fileLink}
-                                </div>
-                                <div class="text-sm font-medium">
-                                    <div class="flex gap-2">
-                                        <button type="button"
-                                                onclick='openEditMaterial(${material.id}, "${material.escaped_title}", "${material.escaped_description}", ${material.learning_material_category_id})'
-                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                            Edit
-                                        </button>
-                                        <button type="button"
-                                                onclick='openDeleteMaterial(${material.id}, "${material.escaped_title}")'
-                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            </td>
+                        </tr>
                     `;
                 });
 
@@ -1336,16 +1487,18 @@
             
             if (!categoryId) {
                 container.innerHTML = `
-                    <div class="px-6 py-8 text-center" id="quizQuestionsPlaceholder">
-                        <div class="text-sm text-gray-500">
-                            Please select a category to view quiz questions.
-                        </div>
-                    </div>
+                    <tr id="quizQuestionsPlaceholder">
+                        <td colspan="5" class="px-6 py-8 text-center">
+                            <div class="text-sm text-gray-500">
+                                Please select a category to view quiz questions.
+                            </div>
+                        </td>
+                    </tr>
                 `;
                 return;
             }
-            
-            container.innerHTML = '<div class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></div>';
+
+            container.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-600 mt-2">Loading quiz questions...</p></td></tr>';
             
             const url = `/instructor/quiz-questions?category=${categoryId}&type=${type}`;
             fetch(url, {
@@ -1358,11 +1511,13 @@
             .then(data => {
                 if (data.length === 0) {
                     container.innerHTML = `
-                        <div class="px-6 py-8 text-center">
-                            <div class="text-sm text-gray-500">
-                                No quiz questions found in this category.
-                            </div>
-                        </div>
+                        <tr>
+                            <td colspan="5" class="px-6 py-8 text-center">
+                                <div class="text-sm text-gray-500">
+                                    No quiz questions found in this category.
+                                </div>
+                            </td>
+                        </tr>
                     `;
                     return;
                 }
@@ -1374,43 +1529,41 @@
                         : question.question_text;
                     
                     questionsHTML += `
-                        <div class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 px-6 py-4">
-                            <div class="grid grid-cols-6 gap-4 items-center">
-                                <div class="col-span-2 text-sm text-gray-900">
-                                    <div class="font-medium">${questionPreview}</div>
-                                    ${question.file_url ? '<p class="text-xs text-blue-600 mt-1">Has supporting file</p>' : ''}
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            <td class="px-6 py-4 text-sm text-gray-900">
+                                <div class="font-medium">${questionPreview}</div>
+                                ${question.file_url ? '<p class="text-xs text-blue-600 mt-1">Has supporting file</p>' : ''}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.question_type === 'MCQ' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+                                    ${question.question_type}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    ${question.category_name}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                    ${question.status.charAt(0).toUpperCase() + question.status.slice(1)}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
+                                <div class="flex gap-2">
+                                    <button type="button"
+                                            onclick='editQuizQuestion(${question.id}, "${question.escaped_question_text}", "${question.question_type}", ${question.category_id}, "${question.escaped_option_a}", "${question.escaped_option_b}", "${question.escaped_option_c}", "${question.escaped_option_d}", "${question.escaped_correct_answer}", "${question.status}")'
+                                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                        Edit
+                                    </button>
+                                    <button type="button"
+                                            onclick='deleteQuizQuestion(${question.id}, "${question.escaped_question_preview}")'
+                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
+                                        Delete
+                                    </button>
                                 </div>
-                                <div class="text-sm text-gray-900">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.question_type === 'MCQ' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
-                                        ${question.question_type}
-                                    </span>
-                                </div>
-                                <div class="text-sm text-gray-900">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                        ${question.category_name}
-                                    </span>
-                                </div>
-                                <div class="text-sm text-gray-900">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${question.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                                        ${question.status.charAt(0).toUpperCase() + question.status.slice(1)}
-                                    </span>
-                                </div>
-                                <div class="text-sm font-medium">
-                                    <div class="flex gap-2">
-                                        <button type="button"
-                                                onclick='editQuizQuestion(${question.id}, "${question.escaped_question_text}", "${question.question_type}", ${question.category_id}, "${question.escaped_option_a}", "${question.escaped_option_b}", "${question.escaped_option_c}", "${question.escaped_option_d}", "${question.escaped_correct_answer}", "${question.status}")'
-                                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                            Edit
-                                        </button>
-                                        <button type="button"
-                                                onclick='deleteQuizQuestion(${question.id}, "${question.escaped_question_preview}")'
-                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            </td>
+                        </tr>
                     `;
                 });
                 
@@ -1418,7 +1571,7 @@
             })
             .catch(error => {
                 console.error('Error fetching quiz questions:', error);
-                container.innerHTML = '<div class="px-6 py-8 text-center"><div class="text-sm text-red-500">Error loading quiz questions. Please try again.</div></div>';
+                container.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center"><div class="text-sm text-red-500">Error loading quiz questions. Please try again.</div></td></tr>';
             });
         }
 

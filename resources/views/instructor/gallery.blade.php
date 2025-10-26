@@ -223,6 +223,16 @@
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
 
+    /* Fixed: Modal close button - removed rotation on hover */
+    .modal-close-btn {
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+        color: #4b5563;
+        transform: scale(1.1);
+    }
+
     /* ========================================= */
     /* UTILITY CLASSES */
     /* ========================================= */
@@ -280,6 +290,7 @@
         height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         transition: left 0.5s;
+        z-index: 1;
     }
 
     .photo-card:hover::before {
@@ -301,6 +312,7 @@
         color: white;
         font-size: 1.5rem;
         font-weight: bold;
+        z-index: 2;
     }
 
     .photo-card:hover .image-overlay {
@@ -318,120 +330,60 @@
     /* MOBILE RESPONSIVE STYLES */
     /* ========================================= */
     @media (max-width: 640px) {
-        /* Page header */
-        .text-center.mb-8 h1 {
-            font-size: 1.875rem !important;
-            padding: 0 1rem;
+        /* Disable hover effects on mobile */
+        .category-card:hover,
+        .photo-card:hover,
+        .dashboard-card:hover {
+            transform: none !important;
         }
 
-        .text-center.mb-8 p {
-            font-size: 0.875rem !important;
-            padding: 0 1rem;
+        /* Header adjustments */
+        .section-header {
+            padding: 1rem;
         }
 
-        /* Section header with buttons */
-        .section-header .flex.items-center.justify-between {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 1rem !important;
+        /* Statistics card */
+        .mb-6.p-4 {
+            padding: 0.75rem !important;
         }
 
-        .section-header .flex.items-center.space-x-4 {
-            width: 100% !important;
-        }
-
-        .section-header .flex.items-center.space-x-4 a {
-            width: 100% !important;
-            justify-content: center !important;
-            padding: 0.625rem 1rem !important;
-            font-size: 0.875rem !important;
-        }
-
-        /* Filter buttons container */
-        .flex.justify-between.items-center {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 1rem !important;
-        }
-
-        .flex.flex-wrap.gap-3 {
-            justify-content: center !important;
-        }
-
-        .filter-btn {
-            flex: 1 1 auto !important;
-            min-width: fit-content !important;
-            padding: 0.5rem 0.75rem !important;
-            font-size: 0.75rem !important;
-        }
-
-        /* Category cards - 2 columns on mobile */
-        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 0.75rem !important;
-        }
-
-        .category-card {
-            padding: 1rem !important;
-        }
-
-        /* Photo gallery grid - 2 columns on mobile */
-        .grid.grid-cols-2.sm\\:grid-cols-3.lg\\:grid-cols-4 {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 0.5rem !important;
-        }
-
-        /* General buttons */
-        button:not(.filter-btn) {
-            font-size: 0.875rem !important;
-            padding: 0.625rem 1rem !important;
-        }
-
-        /* Modals */
-        .fixed.inset-0 > div {
-            margin: 1rem !important;
-            max-width: calc(100vw - 2rem) !important;
-        }
-
-        /* Photo cards */
+        /* Photo cards in grid */
         .photo-card {
-            padding: 0.5rem !important;
-        }
-    }
-
-    /* Extra small devices (Honor X9a - 360px-412px) */
-    @media (max-width: 400px) {
-        .text-center.mb-8 h1 {
-            font-size: 1.5rem !important;
+            margin-bottom: 0;
         }
 
-        /* Single column for categories and gallery */
-        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3,
-        .grid.grid-cols-2.sm\\:grid-cols-3.lg\\:grid-cols-4 {
-            grid-template-columns: 1fr !important;
+        .photo-card .p-5 {
+            padding: 0.75rem !important;
         }
 
-        button {
+        /* Action buttons in photo cards */
+        .photo-card button {
             font-size: 0.75rem !important;
-            padding: 0.5rem 0.75rem !important;
+            padding: 0.5rem 0.625rem !important;
+        }
+
+        .photo-card button svg {
+            width: 0.875rem !important;
+            height: 0.875rem !important;
+            margin-right: 0.25rem !important;
         }
     }
     </style>
 
-    <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8 pb-8 sm:pb-12 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             {{-- ================================================================ --}}
             {{-- HEADER SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 gradient-header rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            <div class="text-center mb-4 sm:mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Gallery</h1>
-                <p class="text-gray-600 text-lg">Browse and manage photos from training sessions</p>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Gallery</h1>
+                <p class="text-gray-600 text-sm sm:text-lg px-2">Browse and manage photos from training sessions</p>
             </div>
 
             @if(session('success'))
@@ -445,78 +397,77 @@
 
                 {{-- Card Header --}}
                 <div class="section-header">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+                        <div class="flex-1 w-full sm:w-auto">
                             <div class="flex items-center mb-2">
                                 <div class="icon-wrapper bg-purple-100 mr-3">
                                     <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                                     </svg>
                                 </div>
-                                <h2 class="text-2xl font-semibold mb-2 flex items-center text-gray-900">
+                                <h2 class="text-xl sm:text-2xl font-semibold flex items-center text-gray-900">
                                     Photo Collection
                                 </h2>
                             </div>
-                            <p class="text-gray-600">View and manage training photos organized by category</p>
+                            <p class="text-gray-600 text-sm sm:text-base">View and manage training photos organized by category</p>
                         </div>
-                        <div class="flex items-center space-x-4">
-                            <a href="{{ route('alumni') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700">
-                                Legacy Gallery
+                        <div class="flex items-center w-full sm:w-auto">
+                            <a href="{{ route('alumni') }}" class="w-full sm:w-auto text-center px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 bg-blue-600 text-white hover:bg-blue-700">
+                                <span class="hidden sm:inline">Legacy Gallery</span>
+                                <span class="sm:hidden">Legacy</span>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <div class="p-6">
+                <div class="p-3 sm:p-6">
                     {{-- ================================================================ --}}
                     {{-- CATEGORY FILTER BUTTONS --}}
                     {{-- ================================================================ --}}
-                    <div class="mb-6">
-                        <div class="flex justify-between items-center">
-                            <div class="flex flex-wrap gap-3">
-                                <button onclick="filterByCategory('all')"
-                                       class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center gap-2"
-                                       data-category="all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                    </svg>
-                                    All
-                                </button>
+                    <div class="mb-4 sm:mb-6">
+                        <div class="flex flex-wrap gap-2 sm:gap-3 mb-3 sm:mb-4">
+                            <button onclick="filterByCategory('all')"
+                                   class="filter-btn active px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 flex items-center gap-1 sm:gap-2"
+                                   data-category="all">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                                All
+                            </button>
 
-                                @foreach($categories as $category)
-                                    <button onclick="filterByCategory('{{ $category->id }}')"
-                                           class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center gap-2"
-                                           data-category="{{ $category->id }}">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                        </svg>
-                                        {{ $category->name }}
-                                    </button>
-                                @endforeach
-                            </div>
+                            @foreach($categories as $category)
+                                <button onclick="filterByCategory('{{ $category->id }}')"
+                                       class="filter-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 flex items-center gap-1 sm:gap-2"
+                                       data-category="{{ $category->id }}">
+                                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                    {{ $category->name }}
+                                </button>
+                            @endforeach
+                        </div>
 
-                            <div class="flex gap-3">
-                                <button onclick="openGalleryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                    Add Picture
-                                </button>
-                                <button onclick="openCategoryModal()" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 bg-green-100 text-green-700 hover:bg-green-200 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                    Add Category
-                                </button>
-                            </div>
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                            <button onclick="openGalleryModal()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition duration-200 flex items-center justify-center gap-1 sm:gap-2">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Add Picture
+                            </button>
+                            <button onclick="openCategoryModal()" class="w-full sm:w-auto px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 bg-green-100 text-green-700 hover:bg-green-200 flex items-center justify-center gap-1 sm:gap-2">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Add Category
+                            </button>
                         </div>
                     </div>
 
                     {{-- ================================================================ --}}
                     {{-- GALLERY STATISTICS --}}
                     {{-- ================================================================ --}}
-                    <div class="mb-6 p-4 rounded-lg" style="background-color: #e8f4fd; border: 1px solid #3c92d9;">
-                        <div class="flex flex-wrap gap-4 text-sm" style="color: #2c5f8a;">
+                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg" style="background-color: #e8f4fd; border: 1px solid #3c92d9;">
+                        <div class="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm" style="color: #2c5f8a;">
                             <span><strong>Total Pictures:</strong> <span id="totalPictures">{{ $galleries->count() }}</span></span>
                             <span><strong>Categories:</strong> <span id="totalCategories">{{ $categories->count() }}</span></span>
                             <span><strong>Viewing:</strong> <span id="currentViewText">All Categories</span></span>
@@ -548,7 +499,7 @@
                             @endphp
                             
                             @if($categories->count() > 0)
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                                     @foreach($categories as $index => $category)
                                         @php
                                             $categoryGalleries = $galleriesByCategory->get($category->id, collect());
@@ -556,23 +507,23 @@
                                             $photoCount = $categoryGalleries->count();
                                         @endphp
                                         
-                                        <div class="category-card text-white rounded-xl p-6 shadow-lg cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-xl" 
+                                        <div class="category-card text-white rounded-xl p-4 sm:p-6 shadow-lg cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-xl" 
                                              style="{{ $color }}"
                                              onclick="filterByCategory('{{ $category->id }}')">
-                                            <div class="flex items-center justify-between mb-4">
-                                                <h3 class="text-xl font-bold">{{ $category->name }}</h3>
-                                                <svg class="w-8 h-8 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                                                <h3 class="text-base sm:text-xl font-bold">{{ $category->name }}</h3>
+                                                <svg class="w-6 h-6 sm:w-8 sm:h-8 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"/>
                                                 </svg>
                                             </div>
-                                            <p class="opacity-75 mb-3">
-                                                Training photos and activities in this category
+                                            <p class="opacity-75 mb-2 sm:mb-3 text-xs sm:text-sm">
+                                                Training photos and activities
                                             </p>
                                             <div class="flex justify-between items-center">
-                                                <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-medium">
+                                                <span class="bg-white bg-opacity-20 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium">
                                                     {{ $photoCount }} {{ Str::plural('Photo', $photoCount) }}
                                                 </span>
-                                                <span class="text-sm opacity-75">Click to manage →</span>
+                                                <span class="text-xs sm:text-sm opacity-75">Click to manage →</span>
                                             </div>
                                         </div>
                                     @endforeach
@@ -592,18 +543,19 @@
                         {{-- PHOTO GALLERY GRID (HIDDEN BY DEFAULT) --}}
                         {{-- ================================================================ --}}
                         <div id="photosView" class="hidden">
-                            <div class="mb-6">
-                                <button onclick="showCategoryOverview()" class="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="mb-4 sm:mb-6">
+                                <button onclick="showCategoryOverview()" class="flex items-center px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 text-xs sm:text-sm">
+                                    <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
-                                    Back to Categories
+                                    <span class="hidden sm:inline">Back to Categories</span>
+                                    <span class="sm:hidden">Back</span>
                                 </button>
                             </div>
 
-                            <div id="currentCategoryHeader" class="mb-6"></div>
+                            <div id="currentCategoryHeader" class="mb-4 sm:mb-6"></div>
 
-                            <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+                            <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6"></div>
 
                             <div id="noResults" class="text-center py-12 hidden">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -617,30 +569,30 @@
                         {{-- ================================================================ --}}
                         {{-- EDIT GALLERY MODAL --}}
                         {{-- ================================================================ --}}
-                        <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-xl relative">
-                                <button type="button" @click="showModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                                <h2 class="text-lg font-semibold mb-4">Edit Gallery Item</h2>
+                        <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
+                            <div class="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-full max-w-xl relative max-h-[90vh] overflow-y-auto">
+                                <button type="button" @click="showModal = false" class="modal-close-btn absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                                <h2 class="text-base sm:text-lg font-semibold mb-4">Edit Gallery Item</h2>
                                 <form method="POST" :action="updateUrl" enctype="multipart/form-data">
                                     <input type="hidden" name="_method" value="PUT">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                                     <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Title</label>
                                         <input type="text" name="title" x-model="gallery.title" required
-                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
 
                                     <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Description</label>
                                         <textarea name="description" x-model="gallery.description" rows="3"
-                                                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                                     </div>
 
                                     <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Category</label>
                                         <select name="gallery_category_id" x-model="gallery.gallery_category_id" required
-                                                class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                             @foreach($categories as $category)
                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
@@ -648,15 +600,15 @@
                                     </div>
 
                                     <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Replace Image (optional)</label>
+                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Replace Image (optional)</label>
                                         <input type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.webp"
-                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <p class="text-xs text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)</p>
                                     </div>
 
-                                    <div class="flex justify-end gap-3">
-                                        <button type="button" @click="showModal = false" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition duration-200">Cancel</button>
-                                        <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition duration-200">Save</button>
+                                    <div class="flex justify-end gap-2 sm:gap-3">
+                                        <button type="button" @click="showModal = false" class="px-3 sm:px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">Cancel</button>
+                                        <button type="submit" class="px-3 sm:px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition duration-200 text-xs sm:text-sm">Save</button>
                                     </div>
                                 </form>
                             </div>
@@ -665,22 +617,22 @@
                         {{-- ================================================================ --}}
                         {{-- DELETE GALLERY CONFIRMATION MODAL --}}
                         {{-- ================================================================ --}}
-                        <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                            <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-                                <h2 class="text-lg font-semibold mb-4">Confirm Deletion</h2>
-                                <p class="mb-6 text-gray-700">Are you sure you want to delete <strong x-text="deleteGallery.title"></strong>?</p>
+                        <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
+                            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-xl w-full max-w-md">
+                                <h2 class="text-base sm:text-lg font-semibold mb-4">Confirm Deletion</h2>
+                                <p class="mb-6 text-gray-700 text-sm sm:text-base">Are you sure you want to delete <strong x-text="deleteGallery.title"></strong>?</p>
 
                                 <form :action="deleteUrl" method="POST">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                                    <div class="flex justify-end gap-3">
+                                    <div class="flex justify-end gap-2 sm:gap-3">
                                         <button type="button" @click="showDeleteModal = false"
-                                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200">
+                                                class="px-3 sm:px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">
                                             Cancel
                                         </button>
                                         <button type="submit"
-                                                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200">
+                                                class="px-3 sm:px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200 text-xs sm:text-sm">
                                             Confirm Delete
                                         </button>
                                     </div>
@@ -697,51 +649,54 @@
     {{-- IMAGE PREVIEW MODAL - ENHANCED LIGHTBOX --}}
     {{-- ================================================================ --}}
     <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center transition-all duration-300 backdrop-blur-sm overflow-y-auto" style="animation: fadeIn 0.3s ease-in-out;">
-        <div class="relative max-w-5xl w-full p-4 my-8">
-            {{-- Close Button --}}
-            <button onclick="closeImageModal()" class="fixed top-6 right-6 text-white hover:text-gray-300 z-20 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+        <div class="relative max-w-5xl w-full p-2 sm:p-4 my-4 sm:my-8">
+            {{-- Modal Action Buttons Container --}}
+            <div class="fixed top-3 right-3 sm:top-6 sm:right-6 z-20 flex gap-2">
+                {{-- Download Button --}}
+                <a id="downloadButton" href="#" download class="modal-close-btn text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 sm:p-3 transition-all duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                </a>
 
-            {{-- Download Button --}}
-            <a id="downloadButton" href="#" download class="fixed top-6 right-24 text-white hover:text-gray-300 z-20 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                </svg>
-            </a>
+                {{-- Close Button --}}
+                <button onclick="closeImageModal()" class="modal-close-btn text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 sm:p-3 transition-all duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
 
             <div class="flex flex-col items-center">
                 {{-- Image Container with Loading State --}}
-                <div class="relative w-full flex items-center justify-center mb-4">
+                <div class="relative w-full flex items-center justify-center mb-2 sm:mb-4">
                     <div id="imageLoader" class="absolute inset-0 flex items-center justify-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                        <div class="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-t-2 border-b-2 border-white"></div>
                     </div>
-                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[60vh] object-contain rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'" onerror="document.getElementById('imageLoader').style.display='none'">
+                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[50vh] sm:max-h-[60vh] object-contain rounded-lg sm:rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'" onerror="document.getElementById('imageLoader').style.display='none'">
                 </div>
 
                 {{-- Info Card --}}
-                <div class="bg-white rounded-xl p-6 mt-4 max-w-2xl w-full shadow-2xl">
-                    <div class="flex items-start justify-between mb-3">
-                        <h3 id="previewTitle" class="text-xl font-bold text-gray-900 flex-1"></h3>
-                        <span class="ml-3 px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;" id="previewCategory"></span>
+                <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 mt-2 sm:mt-4 max-w-2xl w-full shadow-2xl">
+                    <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+                        <h3 id="previewTitle" class="text-base sm:text-xl font-bold text-gray-900 flex-1 min-w-0 truncate"></h3>
+                        <span class="flex-shrink-0 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold shadow-sm whitespace-nowrap" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;" id="previewCategory"></span>
                     </div>
 
-                    <p id="previewDescription" class="text-sm text-gray-600 mb-4 leading-relaxed"></p>
+                    <p id="previewDescription" class="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-4 leading-relaxed"></p>
 
-                    <div class="border-t border-gray-200 pt-4 space-y-2">
-                        <div class="flex items-center text-sm text-gray-700">
-                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="border-t border-gray-200 pt-2 sm:pt-4 space-y-1 sm:space-y-2">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-700">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            <strong class="mr-2">Instructor:</strong> <span id="previewInstructor" class="text-gray-600"></span>
+                            <strong class="mr-1 sm:mr-2 flex-shrink-0">Instructor:</strong> <span id="previewInstructor" class="text-gray-600 truncate"></span>
                         </div>
-                        <div class="flex items-center text-sm text-gray-700">
-                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-700">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            <strong class="mr-2">Upload Date:</strong> <span id="previewDate" class="text-gray-600"></span>
+                            <strong class="mr-1 sm:mr-2 flex-shrink-0">Upload Date:</strong> <span id="previewDate" class="text-gray-600"></span>
                         </div>
                     </div>
                 </div>
@@ -754,59 +709,59 @@
     {{-- ================================================================ --}}
     <div id="galleryModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full hidden z-50 backdrop-blur-sm transition-all duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full transform transition-all duration-300 scale-95 hover:scale-100" style="animation: slideIn 0.3s ease-out;">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-6">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full transform transition-all duration-300" style="animation: slideIn 0.3s ease-out;">
+                <div class="p-4 sm:p-8">
+                    <div class="flex justify-between items-center mb-4 sm:mb-6">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900">Add Gallery Item</h3>
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Add Gallery Item</h3>
                         </div>
-                        <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-gray-600 transition-all duration-200 hover:rotate-90 transform">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="closeGalleryModal()" class="modal-close-btn text-gray-400 hover:text-gray-600 transition-all duration-200">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
 
-                    <form action="{{ route('instructor.gallery.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+                    <form action="{{ route('instructor.gallery.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 sm:space-y-5">
                         @csrf
                         <div>
-                            <label for="gallery_title" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label for="gallery_title" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                                 </svg>
                                 Title
                             </label>
                             <input type="text" id="gallery_title" name="title" required
-                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                    placeholder="Enter picture title">
                         </div>
 
                         <div>
-                            <label for="gallery_description" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label for="gallery_description" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
                                 </svg>
                                 Description
                             </label>
                             <textarea id="gallery_description" name="description" rows="3"
-                                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                                      class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                                       placeholder="Enter picture description (optional)"></textarea>
                         </div>
 
                         <div>
-                            <label for="gallery_category" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label for="gallery_category" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                                 </svg>
                                 Category
                             </label>
                             <select id="gallery_category" name="gallery_category_id" required
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                    class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <option value="">Select Category</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -815,15 +770,15 @@
                         </div>
 
                         <div>
-                            <label for="gallery_image" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label for="gallery_image" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                                 Image
                             </label>
                             <div class="relative">
                                 <input type="file" id="gallery_image" name="image" required accept=".jpg,.jpeg,.png,.gif,.webp"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                       class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                        onchange="previewGalleryImage(event)">
                             </div>
                             <p class="text-xs text-gray-500 mt-2 flex items-center">
@@ -833,18 +788,18 @@
                                 Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)
                             </p>
                             <div id="imagePreviewContainer" class="hidden mt-3">
-                                <img id="imagePreview" src="" alt="Preview" class="w-full h-48 object-cover rounded-lg border-2 border-gray-200">
+                                <img id="imagePreview" src="" alt="Preview" class="w-full h-32 sm:h-48 object-cover rounded-lg border-2 border-gray-200">
                             </div>
                         </div>
 
-                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                        <div class="flex justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200">
                             <button type="button" onclick="closeGalleryModal()"
-                                    class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium">
+                                    class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium text-xs sm:text-sm">
                                 Cancel
                             </button>
                             <button type="submit"
-                                    class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition duration-200 font-medium shadow-lg flex items-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition duration-200 font-medium shadow-lg flex items-center text-xs sm:text-sm">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                 </svg>
                                 Add Picture
@@ -862,23 +817,23 @@
     <div id="categoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Category Management</h3>
-                        <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h3 class="text-base sm:text-lg font-medium text-gray-900">Category Management</h3>
+                        <button onclick="closeCategoryModal()" class="modal-close-btn text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
 
-                    <div class="flex mb-6 bg-gray-100 p-1 rounded-lg">
+                    <div class="flex mb-4 sm:mb-6 bg-gray-100 p-1 rounded-lg">
                         <button id="addCategoryBtn" onclick="showAddCategoryForm()" 
-                                class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white">
+                                class="flex-1 py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white">
                             Add Category
                         </button>
                         <button id="manageCategoriesBtn" onclick="showCategoriesList()" 
-                                class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700">
+                                class="flex-1 py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700">
                             Manage Categories
                         </button>
                     </div>
@@ -887,19 +842,19 @@
                         <form action="{{ route('instructor.gallery_categories.store') }}" method="POST">
                             @csrf
                             <div class="mb-4">
-                                <label for="category_name" class="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
+                                <label for="category_name" class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Category Name</label>
                                 <input type="text" id="category_name" name="name" required 
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                        placeholder="Enter category name">
                             </div>
                             
-                            <div class="flex justify-end gap-3">
+                            <div class="flex justify-end gap-2 sm:gap-3">
                                 <button type="button" onclick="closeCategoryModal()" 
-                                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                                        class="px-3 sm:px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">
                                     Cancel
                                 </button>
                                 <button type="submit" 
-                                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                                        class="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 text-xs sm:text-sm">
                                     Add Category
                                 </button>
                             </div>
@@ -910,21 +865,21 @@
                         <div class="max-h-96 overflow-y-auto">
                             @if($categories->isEmpty())
                                 <div class="text-center py-8 text-gray-500">
-                                    <p>No categories available.</p>
-                                    <p class="text-sm">Click "Add Category" to create your first category.</p>
+                                    <p class="text-sm sm:text-base">No categories available.</p>
+                                    <p class="text-xs sm:text-sm">Click "Add Category" to create your first category.</p>
                                 </div>
                             @else
                                 <div class="space-y-2">
                                     @foreach($categories as $category)
                                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors duration-200">
-                                            <div>
-                                                <h4 class="font-medium text-gray-900">{{ $category->name }}</h4>
-                                                <p class="text-sm text-gray-500">
+                                            <div class="flex-1 min-w-0 pr-2">
+                                                <h4 class="font-medium text-gray-900 text-sm sm:text-base truncate">{{ $category->name }}</h4>
+                                                <p class="text-xs sm:text-sm text-gray-500">
                                                     {{ $category->galleries->count() ?? 0 }} picture(s) in this category
                                                 </p>
                                             </div>
                                             <button onclick="confirmDeleteCategory({{ $category->id }}, '{{ $category->name }}', {{ $category->galleries->count() ?? 0 }})"
-                                                    class="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition duration-200">
+                                                    class="px-2 sm:px-3 py-1 bg-red-600 text-white text-xs sm:text-sm rounded hover:bg-red-700 transition duration-200 flex-shrink-0">
                                                 Delete
                                             </button>
                                         </div>
@@ -933,7 +888,7 @@
                             @endif
                         </div>
                     </div>
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -944,32 +899,32 @@
     <div id="deleteCategoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[60]">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Confirm Category Deletion</h3>
-                        <button onclick="closeDeleteCategoryModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h3 class="text-base sm:text-lg font-medium text-gray-900">Confirm Category Deletion</h3>
+                        <button onclick="closeDeleteCategoryModal()" class="modal-close-btn text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
                     
                     <div class="mb-4">
-                        <p class="text-gray-700 mb-2">Are you sure you want to delete the category:</p>
-                        <p class="font-semibold text-gray-900" id="categoryToDeleteName"></p>
-                        <p class="text-sm text-red-600 mt-2" id="categoryWarningMessage"></p>
+                        <p class="text-gray-700 mb-2 text-sm sm:text-base">Are you sure you want to delete the category:</p>
+                        <p class="font-semibold text-gray-900 text-sm sm:text-base" id="categoryToDeleteName"></p>
+                        <p class="text-xs sm:text-sm text-red-600 mt-2" id="categoryWarningMessage"></p>
                     </div>
                     
                     <form id="deleteCategoryForm" method="POST">
                         @csrf
                         @method('DELETE')
-                        <div class="flex justify-end gap-3">
+                        <div class="flex justify-end gap-2 sm:gap-3">
                             <button type="button" onclick="closeDeleteCategoryModal()" 
-                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200">
+                                    class="px-3 sm:px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">
                                 Cancel
                             </button>
                             <button type="submit" 
-                                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200">
+                                    class="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200 text-xs sm:text-sm">
                                 Delete Category
                             </button>
                         </div>
@@ -1023,15 +978,6 @@
                     return this.deleteRouteTemplate.replace('__id__', this.deleteGallery.id);
                 }
             }
-        }
-
-        {{-- ================================================================ --}}
-        {{-- INITIALIZATION --}}
-        {{-- ================================================================ --}}
-        function initializeGallery() {
-            updateStats();
-            showCategoryOverview();
-            updateFilterButtons('all');
         }
 
         {{-- ================================================================ --}}
@@ -1112,13 +1058,13 @@
             const photoCount = galleryData[categoryId]?.length || 0;
             
             header.innerHTML = `
-                <div class="text-white px-8 py-4 rounded-xl shadow-lg" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9);">
+                <div class="text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h2 class="text-2xl md:text-3xl font-bold tracking-wide">${category.name}</h2>
-                            <p class="text-blue-100 text-sm mt-1" style="color: rgba(255,255,255,0.8);">Manage photos in this category</p>
+                            <h2 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-wide">${category.name}</h2>
+                            <p class="text-blue-100 text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">Manage photos in this category</p>
                         </div>
-                        <span class="bg-white bg-opacity-20 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <span class="bg-white bg-opacity-20 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium">
                             ${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'}
                         </span>
                     </div>
@@ -1138,7 +1084,7 @@
 
                 return `
                 <div class="photo-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 group cursor-pointer"
+                    <div class="relative h-48 sm:h-56 bg-gradient-to-br from-gray-100 to-gray-200 group cursor-pointer"
                          onclick="openImageModal('{{ asset('') }}${photo.image_path}', '${titleEscaped}', '${descEscaped}', '${photo.instructor?.name || 'Unknown'}', '${photo.category?.name || 'N/A'}', '${formatDate(photo.created_at)}')">
                         ${photo.image_path ?
                             `<img src="{{ asset('') }}${photo.image_path}"
@@ -1146,54 +1092,54 @@
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                  loading="lazy">
                              <div class="image-overlay">
-                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-8 h-8 sm:w-12 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
                                 </svg>
                              </div>` :
                             `<div class="w-full h-full flex items-center justify-center text-gray-400">
-                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-12 h-12 sm:w-16 sm:h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                             </div>`
                         }
                     </div>
 
-                    <div class="p-5">
-                        <div class="flex items-start justify-between mb-3">
-                            <h3 class="font-bold text-lg text-gray-900 flex-1 leading-tight">${photo.title || 'Untitled'}</h3>
-                            <span class="ml-2 px-2.5 py-1 rounded-full text-xs font-semibold" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;">
+                    <div class="p-3 sm:p-5">
+                        <div class="flex items-start justify-between mb-2 sm:mb-3 gap-1 sm:gap-2">
+                            <h3 class="font-bold text-sm sm:text-lg text-gray-900 flex-1 leading-tight line-clamp-2">${photo.title || 'Untitled'}</h3>
+                            <span class="ml-1 sm:ml-2 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-semibold flex-shrink-0" style="background: linear-gradient(135deg, #3c92d9, #2c7ec9); color: white;">
                                 ${photo.category?.name || 'N/A'}
                             </span>
                         </div>
 
                         ${photo.description ?
-                            `<p class="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">${photo.description}</p>` :
-                            `<p class="text-sm text-gray-400 italic mb-4">No description</p>`
+                            `<p class="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-2 leading-relaxed">${photo.description}</p>` :
+                            `<p class="text-xs sm:text-sm text-gray-400 italic mb-3 sm:mb-4">No description</p>`
                         }
 
-                        <div class="flex items-center text-xs text-gray-500 mb-4">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center text-xs text-gray-500 mb-3 sm:mb-4">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                             ${formatDate(photo.created_at)}
                         </div>
 
-                        <div class="flex gap-2 pt-3 border-t border-gray-100">
+                        <div class="flex gap-2 pt-2 sm:pt-3 border-t border-gray-100">
                             <button type="button"
                                     onclick="event.stopPropagation(); openEditGallery(${photo.id}, '${titleEscaped}', '${descEscaped}', ${photo.gallery_category_id})"
-                                    class="flex-1 flex items-center justify-center px-3 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="flex-1 flex items-center justify-center px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                 </svg>
-                                Edit
+                                <span class="hidden sm:inline">Edit</span>
                             </button>
                             <button type="button"
                                     onclick="event.stopPropagation(); openDeleteGallery(${photo.id}, '${titleEscaped}')"
-                                    class="flex-1 flex items-center justify-center px-3 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="flex-1 flex items-center justify-center px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
-                                Delete
+                                <span class="hidden sm:inline">Delete</span>
                             </button>
                         </div>
                     </div>
@@ -1316,6 +1262,7 @@
         function closeGalleryModal() {
             document.getElementById('galleryModal').classList.add('hidden');
             document.querySelector('#galleryModal form').reset();
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
         }
 
         {{-- ================================================================ --}}
@@ -1332,16 +1279,16 @@
         }
 
         function showAddCategoryForm() {
-            document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
-            document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
+            document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
+            document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
             
             document.getElementById('addCategorySection').classList.remove('hidden');
             document.getElementById('categoriesListSection').classList.add('hidden');
         }
 
         function showCategoriesList() {
-            document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
-            document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
+            document.getElementById('addCategoryBtn').className = 'flex-1 py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 hover:text-gray-700';
+            document.getElementById('manageCategoriesBtn').className = 'flex-1 py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-colors duration-200 bg-green-600 text-white';
             
             document.getElementById('addCategorySection').classList.add('hidden');
             document.getElementById('categoriesListSection').classList.remove('hidden');
@@ -1414,33 +1361,4 @@
             });
         }
     </script>
-
-    {{-- ================================================================ --}}
-    {{-- CUSTOM STYLES --}}
-    {{-- ================================================================ --}}
-    <style>
-        .category-card {
-            transition: all 0.3s ease;
-        }
-
-        .category-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 </x-app-layout>
