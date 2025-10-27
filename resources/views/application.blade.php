@@ -36,9 +36,9 @@
             color: var(--text-primary);
             line-height: 1.7;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -59,7 +59,7 @@
             width: 100%;
             background: rgba(16, 20, 28, 0.95);
             backdrop-filter: blur(20px);
-            padding: 1rem 2rem;
+            padding: 0.75rem 1rem;
             z-index: 2000;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-bottom: 1px solid var(--border-color);
@@ -68,7 +68,7 @@
         .navbar.scrolled {
             background: rgba(16, 20, 28, 0.98);
             box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
-            padding: 0.75rem 2rem;
+            padding: 0.5rem 1rem;
         }
 
         .nav-container {
@@ -78,16 +78,16 @@
             max-width: 1400px;
             margin: 0 auto;
             gap: 0.5rem;
-            padding-right: 1rem;
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.5rem;
             text-decoration: none;
             cursor: pointer;
             transition: transform 0.3s ease;
+            flex-shrink: 0;
         }
 
         .nav-logo:hover {
@@ -96,7 +96,7 @@
 
         .nav-logo img {
             width: auto;
-            height: 70px;
+            height: 60px;
             border-radius: 50%;
             transition: all 0.3s ease;
         }
@@ -108,7 +108,7 @@
 
         .nav-logo-text .main-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--text-primary);
             line-height: 1;
@@ -116,10 +116,10 @@
         }
 
         .nav-logo-text .sub-title {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.8);
             font-weight: 500;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1;
         }
@@ -163,18 +163,19 @@
 
         .btn-primary {
             background: var(--gradient-primary);
-            padding: 12px 28px;
+            padding: 10px 24px;
             border: none;
             border-radius: 8px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             color: white;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             box-shadow: var(--shadow-primary);
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            display: inline-block;
         }
 
         .btn-primary:hover {
@@ -182,14 +183,44 @@
             box-shadow: 0 6px 20px rgba(60, 146, 217, 0.4);
         }
 
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 8px;
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 1px;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
         /* Main Content */
         .main-content {
-            margin-top: 100px;
-            min-height: calc(100vh - 100px);
+            margin-top: 90px;
+            min-height: calc(100vh - 90px);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .application-container {
@@ -198,7 +229,7 @@
             background: rgba(60, 146, 217, 0.05);
             backdrop-filter: blur(20px);
             border-radius: 16px;
-            padding: 3rem;
+            padding: 2.5rem;
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 60px rgba(60, 146, 217, 0.2);
         }
@@ -210,15 +241,16 @@
 
         .application-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-size: 2rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 1rem;
+            line-height: 1.2;
         }
 
         .application-subtitle {
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 1rem;
             line-height: 1.6;
         }
 
@@ -236,7 +268,11 @@
             margin-bottom: 0.5rem;
             color: var(--primary-blue);
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+        }
+
+        .form-label i {
+            margin-right: 0.5rem;
         }
 
         .form-input,
@@ -248,7 +284,7 @@
             border: 2px solid rgba(60, 146, 217, 0.3);
             background: rgba(60, 146, 217, 0.1);
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
             font-family: 'Inter', sans-serif;
         }
@@ -279,7 +315,7 @@
             border: 2px solid rgba(60, 146, 217, 0.3);
             background: rgba(60, 146, 217, 0.1);
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             cursor: pointer;
         }
@@ -311,7 +347,8 @@
             display: block;
             margin-top: 0.5rem;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
 
         /* Alert Styles */
@@ -352,7 +389,7 @@
             border: none;
             padding: 1rem 2rem;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -369,74 +406,126 @@
             transform: translateY(0);
         }
 
-        /* Mobile Menu */
-        .mobile-menu-toggle {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            padding: 8px;
-        }
-
-        .mobile-menu-toggle span {
-            width: 25px;
-            height: 2px;
-            background: var(--text-primary);
-            margin: 3px 0;
-            transition: 0.3s;
-            border-radius: 1px;
-        }
-
-        .mobile-menu-toggle.active span:nth-child(1) {
-            transform: rotate(-45deg) translate(-5px, 6px);
-        }
-
-        .mobile-menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .mobile-menu-toggle.active span:nth-child(3) {
-            transform: rotate(45deg) translate(-5px, -6px);
-        }
-
-        /* Form Row for Side-by-Side Fields */
+        /* Form Row */
         .form-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-row .form-group {
-            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
             margin-bottom: 0;
         }
 
-        /* Footer Styles */
+        .form-row .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
         .footer {
             text-align: center;
-            padding: 2rem;
+            padding: 1.5rem 1rem;
             border-top: 1px solid var(--border-color);
             color: var(--text-secondary);
             margin-top: auto;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        /* Tablet and Desktop */
+        @media (min-width: 768px) {
+            .navbar {
+                padding: 1rem 2rem;
+            }
+
+            .nav-logo img {
+                height: 70px;
+            }
+
+            .nav-logo-text .main-title {
+                font-size: 1.75rem;
+            }
+
+            .nav-logo-text .sub-title {
+                font-size: 0.875rem;
+                letter-spacing: 2px;
+            }
+
+            .main-content {
+                margin-top: 100px;
+                padding: 2rem;
+            }
+
+            .application-container {
+                padding: 3rem;
+            }
+
+            .application-title {
+                font-size: 2.5rem;
+            }
+
+            .application-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .form-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .form-row .form-group {
+                margin-bottom: 0;
+            }
+
+            .form-input,
+            .form-select,
+            .form-textarea {
+                font-size: 1rem;
+            }
+
+            .form-label {
+                font-size: 0.95rem;
+            }
+
+            .form-help {
+                font-size: 0.875rem;
+            }
+
+            .submit-btn {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Mobile Navigation */
+        @media (max-width: 767px) {
             .nav-links {
                 display: none;
-                position: absolute;
-                top: 100%;
+                position: fixed;
+                top: 77px;
                 left: 0;
                 width: 100%;
+                max-height: calc(100vh - 77px);
                 background: rgba(16, 20, 28, 0.98);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
-                padding: 2rem;
-                gap: 1.5rem;
+                padding: 2rem 1rem;
+                gap: 0;
                 border-top: 1px solid var(--border-color);
+                overflow-y: auto;
             }
 
             .nav-links.active {
                 display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-links a {
+                font-size: 1rem;
+                padding: 0.75rem 1rem;
+                width: 100%;
+                display: block;
+                text-align: center;
+                background: rgba(60, 146, 217, 0.05);
+                border-radius: 8px;
             }
 
             .mobile-menu-toggle {
@@ -444,7 +533,7 @@
             }
 
             .main-content {
-                margin-top: 80px;
+                margin-top: 85px;
                 padding: 1rem;
             }
 
@@ -453,30 +542,35 @@
             }
 
             .application-title {
-                font-size: 2rem;
-            }
-
-            .nav-container {
-                padding-right: 0;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .form-row .form-group {
-                margin-bottom: 1.5rem;
+                font-size: 1.75rem;
             }
         }
 
+        /* Small Mobile */
         @media (max-width: 480px) {
+            .nav-logo img {
+                height: 50px;
+            }
+
+            .nav-logo-text .main-title {
+                font-size: 1.25rem;
+            }
+
+            .nav-logo-text .sub-title {
+                font-size: 0.65rem;
+                letter-spacing: 1px;
+            }
+
             .application-container {
                 padding: 1.5rem 1rem;
             }
 
             .application-title {
-                font-size: 1.75rem;
+                font-size: 1.5rem;
+            }
+
+            .application-subtitle {
+                font-size: 0.95rem;
             }
 
             .form-input,
@@ -484,12 +578,74 @@
             .form-textarea,
             .form-file {
                 padding: 0.75rem;
-                font-size: 0.95rem;
+                font-size: 0.9rem;
+            }
+
+            .form-file::-webkit-file-upload-button {
+                padding: 0.4rem 0.75rem;
+                margin-right: 0.75rem;
+                font-size: 0.85rem;
             }
 
             .submit-btn {
                 padding: 0.875rem 1.5rem;
                 font-size: 1rem;
+            }
+
+            .btn-primary {
+                padding: 8px 20px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Very Small Screens */
+        @media (max-width: 360px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+
+            .application-container {
+                padding: 1.25rem 1rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+            }
+
+            .form-help {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Landscape Mode */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .navbar {
+                padding: 0.5rem 1rem;
+            }
+
+            .nav-logo img {
+                height: 40px;
+            }
+
+            .main-content {
+                margin-top: 70px;
+                padding: 1rem;
+            }
+
+            .application-container {
+                padding: 1.5rem;
+            }
+
+            .application-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+
+            .submit-btn {
+                margin-top: 1.5rem;
             }
         }
     </style>
@@ -528,21 +684,19 @@
     <main class="main-content">
         <div class="application-container">
             @if($applicationDeadline && now() > $applicationDeadline)
-                <!-- Only show this when closed -->
-                <div class="alert alert-error" style="text-align: center; padding: 3rem;">
-                    <i class="fas fa-clock" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.7;"></i>
-                    <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Permohonan Ditutup</h2>
-                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;">
+                <div class="alert alert-error" style="text-align: center; padding: 2.5rem 2rem;">
+                    <i class="fas fa-clock" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.7;"></i>
+                    <h2 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.5rem;">Permohonan Ditutup</h2>
+                    <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 2rem;">
                         Tarikh akhir permohonan telah berlalu pada <strong>{{ $applicationDeadline->format('d F Y') }}</strong>.
                         Sila tunggu pengumuman sesi permohonan seterusnya.
                     </p>
-                    <a href="/" class="btn-primary" style="display: inline-block;">
+                    <a href="/" class="btn-primary">
                         <i class="fas fa-home" style="margin-right: 0.5rem;"></i>
                         Kembali ke Laman Utama
                     </a>
                 </div>
             @else
-                <!-- Only show header and form when applications are open -->
                 <div class="application-header">
                     <h1 class="application-title">Mohon Sertai PALAPES Laut UMS</h1>
                     <p class="application-subtitle">
@@ -572,12 +726,10 @@
                 <form action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data" class="application-form">
                     @csrf
 
-                    <!-- Name and Email Row -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="name" class="form-label">
-                                <i class="fas fa-user" style="margin-right: 0.5rem;"></i>
-                                Nama Penuh
+                                <i class="fas fa-user"></i>Nama Penuh
                             </label>
                             <input type="text" id="name" name="name" value="{{ old('name') }}" required
                                 class="form-input" placeholder="Masukkan nama penuh anda">
@@ -585,20 +737,17 @@
 
                         <div class="form-group">
                             <label for="email" class="form-label">
-                                <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i>
-                                Alamat Emel
+                                <i class="fas fa-envelope"></i>Alamat Emel
                             </label>
                             <input type="email" id="email" name="email" value="{{ old('email') }}" required
                                 class="form-input" placeholder="contoh@email.com">
                         </div>
                     </div>
 
-                    <!-- Phone and Gender Row -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="phone_number" class="form-label">
-                                <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>
-                                Nombor Telefon
+                                <i class="fas fa-phone"></i>Nombor Telefon
                             </label>
                             <input type="text" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" required
                                 class="form-input" placeholder="012-3456789">
@@ -606,8 +755,7 @@
 
                         <div class="form-group">
                             <label for="gender" class="form-label">
-                                <i class="fas fa-venus-mars" style="margin-right: 0.5rem;"></i>
-                                Jantina
+                                <i class="fas fa-venus-mars"></i>Jantina
                             </label>
                             <select id="gender" name="gender" required class="form-select">
                                 <option value="">Pilih Jantina</option>
@@ -617,12 +765,10 @@
                         </div>
                     </div>
 
-                    <!-- IC Number and Matric Number Row -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="ic_number" class="form-label">
-                                <i class="fas fa-id-card" style="margin-right: 0.5rem;"></i>
-                                Nombor Kad Pengenalan
+                                <i class="fas fa-id-card"></i>Nombor Kad Pengenalan
                             </label>
                             <input type="text" id="ic_number" name="ic_number" value="{{ old('ic_number') }}" required
                                 class="form-input" placeholder="000000-00-0000">
@@ -630,20 +776,17 @@
 
                         <div class="form-group">
                             <label for="matric_no" class="form-label">
-                                <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i>
-                                Nombor Matrik
+                                <i class="fas fa-graduation-cap"></i>Nombor Matrik
                             </label>
                             <input type="text" id="matric_no" name="matric_no" value="{{ old('matric_no') }}" required
                                 class="form-input" placeholder="Masukkan nombor matrik UMS">
                         </div>
                     </div>
 
-                    <!-- Faculty and Course Row -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="faculty" class="form-label">
-                                <i class="fas fa-university" style="margin-right: 0.5rem;"></i>
-                                Fakulti
+                                <i class="fas fa-university"></i>Fakulti
                             </label>
                             <select id="faculty" name="faculty" required class="form-select">
                                 <option value="">Pilih Fakulti</option>
@@ -663,72 +806,63 @@
 
                         <div class="form-group">
                             <label for="course" class="form-label">
-                                <i class="fas fa-book" style="margin-right: 0.5rem;"></i>
-                                Kursus
+                                <i class="fas fa-book"></i>Kursus
                             </label>
                             <input type="text" id="course" name="course" value="{{ old('course') }}" required
                                 class="form-input" placeholder="Masukkan nama kursus">
                         </div>
                     </div>
 
-                    <!-- Height, Weight, BMI Row -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="height" class="form-label">
-                                <i class="fas fa-ruler-vertical" style="margin-right: 0.5rem;"></i>
-                                Tinggi (cm)
+                                <i class="fas fa-ruler-vertical"></i>Tinggi (cm)
                             </label>
                             <input type="number" id="height" name="height" value="{{ old('height') }}" step="0.01" min="100" max="250"
                                 class="form-input" placeholder="Contoh: 170.5">
                             <span class="form-help">
-                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                                <i class="fas fa-info-circle"></i>
                                 Masukkan tinggi dalam sentimeter (cm)
                             </span>
                         </div>
 
                         <div class="form-group">
                             <label for="weight" class="form-label">
-                                <i class="fas fa-weight" style="margin-right: 0.5rem;"></i>
-                                Berat (kg)
+                                <i class="fas fa-weight"></i>Berat (kg)
                             </label>
                             <input type="number" id="weight" name="weight" value="{{ old('weight') }}" step="0.01" min="30" max="200"
                                 class="form-input" placeholder="Contoh: 65.5">
                             <span class="form-help">
-                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                                <i class="fas fa-info-circle"></i>
                                 Masukkan berat dalam kilogram (kg)
                             </span>
                         </div>
                     </div>
 
-                    <!-- BMI Display -->
                     <div class="form-group">
                         <label for="bmi" class="form-label">
-                            <i class="fas fa-calculator" style="margin-right: 0.5rem;"></i>
-                            BMI (Kiraan Automatik)
+                            <i class="fas fa-calculator"></i>BMI (Kiraan Automatik)
                         </label>
                         <input type="number" id="bmi" name="bmi" value="{{ old('bmi') }}" step="0.01" readonly
-                            class="form-input bg-gray-100" placeholder="BMI akan dikira secara automatik">
+                            class="form-input" placeholder="BMI akan dikira secara automatik">
                         <span class="form-help">
-                            <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                            <i class="fas fa-info-circle"></i>
                             BMI akan dikira secara automatik berdasarkan tinggi dan berat yang dimasukkan
                         </span>
                     </div>
 
-                    <!-- Profile Picture -->
                     <div class="form-group">
                         <label for="profile_pic" class="form-label">
-                            <i class="fas fa-camera" style="margin-right: 0.5rem;"></i>
-                            Gambar Profil
+                            <i class="fas fa-camera"></i>Gambar Profil
                         </label>
                         <input type="file" id="profile_pic" name="profile_pic" accept="image/*"
                             class="form-file">
                         <span class="form-help">
-                            <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                            <i class="fas fa-info-circle"></i>
                             Muat naik gambar passport terkini (JPEG, PNG, JPG, GIF - Maksimum 2MB)
                         </span>
                     </div>
 
-                    <!-- Submit Button -->
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
                         Hantar Permohonan
@@ -753,10 +887,19 @@
             document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
         });
 
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
-            if (window.scrollY > 100) {
+            if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
@@ -782,21 +925,27 @@
         document.getElementById('height').addEventListener('input', calculateBMI);
         document.getElementById('weight').addEventListener('input', calculateBMI);
 
+        // Calculate BMI on page load if values exist
+        window.addEventListener('load', calculateBMI);
+
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const offsetTop = target.offsetTop - 100;
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                    // Close mobile menu if open
-                    navLinks.classList.remove('active');
-                    mobileToggle.classList.remove('active');
-                    document.body.style.overflow = '';
+                const href = this.getAttribute('href');
+                if (href !== '#' && href.length > 1) {
+                    const target = document.querySelector(href);
+                    if (target) {
+                        e.preventDefault();
+                        const navbarHeight = document.getElementById('navbar').offsetHeight;
+                        const offsetTop = target.offsetTop - navbarHeight;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                        navLinks.classList.remove('active');
+                        mobileToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
                 }
             });
         });
