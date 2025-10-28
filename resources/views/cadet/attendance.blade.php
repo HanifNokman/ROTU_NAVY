@@ -972,8 +972,15 @@
                 const maps = {};
 
                 console.log('Looking for attendance forms...');
-                // More specific selector - find forms with training_id input
-                const forms = document.querySelectorAll('form[action*="attendance/mark"]');
+                // Find forms that have training_id input (more reliable selector)
+                const formsWithTrainingId = Array.from(document.querySelectorAll('form')).filter(form => {
+                    return form.querySelector('input[name="training_id"]') &&
+                           form.getAttribute('action') &&
+                           form.getAttribute('action').includes('attendance') &&
+                           form.getAttribute('method') === 'POST';
+                });
+
+                const forms = formsWithTrainingId;
                 console.log('Found', forms.length, 'attendance form(s)');
 
                 // Additional debugging
@@ -981,14 +988,15 @@
                 console.log('Total forms on page:', allForms.length);
                 allForms.forEach((f, i) => {
                     const action = f.getAttribute('action');
+                    const method = f.getAttribute('method');
                     const hasTrainingId = f.querySelector('input[name="training_id"]');
-                    console.log(`Form ${i + 1} action:`, action, '| Has training_id:', !!hasTrainingId);
+                    console.log(`Form ${i + 1} action:`, action, '| Method:', method, '| Has training_id:', !!hasTrainingId);
                 });
 
-                const trainingSections = document.querySelectorAll('.p-6.bg-gradient-to-r.from-gray-50.to-blue-50');
+                const trainingSections = document.querySelectorAll('.bg-white.rounded-xl.border.border-gray-200');
                 console.log('Training session cards found:', trainingSections.length);
 
-                const attendanceConfirmed = document.querySelectorAll('.bg-green-50.border.border-green-200');
+                const attendanceConfirmed = document.querySelectorAll('.bg-gradient-to-br.from-green-50.to-emerald-50');
                 console.log('Already marked attendance sections:', attendanceConfirmed.length);
 
                 if (forms.length === 0) {
@@ -996,14 +1004,15 @@
                     console.warn('1. No training sessions scheduled for today');
                     console.warn('2. Attendance already marked for all sessions');
                     console.warn('3. Training sessions are not active/eligible');
-                    console.warn('Check the page - do you see any "Mark Present" buttons?');
+                    console.warn('Check the page - do you see any "Mark My Attendance" buttons?');
+                    return; // Exit early if no forms
                 }
 
                 // Process all attendance forms on the page
                 forms.forEach((form, index) => {
                     console.log('Processing form', index + 1);
                     const button = form.querySelector('button[type="submit"]');
-                    const trainingCard = form.closest('.p-6');
+                    const trainingCard = form.closest('.px-6.pb-6.space-y-4') || form.closest('.bg-white.rounded-xl.border.border-gray-200');
                     const trainingIdInput = form.querySelector('input[name="training_id"]');
                     const trainingId = trainingIdInput ? trainingIdInput.value : index;
                     const mapContainer = document.getElementById(`map-${trainingId}`);
@@ -1031,12 +1040,12 @@
 
                     console.log('✅ All required elements found, proceeding with map initialization...');
 
-                    // Create status message div
-                    let statusDiv = trainingCard.querySelector('.location-status');
+                    // Create status message div - insert before the button
+                    let statusDiv = form.querySelector('.location-status');
                     if (!statusDiv) {
                         statusDiv = document.createElement('div');
                         statusDiv.className = 'location-status text-sm mb-3 p-3 rounded-lg border-2';
-                        button.parentNode.insertBefore(statusDiv, button);
+                        form.insertBefore(statusDiv, button);
                     }
 
                     // Disable button initially

@@ -573,11 +573,12 @@
                     $today = $now->toDateString();
                     $yesterday = $now->copy()->subDay()->toDateString();
 
-                    $pendingAttendance = DB::table('trainings')
-                        ->join('training_attendances', 'trainings.id', '=', 'training_attendances.training_id')
-                        ->where('training_attendances.cadet_id', $layoutCadet->id)
-                        ->where('training_attendances.present', false)
-                        ->whereNull('training_attendances.absence_reason')
+                    // Check for active trainings where attendance hasn't been marked yet
+                    $activeTrainingsNeedingAttendance = DB::table('trainings')
+                        ->leftJoin('training_attendances', function($join) use ($layoutCadet) {
+                            $join->on('trainings.id', '=', 'training_attendances.training_id')
+                                 ->where('training_attendances.cadet_id', '=', $layoutCadet->id);
+                        })
                         ->where(function ($query) use ($intakeStr) {
                             $query->where('trainings.involvement', 'LIKE', "%{$intakeStr}%")
                                 ->orWhereNull('trainings.involvement')
@@ -598,9 +599,18 @@
                                     });
                             });
                         })
+                        ->where(function($q) {
+                            // Either no attendance record exists, or attendance is marked as absent without reason
+                            $q->whereNull('training_attendances.id')
+                              ->orWhere(function($subQ) {
+                                  $subQ->where('training_attendances.present', false)
+                                       ->whereNull('training_attendances.absence_reason');
+                              })
+                              ->orWhere('training_attendances.present', false);
+                        })
                         ->exists();
 
-                    $hasNotifications = $pendingAbsences || $pendingAttendance;
+                    $hasNotifications = $pendingAbsences || $activeTrainingsNeedingAttendance;
                 }
             }
 
