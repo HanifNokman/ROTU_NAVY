@@ -632,6 +632,30 @@
                 updateStats();
                 showCategoryOverview();
                 updateFilterButtons('all');
+
+                // Initialize modal event listeners
+                const imageModal = document.getElementById('imagePreviewModal');
+                const previewImage = document.getElementById('previewImage');
+
+                if (imageModal) {
+                    imageModal.addEventListener('click', function(event) {
+                        if (event.target === this) {
+                            closeImageModal();
+                        }
+                    });
+                }
+
+                if (previewImage) {
+                    previewImage.addEventListener('error', function() {
+                        this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMDAgMTUwTDE2MCAyMDBIMjQwTDIwMCAxNTBaIiBmaWxsPSIjOUNBM0FGIi8+CjxjaXJjbGUgY3g9IjE3MCIgY3k9IjEyMCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                    });
+                }
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        closeImageModal();
+                    }
+                });
             });
 
             // ================================================================
@@ -835,24 +859,6 @@
                 }, 200);
             }
 
-            // ================================================================
-            // EVENT LISTENERS
-            // ================================================================
-            document.getElementById('imagePreviewModal').addEventListener('click', function(event) {
-                if (event.target === this) {
-                    closeImageModal();
-                }
-            });
-
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    closeImageModal();
-                }
-            });
-
-            document.getElementById('previewImage').addEventListener('error', function() {
-                this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMDAgMTUwTDE2MCAyMDBIMjQwTDIwMCAxNTBaIiBmaWxsPSIjOUNBM0FGIi8+CjxjaXJjbGUgY3g9IjE3MCIgY3k9IjEyMCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
-            });
 
             // ================================================================
             // UTILITY FUNCTIONS
