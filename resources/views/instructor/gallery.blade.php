@@ -151,24 +151,7 @@
     /* ========================================= */
     /* BUTTON STYLES */
     /* ========================================= */
-    .btn-primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
-        padding: 0.625rem 1.25rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        border: none;
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
-        transform: translateY(-1px);
-    }
+    /* Removed .btn-primary override - using global style from app.blade.php (#3c92d9) */
 
     .filter-btn {
         padding: 0.625rem 1rem;
