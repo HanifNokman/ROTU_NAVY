@@ -254,66 +254,96 @@
                     <p class="text-gray-600 ml-13">Manage attendance for ongoing training sessions</p>
                 </div>
                 <div class="p-6">
-                    <div class="space-y-4">
+                    <div class="max-w-5xl space-y-4">
                         @if($todaysTrainings->count() > 0)
                             @foreach($todaysTrainings as $training)
-                            <div class="border-2 border-gray-200 rounded-lg p-6 bg-gradient-to-r from-gray-50 to-blue-50 hover:shadow-lg transition-all duration-300">
-                                <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                                    <div class="flex-1">
-                                        <h4 class="text-xl font-semibold text-gray-900 mb-2">{{ $training->title }}</h4>
-                                        <div class="space-y-1 text-gray-600">
-                                            <p class="flex items-center">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                </svg>
-                                                {{ $training->location }}
-                                            </p>
-                                            <p class="flex items-center">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                                @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
-                                                    <!-- Multi-day training -->
-                                                    <span>{{ $training->start_datetime->format('M d, Y') }} - {{ $training->end_datetime->format('M d, Y') }} | Starts: {{ $training->formatted_start_time }} | Ends: {{ $training->end_datetime->format('h:i A') }}</span>
-                                                @else
-                                                    <!-- Single day training -->
-                                                    <span>{{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}@if($training->end_datetime) - {{ $training->end_datetime->format('h:i A') }}@endif</span>
-                                                @endif
-                                            </p>
-                                            <p class="flex items-center">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                                </svg>
-                                                {{ $training->involvement ?? 'Not specified' }}
-                                            </p>
+                            <div class="bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:border-blue-300">
+                                <div class="flex flex-col lg:flex-row">
+                                    <!-- Left Content Section -->
+                                    <div class="flex-1 p-5 min-w-0">
+                                        <!-- Title -->
+                                        <h4 class="text-xl font-bold text-gray-900 mb-3 flex items-start">
+                                            <svg class="w-5 h-5 mr-2.5 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span>{{ $training->title }}</span>
+                                        </h4>
+
+                                        <!-- Details Grid -->
+                                        <div class="space-y-2.5">
+                                            <!-- Location -->
+                                            <div class="flex items-start">
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 mr-3 flex-shrink-0">
+                                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Location</p>
+                                                    <p class="text-sm font-semibold text-gray-900">{{ $training->location }}</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Date & Time -->
+                                            <div class="flex items-start">
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-50 mr-3 flex-shrink-0">
+                                                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Schedule</p>
+                                                    <p class="text-sm font-semibold text-gray-900">
+                                                    @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
+                                                        {{ $training->start_datetime->format('M d, Y') }} - {{ $training->end_datetime->format('M d, Y') }}
+                                                    @else
+                                                        {{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}@if($training->end_datetime) - {{ $training->end_datetime->format('h:i A') }}@endif
+                                                    @endif
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Involvement -->
+                                            <div class="flex items-start">
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 mr-3 flex-shrink-0">
+                                                    <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Involvement</p>
+                                                    <p class="text-sm font-semibold text-gray-900">{{ $training->involvement ?? 'Not specified' }}</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Duration Badge (if multi-day) -->
                                             @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
-                                                <!-- Show duration for multi-day trainings -->
-                                                <p class="flex items-center">
-                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                     </svg>
-                                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                                                        {{ floor($training->start_datetime->diffInDays($training->end_datetime)) + 1 }}-day training
-                                                    </span>
-                                                </p>
+                                                    {{ floor($training->start_datetime->diffInDays($training->end_datetime)) + 1 }}-day training
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="flex flex-col w-full md:w-48 md:ml-6 gap-3">
-                                        <button onclick="openAttendanceModal({{ $training->id }})" class="bg-green-600 hover:bg-green-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center shadow-lg hover:shadow-xl">
-                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                                    <!-- Right Action Section -->
+                                    <div class="flex flex-row lg:flex-col lg:justify-start bg-gray-50 lg:bg-transparent border-t lg:border-t-0 lg:border-l border-gray-200 p-4 lg:p-5 gap-3 lg:gap-3 lg:w-52 flex-shrink-0">
+                                        <button onclick="openAttendanceModal({{ $training->id }})" class="flex-1 lg:flex-none lg:w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                            <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                                             </svg>
-                                            Attendance
+                                            <span class="whitespace-nowrap">Attendance</span>
                                         </button>
                                         @if($training->status === 'Active' && empty($training->end_datetime))
-                                        <button onclick="endTraining({{ $training->id }})" class="bg-red-600 hover:bg-red-700 text-white w-full py-3 rounded-lg text-base font-semibold transition duration-200 flex items-center justify-center shadow-lg hover:shadow-xl">
-                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button onclick="endTraining({{ $training->id }})" class="flex-1 lg:flex-none lg:w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                            <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
                                             </svg>
-                                            End Training
+                                            <span class="whitespace-nowrap">End Training</span>
                                         </button>
                                         @endif
                                     </div>
