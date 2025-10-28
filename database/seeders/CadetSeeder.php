@@ -29,6 +29,8 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.2,
                 'BMI' => 22.5,
                 'swimming_qualification' => 'Pass',
+                'ttp_date' => '2022-09-15',
+                'insurance_number' => 'INS2022001',
                 'is_best_cadet' => true,  // Sample: Best Cadet for Intake 2022
             ],
             [
@@ -45,6 +47,8 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.0,
                 'BMI' => 24.1,
                 'swimming_qualification' => 'Pass',
+                'ttp_date' => '2022-09-18',
+                'insurance_number' => 'INS2022002',
             ],
             [
                 'user_id' => User::where('email', 'siti.sarah11@rotunavy.com')->first()->id,
@@ -60,6 +64,8 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.5,
                 'BMI' => 21.8,
                 'swimming_qualification' => 'In Progress',
+                'ttp_date' => '2022-10-05',
+                'insurance_number' => 'INS2022003',
                 'is_best_academic' => true,  // Sample: Best Academic for Intake 2022 (highest CGPA)
             ],
             [
@@ -76,6 +82,8 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 2.8,
                 'BMI' => 23.7,
                 'swimming_qualification' => 'Pass',
+                'ttp_date' => '2022-09-20',
+                'insurance_number' => 'INS2022004',
             ],
             [
                 'user_id' => User::where('email', 'aisyah.zainal11@rotunavy.com')->first()->id,
@@ -91,6 +99,8 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.3,
                 'BMI' => 20.2,
                 'swimming_qualification' => 'Fail',
+                'ttp_date' => '2022-09-22',
+                'insurance_number' => 'INS2022005',
             ],
 
             // Intake 12 (intake_year = 2023)
@@ -108,6 +118,8 @@ class CadetSeeder extends Seeder
                 'past_cgpa' => 3.1,
                 'BMI' => 22.9,
                 'swimming_qualification' => 'Pass',
+                'ttp_date' => '2023-08-10',
+                'insurance_number' => 'INS2023001',
                 'is_best_cadet' => true,  // Sample: Best Cadet for Intake 2023 (not commissioned yet, no badge)
             ],
             [

@@ -157,6 +157,16 @@
                         <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
                         <x-input-error class="mt-2" :messages="$errors->get('rank')" />
                     </div>
+                    <div>
+                        <x-input-label for="ttp_date" :value="__('TTP Date')" class="text-sm font-semibold text-gray-700" />
+                        <input id="ttp_date" name="ttp_date" type="date" class="mt-2 block w-full px-4 py-2.5 rounded-lg border-gray-300" value="{{ $personal->ttp_date ? \Carbon\Carbon::parse($personal->ttp_date)->format('Y-m-d') : '' }}" />
+                        <x-input-error class="mt-2" :messages="$errors->get('ttp_date')" />
+                    </div>
+                    <div>
+                        <x-input-label for="insurance_number" :value="__('Insurance Number')" class="text-sm font-semibold text-gray-700" />
+                        <x-text-input id="insurance_number" name="insurance_number" type="text" class="mt-2 block w-full px-4 py-2.5 rounded-lg" maxlength="50" :value="$personal->insurance_number" placeholder="Enter insurance number" />
+                        <x-input-error class="mt-2" :messages="$errors->get('insurance_number')" />
+                    </div>
                 </div>
             </div>
 

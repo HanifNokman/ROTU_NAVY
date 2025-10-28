@@ -1325,10 +1325,10 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <span class="text-sm font-medium text-blue-800">
-                                    <span id="badge-counter">{{ count($badgesData['display']) }}</span>/8 badges displayed
+                                    <span id="badge-counter">{{ count($badgesData['display']) }}</span>/12 badges displayed
                                 </span>
                             </div>
-                            <span class="text-xs text-gray-500 italic">Maximum 8 badges can be displayed at a time</span>
+                            <span class="text-xs text-gray-500 italic">Maximum 12 badges can be displayed at a time</span>
                         </div>
                     </div>
                 </div>
@@ -1677,7 +1677,7 @@
                     }
                 } else if (data.error === 'limit_reached') {
                     // Show custom alert for limit reached
-                    alert(data.message || 'You can only display a maximum of 8 badges. Please disable one before adding another.');
+                    alert(data.message || 'You can only display a maximum of 12 badges. Please disable one before adding another.');
                 } else {
                     alert(data.message || 'Error toggling badge display');
                 }

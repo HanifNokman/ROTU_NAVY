@@ -2175,9 +2175,13 @@ function showCadetProfile(cadetId) {
                                 <span class="text-gray-600">Email:</span>
                                 <span class="font-medium">${data.user.email || 'N/A'}</span>
                             </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Insurance Number:</span>
+                                <span class="font-medium">${data.cadet.insurance_number || 'N/A'}</span>
+                            </div>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <h5 class="font-medium text-gray-900 border-b pb-2">Military Information</h5>
                         <div class="space-y-2 text-sm">
@@ -2203,9 +2207,13 @@ function showCadetProfile(cadetId) {
                                     ${data.cadet.swimming_qualification || 'N/A'}
                                 </span>
                             </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">TTP Date:</span>
+                                <span class="font-medium">${data.cadet.ttp_date ? new Date(data.cadet.ttp_date).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'}) : 'N/A'}</span>
+                            </div>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <h5 class="font-medium text-gray-900 border-b pb-2">Academic Information</h5>
                         <div class="space-y-2 text-sm">

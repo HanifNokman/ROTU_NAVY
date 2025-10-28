@@ -26,10 +26,10 @@ class CadetDashboardController extends Controller
             ])
             ->firstOrFail();
 
-        // Sort displayed badges by rarity (rarest first) and limit to 8
+        // Sort displayed badges by rarity (rarest first) and limit to 12
         $cadet->cadetBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
             return $cadetBadge->badge->rarity_level;
-        })->take(8)->values();
+        })->take(12)->values();
 
         $intakeYear = $cadet->intake_year ?? now()->year;
         $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
@@ -65,10 +65,10 @@ class CadetDashboardController extends Controller
             ])
             ->get()
             ->map(function($intakeCadet) {
-                // Sort each cadet's badges by rarity (rarest first) and limit to 8
+                // Sort each cadet's badges by rarity (rarest first) and limit to 12
                 $intakeCadet->cadetBadges = $intakeCadet->cadetBadges->sortByDesc(function($cadetBadge) {
                     return $cadetBadge->badge->rarity_level;
-                })->take(8)->values();
+                })->take(12)->values();
                 return $intakeCadet;
             })
             ->sortBy(function($cadet) {
@@ -135,10 +135,10 @@ class CadetDashboardController extends Controller
             }
         ])->findOrFail($cadetId);
 
-        // Sort displayed badges by rarity (rarest first) and limit to 8
+        // Sort displayed badges by rarity (rarest first) and limit to 12
         $cadet->cadetBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
             return $cadetBadge->badge->rarity_level;
-        })->take(8)->values();
+        })->take(12)->values();
 
         return response()->json([
             'success' => true,
