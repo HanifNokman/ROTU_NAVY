@@ -472,7 +472,7 @@
                                                     </div>
                                                     <div>
                                                         <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Duration</div>
-                                                        <div class="text-sm font-bold text-gray-900 mt-0.5">{{ $days }}-Day Training</div>
+                                                        <div class="text-sm font-bold text-gray-900 mt-0.5">{{ floor($days ?? 0) }}-Day Training</div>
                                                     </div>
                                                 </div>
                                             @endif
