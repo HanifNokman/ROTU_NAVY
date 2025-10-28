@@ -30,6 +30,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
@@ -37,6 +41,7 @@
             color: var(--text-primary);
             line-height: 1.7;
             scroll-behavior: smooth;
+            max-width: 100vw;
         }
 
         /* Custom Scrollbar */
@@ -1399,6 +1404,26 @@
             max-width: 120px !important;
         }
 
+        /* QR Code Container */
+        .qr-code-container {
+            width: 280px;
+            height: 280px;
+            background: white;
+            margin: 0 auto 2rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .qr-code-container img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
         /* Enhanced Footer */
         .footer {
             background: rgba(16, 20, 28, 0.98);
@@ -1544,6 +1569,35 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            /* Navigation responsiveness */
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+
+            .navbar.scrolled {
+                padding: 0.5rem 1rem;
+            }
+
+            .nav-logo img {
+                height: 50px;
+            }
+
+            .nav-logo-text .main-title {
+                font-size: 1.25rem;
+            }
+
+            .nav-logo-text .sub-title {
+                font-size: 0.7rem;
+                letter-spacing: 1px;
+            }
+
+            .user-dropdown-menu {
+                width: calc(100vw - 2rem);
+                max-width: 320px;
+                right: 0;
+                left: auto;
+            }
+
             .nav-links {
                 display: none;
                 position: absolute;
@@ -1553,7 +1607,7 @@
                 background: rgba(16, 20, 28, 0.98);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
-                padding: 2rem;
+                padding: 2rem 1rem;
                 gap: 1.5rem;
                 border-top: 1px solid var(--border-color);
             }
@@ -1588,24 +1642,83 @@
                 display: block;
             }
 
+            /* Notification banner */
+            .notification-banner {
+                padding: 1rem 3rem 1rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            /* Hero section */
+            .hero-content {
+                padding: 2rem 1.5rem;
+                max-width: 90%;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero-content p {
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
+            }
+
             .hero-cta {
                 flex-direction: column;
                 align-items: center;
+                gap: 1rem;
             }
 
+            .hero-cta .btn-primary {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .carousel-nav {
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+
+            .carousel-nav.prev {
+                left: 15px;
+            }
+
+            .carousel-nav.next {
+                right: 15px;
+            }
+
+            /* Statistics */
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem;
             }
 
+            /* Features and Requirements */
             .features-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
+                gap: 2rem;
+            }
+
+            .feature-card {
+                padding: 2.5rem 2rem;
+            }
+
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.75rem;
             }
 
             .requirements-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem;
             }
 
+            /* Sections */
             .section {
                 padding: 4rem 1rem;
             }
@@ -1721,28 +1834,200 @@
         }
 
         @media (max-width: 480px) {
+            /* Extra small devices - Honor X9a and smaller */
+
+            /* Navigation */
+            .navbar {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .navbar.scrolled {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .nav-logo img {
+                height: 45px;
+            }
+
+            .nav-logo-text .main-title {
+                font-size: 1.1rem;
+            }
+
+            .nav-logo-text .sub-title {
+                font-size: 0.65rem;
+            }
+
+            .user-dropdown-menu {
+                width: calc(100vw - 1.5rem);
+                max-width: 300px;
+            }
+
+            .user-dropdown-trigger {
+                min-width: 120px;
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+
+            .user-avatar {
+                width: 28px;
+                height: 28px;
+            }
+
+            /* Notification banner */
+            .notification-banner {
+                padding: 0.875rem 2.5rem 0.875rem 0.875rem;
+                font-size: 0.8rem;
+            }
+
+            .notification-close {
+                right: 0.75rem;
+                width: 28px;
+                height: 28px;
+                font-size: 1rem;
+            }
+
+            /* Statistics - single column */
             .stats-container {
                 grid-template-columns: 1fr;
+                gap: 1.25rem;
             }
 
             .stat-number {
                 font-size: 2.5rem;
             }
 
+            .stat-label {
+                font-size: 0.95rem;
+            }
+
+            /* Features */
             .feature-card {
-                padding: 2rem;
+                padding: 2rem 1.5rem;
+            }
+
+            .feature-icon {
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+
+            /* Requirements */
+            .requirement-card {
+                padding: 2rem 1.5rem;
+            }
+
+            /* Sections */
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+            }
+
+            .enhanced-card {
+                padding: 1.5rem;
+            }
+
+            /* Hero */
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            /* Timeline */
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                width: calc(100% - 60px) !important;
+                margin-left: 60px;
+                padding: 1.5rem;
+            }
+
+            .timeline-center-icon {
+                left: 20px !important;
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+
+            .timeline-content {
+                min-height: auto;
+            }
+
+            /* Application section - QR code */
+            .qr-code-container {
+                width: 240px;
+                height: 240px;
+            }
+
+            /* Footer */
+            .footer-section .social-icons a {
+                width: 44px;
+                height: 44px;
+                font-size: 1.25rem;
+            }
+
+            /* Modals */
+            .modal-content {
+                width: 96%;
+                margin: 2% auto;
+                padding: 1.25rem;
             }
 
             #logoutModal .modal-buttons {
                 flex-direction: row !important;
                 gap: 0.75rem !important;
             }
-            
+
             #logoutModal .btn-secondary-modal,
             #logoutModal .btn-primary {
-                font-size: 0.9rem !important;
-                padding: 10px 12px !important;
-                min-width: 80px !important;
+                font-size: 0.85rem !important;
+                padding: 9px 10px !important;
+                min-width: 75px !important;
+            }
+        }
+
+        /* Extra small devices - specific adjustments for 360px screens */
+        @media (max-width: 360px) {
+            .nav-logo img {
+                height: 40px;
+            }
+
+            .nav-logo-text .main-title {
+                font-size: 1rem;
+            }
+
+            .nav-logo-text .sub-title {
+                font-size: 0.6rem;
+            }
+
+            .user-dropdown-menu {
+                width: calc(100vw - 1rem);
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .feature-card,
+            .requirement-card {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .qr-code-container {
+                width: 220px;
+                height: 220px;
             }
         }
     </style>
@@ -2429,9 +2714,9 @@
                     <div class="enhanced-card animate-on-scroll" style="text-align: center;">
                         <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.75rem;">Kod QR Akses Pantas</h3>
                         
-                        <div style="width: 280px; height: 280px; background: white; margin: 0 auto 2rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+                        <div class="qr-code-container">
                             @if(\App\Models\ContentSetting::get('qr_code_image'))
-                                <img id="qrCodeImage" src="{{ asset(\App\Models\ContentSetting::get('qr_code_image')) }}" alt="Kod QR" style="width: 240px; height: 240px; border-radius: 8px; object-fit: contain;">
+                                <img id="qrCodeImage" src="{{ asset(\App\Models\ContentSetting::get('qr_code_image')) }}" alt="Kod QR">
                             @else
                                 <div style="color: #666; text-align: center; padding: 2rem;">
                                     <i class="fas fa-qrcode" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
