@@ -214,16 +214,44 @@
 
         /* Alumni tree adjustments */
         .alumni-tree-spacing {
-            gap: 1rem !important;
+            gap: 1.5rem !important;
         }
 
         .alumni-portrait {
-            width: 4.5rem !important;
-            height: 5.5rem !important;
+            width: 5rem !important;
+            height: 7rem !important;
+        }
+
+        .alumni-portrait svg {
+            width: 1.75rem !important;
+            height: 1.75rem !important;
         }
 
         .alumni-name {
-            font-size: 0.75rem !important;
+            font-size: 0.7rem !important;
+            line-height: 1.2 !important;
+            padding: 0 0.25rem;
+        }
+
+        .alumni-role {
+            font-size: 0.7rem !important;
+            margin-top: 0.125rem !important;
+        }
+
+        .connecting-line {
+            height: 1.5rem !important;
+        }
+
+        /* Adjust Thana/Zayn spacing on mobile */
+        .thana-zayn-container {
+            gap: 4rem !important;
+            space-x: 6rem !important;
+        }
+
+        /* Alumni grid on mobile */
+        .alumni-others-grid {
+            gap: 1rem !important;
+            padding: 0 0.5rem;
         }
 
         /* Section header adjustments */
@@ -321,34 +349,35 @@
                             </summary>
                             <div class="p-4 sm:p-6">
                                 <!-- Family Tree Layout -->
-                                <div class="flex flex-col items-center alumni-tree-spacing space-y-4 sm:space-y-6">
+                                <div class="flex flex-col items-center alumni-tree-spacing space-y-5 sm:space-y-6">
                                     <!-- CO at the top -->
                                     @php
                                         $co = $cadets->firstWhere('position', 'CO');
                                     @endphp
                                     <div class="text-center">
-                                        <div class="alumni-portrait w-16 h-20 sm:w-20 sm:h-24 mx-auto mb-2 sm:mb-3 bg-gray-200 rounded-lg overflow-hidden">
+                                        <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-3 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                             @if($co && $co->profile_pic)
                                                 <img src="{{ asset('storage/' . $co->profile_pic) }}" alt="{{ $co->user->name }}" class="w-full h-full object-cover">
                                             @else
                                                 <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                     </svg>
                                                 </div>
                                             @endif
                                         </div>
                                         @if($co)
-                                            <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Lt. M {{ $co->user->name }} PSSTLDM</p>
+                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $co->user->name }}</p>
+                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                         @else
                                             <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Position Vacant</p>
                                         @endif
-                                        <p class="text-xs sm:text-sm text-gray-500 font-bold">CO Intake</p>
+                                        <p class="alumni-role text-xs sm:text-sm text-gray-500 font-semibold mt-1">CO Intake</p>
                                     </div>
 
                                     <!-- Line connecting CO to Thana and Zayn -->
                                     @if($co)
-                                    <div class="w-px h-4 sm:h-6 bg-gray-300"></div>
+                                    <div class="connecting-line w-px h-6 sm:h-6 bg-gray-400"></div>
                                     @endif
 
                                     <!-- Thana and Zayn side by side -->
@@ -356,52 +385,71 @@
                                         $thana = $cadets->firstWhere('position', 'Thana');
                                         $zayn = $cadets->firstWhere('position', 'Zayn');
                                     @endphp
-                                    <div class="flex justify-center space-x-20 sm:space-x-40">
+                                    <div class="thana-zayn-container flex justify-center" style="gap: 6rem;">
+                                        <style>
+                                            @media (min-width: 640px) {
+                                                .thana-zayn-container {
+                                                    gap: 12rem !important;
+                                                }
+                                            }
+                                            @media (min-width: 768px) {
+                                                .thana-zayn-container {
+                                                    gap: 14rem !important;
+                                                }
+                                            }
+                                            @media (min-width: 1024px) {
+                                                .thana-zayn-container {
+                                                    gap: 16rem !important;
+                                                }
+                                            }
+                                        </style>
                                         <!-- Thana position -->
                                         <div class="text-center">
-                                            <div class="alumni-portrait w-16 h-20 sm:w-20 sm:h-24 mx-auto mb-2 sm:mb-3 bg-gray-200 rounded-lg overflow-hidden">
+                                            <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-3 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                                 @if($thana && $thana->profile_pic)
                                                     <img src="{{ asset('storage/' . $thana->profile_pic) }}" alt="{{ $thana->user->name }}" class="w-full h-full object-cover">
                                                 @else
                                                     <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                         </svg>
                                                     </div>
                                                 @endif
                                             </div>
                                             @if($thana)
-                                                <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Lt. M {{ $thana->user->name }} PSSTLDM</p>
+                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $thana->user->name }}</p>
+                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                             @else
                                                 <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Position Vacant</p>
                                             @endif
-                                            <p class="text-xs sm:text-sm text-gray-500 font-bold">Rank Thana</p>
+                                            <p class="alumni-role text-xs sm:text-sm text-gray-500 font-semibold mt-1">Rank Thana</p>
                                         </div>
                                         <!-- Zayn position -->
                                         <div class="text-center">
-                                            <div class="alumni-portrait w-16 h-20 sm:w-20 sm:h-24 mx-auto mb-2 sm:mb-3 bg-gray-200 rounded-lg overflow-hidden">
+                                            <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-3 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                                 @if($zayn && $zayn->profile_pic)
                                                     <img src="{{ asset('storage/' . $zayn->profile_pic) }}" alt="{{ $zayn->user->name }}" class="w-full h-full object-cover">
                                                 @else
                                                     <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                         </svg>
                                                     </div>
                                                 @endif
                                             </div>
                                             @if($zayn)
-                                                <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Lt. M {{ $zayn->user->name }} PSSTLDM</p>
+                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $zayn->user->name }}</p>
+                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                             @else
                                                 <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Position Vacant</p>
                                             @endif
-                                            <p class="text-xs sm:text-sm text-gray-500 font-bold">Rank Zayn</p>
+                                            <p class="alumni-role text-xs sm:text-sm text-gray-500 font-semibold mt-1">Rank Zayn</p>
                                         </div>
                                     </div>
 
                                     <!-- Line connecting to others -->
                                     @if($thana || $zayn)
-                                    <div class="w-px h-4 sm:h-6 bg-gray-300"></div>
+                                    <div class="connecting-line w-px h-6 sm:h-6 bg-gray-400"></div>
                                     @endif
 
                                     <!-- Other cadets in grid -->
@@ -409,23 +457,35 @@
                                         $others = $cadets->filter(function($cadet) {
                                             return !in_array($cadet->position, ['CO', 'Thana', 'Zayn']);
                                         });
+                                        $otherCount = $others->count();
+                                        
+                                        // Determine desktop grid columns based on count
+                                        $desktopCols = 'lg:grid-cols-5'; // default 5 columns
+                                        if ($otherCount <= 3) {
+                                            $desktopCols = 'lg:grid-cols-' . $otherCount;
+                                        } elseif ($otherCount == 4) {
+                                            $desktopCols = 'lg:grid-cols-4';
+                                        }
                                     @endphp
-                                    @if($others->count() > 0)
-                                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                                    @if($otherCount > 0)
+                                    <div class="alumni-others-grid grid gap-4 sm:gap-4 w-full max-w-6xl
+                                        grid-cols-2 md:grid-cols-3 {{ $desktopCols }}
+                                        @if($otherCount <= 2) justify-items-center @endif">
                                         @foreach($others as $cadet)
                                         <div class="text-center">
-                                            <div class="alumni-portrait w-16 h-20 sm:w-20 sm:h-24 mx-auto mb-2 bg-gray-200 rounded-lg overflow-hidden">
+                                            <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-2 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                                 @if($cadet->profile_pic)
                                                     <img src="{{ asset('storage/' . $cadet->profile_pic) }}" alt="{{ $cadet->user->name }}" class="w-full h-full object-cover">
                                                 @else
                                                     <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                         </svg>
                                                     </div>
                                                 @endif
                                             </div>
-                                            <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Lt. M {{ $cadet->user->name }} PSSTLDM</p>
+                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $cadet->user->name }}</p>
+                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                         </div>
                                         @endforeach
                                     </div>
