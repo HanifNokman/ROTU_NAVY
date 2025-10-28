@@ -90,6 +90,18 @@
     }
 
     /* ========================================= */
+    /* DESKTOP STYLES */
+    /* ========================================= */
+    @media (min-width: 641px) {
+        /* Make action buttons shorter on desktop */
+        .section-header button[onclick*="Modal"],
+        .section-header button {
+            padding-top: 0.625rem !important;    /* py-2.5 */
+            padding-bottom: 0.625rem !important; /* py-2.5 */
+        }
+    }
+
+    /* ========================================= */
     /* MOBILE RESPONSIVE STYLES */
     /* ========================================= */
     @media (max-width: 640px) {
@@ -159,10 +171,38 @@
             stroke-width: 2.5 !important;
         }
 
-        /* Ensure Add Quiz Question button icon stays horizontal */
-        .bg-gradient-to-r.from-purple-600 {
+        /* Ensure all action buttons stay horizontal on mobile */
+        button[onclick*="Modal"].bg-blue-600,
+        button[onclick*="Modal"].bg-green-600,
+        button[onclick*="Modal"].bg-purple-600,
+        .section-header button {
             flex-direction: row !important;
             align-items: center !important;
+            justify-content: center !important;
+            display: flex !important;
+            gap: 0.5rem !important;
+            text-align: center !important;
+        }
+
+        button[onclick*="Modal"] svg,
+        .section-header button svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+            min-width: 1.25rem !important;
+            min-height: 1.25rem !important;
+            flex-shrink: 0 !important;
+            display: inline-block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            vertical-align: middle !important;
+            float: none !important;
+        }
+
+        button[onclick*="Modal"] span,
+        .section-header button span {
+            display: inline-block !important;
+            vertical-align: middle !important;
+            line-height: 1.25rem !important;
         }
 
         /* Category filters */
@@ -320,9 +360,15 @@
             height: 1.25rem !important;
         }
 
-        /* Content cards */
+        /* Content cards - remove horizontal margins only */
         .dashboard-card {
-            margin: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* Add vertical spacing between dashboard cards */
+        .dashboard-card + .dashboard-card {
+            margin-top: 2rem !important;
         }
 
         /* Module/lesson items */
@@ -367,7 +413,7 @@
     </style>
 
     <div class="py-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
             {{-- ================================================================ --}}
             {{-- DASHBOARD HEADER --}}
@@ -410,17 +456,17 @@
                             <p class="text-gray-600 ml-13">Manage educational materials and learning resources for cadets</p>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="openMaterialModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <button onclick="openMaterialModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex flex-row items-center justify-center gap-2 whitespace-nowrap">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                                 </svg>
-                                Add Materials
+                                <span>Add Materials</span>
                             </button>
-                            <button onclick="openCategoryModal()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <button onclick="openCategoryModal()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex flex-row items-center justify-center gap-2 whitespace-nowrap">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                                 </svg>
-                                Add Category
+                                <span>Add Category</span>
                             </button>
                         </div>
                     </div>
@@ -647,11 +693,11 @@
                             </div>
                             <p class="text-gray-600 ml-13">Create and manage quiz questions for cadets</p>
                         </div>
-                        <button onclick="openQuizModal()" class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <button onclick="openQuizModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex flex-row items-center justify-center gap-2 whitespace-nowrap">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            Add Quiz Question
+                            <span>Add Quiz Question</span>
                         </button>
                     </div>
                 </div>
