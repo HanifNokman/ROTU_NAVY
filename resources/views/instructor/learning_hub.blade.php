@@ -136,13 +136,14 @@
             width: 100% !important;
         }
 
-        .flex.gap-2 {
+        /* Scoped to page content only, not mobile sidebar */
+        main .flex.gap-2 {
             width: 100% !important;
             flex-direction: column !important;
             gap: 0.5rem !important;
         }
 
-        .flex.gap-2 button {
+        main .flex.gap-2 button {
             width: 100% !important;
             justify-content: center !important;
             padding: 0.75rem 1rem !important;
@@ -152,7 +153,7 @@
         }
 
         /* Make plus icons more visible */
-        .flex.gap-2 button svg {
+        main .flex.gap-2 button svg {
             width: 1.25rem !important;
             height: 1.25rem !important;
             stroke-width: 2.5 !important;

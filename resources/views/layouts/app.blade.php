@@ -146,10 +146,15 @@
                     letter-spacing: 0.05em !important;
                 }
 
-                /* Reduce button padding */
+                /* Reduce button padding and ensure proper layout */
                 .btn-primary {
                     padding: 10px 20px !important;
                     font-size: 0.875rem !important;
+                    display: flex !important;
+                    flex-direction: row !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    white-space: nowrap !important;
                 }
 
                 /* Optimize info cards */
@@ -710,21 +715,21 @@
                     x-transition:leave-end="opacity-0 translate-x-full"
                     class="fixed top-0 right-0 w-[85vw] max-w-sm h-full bg-[#2e313c] shadow-2xl flex flex-col justify-between z-50 border-l border-[#373a46] sm:hidden text-white overflow-y-auto"
                 >
-                    <div class="flex flex-col h-full space-y-3 px-4 pt-4 pb-4">
-                        <div class="flex justify-end">
+                    <div class="flex flex-col h-full px-4 pb-4">
+                        <div class="flex justify-end pt-2 pb-2">
                             <button @click="sidebarOpen = false" class="text-white hover:text-gray-400">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
-                        
+
                         {{-- ================================================================ --}}
                         {{-- MOBILE PROFILE SECTION --}}
                         {{-- ================================================================ --}}
                         <x-dropdown align="right" width="full" contentClasses="py-1 bg-white text-black border border-gray-300">
                             <x-slot name="trigger">
-                                <div class="flex items-center gap-2 border-b border-[#373a46] pb-3 cursor-pointer hover:bg-[#373a46] transition-colors rounded-lg px-2 py-2 w-full">
+                                <div class="flex items-center gap-2 border-b border-[#373a46] pb-3 mb-3 cursor-pointer hover:bg-[#373a46] transition-colors rounded-lg px-2 py-2 w-full">
                                     @if($avatarSrc)
                                         <img src="{{ $avatarSrc }}"
                                              alt="Profile"
@@ -902,26 +907,26 @@
                             <div class="px-3 pb-2 flex flex-col space-y-2">
                                 @if(Auth::user()->role === 'instructor')
                                     <div class="relative">
-                                        <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full text-sm py-2.5">
+                                        <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex flex-row items-center justify-center w-full text-sm py-2.5">
                                             @if($hasNotifications)
                                                 <div class="notification-badge"></div>
                                             @endif
                                             <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                             </svg>
-                                            <span class="truncate">Pending Application</span>
+                                            <span class="truncate whitespace-nowrap">Pending Application</span>
                                         </a>
                                     </div>
                                 @elseif(Auth::user()->role === 'cadet')
                                     <div class="relative">
-                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full text-sm py-2.5">
+                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex flex-row items-center justify-center w-full text-sm py-2.5">
                                             @if($hasNotifications)
                                                 <div class="notification-badge"></div>
                                             @endif
                                             <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
-                                            <span class="truncate">Attendance</span>
+                                            <span class="truncate whitespace-nowrap">Attendance</span>
                                         </a>
                                     </div>
                                 @endif
