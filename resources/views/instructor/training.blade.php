@@ -1008,7 +1008,7 @@
         renderDynamicIntakeCheckboxes();
         // Form submission handler
         document.getElementById('trainingForm').addEventListener('submit', handleFormSubmit);
-        
+
         // Add checkbox interaction
         document.addEventListener('change', function(e) {
             if (e.target.name === 'involvement[]') {
@@ -1018,6 +1018,43 @@
                 } else {
                     label.classList.remove('bg-blue-50', 'border-blue-300');
                 }
+            }
+        });
+
+        // Initialize modal close event listeners
+        const trainingModal = document.getElementById('trainingModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const attendanceModal = document.getElementById('attendanceModal');
+
+        if (trainingModal) {
+            trainingModal.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        }
+
+        if (deleteModal) {
+            deleteModal.addEventListener('click', function(e) {
+                if (e.target === this) closeDeleteModal();
+            });
+        }
+
+        if (attendanceModal) {
+            attendanceModal.addEventListener('click', function(e) {
+                if (e.target === this) closeAttendanceModal();
+            });
+        }
+
+        // Enhanced keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // ESC to close attendance modal
+            if (e.key === 'Escape' && attendanceModal && !attendanceModal.classList.contains('hidden')) {
+                closeAttendanceModal();
+            }
+
+            // Ctrl+S to save attendance
+            if (e.ctrlKey && e.key === 's' && attendanceModal && !attendanceModal.classList.contains('hidden')) {
+                e.preventDefault();
+                saveAttendance();
             }
         });
     });
@@ -1717,20 +1754,6 @@
     }, 3000);
 }
 
-    // Enhanced keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        // ESC to close attendance modal
-        if (e.key === 'Escape' && !document.getElementById('attendanceModal').classList.contains('hidden')) {
-            closeAttendanceModal();
-        }
-        
-        // Ctrl+S to save attendance
-        if (e.ctrlKey && e.key === 's' && !document.getElementById('attendanceModal').classList.contains('hidden')) {
-            e.preventDefault();
-            saveAttendance();
-        }
-    });
-
     function handleFormSubmit(e) {
         e.preventDefault();
         
@@ -1799,19 +1822,6 @@
     function formatDateTimeForInput(datetime) {
         return new Date(datetime).toISOString().slice(0, 16);
     }
-
-    // Close modals when clicking outside
-    document.getElementById('trainingModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
-
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this) closeDeleteModal();
-    });
-
-    document.getElementById('attendanceModal').addEventListener('click', function(e) {
-        if (e.target === this) closeAttendanceModal();
-    });
 </script>
 
 <script>
