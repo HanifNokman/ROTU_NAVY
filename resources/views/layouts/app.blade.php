@@ -36,17 +36,17 @@
             }
 
             :root {
-                --gradient-primary: linear-gradient(135deg, #3c92d9, #2980b9);
+                --gradient-primary: linear-gradient(135deg, #3c92d9, #3c92d9);
                 --shadow-primary: 0 10px 30px rgba(60, 146, 217, 0.3);
             }
 
             .btn-primary {
-                background: var(--gradient-primary);
+                background: var(--gradient-primary) !important;
                 padding: 12px 28px;
                 border: none;
                 border-radius: 8px;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                color: white;
+                color: white !important;
                 text-decoration: none;
                 font-weight: 600;
                 font-size: 0.95rem;
@@ -54,11 +54,15 @@
                 position: relative;
                 overflow: visible;
                 cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .btn-primary:hover {
                 transform: translateY(-1px);
                 box-shadow: 0 6px 20px rgba(60, 146, 217, 0.4);
+                background: #3c92d9 !important;
             }
 
             .btn-primary::after {

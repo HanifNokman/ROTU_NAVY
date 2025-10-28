@@ -219,12 +219,12 @@ class PerformanceController extends Controller
             return $a->rarity_level <=> $b->rarity_level;
         });
 
-        // Limit displayed badges to maximum 8, sorted by rarity (rarest first)
+        // Limit displayed badges to maximum 12, sorted by rarity (rarest first)
         $displayedBadges = collect($displayBadges)
             ->sortByDesc(function($cadetBadge) {
                 return $cadetBadge->badge->rarity_level;
             })
-            ->take(8)
+            ->take(12)
             ->values()
             ->all();
 
@@ -259,17 +259,17 @@ class PerformanceController extends Controller
             return response()->json(['error' => 'Badge not unlocked'], 404);
         }
 
-        // Check if trying to display but already at 8 badge limit
+        // Check if trying to display but already at 12 badge limit
         if (!$cadetBadge->is_displayed) {
             $currentDisplayedCount = CadetBadge::where('cadet_id', $cadet->id)
                 ->where('is_displayed', true)
                 ->count();
 
-            if ($currentDisplayedCount >= 8) {
+            if ($currentDisplayedCount >= 12) {
                 return response()->json([
                     'success' => false,
                     'error' => 'limit_reached',
-                    'message' => 'You can only display a maximum of 8 badges. Please disable one before adding another.'
+                    'message' => 'You can only display a maximum of 12 badges. Please disable one before adding another.'
                 ], 400);
             }
         }
