@@ -389,17 +389,17 @@
                                         <style>
                                             @media (min-width: 640px) {
                                                 .thana-zayn-container {
-                                                    gap: 16rem !important;
+                                                    gap: 12rem !important;
                                                 }
                                             }
                                             @media (min-width: 768px) {
                                                 .thana-zayn-container {
-                                                    gap: 20rem !important;
+                                                    gap: 14rem !important;
                                                 }
                                             }
                                             @media (min-width: 1024px) {
                                                 .thana-zayn-container {
-                                                    gap: 24rem !important;
+                                                    gap: 16rem !important;
                                                 }
                                             }
                                         </style>
@@ -457,9 +457,20 @@
                                         $others = $cadets->filter(function($cadet) {
                                             return !in_array($cadet->position, ['CO', 'Thana', 'Zayn']);
                                         });
+                                        $otherCount = $others->count();
+                                        
+                                        // Determine desktop grid columns based on count
+                                        $desktopCols = 'lg:grid-cols-5'; // default 5 columns
+                                        if ($otherCount <= 3) {
+                                            $desktopCols = 'lg:grid-cols-' . $otherCount;
+                                        } elseif ($otherCount == 4) {
+                                            $desktopCols = 'lg:grid-cols-4';
+                                        }
                                     @endphp
-                                    @if($others->count() > 0)
-                                    <div class="alumni-others-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-4 w-full max-w-4xl">
+                                    @if($otherCount > 0)
+                                    <div class="alumni-others-grid grid gap-4 sm:gap-4 w-full max-w-6xl
+                                        grid-cols-2 md:grid-cols-3 {{ $desktopCols }}
+                                        @if($otherCount <= 2) justify-items-center @endif">
                                         @foreach($others as $cadet)
                                         <div class="text-center">
                                             <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-2 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
