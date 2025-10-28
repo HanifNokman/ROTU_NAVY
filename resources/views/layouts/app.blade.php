@@ -911,7 +911,7 @@
                             <div class="px-3 pb-2 flex flex-col space-y-2">
                                 @if(Auth::user()->role === 'instructor')
                                     <div class="relative">
-                                        <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex flex-row items-center justify-center w-full text-sm py-2.5">
+                                        <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex flex-row items-center justify-center w-full text-base h-12">
                                             @if($hasNotifications)
                                                 <div class="notification-badge"></div>
                                             @endif
@@ -923,7 +923,7 @@
                                     </div>
                                 @elseif(Auth::user()->role === 'cadet')
                                     <div class="relative">
-                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex flex-row items-center justify-center w-full text-sm py-2.5">
+                                        <a href="{{ route('cadet.attendance') }}" class="btn-primary flex flex-row items-center justify-center w-full text-base h-12">
                                             @if($hasNotifications)
                                                 <div class="notification-badge"></div>
                                             @endif
@@ -1165,7 +1165,7 @@
                                 <div class="p-4 flex flex-col justify-between h-full">
                                     @if(Auth::user()->role === 'instructor')
                                         <div class="relative">
-                                            <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full">
+                                            <a href="{{ route('instructor.pending.verification') }}" class="btn-primary flex items-center justify-center w-full h-12 text-base">
                                                 @if($hasNotifications)
                                                     <div class="notification-badge"></div>
                                                 @endif
@@ -1177,7 +1177,7 @@
                                         </div>
                                     @elseif(Auth::user()->role === 'cadet')
                                         <div class="relative">
-                                            <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full">
+                                            <a href="{{ route('cadet.attendance') }}" class="btn-primary flex items-center justify-center w-full h-12 text-base">
                                                 @if($hasNotifications)
                                                     <div class="notification-badge"></div>
                                                 @endif
