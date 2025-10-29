@@ -18,7 +18,7 @@ class TrainingController extends Controller
     public function index(Request $request)
     {
         $this->updateExpiredTrainings();
-        
+
         // Get filter parameters
         $filterYear = $request->get('year');
         $filterMonth = $request->get('month');
@@ -57,11 +57,11 @@ class TrainingController extends Controller
             ->get()
             ->map(function($training) {
                 // Format dates
-                $training->formatted_start_date = $training->start_datetime ? 
+                $training->formatted_start_date = $training->start_datetime ?
                     $training->start_datetime->format('M d, Y') : 'N/A';
-                $training->formatted_start_time = $training->start_datetime ? 
+                $training->formatted_start_time = $training->start_datetime ?
                     $training->start_datetime->format('h:i A') : 'N/A';
-                
+
                 // Add status badge color
                 $training->status_badge_color = match($training->status) {
                     'Active' => 'bg-green-100 text-green-800',
@@ -69,16 +69,16 @@ class TrainingController extends Controller
                     'Cancelled' => 'bg-red-100 text-red-800',
                     default => 'bg-blue-100 text-blue-800',
                 };
-                
+
                 return $training;
             });
-        
+
         // Get today's trainings (unfiltered)
         $todaysTrainings = Training::where(function ($query) {
             $now = Carbon::now();
             $today = $now->toDateString();
             $yesterday = $now->copy()->subDay()->toDateString();
-            
+
             $query->whereDate('start_datetime', $today)
                 ->orWhere(function ($q) use ($today, $yesterday) {
                     $q->whereDate('start_datetime', $yesterday)
@@ -92,7 +92,7 @@ class TrainingController extends Controller
                         });
                 });
         })->orderBy('start_datetime', 'asc')->get();
-        
+
         // Get calendar events (based on filtered trainings)
         $calendarEvents = $trainings->map(function ($training) {
             return [
@@ -141,8 +141,8 @@ class TrainingController extends Controller
         }
 
         return view('instructor.training', compact(
-            'trainings', 
-            'calendarEvents', 
+            'trainings',
+            'calendarEvents',
             'todaysTrainings',
             'availableYears',
             'availableYearsMonths',
@@ -169,6 +169,8 @@ class TrainingController extends Controller
             'allowance_amount' => $training->allowance_amount,
             'allowance_type' => $training->allowance_type,
             'status' => $training->status,
+            'latitude' => $training->latitude,
+            'longitude' => $training->longitude,
         ]);
     }
 
@@ -186,7 +188,9 @@ class TrainingController extends Controller
             'end_datetime' => 'nullable|date|after:start_datetime',
             'involvement' => 'nullable|string|max:255',
             'duration_hours' => 'nullable|integer|min:2|max:10',
-            'status' => 'required|in:Active,Completed,Cancelled'
+            'status' => 'required|in:Active,Completed,Cancelled',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180'
         ]);
 
         if ($validated['status'] !== 'Cancelled') {
@@ -218,7 +222,9 @@ class TrainingController extends Controller
             'end_datetime' => 'nullable|date|after:start_datetime',
             'involvement' => 'nullable|string|max:255',
             'duration_hours' => 'nullable|integer|min:2|max:10',
-            'status' => 'required|in:Active,Completed,Cancelled'
+            'status' => 'required|in:Active,Completed,Cancelled',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180'
         ]);
 
         $involvementChanged = $training->involvement !== $validated['involvement'];
