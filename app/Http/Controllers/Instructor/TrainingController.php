@@ -169,8 +169,8 @@ class TrainingController extends Controller
             'allowance_amount' => $training->allowance_amount,
             'allowance_type' => $training->allowance_type,
             'status' => $training->status,
-            'latitude' => $training->latitude,
-            'longitude' => $training->longitude,
+            'meetup_latitude' => $training->meetup_latitude,
+            'meetup_longitude' => $training->meetup_longitude,
         ]);
     }
 
@@ -189,8 +189,8 @@ class TrainingController extends Controller
             'involvement' => 'nullable|string|max:255',
             'duration_hours' => 'nullable|integer|min:2|max:10',
             'status' => 'required|in:Active,Completed,Cancelled',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180'
+            'meetup_latitude' => 'nullable|numeric|between:-90,90',
+            'meetup_longitude' => 'nullable|numeric|between:-180,180'
         ]);
 
         if ($validated['status'] !== 'Cancelled') {
@@ -223,8 +223,8 @@ class TrainingController extends Controller
             'involvement' => 'nullable|string|max:255',
             'duration_hours' => 'nullable|integer|min:2|max:10',
             'status' => 'required|in:Active,Completed,Cancelled',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180'
+            'meetup_latitude' => 'nullable|numeric|between:-90,90',
+            'meetup_longitude' => 'nullable|numeric|between:-180,180'
         ]);
 
         $involvementChanged = $training->involvement !== $validated['involvement'];
