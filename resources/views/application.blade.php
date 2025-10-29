@@ -259,6 +259,13 @@
             margin-top: 2rem;
         }
 
+        .required-indicator {
+            color: var(--accent-pink);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -729,7 +736,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="name" class="form-label">
-                                <i class="fas fa-user"></i>Nama Penuh
+                                <i class="fas fa-user"></i>Nama Penuh <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <input type="text" id="name" name="name" value="{{ old('name') }}" required
                                 class="form-input" placeholder="Masukkan nama penuh anda">
@@ -737,7 +744,7 @@
 
                         <div class="form-group">
                             <label for="email" class="form-label">
-                                <i class="fas fa-envelope"></i>Alamat Emel
+                                <i class="fas fa-envelope"></i>Alamat Emel <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <input type="email" id="email" name="email" value="{{ old('email') }}" required
                                 class="form-input" placeholder="contoh@email.com">
@@ -747,7 +754,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="phone_number" class="form-label">
-                                <i class="fas fa-phone"></i>Nombor Telefon
+                                <i class="fas fa-phone"></i>Nombor Telefon <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <input type="text" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" required
                                 class="form-input" placeholder="012-3456789">
@@ -755,7 +762,7 @@
 
                         <div class="form-group">
                             <label for="gender" class="form-label">
-                                <i class="fas fa-venus-mars"></i>Jantina
+                                <i class="fas fa-venus-mars"></i>Jantina <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <select id="gender" name="gender" required class="form-select">
                                 <option value="">Pilih Jantina</option>
@@ -768,7 +775,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="ic_number" class="form-label">
-                                <i class="fas fa-id-card"></i>Nombor Kad Pengenalan
+                                <i class="fas fa-id-card"></i>Nombor Kad Pengenalan <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <input type="text" id="ic_number" name="ic_number" value="{{ old('ic_number') }}" required
                                 class="form-input" placeholder="000000-00-0000">
@@ -776,7 +783,7 @@
 
                         <div class="form-group">
                             <label for="matric_no" class="form-label">
-                                <i class="fas fa-graduation-cap"></i>Nombor Matrik
+                                <i class="fas fa-graduation-cap"></i>Nombor Matrik <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <input type="text" id="matric_no" name="matric_no" value="{{ old('matric_no') }}" required
                                 class="form-input" placeholder="Masukkan nombor matrik UMS">
@@ -786,7 +793,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="faculty" class="form-label">
-                                <i class="fas fa-university"></i>Fakulti
+                                <i class="fas fa-university"></i>Fakulti <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <select id="faculty" name="faculty" required class="form-select">
                                 <option value="">Pilih Fakulti</option>
@@ -806,7 +813,7 @@
 
                         <div class="form-group">
                             <label for="course" class="form-label">
-                                <i class="fas fa-book"></i>Kursus
+                                <i class="fas fa-book"></i>Kursus <span class="required-indicator">* Wajib diisi</span>
                             </label>
                             <input type="text" id="course" name="course" value="{{ old('course') }}" required
                                 class="form-input" placeholder="Masukkan nama kursus">
@@ -816,9 +823,9 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="height" class="form-label">
-                                <i class="fas fa-ruler-vertical"></i>Tinggi (cm)
+                                <i class="fas fa-ruler-vertical"></i>Tinggi (cm) <span class="required-indicator">* Wajib diisi</span>
                             </label>
-                            <input type="number" id="height" name="height" value="{{ old('height') }}" step="0.01" min="100" max="250"
+                            <input type="number" id="height" name="height" value="{{ old('height') }}" step="0.01" min="100" max="250" required
                                 class="form-input" placeholder="Contoh: 170.5">
                             <span class="form-help">
                                 <i class="fas fa-info-circle"></i>
@@ -828,9 +835,9 @@
 
                         <div class="form-group">
                             <label for="weight" class="form-label">
-                                <i class="fas fa-weight"></i>Berat (kg)
+                                <i class="fas fa-weight"></i>Berat (kg) <span class="required-indicator">* Wajib diisi</span>
                             </label>
-                            <input type="number" id="weight" name="weight" value="{{ old('weight') }}" step="0.01" min="30" max="200"
+                            <input type="number" id="weight" name="weight" value="{{ old('weight') }}" step="0.01" min="30" max="200" required
                                 class="form-input" placeholder="Contoh: 65.5">
                             <span class="form-help">
                                 <i class="fas fa-info-circle"></i>
@@ -841,9 +848,9 @@
 
                     <div class="form-group">
                         <label for="bmi" class="form-label">
-                            <i class="fas fa-calculator"></i>BMI (Kiraan Automatik)
+                            <i class="fas fa-calculator"></i>BMI (Kiraan Automatik) <span class="required-indicator">* Wajib diisi</span>
                         </label>
-                        <input type="number" id="bmi" name="bmi" value="{{ old('bmi') }}" step="0.01" readonly
+                        <input type="number" id="bmi" name="bmi" value="{{ old('bmi') }}" step="0.01" readonly required
                             class="form-input" placeholder="BMI akan dikira secara automatik">
                         <span class="form-help">
                             <i class="fas fa-info-circle"></i>
@@ -853,9 +860,9 @@
 
                     <div class="form-group">
                         <label for="profile_pic" class="form-label">
-                            <i class="fas fa-camera"></i>Gambar Profil
+                            <i class="fas fa-camera"></i>Gambar Profil <span class="required-indicator">* Wajib diisi</span>
                         </label>
-                        <input type="file" id="profile_pic" name="profile_pic" accept="image/*"
+                        <input type="file" id="profile_pic" name="profile_pic" accept="image/*" required
                             class="form-file">
                         <span class="form-help">
                             <i class="fas fa-info-circle"></i>
@@ -927,6 +934,41 @@
 
         // Calculate BMI on page load if values exist
         window.addEventListener('load', calculateBMI);
+
+        // Hide required indicator when field is filled
+        function toggleRequiredIndicator(fieldId) {
+            const field = document.getElementById(fieldId);
+            const indicator = field.closest('.form-group').querySelector('.required-indicator');
+            if (field && indicator) {
+                if (field.type === 'file') {
+                    if (field.files.length > 0) {
+                        indicator.style.display = 'none';
+                    } else {
+                        indicator.style.display = 'inline';
+                    }
+                } else {
+                    if (field.value.trim() !== '') {
+                        indicator.style.display = 'none';
+                    } else {
+                        indicator.style.display = 'inline';
+                    }
+                }
+            }
+        }
+
+        // Add event listeners to required fields
+        document.addEventListener('DOMContentLoaded', function() {
+            const requiredFields = ['name', 'email', 'phone_number', 'gender', 'ic_number', 'matric_no', 'faculty', 'course', 'height', 'weight', 'bmi', 'profile_pic'];
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', () => toggleRequiredIndicator(fieldId));
+                    field.addEventListener('change', () => toggleRequiredIndicator(fieldId));
+                    // Initial check
+                    toggleRequiredIndicator(fieldId);
+                }
+            });
+        });
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
