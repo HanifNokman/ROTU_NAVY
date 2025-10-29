@@ -226,7 +226,7 @@
                                                 @if($training['type'] === 'hourly')
                                                     <span class="text-green-700">{{ $training['hours'] }} hours</span>
                                                 @else
-                                                    <span class="text-blue-700">{{ $training['days'] }} days</span>
+                                                    <span class="text-blue-700">{{ floor($training['days']) }} days</span>
                                                 @endif
                                             </td>
                                             <td>

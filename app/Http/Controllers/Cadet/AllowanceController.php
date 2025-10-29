@@ -136,7 +136,7 @@ class AllowanceController extends Controller
             });
 
             $totalHours = $trainings->where('type', 'hourly')->sum('hours');
-            $totalDays = $trainings->where('type', 'daily')->sum('days');
+            $totalDays = floor($trainings->where('type', 'daily')->sum('days'));
             $hourlyAllowance = $totalHours * 8;
             $dailyAllowance = $totalDays * 50;
             $totalAllowance = $hourlyAllowance + $dailyAllowance;
