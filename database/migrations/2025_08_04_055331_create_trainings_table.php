@@ -23,6 +23,8 @@ return new class extends Migration
             $table->decimal('allowance_amount', 8, 2)->nullable(); // Calculated allowance
             $table->enum('allowance_type', ['hourly', 'daily'])->nullable(); // Type of allowance calculation
             $table->enum('status', ['Active', 'Completed', 'Cancelled'])->default('Active');
+            $table->decimal('meetup_latitude', 10, 8)->nullable();
+            $table->decimal('meetup_longitude', 11, 8)->nullable();
             $table->timestamps();
         });
     }

@@ -63,7 +63,9 @@ class Training extends Model
         'duration_hours',
         'allowance_amount',
         'allowance_type',
-        'status'
+        'status',
+        'meetup_latitude',
+        'meetup_longitude'
     ];
     /**
      * Get list of time options in HHMMH format for dropdowns (0000H, 0100H, ..., 2300H, 2400H)
@@ -119,6 +121,8 @@ public function calculateRoundedDuration(): ?int
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
         'allowance_amount' => 'float',
+        'meetup_latitude' => 'float',
+        'meetup_longitude' => 'float',
     ];
 
     protected $attributes = [
