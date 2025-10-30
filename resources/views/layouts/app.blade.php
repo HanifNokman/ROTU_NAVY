@@ -537,7 +537,7 @@
         </style>
     </head>
     
-    <body class="font-sans antialiased bg-gray-100 overflow-hidden">
+    <body class="font-sans antialiased overflow-hidden" style="background: linear-gradient(to bottom, #f5f5f5 0%, #ffffff 50%, #f5f5f5 100%);">
         {{-- ================================================================ --}}
         {{-- USER DATA AND NOTIFICATIONS SETUP --}}
         {{-- ================================================================ --}}
@@ -689,10 +689,10 @@
                 </div>
             </div>
 
-            {{-- ================================================================ --}}
-            {{-- MOBILE LAYOUT --}}
-            {{-- ================================================================ --}}
-            <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-gray-100">
+                {{-- ================================================================ --}}
+                {{-- MOBILE LAYOUT --}}
+                {{-- ================================================================ --}}
+                <div x-data="{ sidebarOpen: false }" class="min-h-screen">
                 <div class="sm:hidden fixed top-4 right-4 z-50">
                     <button @click="sidebarOpen = !sidebarOpen" class="bg-white p-2 rounded-md shadow-md relative">
                         @if($hasNotifications)
@@ -972,7 +972,7 @@
                 {{-- ================================================================ --}}
                 {{-- DESKTOP TWO COLUMN LAYOUT --}}
                 {{-- ================================================================ --}}
-                <div class="flex h-screen">
+                <div class="flex h-screen" style="background: linear-gradient(to bottom, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);">
                     {{-- ================================================================ --}}
                     {{-- DESKTOP SIDEBAR --}}
                     {{-- ================================================================ --}}
