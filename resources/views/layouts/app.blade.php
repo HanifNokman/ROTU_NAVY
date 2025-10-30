@@ -31,6 +31,29 @@
         {{-- CUSTOM STYLES --}}
         {{-- ================================================================ --}}
         <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar:horizontal {
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: white;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3c92d9, #2980b9);
+            border-radius: 4px;
+        }
+
+        /* Sidebar scrollbar track */
+        aside::-webkit-scrollbar-track,
+        aside nav::-webkit-scrollbar-track {
+            background: #2e313c !important;
+        }
             [x-cloak] {
                 display: none !important;
             }
@@ -537,7 +560,7 @@
         </style>
     </head>
     
-    <body class="font-sans antialiased overflow-hidden" style="background: linear-gradient(to bottom, #f5f5f5 0%, #ffffff 50%, #f5f5f5 100%);">
+    <body class="font-sans antialiased overflow-hidden" style="background: #f5f5f5">
         {{-- ================================================================ --}}
         {{-- USER DATA AND NOTIFICATIONS SETUP --}}
         {{-- ================================================================ --}}
@@ -972,7 +995,7 @@
                 {{-- ================================================================ --}}
                 {{-- DESKTOP TWO COLUMN LAYOUT --}}
                 {{-- ================================================================ --}}
-                <div class="flex h-screen" style="background: linear-gradient(to bottom, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);">
+                <div class="flex h-screen" style="background: #f5f5f5;">
                     {{-- ================================================================ --}}
                     {{-- DESKTOP SIDEBAR --}}
                     {{-- ================================================================ --}}
