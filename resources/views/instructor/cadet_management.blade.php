@@ -800,7 +800,7 @@
                 
                 <div id="bestCadetSection" class="section-content-dropdown">
                     <div class="p-6">
-                    <div class="mb-4 flex justify-end">
+                    <div class="mb-4 flex justify-center">
                         <select id="bestCadetIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @foreach($recentIntakes as $intake)
                                 <option value="{{ $intake['year'] }}" {{ $bestCadetIntakeYear == $intake['year'] ? 'selected' : '' }}>
@@ -885,7 +885,7 @@
                 
                 <div id="bestAcademicSection" class="section-content-dropdown">
                     <div class="p-6">
-                    <div class="mb-4 flex justify-end">
+                    <div class="mb-4 flex justify-center">
                         <select id="bestAcademicIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @foreach($recentIntakes as $intake)
                                 <option value="{{ $intake['year'] }}" {{ $bestCadetIntakeYear == $intake['year'] ? 'selected' : '' }}>
@@ -967,7 +967,7 @@
                 
                 <div id="suspendedSection" class="section-content-dropdown">
                     <div class="p-6">
-                    <div class="mb-4 flex justify-end">
+                    <div class="mb-4 flex justify-center">
                         <select id="suspendedIntakeFilter" class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @foreach($recentIntakes as $intake)
                                 <option value="{{ $intake['year'] }}" {{ $suspendedIntakeYear == $intake['year'] ? 'selected' : '' }}>
