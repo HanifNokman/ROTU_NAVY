@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Learning Hub (Instructors)') }}
+            {{ __('Learning Hub Management') }}
         </h2>
     </x-slot>
 
