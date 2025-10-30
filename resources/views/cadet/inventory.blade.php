@@ -568,7 +568,7 @@
                             </svg>
                         </div>
                     </div>
-                    <p class="text-gray-600 text-xs sm:text-base ml-9 sm:ml-13 hidden sm:block">Select items to borrow</p>
+                    <p class="text-gray-600 text-xs sm:text-base ml-9 sm:ml-13 sm:block">Select items to borrow</p>
                 </div>
 
                 <div class="section-content" id="availableItems-content">
