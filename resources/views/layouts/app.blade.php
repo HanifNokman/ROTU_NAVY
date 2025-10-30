@@ -31,6 +31,29 @@
         {{-- CUSTOM STYLES --}}
         {{-- ================================================================ --}}
         <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar:horizontal {
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: white;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3c92d9, #2980b9);
+            border-radius: 4px;
+        }
+
+        /* Sidebar scrollbar track */
+        aside::-webkit-scrollbar-track,
+        aside nav::-webkit-scrollbar-track {
+            background: #2e313c !important;
+        }
             [x-cloak] {
                 display: none !important;
             }
@@ -537,7 +560,7 @@
         </style>
     </head>
     
-    <body class="font-sans antialiased bg-gray-100 overflow-hidden">
+    <body class="font-sans antialiased overflow-hidden" style="background: #f5f5f5">
         {{-- ================================================================ --}}
         {{-- USER DATA AND NOTIFICATIONS SETUP --}}
         {{-- ================================================================ --}}
@@ -689,10 +712,10 @@
                 </div>
             </div>
 
-            {{-- ================================================================ --}}
-            {{-- MOBILE LAYOUT --}}
-            {{-- ================================================================ --}}
-            <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-gray-100">
+                {{-- ================================================================ --}}
+                {{-- MOBILE LAYOUT --}}
+                {{-- ================================================================ --}}
+                <div x-data="{ sidebarOpen: false }" class="min-h-screen">
                 <div class="sm:hidden fixed top-4 right-4 z-50">
                     <button @click="sidebarOpen = !sidebarOpen" class="bg-white p-2 rounded-md shadow-md relative">
                         @if($hasNotifications)
@@ -972,7 +995,7 @@
                 {{-- ================================================================ --}}
                 {{-- DESKTOP TWO COLUMN LAYOUT --}}
                 {{-- ================================================================ --}}
-                <div class="flex h-screen">
+                <div class="flex h-screen" style="background: #f5f5f5;">
                     {{-- ================================================================ --}}
                     {{-- DESKTOP SIDEBAR --}}
                     {{-- ================================================================ --}}
