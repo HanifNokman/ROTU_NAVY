@@ -676,12 +676,33 @@
                                     </button>
                                 </div>
 
-                                <div class="relative w-full" style="height: 320px; overflow: hidden;">
+                                <div id="mapWrapper" class="relative w-full" style="height: 320px; width: 100%; overflow: hidden; display: block;">
                                     <div id="map" class="absolute inset-0 rounded-lg border-2 border-gray-300 shadow-inner"></div>
+                                    <!-- Loading Spinner Overlay -->
+                                    <div id="mapLoadingSpinner" class="absolute inset-0 bg-white bg-opacity-90 rounded-lg flex items-center justify-center z-10">
+                                        <div class="text-center">
+                                            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-3"></div>
+                                            <p class="text-sm text-gray-600 font-medium">Loading map...</p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <input type="hidden" id="meetup_latitude" name="meetup_latitude">
                                 <input type="hidden" id="meetup_longitude" name="meetup_longitude">
+
+                                <!-- Map Legend -->
+                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
+                                    <div class="flex flex-wrap gap-3 items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow"></div>
+                                            <span class="text-xs text-gray-700 font-medium">Meetup Point</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 bg-green-200 border-2 border-green-500 rounded-full"></div>
+                                            <span class="text-xs text-gray-700 font-medium">Allowed Zone (100m)</span>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="bg-blue-50 p-3 rounded-lg">
                                     <p class="text-sm text-blue-800">
@@ -1036,10 +1057,13 @@
     /* Map container styling */
     #map {
         width: 100% !important;
-        height: 320px !important;
+        height: 100% !important;
         min-height: 320px !important;
-        max-height: 320px !important;
-        position: relative;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         z-index: 1;
         overflow: hidden;
     }
@@ -1048,20 +1072,88 @@
     .leaflet-container {
         height: 100% !important;
         width: 100% !important;
-        max-height: 320px !important;
-        position: relative;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
     }
 
     /* Keep map controls within bounds */
     .leaflet-pane,
     .leaflet-map-pane {
         z-index: 1;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
     }
 
-    /* Ensure tile layer stays within container */
+    /* Ensure tile layer fills entire container */
     .leaflet-tile-pane {
-        width: 100%;
-        height: 100%;
+        position: absolute !important;
+        /* DO NOT override transform - Leaflet needs it for positioning */
+    }
+
+    /* Fix individual tiles */
+    .leaflet-tile {
+        position: absolute !important;
+    }
+
+    /* Ensure all panes cover full area */
+    .leaflet-overlay-pane,
+    .leaflet-shadow-pane,
+    .leaflet-marker-pane,
+    .leaflet-tooltip-pane,
+    .leaflet-popup-pane {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    /* Ensure zoom controls are visible and on top */
+    .leaflet-control-zoom {
+        position: absolute !important;
+        z-index: 1000 !important;
+        margin: 10px !important;
+    }
+
+    .leaflet-control-zoom a {
+        width: 30px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        font-size: 18px !important;
+        background-color: white !important;
+        border: 2px solid rgba(0,0,0,0.2) !important;
+        border-radius: 4px !important;
+        color: #000 !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        display: block !important;
+    }
+
+    .leaflet-control-zoom a:hover {
+        background-color: #f4f4f4 !important;
+    }
+
+    .leaflet-control-zoom-in {
+        margin-bottom: 5px !important;
+    }
+
+    /* Ensure all leaflet controls are visible */
+    .leaflet-control {
+        z-index: 800 !important;
+    }
+
+    /* Custom map marker styling */
+    .custom-map-marker {
+        background: none !important;
+        border: none !important;
+    }
+
+    .custom-map-marker svg {
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
     </style>
 
@@ -1084,8 +1176,10 @@
     let currentAttendanceFilter = 'all';
     let map = null;
     let marker = null;
+    let geofenceCircle = null;
     const DEFAULT_LAT = 6.04444000; // Palapes UMS - 8 decimal precision
     const DEFAULT_LNG = 116.12926000; // Palapes UMS - 8 decimal precision
+    const GEOFENCE_RADIUS = 100; // 100 meters radius for attendance verification
 
     // Fix Leaflet default icon paths
     delete L.Icon.Default.prototype._getIconUrl;
@@ -1217,19 +1311,33 @@
 
         currentTrainingId = null;
 
+        // Show loading spinner
+        const loadingSpinner = document.getElementById('mapLoadingSpinner');
+        if (loadingSpinner) {
+            loadingSpinner.classList.remove('hidden');
+        }
+
         // Show modal BEFORE initializing map (map needs visible container)
         document.getElementById('trainingModal').classList.remove('hidden');
 
-        // Initialize map with default location
-        setTimeout(() => {
-            initializeMap();
-            setTimeout(() => {
-                if (map) {
-                    console.log('New training: setting default location');
-                    useDefaultLocation();
-                }
-            }, 500); // Increased timeout to ensure map is fully initialized
-        }, 300); // Increased timeout to ensure modal is fully visible
+        // Wait for modal to be fully rendered and transitioned before initializing map
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                initializeMap();
+                // Give map time to initialize, then set default location and force resize
+                setTimeout(() => {
+                    if (map) {
+                        console.log('New training: setting default location');
+                        useDefaultLocation();
+                        // Force map to recalculate size multiple times with increasing delays
+                        setTimeout(() => map && map.invalidateSize(true), 100);
+                        setTimeout(() => map && map.invalidateSize(true), 300);
+                        setTimeout(() => map && map.invalidateSize(true), 600);
+                        setTimeout(() => map && map.invalidateSize(true), 1000);
+                    }
+                }, 100);
+            });
+        });
     }
 
     function editTraining(trainingId) {
@@ -1288,26 +1396,47 @@
                 }
                 document.getElementById('status').value = data.status;
 
+                // Show loading spinner
+                const loadingSpinner = document.getElementById('mapLoadingSpinner');
+                if (loadingSpinner) {
+                    loadingSpinner.classList.remove('hidden');
+                }
+
                 // Show modal BEFORE initializing map (map needs visible container)
                 document.getElementById('trainingModal').classList.remove('hidden');
 
-                // Initialize map and set meetup coordinates
-                setTimeout(() => {
-                    initializeMap();
-                    setTimeout(() => {
-                        if (data.meetup_latitude && data.meetup_longitude) {
-                            console.log('Setting map to training coordinates:', data.meetup_latitude, data.meetup_longitude);
-                            setMapLocation(parseFloat(data.meetup_latitude), parseFloat(data.meetup_longitude));
-                        } else {
-                            console.log('No meetup coordinates found, using default location');
-                            useDefaultLocation();
-                        }
-                    }, 500); // Increased timeout to ensure map is fully initialized
-                }, 300); // Increased timeout to ensure modal is fully visible
+                // Wait for modal to be fully rendered and transitioned before initializing map
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        initializeMap();
+                        // Give map time to initialize, then set location and force resize
+                        setTimeout(() => {
+                            if (data.meetup_latitude && data.meetup_longitude) {
+                                console.log('Setting map to training coordinates:', data.meetup_latitude, data.meetup_longitude);
+                                setMapLocation(parseFloat(data.meetup_latitude), parseFloat(data.meetup_longitude));
+                            } else {
+                                console.log('No meetup coordinates found, using default location');
+                                useDefaultLocation();
+                            }
+                            // Force map to recalculate size multiple times with increasing delays
+                            if (map) {
+                                setTimeout(() => map && map.invalidateSize(true), 100);
+                                setTimeout(() => map && map.invalidateSize(true), 300);
+                                setTimeout(() => map && map.invalidateSize(true), 600);
+                                setTimeout(() => map && map.invalidateSize(true), 1000);
+                            }
+                        }, 100);
+                    });
+                });
             })
             .catch(error => {
                 console.error('Error fetching training data:', error);
                 alert('Error loading training data');
+                // Hide spinner on error
+                const loadingSpinner = document.getElementById('mapLoadingSpinner');
+                if (loadingSpinner) {
+                    loadingSpinner.classList.add('hidden');
+                }
             });
     }
 
@@ -1934,6 +2063,13 @@
 
     function closeModal() {
         document.getElementById('trainingModal').classList.add('hidden');
+
+        // Reset loading spinner
+        const loadingSpinner = document.getElementById('mapLoadingSpinner');
+        if (loadingSpinner) {
+            loadingSpinner.classList.remove('hidden');
+        }
+
         // Cleanup map
         if (map) {
             try {
@@ -1943,6 +2079,7 @@
             }
             map = null;
             marker = null;
+            geofenceCircle = null;
         }
     }
 
@@ -1959,10 +2096,17 @@
     // ============================================================
 
     function initializeMap() {
+        // Show loading spinner
+        const loadingSpinner = document.getElementById('mapLoadingSpinner');
+        if (loadingSpinner) {
+            loadingSpinner.classList.remove('hidden');
+        }
+
         // Check if Leaflet is loaded
         if (typeof L === 'undefined') {
             console.error('Leaflet not loaded');
             showToast('Map library not loaded. Please refresh the page.', 'error');
+            if (loadingSpinner) loadingSpinner.classList.add('hidden');
             return;
         }
 
@@ -1977,22 +2121,46 @@
         const mapContainer = document.getElementById('map');
         if (!mapContainer) {
             console.error('Map container not found');
+            if (loadingSpinner) loadingSpinner.classList.add('hidden');
             return;
         }
 
+        // Log container dimensions for debugging
+        const containerRect = mapContainer.getBoundingClientRect();
+        console.log('Map container dimensions:', {
+            width: containerRect.width,
+            height: containerRect.height,
+            offsetWidth: mapContainer.offsetWidth,
+            offsetHeight: mapContainer.offsetHeight,
+            clientWidth: mapContainer.clientWidth,
+            clientHeight: mapContainer.clientHeight
+        });
+
+        // Verify parent wrapper dimensions
+        const mapWrapper = document.getElementById('mapWrapper');
+        if (mapWrapper) {
+            const wrapperRect = mapWrapper.getBoundingClientRect();
+            console.log('Map wrapper dimensions:', {
+                width: wrapperRect.width,
+                height: wrapperRect.height
+            });
+        }
+
         try {
-            // Create map centered on default location
-            map = L.map('map', {
+            // Create map centered on default location - use the DOM element directly
+            map = L.map(mapContainer, {
                 center: [DEFAULT_LAT, DEFAULT_LNG],
                 zoom: 16,
                 zoomControl: true,
-                scrollWheelZoom: true,
+                scrollWheelZoom: false, // Disable scroll wheel zoom (like cadet attendance)
                 attributionControl: true,
                 preferCanvas: false,
                 boxZoom: true,
                 doubleClickZoom: true,
                 dragging: true
             });
+
+            console.log('Map created successfully with container:', mapContainer);
 
             // Add OpenStreetMap tiles
             const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -2007,36 +2175,115 @@
                 console.error('Tile loading error:', error);
             });
 
+            // Track tile loading
+            let tilesLoaded = 0;
+            tileLayer.on('tileload', function() {
+                tilesLoaded++;
+                console.log('Tile loaded:', tilesLoaded);
+                // Force resize on every few tiles loaded
+                if (tilesLoaded % 3 === 0 && map) {
+                    map.invalidateSize(true);
+                }
+            });
+
+            // Hide loading spinner when tiles are loaded
+            tileLayer.on('load', function() {
+                console.log('Map tiles loaded completely');
+                if (loadingSpinner) {
+                    loadingSpinner.classList.add('hidden');
+                }
+                // Force final resize after all tiles loaded
+                setTimeout(() => {
+                    if (map) {
+                        map.invalidateSize(true);
+                        console.log('Final invalidateSize after tile load');
+                    }
+                }, 100);
+            });
+
             tileLayer.addTo(map);
 
-            // Force map to recalculate size multiple times to ensure proper rendering
-            setTimeout(() => {
-                if (map) {
-                    map.invalidateSize(true);
-                }
-            }, 100);
-
-            setTimeout(() => {
-                if (map) {
-                    map.invalidateSize(true);
-                }
-            }, 300);
-
-            setTimeout(() => {
-                if (map) {
-                    map.invalidateSize(true);
-                }
-            }, 500);
+            // Also listen for when the map is ready
+            map.whenReady(function() {
+                console.log('Map ready event fired');
+                setTimeout(() => {
+                    if (map) {
+                        map.invalidateSize(true);
+                        // Force a complete re-render by setting view again
+                        map.setView(map.getCenter(), map.getZoom(), {animate: false});
+                        console.log('Map resized and view reset on ready event');
+                    }
+                }, 50);
+            });
 
             // Add click event to map
             map.on('click', function(e) {
                 setMapLocation(e.latlng.lat, e.latlng.lng);
             });
 
+            // Add zoom event listener to adjust marker size
+            map.on('zoomend', function() {
+                updateMarkerSize();
+            });
+
             console.log('Map initialized successfully');
         } catch (error) {
             console.error('Error initializing map:', error);
             showToast('Error loading map. Please refresh the page.', 'error');
+            if (loadingSpinner) loadingSpinner.classList.add('hidden');
+        }
+    }
+
+    // Helper function to create marker icon with size based on zoom level
+    function createMarkerIcon() {
+        if (!map) return null;
+
+        const zoom = map.getZoom();
+        // Scale marker based on zoom: smaller when zoomed out, larger when zoomed in
+        // Zoom levels typically range from 10 (far out) to 19 (very close)
+        // Smaller default size with proportional scaling
+        let scale = 1;
+        if (zoom <= 12) {
+            scale = 0.35; // Very small (11x14)
+        } else if (zoom <= 14) {
+            scale = 0.5; // Small (16x20)
+        } else if (zoom <= 16) {
+            scale = 0.65; // Normal/Default (21x26) - Reduced from 32x40
+        } else if (zoom <= 18) {
+            scale = 0.85; // Medium (27x34)
+        } else {
+            scale = 1; // Large (32x40)
+        }
+
+        const width = Math.round(32 * scale);
+        const height = Math.round(40 * scale);
+
+        return L.divIcon({
+            html: `
+                <svg width="${width}" height="${height}" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 8.25 12 24 12 24s12-15.75 12-24c0-6.627-5.373-12-12-12z"
+                          fill="#ef4444"
+                          stroke="#fff"
+                          stroke-width="1.5"/>
+                    <circle cx="12" cy="12" r="4" fill="#fff"/>
+                </svg>
+            `,
+            iconSize: [width, height],
+            iconAnchor: [width / 2, height], // Point of the pin at bottom
+            className: 'custom-map-marker'
+        });
+    }
+
+    // Function to update marker size based on current zoom level
+    function updateMarkerSize() {
+        if (!map || !marker) return;
+
+        const currentLatLng = marker.getLatLng();
+        const newIcon = createMarkerIcon();
+
+        if (newIcon) {
+            marker.setIcon(newIcon);
+            console.log('Marker size updated for zoom level:', map.getZoom());
         }
     }
 
@@ -2055,10 +2302,35 @@
             }
         }
 
-        // Add new marker
+        // Remove existing geofence circle
+        if (geofenceCircle) {
+            try {
+                map.removeLayer(geofenceCircle);
+            } catch (e) {
+                console.error('Error removing geofence circle:', e);
+            }
+        }
+
+        // Add geofence circle (100m radius for attendance verification)
+        geofenceCircle = L.circle([lat, lng], {
+            color: '#10b981',
+            fillColor: '#10b981',
+            fillOpacity: 0.15,
+            radius: GEOFENCE_RADIUS,
+            weight: 2
+        }).addTo(map);
+
+        // Create marker icon with dynamic size based on zoom level
+        const meetupIcon = createMarkerIcon();
+
+        // Add new marker with custom red icon
         marker = L.marker([lat, lng], {
+            icon: meetupIcon,
             draggable: true
         }).addTo(map);
+
+        // Add popup to marker
+        marker.bindPopup(`<b>Meetup Location</b><br>Cadets must be within ${GEOFENCE_RADIUS}m of this point.`);
 
         // Update marker position on drag
         marker.on('dragend', function(e) {
@@ -2066,8 +2338,21 @@
             setMapLocation(position.lat, position.lng);
         });
 
-        // Center map on marker
-        map.setView([lat, lng], 16);
+        // Center map on marker - preserve current zoom level
+        const currentZoom = map.getZoom();
+        map.setView([lat, lng], currentZoom, {animate: false});
+
+        // Force map to recalculate size in case container dimensions changed
+        map.invalidateSize(true);
+
+        // Force another setView to ensure tiles load properly
+        setTimeout(() => {
+            if (map) {
+                map.setView([lat, lng], currentZoom, {animate: false});
+                map.invalidateSize(true);
+                console.log('Location set and map re-rendered at zoom level:', currentZoom);
+            }
+        }, 100);
 
         // Update hidden inputs with 8 decimal precision (matches database)
         document.getElementById('meetup_latitude').value = lat.toFixed(8);
