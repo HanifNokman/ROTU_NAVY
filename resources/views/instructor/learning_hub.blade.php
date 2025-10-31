@@ -230,10 +230,33 @@
             align-items: flex-start !important;
         }
 
-        /* Keep modal headers horizontal */
-        .fixed.inset-0 .flex.justify-between.items-center {
+/* Keep modal headers horizontal on mobile but adjust positioning */
+        .fixed.inset-0 .flex.justify-between.items-start {
             flex-direction: row !important;
             align-items: center !important;
+            gap: 1rem !important;
+        }
+        
+        /* Fix ALL modal close X buttons to be compact squares on the right */
+        .fixed.inset-0 .flex.justify-between button:last-child,
+        .fixed.inset-0 button[onclick*="Modal"],
+        .fixed.inset-0 .px-6.py-5 button {
+            min-width: 36px !important;
+            max-width: 36px !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0.5rem !important;
+            flex-shrink: 0 !important;
+            flex-grow: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        /* Ensure modal title section doesn't interfere */
+        .fixed.inset-0 .flex.justify-between > div:first-child {
+            flex: 1 !important;
+            min-width: 0 !important;
         }
 
         /* Material buttons in header */
@@ -567,17 +590,17 @@
                             <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
                                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl transform transition-all duration-300 overflow-hidden">
                                     <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-                                        <div class="flex justify-between items-center">
-                                            <div class="flex items-center gap-3">
-                                                <div class="icon-wrapper gradient-blue">
+                                        <div class="flex justify-between items-start gap-4">
+                                            <div class="flex items-center gap-3 flex-1 min-w-0">
+                                                <div class="icon-wrapper gradient-blue flex-shrink-0">
                                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </div>
                                                 <h2 class="text-xl font-bold text-gray-900">Edit Learning Material</h2>
                                             </div>
-                                            <button type="button" @click="showModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
-                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <button type="button" @click="showModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-1.5 transition-colors duration-200 flex-shrink-0">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
                                             </button>
@@ -760,17 +783,17 @@
                             <div x-show="showEditModal" x-cloak class="fixed inset-0 flex items-center justify-center z-[60] bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
                                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden transform transition-all duration-300">
                                     <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
-                                        <div class="flex justify-between items-center">
-                                            <div class="flex items-center gap-3">
-                                                <div class="icon-wrapper gradient-purple">
+                                        <div class="flex justify-between items-start gap-4">
+                                            <div class="flex items-center gap-3 flex-1 min-w-0">
+                                                <div class="icon-wrapper gradient-purple flex-shrink-0">
                                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </div>
                                                 <h2 class="text-xl font-bold text-gray-900">Edit Quiz Question</h2>
                                             </div>
-                                            <button type="button" @click="showEditModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
-                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <button type="button" @click="showEditModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-1.5 transition-colors duration-200 flex-shrink-0">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
                                             </button>
@@ -931,17 +954,17 @@
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300">
                 <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-start gap-4">
                         <div class="flex items-center gap-3">
-                            <div class="icon-wrapper gradient-green">
+                            <div class="icon-wrapper gradient-green flex-shrink-0">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                 </svg>
                             </div>
                             <h3 class="text-xl font-bold text-gray-900">Add Learning Material</h3>
                         </div>
-                        <button onclick="closeMaterialModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="closeMaterialModal()" class="w-5 h-5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-0.5 transition-colors duration-200 flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
@@ -1010,16 +1033,16 @@
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300">
                 <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-start gap-4">
                         <div class="flex items-center gap-3">
-                            <div class="icon-wrapper gradient-blue">
+                            <div class="icon-wrapper gradient-blue flex-shrink-0">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/>
                                 </svg>
                             </div>
                             <h3 class="text-xl font-bold text-gray-900">Category Management</h3>
                         </div>
-                        <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
+                        <button onclick="closeCategoryModal()" class="w-5 h-5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-0.5 transition-colors duration-200 flex-shrink-0">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -1152,16 +1175,16 @@
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300">
                 <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <div class="icon-wrapper gradient-purple">
+                    <div class="flex justify-between items-start gap-4">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="icon-wrapper gradient-purple flex-shrink-0">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
                             <h3 class="text-xl font-bold text-gray-900">Add Quiz Question</h3>
                         </div>
-                        <button onclick="closeQuizModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
+                        <button onclick="closeQuizModal()" class="w-5 h-5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-0.5 transition-colors duration-200 flex-shrink-0">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -1169,9 +1192,8 @@
                     </div>
                 </div>
 
-                <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
-                    <div class="p-6">
-
+                
+                <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
                     <form action="{{ route('instructor.quiz.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-4">
@@ -1255,7 +1277,6 @@
                             </button>
                         </div>
                     </form>
-                    </div>
                 </div>
             </div>
         </div>
