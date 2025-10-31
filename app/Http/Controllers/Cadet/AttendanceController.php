@@ -171,6 +171,10 @@ class AttendanceController extends Controller
                 return $attendance->training->start_datetime;
             });
 
+        // Get dynamic meetup coordinates from today's training or use default
+        $geofenceLat = $todaysTraining->meetup_latitude ?? self::GEOFENCE_LATITUDE;
+        $geofenceLng = $todaysTraining->meetup_longitude ?? self::GEOFENCE_LONGITUDE;
+
         return view('cadet.attendance', [
             'cadet' => $cadet,
             'todaysTraining' => $todaysTraining,
@@ -178,8 +182,8 @@ class AttendanceController extends Controller
             'absentAttendances' => $absentAttendances,
             'todaysTrainings' => $todaysTrainings,
             'geofence' => [
-                'latitude' => self::GEOFENCE_LATITUDE,
-                'longitude' => self::GEOFENCE_LONGITUDE,
+                'latitude' => $geofenceLat,
+                'longitude' => $geofenceLng,
                 'radius' => self::GEOFENCE_RADIUS,
             ]
         ]);
@@ -236,41 +240,45 @@ class AttendanceController extends Controller
             $this->safeLog('info', 'Parsed latitude: ' . $latitude);
             $this->safeLog('info', 'Parsed longitude: ' . $longitude);
 
-            // GEOFENCE VALIDATION
-            $this->safeLog('info', 'Starting geofence validation...');
-            $this->safeLog('info', 'Geofence center: ' . self::GEOFENCE_LATITUDE . ', ' . self::GEOFENCE_LONGITUDE);
-            $this->safeLog('info', 'Geofence radius: ' . self::GEOFENCE_RADIUS . 'm');
-            
-            $distance = $this->calculateDistance(
-                self::GEOFENCE_LATITUDE,
-                self::GEOFENCE_LONGITUDE,
-                $latitude,
-                $longitude
-            );
-            
-            $this->safeLog('info', 'Distance from center: ' . round($distance, 2) . 'm');
-            $this->safeLog('info', 'Within geofence: ' . ($distance <= self::GEOFENCE_RADIUS ? 'YES' : 'NO'));
-            
-            if (!$this->isWithinGeofence($latitude, $longitude)) {
-                $this->safeLog('warning', 'GEOFENCE CHECK FAILED');
-                $this->safeLog('warning', 'User is ' . round($distance - self::GEOFENCE_RADIUS, 2) . 'm outside allowed zone');
-                
-                return redirect()->back()->with('error', 
-                    sprintf('You must be at the designated location. You are %.0fm away (need to be within %dm).', 
-                    $distance, self::GEOFENCE_RADIUS)
-                );
-            }
-            
-            $this->safeLog('info', 'Geofence validation PASSED');
-
-            // GET TRAINING RECORD
+            // GET TRAINING RECORD FIRST (needed for dynamic meetup coordinates)
             $this->safeLog('info', 'Fetching training record...');
             $training = Training::findOrFail($trainingId);
             $this->safeLog('info', 'Training ID: ' . $training->id);
             $this->safeLog('info', 'Training Title: ' . $training->title);
             $this->safeLog('info', 'Training Location: ' . $training->location);
             $this->safeLog('info', 'Training Status: ' . $training->status);
-            
+
+            // Get dynamic meetup coordinates or use default
+            $meetupLat = $training->meetup_latitude ?? self::GEOFENCE_LATITUDE;
+            $meetupLng = $training->meetup_longitude ?? self::GEOFENCE_LONGITUDE;
+
+            // GEOFENCE VALIDATION (using training's dynamic meetup point)
+            $this->safeLog('info', 'Starting geofence validation...');
+            $this->safeLog('info', 'Training meetup point: ' . $meetupLat . ', ' . $meetupLng);
+            $this->safeLog('info', 'Geofence radius: ' . self::GEOFENCE_RADIUS . 'm');
+
+            $distance = $this->calculateDistance(
+                $meetupLat,
+                $meetupLng,
+                $latitude,
+                $longitude
+            );
+
+            $this->safeLog('info', 'Distance from meetup point: ' . round($distance, 2) . 'm');
+            $this->safeLog('info', 'Within geofence: ' . ($distance <= self::GEOFENCE_RADIUS ? 'YES' : 'NO'));
+
+            if ($distance > self::GEOFENCE_RADIUS) {
+                $this->safeLog('warning', 'GEOFENCE CHECK FAILED');
+                $this->safeLog('warning', 'User is ' . round($distance - self::GEOFENCE_RADIUS, 2) . 'm outside allowed zone');
+
+                return redirect()->back()->with('error',
+                    sprintf('You must be at the designated location. You are %.0fm away (need to be within %dm).',
+                    $distance, self::GEOFENCE_RADIUS)
+                );
+            }
+
+            $this->safeLog('info', 'Geofence validation PASSED');
+
             // CHECK INTAKE ELIGIBILITY
             $this->safeLog('info', 'Checking intake eligibility...');
             $intakeNumber = $cadet->intake_year - 2011;

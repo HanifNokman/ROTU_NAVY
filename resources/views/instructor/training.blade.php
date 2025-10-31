@@ -513,7 +513,7 @@
                             </div>
                             <h3 id="modalTitle" class="text-2xl font-bold text-gray-900">Create Training Session</h3>
                         </div>
-                        <button onclick="closeModal()" type="button" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-all duration-200 hover:rotate-90">
+                        <button onclick="closeModal()" type="button" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 rounded-full p-2 transition-colors duration-200 active:scale-95">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -633,10 +633,10 @@
                                 <h4 class="text-lg font-semibold text-gray-900">Status</h4>
                             </div>
                             <div class="h-px bg-gradient-to-r from-orange-200 via-orange-300 to-transparent mb-4"></div>
-                        
+
                         <div class="w-full md:w-1/2">
                             <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Training Status *</label>
-                            <select id="status" name="status" required 
+                            <select id="status" name="status" required
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="Active">Active</option>
                                 <option value="Completed">Completed</option>
@@ -644,6 +644,53 @@
                             </select>
                         </div>
                     </div>
+
+                        {{-- Meetup Point --}}
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <h4 class="text-lg font-semibold text-gray-900">Meetup Point</h4>
+                            </div>
+                            <div class="h-0.5 bg-gradient-to-r from-red-400 via-red-300 to-transparent mb-4"></div>
+
+                        <div class="space-y-3">
+                                <p class="text-sm text-gray-600">Select the meetup location for attendance verification. Click on the map or use your current location.</p>
+
+                                <div class="flex gap-2 mb-3">
+                                    <button type="button" id="btnCurrentLocation" onclick="useCurrentLocation()"
+                                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                        </svg>
+                                        Use Current Location
+                                    </button>
+                                    <button type="button" id="btnDefaultLocation" onclick="useDefaultLocation()"
+                                        class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                        Use Default (Palapes UMS)
+                                    </button>
+                                </div>
+
+                                <div class="relative w-full" style="height: 320px; overflow: hidden;">
+                                    <div id="map" class="absolute inset-0 rounded-lg border-2 border-gray-300 shadow-inner"></div>
+                                </div>
+
+                                <input type="hidden" id="meetup_latitude" name="meetup_latitude">
+                                <input type="hidden" id="meetup_longitude" name="meetup_longitude">
+
+                                <div class="bg-blue-50 p-3 rounded-lg">
+                                    <p class="text-sm text-blue-800">
+                                        <strong>Selected Location:</strong>
+                                        <span id="selectedCoords" class="font-mono">Click on map to select</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
                     </form>
                 </div>
@@ -716,7 +763,7 @@
                             <p id="trainingTitle" class="text-sm text-gray-600 mt-1"></p>
                         </div>
                     </div>
-                    <button onclick="closeAttendanceModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 p-2 rounded-full transition-all duration-200 hover:rotate-90">
+                    <button onclick="closeAttendanceModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 p-2 rounded-full transition-colors duration-200 active:scale-95">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -830,7 +877,7 @@
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900">Attendance Reports</h3>
                     </div>
-                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 p-2 rounded-full transition-all duration-200 hover:rotate-90">
+                    <button onclick="closeAttendanceListModal()" class="text-gray-400 hover:text-gray-600 hover:bg-white/80 p-2 rounded-full transition-colors duration-200 active:scale-95">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -985,16 +1032,49 @@
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
+
+    /* Map container styling */
+    #map {
+        width: 100% !important;
+        height: 320px !important;
+        min-height: 320px !important;
+        max-height: 320px !important;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    /* Ensure Leaflet container has proper height */
+    .leaflet-container {
+        height: 100% !important;
+        width: 100% !important;
+        max-height: 320px !important;
+        position: relative;
+    }
+
+    /* Keep map controls within bounds */
+    .leaflet-pane,
+    .leaflet-map-pane {
+        z-index: 1;
+    }
+
+    /* Ensure tile layer stays within container */
+    .leaflet-tile-pane {
+        width: 100%;
+        height: 100%;
+    }
     </style>
 
     @push('styles')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/main.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     @endpush
 
     @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <!-- Updated JavaScript section for the view file -->
 <script>
     let calendar;
@@ -1002,6 +1082,18 @@
     let cadetsData = [];
     let currentIntakeFilter = 'all';
     let currentAttendanceFilter = 'all';
+    let map = null;
+    let marker = null;
+    const DEFAULT_LAT = 6.044440;
+    const DEFAULT_LNG = 116.129260;
+
+    // Fix Leaflet default icon paths
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeCalendar();
@@ -1111,20 +1203,30 @@
         document.getElementById('submitText').textContent = 'Create Training';
         document.getElementById('trainingForm').reset();
         document.getElementById('trainingId').value = '';
-        
+
         // Reset all checkboxes
         const involvementCheckboxes = document.querySelectorAll('input[name="involvement[]"]');
         involvementCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
             checkbox.closest('label').classList.remove('bg-blue-50', 'border-blue-300');
         });
-        
+
         // Reset dropdowns
         document.getElementById('start_time').selectedIndex = 0;
         document.getElementById('end_time').selectedIndex = 0;
-        
+
         currentTrainingId = null;
         document.getElementById('trainingModal').classList.remove('hidden');
+
+        // Initialize map with default location
+        setTimeout(() => {
+            initializeMap();
+            setTimeout(() => {
+                if (map) {
+                    useDefaultLocation();
+                }
+            }, 300);
+        }, 200);
     }
 
     function editTraining(trainingId) {
@@ -1182,7 +1284,20 @@
                     }
                 }
                 document.getElementById('status').value = data.status;
+
                 document.getElementById('trainingModal').classList.remove('hidden');
+
+                // Initialize map and set meetup coordinates
+                setTimeout(() => {
+                    initializeMap();
+                    setTimeout(() => {
+                        if (data.meetup_latitude && data.meetup_longitude) {
+                            setMapLocation(data.meetup_latitude, data.meetup_longitude);
+                        } else {
+                            useDefaultLocation();
+                        }
+                    }, 300);
+                }, 200);
             })
             .catch(error => {
                 console.error('Error fetching training data:', error);
@@ -1813,6 +1928,16 @@
 
     function closeModal() {
         document.getElementById('trainingModal').classList.add('hidden');
+        // Cleanup map
+        if (map) {
+            try {
+                map.remove();
+            } catch (e) {
+                console.error('Error removing map:', e);
+            }
+            map = null;
+            marker = null;
+        }
     }
 
     function closeDeleteModal() {
@@ -1821,6 +1946,210 @@
 
     function formatDateTimeForInput(datetime) {
         return new Date(datetime).toISOString().slice(0, 16);
+    }
+
+    // ============================================================
+    // MAP FUNCTIONS FOR MEETUP POINT
+    // ============================================================
+
+    function initializeMap() {
+        // Check if Leaflet is loaded
+        if (typeof L === 'undefined') {
+            console.error('Leaflet not loaded');
+            showToast('Map library not loaded. Please refresh the page.', 'error');
+            return;
+        }
+
+        // Remove existing map if any
+        if (map) {
+            map.remove();
+            map = null;
+            marker = null;
+        }
+
+        // Wait for the map container to be visible
+        const mapContainer = document.getElementById('map');
+        if (!mapContainer) {
+            console.error('Map container not found');
+            return;
+        }
+
+        try {
+            // Create map centered on default location
+            map = L.map('map', {
+                center: [DEFAULT_LAT, DEFAULT_LNG],
+                zoom: 16,
+                zoomControl: true,
+                scrollWheelZoom: true,
+                attributionControl: true,
+                preferCanvas: false,
+                boxZoom: true,
+                doubleClickZoom: true,
+                dragging: true
+            });
+
+            // Add OpenStreetMap tiles
+            const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+                minZoom: 10,
+                tileSize: 256,
+                keepBuffer: 2
+            });
+
+            tileLayer.on('tileerror', function(error) {
+                console.error('Tile loading error:', error);
+            });
+
+            tileLayer.addTo(map);
+
+            // Force map to recalculate size multiple times to ensure proper rendering
+            setTimeout(() => {
+                if (map) {
+                    map.invalidateSize(true);
+                }
+            }, 100);
+
+            setTimeout(() => {
+                if (map) {
+                    map.invalidateSize(true);
+                }
+            }, 300);
+
+            setTimeout(() => {
+                if (map) {
+                    map.invalidateSize(true);
+                }
+            }, 500);
+
+            // Add click event to map
+            map.on('click', function(e) {
+                setMapLocation(e.latlng.lat, e.latlng.lng);
+            });
+
+            console.log('Map initialized successfully');
+        } catch (error) {
+            console.error('Error initializing map:', error);
+            showToast('Error loading map. Please refresh the page.', 'error');
+        }
+    }
+
+    function setMapLocation(lat, lng) {
+        if (!map) {
+            console.error('Map not initialized');
+            return;
+        }
+
+        // Remove existing marker
+        if (marker) {
+            try {
+                map.removeLayer(marker);
+            } catch (e) {
+                console.error('Error removing marker:', e);
+            }
+        }
+
+        // Add new marker
+        marker = L.marker([lat, lng], {
+            draggable: true
+        }).addTo(map);
+
+        // Update marker position on drag
+        marker.on('dragend', function(e) {
+            const position = e.target.getLatLng();
+            setMapLocation(position.lat, position.lng);
+        });
+
+        // Center map on marker
+        map.setView([lat, lng], 16);
+
+        // Update hidden inputs
+        document.getElementById('meetup_latitude').value = lat.toFixed(6);
+        document.getElementById('meetup_longitude').value = lng.toFixed(6);
+
+        // Update display
+        document.getElementById('selectedCoords').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+
+    function setActiveLocationButton(buttonType) {
+        const currentBtn = document.getElementById('btnCurrentLocation');
+        const defaultBtn = document.getElementById('btnDefaultLocation');
+
+        if (!currentBtn || !defaultBtn) return;
+
+        if (buttonType === 'current') {
+            // Set Current Location as active (blue)
+            currentBtn.className = 'px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2';
+            // Set Default as inactive (gray)
+            defaultBtn.className = 'px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2';
+        } else {
+            // Set Default Location as active (green)
+            defaultBtn.className = 'px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2';
+            // Set Current as inactive (gray)
+            currentBtn.className = 'px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2';
+        }
+    }
+
+    function useCurrentLocation() {
+        if (!map) {
+            console.error('Map not initialized');
+            showToast('Map not ready. Please try again.', 'warning');
+            return;
+        }
+
+        if (navigator.geolocation) {
+            showToast('Getting your location...', 'info');
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    setMapLocation(lat, lng);
+                    setActiveLocationButton('current');
+                    showToast('Current location set successfully', 'success');
+                },
+                function(error) {
+                    console.error('Geolocation error:', error);
+                    showToast('Could not get current location. Using default location.', 'warning');
+                    useDefaultLocation();
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            showToast('Geolocation is not supported by this browser. Using default location.', 'warning');
+            useDefaultLocation();
+        }
+    }
+
+    function useDefaultLocation() {
+        if (!map) {
+            console.error('Map not initialized');
+            return;
+        }
+        setMapLocation(DEFAULT_LAT, DEFAULT_LNG);
+        setActiveLocationButton('default');
+        showToast('Default location (Palapes UMS) set', 'info');
+    }
+
+    function showToast(message, type = 'info') {
+        // Simple toast notification
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-lg text-white transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500' :
+            type === 'error' ? 'bg-red-500' :
+            type === 'warning' ? 'bg-yellow-500' :
+            'bg-blue-500'
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 </script>
 
