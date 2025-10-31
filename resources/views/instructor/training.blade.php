@@ -1084,8 +1084,8 @@
     let currentAttendanceFilter = 'all';
     let map = null;
     let marker = null;
-    const DEFAULT_LAT = 6.044440;
-    const DEFAULT_LNG = 116.129260;
+    const DEFAULT_LAT = 6.04444000; // Palapes UMS - 8 decimal precision
+    const DEFAULT_LNG = 116.12926000; // Palapes UMS - 8 decimal precision
 
     // Fix Leaflet default icon paths
     delete L.Icon.Default.prototype._getIconUrl;
@@ -1216,6 +1216,8 @@
         document.getElementById('end_time').selectedIndex = 0;
 
         currentTrainingId = null;
+
+        // Show modal BEFORE initializing map (map needs visible container)
         document.getElementById('trainingModal').classList.remove('hidden');
 
         // Initialize map with default location
@@ -1223,10 +1225,11 @@
             initializeMap();
             setTimeout(() => {
                 if (map) {
+                    console.log('New training: setting default location');
                     useDefaultLocation();
                 }
-            }, 300);
-        }, 200);
+            }, 500); // Increased timeout to ensure map is fully initialized
+        }, 300); // Increased timeout to ensure modal is fully visible
     }
 
     function editTraining(trainingId) {
@@ -1285,6 +1288,7 @@
                 }
                 document.getElementById('status').value = data.status;
 
+                // Show modal BEFORE initializing map (map needs visible container)
                 document.getElementById('trainingModal').classList.remove('hidden');
 
                 // Initialize map and set meetup coordinates
@@ -1292,12 +1296,14 @@
                     initializeMap();
                     setTimeout(() => {
                         if (data.meetup_latitude && data.meetup_longitude) {
-                            setMapLocation(data.meetup_latitude, data.meetup_longitude);
+                            console.log('Setting map to training coordinates:', data.meetup_latitude, data.meetup_longitude);
+                            setMapLocation(parseFloat(data.meetup_latitude), parseFloat(data.meetup_longitude));
                         } else {
+                            console.log('No meetup coordinates found, using default location');
                             useDefaultLocation();
                         }
-                    }, 300);
-                }, 200);
+                    }, 500); // Increased timeout to ensure map is fully initialized
+                }, 300); // Increased timeout to ensure modal is fully visible
             })
             .catch(error => {
                 console.error('Error fetching training data:', error);
@@ -2063,12 +2069,12 @@
         // Center map on marker
         map.setView([lat, lng], 16);
 
-        // Update hidden inputs
-        document.getElementById('meetup_latitude').value = lat.toFixed(6);
-        document.getElementById('meetup_longitude').value = lng.toFixed(6);
+        // Update hidden inputs with 8 decimal precision (matches database)
+        document.getElementById('meetup_latitude').value = lat.toFixed(8);
+        document.getElementById('meetup_longitude').value = lng.toFixed(8);
 
-        // Update display
-        document.getElementById('selectedCoords').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        // Update display with 8 decimal precision
+        document.getElementById('selectedCoords').textContent = `${lat.toFixed(8)}, ${lng.toFixed(8)}`;
     }
 
     function setActiveLocationButton(buttonType) {

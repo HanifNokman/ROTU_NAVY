@@ -17,12 +17,13 @@ use Illuminate\Support\Facades\File;
 class AttendanceController extends Controller
 {
     // Geofence configuration (meetup location)
-    private const GEOFENCE_LATITUDE = 6.044440;
-    private const GEOFENCE_LONGITUDE = 116.129260;
+    // Using 8 decimal precision to match database storage (decimal(10,8) and decimal(11,8))
+    private const GEOFENCE_LATITUDE = 6.04444000;
+    private const GEOFENCE_LONGITUDE = 116.12926000;
     private const GEOFENCE_RADIUS = 100; // Radius in meters
 
-    // 6.044440, 116.129260 Palapes UMS
-    // 6.027834, 116.143001 Angkasa Apartment
+    // 6.04444000, 116.12926000 Palapes UMS (8 decimal precision)
+    // 6.02783400, 116.14300100 Angkasa Apartment (8 decimal precision)
 
     /**
      * Helper method to safely log data without binary content
