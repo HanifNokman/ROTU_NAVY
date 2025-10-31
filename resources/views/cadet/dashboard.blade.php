@@ -544,12 +544,13 @@
                     <button
                         type="button"
                         @click="showBadgeBanner = !showBadgeBanner"
-                        class="absolute top-0 right-0 sm:right-4 md:right-8">
-                        <div class="flex items-center space-x-2 bg-white hover:bg-blue-50 border-2 border-blue-500 hover:border-blue-600 text-blue-700 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="absolute top-0 right-0 sm:top-0 sm:right-4 md:right-8"
+                        aria-label="Toggle Badge Progression">
+                        <div class="flex items-center space-x-1 sm:space-x-2 bg-white hover:bg-blue-50 border-2 border-blue-500 hover:border-blue-600 text-blue-700 px-2 py-1.5 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl active:scale-95 sm:hover:scale-105 transition-all duration-200 cursor-pointer">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
-                            <span class="font-bold text-sm sm:text-base">Badge Progression</span>
+                            <span class="font-bold text-xs sm:text-base whitespace-nowrap">Badge Progression</span>
                         </div>
                     </button>
                 @endif
