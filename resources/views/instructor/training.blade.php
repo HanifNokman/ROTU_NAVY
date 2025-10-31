@@ -2747,25 +2747,27 @@ function createTrainingAccordion(training, index) {
     
     accordionDiv.innerHTML = `
         <div class="accordion-header ${headerClass} cursor-pointer" onclick="toggleAccordion('accordion-${index}')">
-            <div class="px-6 py-4 flex justify-between items-center">
-                <div class="flex-1">
-                    <h4 class="text-lg font-semibold text-gray-900">${training.title}</h4>
-                    <div class="text-sm text-gray-600 mt-1">
-                        ${training.start_datetime} • ${training.location || 'N/A'}
+            <div class="px-4 sm:px-6 py-4">
+                <div class="flex justify-between items-start gap-3">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-base sm:text-lg font-semibold text-gray-900 mb-1">${training.title}</h4>
+                        <div class="text-xs sm:text-sm text-gray-600">
+                            ${training.start_datetime} • ${training.location || 'N/A'}
+                        </div>
                     </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-right">
-                        <div class="text-lg font-bold text-gray-900">${attendancePercentage}%</div>
-                        <div class="text-sm text-gray-600">${presentCount}/${totalCadets} present</div>
-                    </div>
-                    <div class="transform transition-transform duration-200" id="accordion-icon-${index}">
-                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+                        <div class="text-right">
+                            <div class="text-xl sm:text-lg font-bold text-gray-900">${attendancePercentage}%</div>
+                            <div class="text-xs sm:text-sm text-gray-600 whitespace-nowrap">${presentCount}/${totalCadets} present</div>
+                        </div>
+                        <div class="transform transition-transform duration-200" id="accordion-icon-${index}">
+                            <i class="fas fa-chevron-down text-gray-400 text-lg"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="accordion-content hidden" id="accordion-content-${index}">
             <div class="border-t border-gray-200">
                 ${createTrainingContent(cadets, training.id)}

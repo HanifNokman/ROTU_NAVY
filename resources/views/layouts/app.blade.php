@@ -698,13 +698,13 @@
                             </div>
                         </div>
                         
-                        <div class="flex justify-end space-x-3 mt-6">
-                            <button @click="showLogoutModal = false" 
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
+                            <button @click="showLogoutModal = false"
+                                    class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                                 Cancel
                             </button>
-                            <button @click="if(currentLogoutForm) { currentLogoutForm.submit(); }" 
-                                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                            <button @click="if(currentLogoutForm) { currentLogoutForm.submit(); }"
+                                    class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
                                 Yes, Log Out
                             </button>
                         </div>
