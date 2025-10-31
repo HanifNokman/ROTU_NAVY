@@ -794,13 +794,14 @@
                         {{-- ================================================================ --}}
                         <nav class="flex flex-col space-y-1 flex-1 overflow-y-auto">
                             <a href="{{ route('dashboard') }}"
-                               class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ (Auth::user()->role === 'instructor' && request()->routeIs('instructor.dashboard')) || (Auth::user()->role === 'cadet' && request()->routeIs('cadet.dashboard')) ? 'bg-[#3c92d9] bg-opacity-20 text-[#3c92d9] border-l-4 border-[#3c92d9]' : 'text-white hover:bg-[#373a46]' }}">
-                                <svg class="w-5 h-5 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
-                                </svg>
-                                <span class="truncate">Dashboard</span>
-                            </a>
+   class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ (Auth::user()->role === 'instructor' && request()->routeIs('instructor.dashboard')) || (Auth::user()->role === 'cadet' && request()->routeIs('cadet.dashboard')) ? 'bg-[#3c92d9] bg-opacity-20 text-[#3c92d9] border-l-4 border-[#3c92d9]' : 'text-white hover:bg-[#373a46]' }}">
+    <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+    </svg>
+    <span class="truncate">Dashboard</span>
+</a>
+
 
                             @if(isset($instructor) && $instructor && $instructor->expertise === 'Admin')
                                 <div x-data="{ open: false }" class="mt-4">
