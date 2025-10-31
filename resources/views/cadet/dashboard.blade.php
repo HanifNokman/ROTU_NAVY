@@ -7,7 +7,7 @@
 
     <style>
     /* ========================================= */
-    /* CUSTOM SCROLLBAR STYLES */
+    /* CUSTOM SCROLLBAR STYLES (Blue Theme) */
     /* ========================================= */
     .custom-scrollbar::-webkit-scrollbar {
         width: 8px;
@@ -15,22 +15,23 @@
     }
 
     .custom-scrollbar::-webkit-scrollbar-track {
-        background: #f1f5f9;
+        background: #e3f2fd;
         border-radius: 10px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+        background: linear-gradient(180deg, #5ba4e0 0%, #3c92d9 100%);
         border-radius: 10px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+        background: linear-gradient(180deg, #3c92d9 0%, #2d7ac4 100%);
     }
 
+    /* Firefox */
     .custom-scrollbar {
         scrollbar-width: thin;
-        scrollbar-color: #94a3b8 #f1f5f9;
+        scrollbar-color: #3c92d9 #e3f2fd;
     }
 
     /* ========================================= */
@@ -420,13 +421,116 @@
     }
     </style>
 
-    <div class="py-4 sm:py-8 pb-8 sm:pb-12 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="py-4 sm:py-8 pb-8 sm:pb-12 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen relative"
+         @if(isset($badgeProgress) && count($badgeProgress) > 0)
+         x-data="{ showBadgeBanner: false }"
+         x-init="setTimeout(() => { showBadgeBanner = true }, 300); setTimeout(() => { showBadgeBanner = false }, 5300)"
+         @endif>
+
+        {{-- Badge Progression Overlay (Full Width of Main Content Area) --}}
+        @if(isset($badgeProgress) && count($badgeProgress) > 0)
+            <div x-show="showBadgeBanner"
+                 x-transition:enter="transition-all ease-out duration-500"
+                 x-transition:enter-start="opacity-0 transform -translate-y-full"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 x-transition:leave="transition-all ease-in duration-300"
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform -translate-y-full"
+                 class="absolute top-4 left-0 right-0 z-50 px-3 sm:px-6 lg:px-8">
+
+                <div class="bg-white border border-gray-300 rounded-lg shadow-xl overflow-visible">
+                    {{-- Header --}}
+                    <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-gray-50">
+                        <span class="text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wide">Badge Progression</span>
+                        <button @click="showBadgeBanner = false"
+                                class="text-gray-500 hover:text-gray-700 hover:bg-gray-200 p-1 rounded transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Badge Cards --}}
+                    <div class="px-4 py-4 overflow-visible">
+                        <div class="flex gap-3 overflow-x-auto overflow-y-visible custom-scrollbar pb-2">
+                            @foreach($badgeProgress as $badge)
+                                <div class="badge-card group flex-shrink-0 bg-gray-50 border-2 border-gray-300 border-dashed rounded-xl p-3 text-center hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
+                                     style="width: 110px; height: 160px;">
+
+                                    {{-- Default View --}}
+                                    <div class="absolute inset-0 p-3 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                                        {{-- Greyed Out Badge Icon/Image with Progress --}}
+                                        <div class="flex justify-center mb-2">
+                                            <div class="relative w-20 h-20 flex items-center justify-center filter grayscale opacity-40 transition-opacity duration-300">
+                                                @if(!empty($badge['icon_path']))
+                                                    <img src="{{ asset('storage/assets/badges/' . $badge['icon_path']) }}"
+                                                         alt="{{ $badge['name'] }}"
+                                                         class="w-full h-full object-contain">
+                                                @else
+                                                    <i class="fas fa-trophy text-5xl text-gray-400"></i>
+                                                @endif
+
+                                                {{-- Lock Icon Overlay --}}
+                                                <div class="absolute inset-0 flex items-center justify-center">
+                                                    <div class="bg-gray-800 bg-opacity-80 rounded-full p-2">
+                                                        <i class="fas fa-lock text-white text-sm"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Badge Name --}}
+                                        <h4 class="text-[10px] font-bold text-gray-700 mb-1 px-0.5 line-clamp-2 leading-tight">{{ $badge['name'] }}</h4>
+
+                                        {{-- Rarity Level --}}
+                                        <div class="mb-1.5">
+                                            <span class="text-[8px] font-medium" style="color: {{ $badge['rarity_color'] ?? '#6b7280' }};">
+                                                {{ $badge['rarity_label'] }}
+                                            </span>
+                                        </div>
+
+                                        {{-- Progress Bar --}}
+                                        <div class="relative h-2 bg-gray-200 rounded-full overflow-hidden mb-1 w-full">
+                                            <div class="absolute inset-0 h-full rounded-full transition-all duration-500 bg-gray-400"
+                                                 style="width: {{ $badge['progress']['percentage'] }}%;"></div>
+                                        </div>
+
+                                        {{-- Progress Percentage --}}
+                                        <span class="text-[9px] font-semibold text-gray-600">{{ number_format($badge['progress']['percentage'], 0) }}%</span>
+                                    </div>
+
+                                    {{-- Hover View - Progress & Criteria --}}
+                                    <div class="absolute inset-0 p-1.5 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 bg-opacity-90 text-white">
+                                        {{-- Progress --}}
+                                        <div class="mb-1 text-center">
+                                            <div class="text-[8px] font-bold text-yellow-400">{{ $badge['progress']['current'] }}/{{ $badge['progress']['target'] }}</div>
+                                        </div>
+
+                                        {{-- Progress Bar --}}
+                                        <div class="relative h-0.5 bg-gray-600 rounded-full overflow-hidden mb-1 w-full">
+                                            <div class="absolute inset-0 h-full rounded-full transition-all duration-500 bg-yellow-400"
+                                                 style="width: {{ $badge['progress']['percentage'] }}%;"></div>
+                                        </div>
+
+                                        {{-- Unlock Criteria --}}
+                                        <div class="text-center w-full">
+                                            <p class="text-[4px] text-gray-200 leading-none px-0.5" style="line-height: 1.1;">{{ $badge['progress']['criteria_text'] }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
-            {{-- ================================================================ --}}
-            {{-- HEADER SECTION --}}
-            {{-- ================================================================ --}}
-            <div class="text-center mb-4 sm:mb-8">
+                    {{-- ================================================================ --}}
+                    {{-- HEADER SECTION --}}
+                    {{-- ================================================================ --}}
+            <div class="text-center mb-4 sm:mb-8 relative">
                 <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-header rounded-2xl shadow-lg mb-3 sm:mb-4">
                     <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
@@ -434,6 +538,21 @@
                 </div>
                 <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 px-2">Cadet Dashboard</h1>
                 <p class="text-gray-600 text-sm sm:text-lg px-2">Your personal overview and performance metrics</p>
+
+                {{-- Badge Progression Button --}}
+                @if(isset($badgeProgress) && count($badgeProgress) > 0)
+                    <button
+                        type="button"
+                        @click="showBadgeBanner = !showBadgeBanner"
+                        class="absolute top-0 right-0 sm:right-4 md:right-8">
+                        <div class="flex items-center space-x-2 bg-white hover:bg-blue-50 border-2 border-blue-500 hover:border-blue-600 text-blue-700 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                            <span class="font-bold text-sm sm:text-base">Badge Progression</span>
+                        </div>
+                    </button>
+                @endif
             </div>
 
             {{-- ================================================================ --}}
@@ -1692,4 +1811,8 @@
             }
         }
     </script>
+
+        </div>
+    </div>
+
 </x-app-layout>

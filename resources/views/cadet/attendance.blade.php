@@ -962,10 +962,21 @@
 
                 console.log('Leaflet loaded successfully');
 
-                const geofence = {
+                const defaultGeofence = {
                     latitude: {{ $geofence['latitude'] }},
                     longitude: {{ $geofence['longitude'] }},
                     radius: {{ $geofence['radius'] }}
+                };
+
+                // Store individual training meetup coordinates
+                const trainingMeetups = {
+                    @foreach($todaysTrainings as $training)
+                    {{ $training->id }}: {
+                        latitude: {{ $training->meetup_latitude ?? $geofence['latitude'] }},
+                        longitude: {{ $training->meetup_longitude ?? $geofence['longitude'] }},
+                        radius: {{ $geofence['radius'] }}
+                    },
+                    @endforeach
                 };
 
                 let userLocation = null;
@@ -1016,8 +1027,12 @@
                     const trainingIdInput = form.querySelector('input[name="training_id"]');
                     const trainingId = trainingIdInput ? trainingIdInput.value : index;
                     const mapContainer = document.getElementById(`map-${trainingId}`);
-                    
+
+                    // Get the specific training's meetup coordinates or use default
+                    const geofence = trainingMeetups[trainingId] || defaultGeofence;
+
                     console.log('Training ID:', trainingId);
+                    console.log('Training meetup coordinates:', geofence);
                     console.log('Map container element:', mapContainer);
                     console.log('Button element:', button);
                     console.log('Training card:', trainingCard);

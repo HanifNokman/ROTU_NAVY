@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Cadet;
+use App\Helpers\BadgeHelper;
 
 class CadetDashboardController extends Controller
 {
@@ -108,15 +109,19 @@ class CadetDashboardController extends Controller
             return $this->getDutyRankingData($dutyCadets);
         }
 
+        // Get badge progress for badges nearing completion (>=50% progress)
+        $badgeProgress = BadgeHelper::getBadgeProgress($cadet->id, 50);
+
         return view('cadet.dashboard', compact(
-            'user', 
-            'cadet', 
-            'cadets', 
-            'sortOrder', 
-            'dutyCadets', 
-            'absentCadets', 
+            'user',
+            'cadet',
+            'cadets',
+            'sortOrder',
+            'dutyCadets',
+            'absentCadets',
             'absenceLeaderboard',
-            'intakeCadets'
+            'intakeCadets',
+            'badgeProgress'
         ));
     }
 
