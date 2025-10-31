@@ -102,7 +102,7 @@
 
         .nav-logo img {
             width: auto;
-            height: 70px;
+            height: clamp(40px, 10vw, 70px);
             border-radius: 50%;
             transition: all 0.3s ease;
         }
@@ -114,18 +114,18 @@
 
         .nav-logo-text .main-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.75rem;
+            font-size: clamp(0.95rem, 3vw, 1.75rem);
             font-weight: 700;
             color: var(--text-primary);
-            line-height: 1;
-            margin-bottom: 0.25rem;
+            line-height: 1.1;
+            margin-bottom: clamp(0.15rem, 0.5vw, 0.25rem);
         }
 
         .nav-logo-text .sub-title {
-            font-size: 0.875rem;
+            font-size: clamp(0.6rem, 1.5vw, 0.875rem);
             color: rgba(255, 255, 255, 0.8);
             font-weight: 500;
-            letter-spacing: 2px;
+            letter-spacing: clamp(1px, 0.3vw, 2px);
             text-transform: uppercase;
             line-height: 1;
         }
@@ -135,6 +135,31 @@
             list-style: none;
             gap: 2.5rem;
             align-items: center;
+        }
+
+        .nav-links > li {
+            position: relative;
+        }
+
+        .nav-links > li:not(:last-child):not(.user-dropdown)::after {
+            content: '';
+            position: absolute;
+            right: -1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 20px;
+            width: 1px;
+            background: linear-gradient(180deg, transparent 0%, rgba(60, 146, 217, 0.3) 50%, transparent 100%);
+        }
+
+        /* Remove separator before user dropdown if dashboard button exists */
+        .nav-links > li:has(+ .user-dropdown)::after {
+            display: none;
+        }
+
+        /* Reduce gap between dashboard button and user dropdown */
+        .nav-links > li:has(+ .user-dropdown) {
+            margin-right: -1.5rem;
         }
 
         .nav-links a {
@@ -671,7 +696,7 @@
             right: 0;
             width: 100%;
             background: var(--gradient-primary);
-            padding: 1.25rem 4rem 1.25rem 2rem;
+            padding: clamp(0.875rem, 2vw, 1.25rem) clamp(2.5rem, 8vw, 4rem) clamp(0.875rem, 2vw, 1.25rem) clamp(1rem, 3vw, 2rem);
             text-align: center;
             border-bottom: 2px solid rgba(60, 146, 217, 0.3);
             transition: transform 0.3s ease, opacity 0.3s ease;
@@ -686,38 +711,43 @@
         }
 
         .notification-banner h3 {
-            font-size: 1.2rem;
-            margin-top: 0.65rem;
-            margin-bottom: 0.25rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+            margin-top: clamp(0.5rem, 1.5vw, 0.65rem);
+            margin-bottom: clamp(0.15rem, 0.5vw, 0.25rem);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: clamp(0.375rem, 1vw, 0.5rem);
             line-height: 1.4;
         }
 
+        .notification-banner h3 i {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+        }
+
         .notification-banner p {
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 2vw, 1rem);
             color: rgba(255, 255, 255, 0.9);
             margin: 0;
-            line-height: 1.6; 
-            padding: 0 1rem; 
+            line-height: 1.5;
+            padding: 0 clamp(0.5rem, 2vw, 1rem);
         }
 
         .notification-close {
             position: absolute;
-            right: 2rem;
+            right: clamp(0.75rem, 3vw, 2rem);
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
             cursor: pointer;
             opacity: 0.7;
             transition: opacity 0.3s ease;
             z-index: 10;
+            padding: clamp(0.25rem, 1vw, 0.5rem);
         }
 
         .notification-close:hover {
@@ -774,17 +804,17 @@
 
         .hero-carousel-indicators {
             position: absolute;
-            bottom: 30px;
+            bottom: clamp(15px, 4vw, 30px);
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 12px;
+            gap: clamp(8px, 2vw, 12px);
             z-index: 15;
         }
 
         .hero-indicator {
-            width: 12px;
-            height: 12px;
+            width: clamp(8px, 2vw, 12px);
+            height: clamp(8px, 2vw, 12px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.4);
             cursor: pointer;
@@ -805,8 +835,8 @@
             background: rgba(60, 146, 217, 0.8);
             border: none;
             color: white;
-            width: 50px;
-            height: 50px;
+            width: clamp(36px, 8vw, 50px);
+            height: clamp(36px, 8vw, 50px);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -814,7 +844,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 15;
-            font-size: 1.2rem;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
         }
 
         .hero-carousel-nav:hover {
@@ -823,11 +853,11 @@
         }
 
         .hero-carousel-nav.prev {
-            left: 30px;
+            left: clamp(10px, 3vw, 30px);
         }
 
         .hero-carousel-nav.next {
-            right: 30px;
+            right: clamp(10px, 3vw, 30px);
         }
 
         .hero-content {
@@ -839,23 +869,24 @@
 
         .hero-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(3rem, 6vw, 5.5rem);
+            font-size: clamp(1.75rem, 6vw, 5.5rem);
             font-weight: 700;
-            margin-bottom: 1.5rem;
+            margin-bottom: clamp(0.75rem, 3vw, 1.5rem);
             background: linear-gradient(135deg, var(--text-primary), var(--primary-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: fadeInUp 1s ease 0.4s both;
-            line-height: 1.1;
+            line-height: 1.2;
         }
 
         .hero-subtitle {
-            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+            font-size: clamp(0.95rem, 2.5vw, 1.75rem);
             color: var(--text-secondary);
-            margin-bottom: 3rem;
+            margin-bottom: clamp(1.5rem, 5vw, 3rem);
             animation: fadeInUp 1s ease 0.6s both;
             font-weight: 400;
+            line-height: 1.5;
         }
 
         .hero-cta {
@@ -916,7 +947,7 @@
 
         .floating-icon {
             position: absolute;
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
             color: rgba(60, 146, 217, 0.1);
             animation: float 6s ease-in-out infinite;
         }
@@ -978,61 +1009,64 @@
         }
 
         .stat-number {
-            font-size: 3rem;
+            font-size: clamp(2rem, 5vw, 3rem);
             font-weight: 800;
             color: var(--primary-blue);
-            margin-bottom: 0.5rem;
+            margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
             display: block;
         }
 
         .stat-label {
-            font-size: 1rem;
+            font-size: clamp(0.85rem, 2vw, 1rem);
             color: var(--text-secondary);
             font-weight: 500;
+            line-height: 1.4;
         }
 
         /* Enhanced Sections */
         .section {
-            padding: 6rem 2rem;
+            padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 3vw, 2rem);
             position: relative;
         }
 
         .section-container {
             max-width: 1400px;
             margin: 0 auto;
+            padding: 0 clamp(0.5rem, 2vw, 1rem);
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: clamp(2rem, 5vw, 4rem);
         }
 
         .section-badge {
             display: inline-block;
             background: rgba(60, 146, 217, 0.1);
             border: 1px solid var(--primary-blue);
-            padding: 6px 16px;
+            padding: clamp(4px, 1vw, 6px) clamp(12px, 3vw, 16px);
             border-radius: 50px;
-            font-size: 0.875rem;
+            font-size: clamp(0.75rem, 2vw, 0.875rem);
             color: var(--primary-blue);
-            margin-bottom: 1rem;
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
             font-weight: 500;
         }
 
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: clamp(1.75rem, 5vw, 4rem);
             font-weight: 700;
-            margin-bottom: 1.5rem;
+            margin-bottom: clamp(0.75rem, 3vw, 1.5rem);
             color: var(--text-primary);
+            line-height: 1.2;
         }
 
         .section-description {
-            font-size: 1.125rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.125rem);
             color: var(--text-secondary);
             max-width: 700px;
             margin: 0 auto;
-            line-height: 1.8;
+            line-height: 1.7;
         }
 
         /* Enhanced Cards */
@@ -1040,7 +1074,7 @@
             background: rgba(60, 146, 217, 0.05);
             backdrop-filter: blur(20px);
             border-radius: 16px;
-            padding: 3rem;
+            padding: clamp(1.5rem, 5vw, 3rem);
             border: 1px solid var(--border-color);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -1063,10 +1097,12 @@
             transform: scaleX(1);
         }
 
-        .enhanced-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 60px rgba(60, 146, 217, 0.2);
-            border-color: rgba(60, 146, 217, 0.3);
+        @media (hover: hover) {
+            .enhanced-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 25px 60px rgba(60, 146, 217, 0.2);
+                border-color: rgba(60, 146, 217, 0.3);
+            }
         }
 
         /* Interactive Timeline with Zig-Zag Layout - Forced Visibility */
@@ -1117,15 +1153,15 @@
             text-align: left;
         }
 
-        .timeline-content, 
+        .timeline-content,
         .timeline-video-content {
             background: rgba(60, 146, 217, 0.1);
             border-radius: 16px;
-            padding: 2.5rem;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
             position: relative;
             border: 2px solid var(--border-color);
             overflow: hidden;
-            min-height: 350px;
+            aspect-ratio: 16/9;
             cursor: pointer;
             transition: all 0.4s ease;
             z-index: 5;
@@ -1164,26 +1200,31 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
+            width: clamp(50px, 10vw, 70px);
+            height: clamp(50px, 10vw, 70px);
+            min-width: clamp(50px, 10vw, 70px);
+            min-height: clamp(50px, 10vw, 70px);
             background: var(--gradient-primary);
             border-radius: 50%;
             display: flex !important;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: clamp(1.25rem, 3vw, 1.8rem);
             color: white;
-            border: 6px solid var(--dark-navy);
+            border: clamp(4px, 1vw, 6px) solid var(--dark-navy);
             z-index: 10;
             box-shadow: 0 8px 25px rgba(60, 146, 217, 0.4);
             transition: all 0.3s ease;
             opacity: 1 !important;
             visibility: visible !important;
+            flex-shrink: 0;
         }
 
-        .timeline-item:hover .timeline-icon {
-            transform: translate(-50%, -50%) scale(1.1);
-            box-shadow: 0 12px 35px rgba(60, 146, 217, 0.6);
+        @media (hover: hover) {
+            .timeline-item:hover .timeline-icon {
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 12px 35px rgba(60, 146, 217, 0.6);
+            }
         }
 
         .timeline-video {
@@ -1191,7 +1232,7 @@
             height: 100%;
             object-fit: cover;
             border-radius: 14px;
-            min-height: 350px;
+            aspect-ratio: 16/9;
             display: block !important;
             opacity: 1 !important;
             visibility: visible !important;
@@ -1204,16 +1245,16 @@
             justify-content: center;
             color: var(--text-secondary);
             text-align: center;
-            padding: 2rem;
+            padding: clamp(1.5rem, 4vw, 2rem);
             height: 100%;
-            min-height: 350px;
+            aspect-ratio: 16/9;
             opacity: 1 !important;
             visibility: visible !important;
         }
 
         .video-fallback p {
             margin: 0;
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
             color: var(--text-primary);
             font-weight: 600;
         }
@@ -1223,19 +1264,22 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            width: 70px;
-            height: 70px;
+            width: clamp(50px, 10vw, 70px);
+            height: clamp(50px, 10vw, 70px);
+            min-width: clamp(50px, 10vw, 70px);
+            min-height: clamp(50px, 10vw, 70px);
             background: var(--gradient-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: clamp(1.25rem, 3vw, 1.8rem);
             color: white;
-            border: 6px solid var(--dark-navy);
+            border: clamp(4px, 1vw, 6px) solid var(--dark-navy);
             z-index: 10;
             box-shadow: 0 8px 25px rgba(60, 146, 217, 0.4);
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .timeline-center-icon:hover {
@@ -1260,7 +1304,7 @@
         .feature-card {
             background: rgba(60, 146, 217, 0.05);
             border-radius: 16px;
-            padding: 3.5rem;
+            padding: clamp(2rem, 5vw, 3.5rem);
             border: 1px solid var(--border-color);
             transition: all 0.4s ease;
             position: relative;
@@ -1284,41 +1328,50 @@
             opacity: 1;
         }
 
-        .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary-blue);
-            box-shadow: 0 20px 40px rgba(60, 146, 217, 0.15);
+        @media (hover: hover) {
+            .feature-card:hover {
+                transform: translateY(-8px);
+                border-color: var(--primary-blue);
+                box-shadow: 0 20px 40px rgba(60, 146, 217, 0.15);
+            }
         }
 
         .feature-icon {
-            width: 80px;
-            height: 80px;
+            width: clamp(55px, 12vw, 80px);
+            height: clamp(55px, 12vw, 80px);
+            min-width: clamp(55px, 12vw, 80px);
+            min-height: clamp(55px, 12vw, 80px);
             background: var(--gradient-primary);
-            border-radius: 16px;
+            border-radius: clamp(12px, 3vw, 16px);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 3vw, 2rem);
             color: white;
-            margin-bottom: 1.5rem;
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-            background: var(--gradient-accent);
+        @media (hover: hover) {
+            .feature-card:hover .feature-icon {
+                transform: scale(1.1) rotate(5deg);
+                background: var(--gradient-accent);
+            }
         }
 
         .feature-title {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
             color: var(--text-primary);
+            line-height: 1.3;
         }
 
         .feature-description {
             color: var(--text-secondary);
             line-height: 1.6;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
 
         /* Requirements Section */
@@ -1332,24 +1385,26 @@
         .requirement-card {
             background: rgba(60, 146, 217, 0.05);
             border-radius: 16px;
-            padding: 2rem;
+            padding: clamp(1.5rem, 4vw, 2rem);
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
 
-        .requirement-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary-blue);
-            box-shadow: 0 20px 40px rgba(60, 146, 217, 0.15);
+        @media (hover: hover) {
+            .requirement-card:hover {
+                transform: translateY(-8px);
+                border-color: var(--primary-blue);
+                box-shadow: 0 20px 40px rgba(60, 146, 217, 0.15);
+            }
         }
 
         .requirement-card h3 {
             color: var(--primary-blue);
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
             text-align: center;
             border-bottom: 2px solid var(--primary-blue);
-            padding-bottom: 0.5rem;
+            padding-bottom: clamp(0.375rem, 1vw, 0.5rem);
         }
 
         .requirement-card ul {
@@ -1358,10 +1413,12 @@
         }
 
         .requirement-card li {
-            padding: 0.5rem 0;
+            padding: clamp(0.375rem, 1vw, 0.5rem) 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            padding-left: 1.5rem;
+            padding-left: clamp(1.25rem, 3vw, 1.5rem);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            line-height: 1.5;
         }
 
         .requirement-card li::before {
@@ -1571,15 +1628,17 @@
 
         .footer-section h3 {
             color: var(--primary-blue);
-            margin-bottom: 1.5rem;
-            font-size: 1.25rem;
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(1.1rem, 3vw, 1.25rem);
             font-weight: 600;
         }
 
         .footer-section p, .footer-section li {
             color: var(--text-secondary);
-            margin-bottom: 0.75rem;
+            margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
             transition: color 0.3s ease;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            line-height: 1.6;
         }
 
         .footer-section a {
@@ -1594,13 +1653,16 @@
 
         .social-icons {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: clamp(0.75rem, 2vw, 1rem);
+            margin-top: clamp(0.75rem, 2vw, 1rem);
+            flex-wrap: wrap;
         }
 
         .social-icon {
-            width: 50px;
-            height: 50px;
+            width: clamp(44px, 10vw, 50px);
+            height: clamp(44px, 10vw, 50px);
+            min-width: clamp(44px, 10vw, 50px);
+            min-height: clamp(44px, 10vw, 50px);
             background: rgba(60, 146, 217, 0.1);
             border: 1px solid var(--border-color);
             border-radius: 50%;
@@ -1608,15 +1670,18 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 2vw, 1.25rem);
             color: var(--text-secondary);
+            flex-shrink: 0;
         }
 
-        .social-icon:hover {
-            background: var(--gradient-primary);
-            color: white;
-            transform: translateY(-3px);
-            border-color: var(--primary-blue);
+        @media (hover: hover) {
+            .social-icon:hover {
+                background: var(--gradient-primary);
+                color: white;
+                transform: translateY(-3px);
+                border-color: var(--primary-blue);
+            }
         }
 
         .footer-bottom {
@@ -1759,6 +1824,19 @@
                 padding-left: 0;
                 width: 100%;
                 animation: fadeSlideIn 0.4s ease-out backwards;
+                position: relative;
+            }
+
+            /* Hide desktop vertical separators on mobile */
+            .nav-links > li::after {
+                display: none !important;
+            }
+
+            /* Add horizontal separators for mobile navigation items */
+            .nav-links.active > li:not(:last-child) {
+                border-bottom: 1px solid rgba(60, 146, 217, 0.2);
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.5rem;
             }
 
             .nav-links.active li:nth-child(1) { animation-delay: 0.05s; }
@@ -2255,6 +2333,49 @@
                 height: 220px;
             }
         }
+
+        /* Intermediate breakpoint for better tablet responsiveness */
+        @media (max-width: 600px) {
+            .hero-content {
+                padding: clamp(1rem, 4vw, 2rem);
+            }
+
+            .hero-content h1 {
+                font-size: clamp(1.5rem, 5vw, 2.5rem);
+            }
+
+            .hero-cta {
+                gap: 1rem;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: clamp(0.6rem, 2vw, 0.75rem) clamp(1.5rem, 4vw, 2rem);
+                font-size: clamp(0.9rem, 2vw, 1rem);
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .features-grid, .requirements-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .notification-banner {
+                padding: 0.75rem 2.5rem 0.75rem 1rem;
+            }
+
+            .notification-banner h3 {
+                font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            }
+        }
     </style>
 </head>
 <body>
@@ -2502,32 +2623,32 @@
                     <h3 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.5rem;">Sorotan Program</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-graduation-cap" style="color: white;"></i>
+                            <div style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-graduation-cap" style="color: white; font-size: 1.25rem;"></i>
                             </div>
-                            <div>
+                            <div style="flex: 1; min-width: 0;">
                                 <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Integrasi Akademik</h4>
-                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Gabungan sempurna latihan ketenteraan dengan pendidikan universiti</p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">Gabungan sempurna latihan ketenteraan dengan pendidikan universiti</p>
                             </div>
                         </div>
-                        
+
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-users" style="color: white;"></i>
+                            <div style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-users" style="color: white; font-size: 1.25rem;"></i>
                             </div>
-                            <div>
+                            <div style="flex: 1; min-width: 0;">
                                 <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Pembangunan Kepimpinan</h4>
-                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Latihan kepimpinan komprehensif dan pengalaman praktikal</p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">Latihan kepimpinan komprehensif dan pengalaman praktikal</p>
                             </div>
                         </div>
-                        
+
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-anchor" style="color: white;"></i>
+                            <div style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-anchor" style="color: white; font-size: 1.25rem;"></i>
                             </div>
-                            <div>
+                            <div style="flex: 1; min-width: 0;">
                                 <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Kecemerlangan Tentera Laut</h4>
-                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Kemahiran maritim lanjutan dan latihan operasi tentera laut</p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">Kemahiran maritim lanjutan dan latihan operasi tentera laut</p>
                             </div>
                         </div>
                     </div>
