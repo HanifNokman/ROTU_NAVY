@@ -32,10 +32,15 @@ Route::get('/', function () {
 
 Route::get('/application', [ApplicationController::class, 'create'])->name('application.create');
 Route::post('/application', [ApplicationController::class, 'store'])->name('application.store');
+Route::get('/application/status', [ApplicationController::class, 'showStatus'])->name('application.status');
+Route::post('/application/status/search', [ApplicationController::class, 'searchStatus'])->name('application.status.search');
 
 Route::get('/about-me', function () {
     return view('about-me');
 })->name('about-me');
+
+Route::get('/gallery', [App\Http\Controllers\PublicGalleryController::class, 'index'])->name('public.gallery');
+Route::get('/gallery/category/{categoryId}', [App\Http\Controllers\PublicGalleryController::class, 'getByCategory'])->name('public.gallery.category');
 
 Route::get('/api/content-settings', [ContentManagementController::class, 'getCurrentSettings'])
     ->name('api.content.settings');

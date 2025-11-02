@@ -76,6 +76,29 @@ class ApplicationController extends Controller
         return view('pending_verification', compact('applications'));
     }
 
+    public function showStatus()
+    {
+        return view('application_status');
+    }
+
+    public function searchStatus(Request $request)
+    {
+        $request->validate([
+            'matric_no' => 'required|string'
+        ]);
+
+        $matric_no = $request->matric_no;
+        $application = Application::where('matric_no', $matric_no)->first();
+
+        if (!$application) {
+            return redirect()->back()
+                ->with('error', 'Permohonan tidak dijumpai. Sila semak semula Nombor Matrik anda.')
+                ->withInput();
+        }
+
+        return view('application_status', compact('application', 'matric_no'));
+    }
+
     public function updateStatus(Request $request, Application $application)
     {
         $request->validate([
