@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Instructor;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Application;
+use App\Models\ContentSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserAcceptedMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class PendingVerificationController extends Controller
 {
@@ -19,6 +21,19 @@ class PendingVerificationController extends Controller
 
     public function index()
     {
+        // Check if 1 week has passed since selection completion and delete applications
+        $selectionCompletedAt = ContentSetting::get('selection_completed_at');
+        if ($selectionCompletedAt) {
+            $completionDate = Carbon::parse($selectionCompletedAt);
+            $oneWeekLater = $completionDate->addWeek();
+
+            if (Carbon::now()->greaterThanOrEqualTo($oneWeekLater)) {
+                Application::truncate();
+                ContentSetting::where('key', 'selection_completed_at')->delete();
+                \Log::info("Applications deleted automatically 1 week after selection process completion.");
+            }
+        }
+
         $pendingCadets = User::where('status', 'pending')
             ->where('role', 'cadet')
             ->get();
@@ -329,10 +344,11 @@ class PendingVerificationController extends Controller
                     }
                 }
 
-                // Only delete applications after successful account creation
+                // Store selection completion date instead of immediately deleting applications
                 if ($createdCount > 0) {
-                    Application::truncate();
-                    \Log::info("Selection process completed. Created {$createdCount} cadet accounts and cleared applications table.");
+                    $completionDate = Carbon::now();
+                    ContentSetting::set('selection_completed_at', $completionDate->toDateTimeString(), 'datetime', 'Date when selection process was completed');
+                    \Log::info("Selection process completed. Created {$createdCount} cadet accounts. Applications will be deleted after 1 week.");
                 }
             });
 

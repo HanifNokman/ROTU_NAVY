@@ -124,45 +124,9 @@
             line-height: 1;
         }
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2.5rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            position: relative;
-            transition: all 0.3s ease;
-            padding: 0.5rem 0;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--primary-blue);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
 
         .btn-primary {
-            background: var(--gradient-primary);
+            background: var(--primary-blue);
             padding: 10px 24px;
             border: none;
             border-radius: 8px;
@@ -171,7 +135,7 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 0.9rem;
-            box-shadow: var(--shadow-primary);
+            box-shadow: 0 4px 12px rgba(60, 146, 217, 0.3);
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -179,39 +143,11 @@
         }
 
         .btn-primary:hover {
+            background: var(--secondary-blue);
             transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(60, 146, 217, 0.4);
         }
 
-        /* Mobile Menu Toggle */
-        .mobile-menu-toggle {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            padding: 8px;
-            flex-shrink: 0;
-        }
-
-        .mobile-menu-toggle span {
-            width: 25px;
-            height: 2px;
-            background: var(--text-primary);
-            margin: 3px 0;
-            transition: 0.3s;
-            border-radius: 1px;
-        }
-
-        .mobile-menu-toggle.active span:nth-child(1) {
-            transform: rotate(-45deg) translate(-5px, 6px);
-        }
-
-        .mobile-menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .mobile-menu-toggle.active span:nth-child(3) {
-            transform: rotate(45deg) translate(-5px, -6px);
-        }
 
         /* Main Content */
         .main-content {
@@ -391,7 +327,7 @@
         /* Submit Button */
         .submit-btn {
             width: 100%;
-            background: var(--gradient-primary);
+            background: var(--primary-blue);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -401,10 +337,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 2rem;
-            box-shadow: var(--shadow-primary);
+            box-shadow: 0 4px 12px rgba(60, 146, 217, 0.3);
         }
 
         .submit-btn:hover {
+            background: var(--secondary-blue);
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(60, 146, 217, 0.4);
         }
@@ -500,44 +437,6 @@
 
         /* Mobile Navigation */
         @media (max-width: 767px) {
-            .nav-links {
-                display: none;
-                position: fixed;
-                top: 77px;
-                left: 0;
-                width: 100%;
-                max-height: calc(100vh - 77px);
-                background: rgba(16, 20, 28, 0.98);
-                backdrop-filter: blur(20px);
-                flex-direction: column;
-                padding: 2rem 1rem;
-                gap: 0;
-                border-top: 1px solid var(--border-color);
-                overflow-y: auto;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li {
-                width: 100%;
-                margin-bottom: 0.5rem;
-            }
-
-            .nav-links a {
-                font-size: 1rem;
-                padding: 0.75rem 1rem;
-                width: 100%;
-                display: block;
-                text-align: center;
-                background: rgba(60, 146, 217, 0.05);
-                border-radius: 8px;
-            }
-
-            .mobile-menu-toggle {
-                display: flex;
-            }
 
             .main-content {
                 margin-top: 85px;
@@ -600,8 +499,12 @@
             }
 
             .btn-primary {
-                padding: 8px 20px;
-                font-size: 0.85rem;
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+
+            .btn-primary i {
+                margin-right: 0.25rem !important;
             }
         }
 
@@ -621,6 +524,15 @@
 
             .form-help {
                 font-size: 0.8rem;
+            }
+
+            .btn-primary {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+
+            .btn-primary i {
+                display: none;
             }
         }
 
@@ -662,28 +574,16 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="/" class="nav-logo">
-                <img src="storage/assets/logo/PSS-LOGO.png" alt="Logo ROTU">
+                <img src="{{ asset('storage/assets/logo/PSS-LOGO.png') }}" alt="Logo ROTU">
                 <div class="nav-logo-text">
                     <span class="main-title">PALAPES</span>
                     <span class="sub-title">LAUT UMS</span>
                 </div>
             </a>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="/">Laman Utama</a></li>
-                <li><a href="/#introduction">Pengenalan</a></li>
-                <li><a href="/#timeline">Perjalanan</a></li>
-                <li><a href="/#about">Mengenai</a></li>
-                <li><a href="/#benefits">Faedah</a></li>
-                <li><a href="/#requirements">Syarat</a></li>
-                <li><a href="/#selection">Pemilihan</a></li>
-                <li><a href="/#application">Mohon</a></li>
-            </ul>
-
-            <div class="mobile-menu-toggle" id="mobileToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <a href="/" class="btn-primary">
+                <i class="fas fa-home" style="margin-right: 0.5rem;"></i>
+                Laman Utama
+            </a>
         </div>
     </nav>
 
@@ -698,10 +598,12 @@
                         Tarikh akhir permohonan telah berlalu pada <strong>{{ $applicationDeadline->format('d F Y') }}</strong>.
                         Sila tunggu pengumuman sesi permohonan seterusnya.
                     </p>
-                    <a href="/" class="btn-primary">
-                        <i class="fas fa-home" style="margin-right: 0.5rem;"></i>
-                        Kembali ke Laman Utama
-                    </a>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                        <a href="{{ route('application.status') }}" class="btn-primary">
+                            <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
+                            Semak Status Permohonan
+                        </a>
+                    </div>
                 </div>
             @else
                 <div class="application-header">
@@ -884,25 +786,6 @@
     </footer>
 
     <script>
-        // Mobile menu toggle
-        const mobileToggle = document.getElementById('mobileToggle');
-        const navLinks = document.getElementById('navLinks');
-
-        mobileToggle.addEventListener('click', function() {
-            this.classList.toggle('active');
-            navLinks.classList.toggle('active');
-            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
-        });
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                mobileToggle.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-        });
-
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');

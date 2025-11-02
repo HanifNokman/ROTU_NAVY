@@ -2397,6 +2397,7 @@
                 <li><a href="#requirements">Syarat</a></li>
                 <li><a href="#selection">Pemilihan</a></li>
                 <li><a href="#application">Mohon</a></li>
+                <li><a href="#gallery">Galeri</a></li>
                 
                 <!-- Authentication-based navigation -->
                 @auth
@@ -3085,6 +3086,37 @@
                 </div>
             </div>
         </section>
+
+    <div style="width: 80%; height: 3px; background: var(--gradient-accent); margin: 4rem auto; box-shadow: 0 2px 10px rgba(60, 146, 217, 0.3);"></div>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="section">
+        <div class="section-container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Galeri Kami</div>
+                <h2 class="section-title">Lihat Perjalanan Kami</h2>
+                <p class="section-description">
+                    Terokai koleksi foto dan kenangan indah daripada latihan, aktiviti, dan pencapaian PALAPES Laut UMS.
+                    Setiap gambar menceritakan kisah dedikasi, disiplin, dan semangat kekitaan.
+                </p>
+            </div>
+
+            <div class="gallery-preview animate-on-scroll" style="margin-top: 4rem; text-align: center;">
+                <div style="background: rgba(60, 146, 217, 0.05); padding: 4rem 2rem; border-radius: 16px; border: 2px solid rgba(60, 146, 217, 0.2);">
+                    <i class="fas fa-images" style="font-size: 5rem; color: var(--primary-blue); margin-bottom: 2rem; opacity: 0.8;"></i>
+                    <h3 style="color: var(--text-primary); font-size: 2rem; margin-bottom: 1.5rem;">Koleksi Foto Penuh</h3>
+                    <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin: 0 auto 2.5rem;">
+                        Lawati galeri lengkap kami untuk melihat lebih banyak foto aktiviti latihan, pertandingan,
+                        majlis rasmi, dan saat-saat bersejarah PALAPES Laut UMS.
+                    </p>
+                    <a href="{{ route('public.gallery') }}" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1.25rem 2.5rem; font-size: 1.1rem;">
+                        <i class="fas fa-arrow-right"></i>
+                        Lihat Galeri Penuh
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Enhanced Footer -->
     <footer class="footer">
