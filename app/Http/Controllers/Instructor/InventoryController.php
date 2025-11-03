@@ -182,7 +182,7 @@ class InventoryController extends Controller
         // Filter by status if provided
         if ($status) {
             if ($status === 'active') {
-                $query->where('equipment_loans.status', 'Borrowed');
+                $query->whereIn('equipment_loans.status', ['Borrowed', 'Pending Return']);
             } elseif ($status === 'returned') {
                 $query->where('equipment_loans.status', 'Returned');
             }
@@ -208,7 +208,7 @@ class InventoryController extends Controller
         }
         if ($status) {
             if ($status === 'active') {
-                $query->where('equipment_loans.status', 'Borrowed');
+                $query->whereIn('equipment_loans.status', ['Borrowed', 'Pending Return']);
             } elseif ($status === 'returned') {
                 $query->where('equipment_loans.status', 'Returned');
             }
@@ -304,6 +304,11 @@ class InventoryController extends Controller
                         $html .= 'Borrowed';
                         $html .= '</span>';
                     }
+                } elseif ($loan->status === 'Pending Return') {
+                    $html .= '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800">';
+                    $html .= '<i class="fas fa-hourglass-half mr-1"></i>';
+                    $html .= 'Pending Return';
+                    $html .= '</span>';
                 } else {
                     $html .= '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">';
                     $html .= '<i class="fas fa-check-circle mr-1"></i>';
@@ -311,10 +316,31 @@ class InventoryController extends Controller
                     $html .= '</span>';
                 }
                 $html .= '</td>';
-                
+
                 // Actions
                 $html .= '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">';
-                if ($loan->status === 'Borrowed') {
+                if ($loan->status === 'Pending Return') {
+                    $html .= '<div class="flex gap-2">';
+                    // Approve button
+                    $html .= '<form method="POST" action="' . route('instructor.inventory.update-loan', $loan) . '" class="inline">';
+                    $html .= csrf_field();
+                    $html .= method_field('PATCH');
+                    $html .= '<input type="hidden" name="action" value="approve_return">';
+                    $html .= '<button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors duration-200">';
+                    $html .= '<i class="fas fa-check mr-1"></i>Accept';
+                    $html .= '</button>';
+                    $html .= '</form>';
+                    // Reject button
+                    $html .= '<form method="POST" action="' . route('instructor.inventory.update-loan', $loan) . '" class="inline">';
+                    $html .= csrf_field();
+                    $html .= method_field('PATCH');
+                    $html .= '<input type="hidden" name="action" value="reject_return">';
+                    $html .= '<button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors duration-200">';
+                    $html .= '<i class="fas fa-times mr-1"></i>Reject';
+                    $html .= '</button>';
+                    $html .= '</form>';
+                    $html .= '</div>';
+                } elseif ($loan->status === 'Borrowed') {
                     $html .= '<form method="POST" action="' . route('instructor.inventory.update-loan', $loan) . '" class="inline">';
                     $html .= csrf_field();
                     $html .= method_field('PATCH');
@@ -567,25 +593,59 @@ class InventoryController extends Controller
 
     public function updateLoanStatus(Request $request, EquipmentLoan $loan)
     {
+        $action = $request->input('action');
+
+        if ($action === 'approve_return') {
+            return $this->approveReturn($loan);
+        } elseif ($action === 'reject_return') {
+            return $this->rejectReturn($loan);
+        }
+
+        // Default behavior for manual status update
         $request->validate([
-            'status' => 'required|in:Borrowed,Returned',
+            'status' => 'required|in:Borrowed,Pending Return,Returned',
             'return_date' => 'nullable|date'
         ]);
 
+        $oldStatus = $loan->status;
+        $newStatus = $request->status;
+
         $loan->update([
-            'status' => $request->status,
-            'return_date' => $request->status === 'Returned' ? 
+            'status' => $newStatus,
+            'return_date' => $newStatus === 'Returned' ?
                 ($request->return_date ?? now()->toDateString()) : null
         ]);
 
         // Update inventory available quantity
-        if ($request->status === 'Returned') {
+        if ($newStatus === 'Returned' && $oldStatus !== 'Returned') {
             $loan->inventoryItem->increment('available_quantity', $loan->quantity);
-        } elseif ($loan->getOriginal('status') === 'Returned') {
+        } elseif ($oldStatus === 'Returned' && $newStatus !== 'Returned') {
             $loan->inventoryItem->decrement('available_quantity', $loan->quantity);
         }
 
         return redirect()->back()->with('success', 'Loan status updated successfully.');
+    }
+
+    public function approveReturn(EquipmentLoan $loan)
+    {
+        if ($loan->status !== 'Pending Return') {
+            return redirect()->back()->with('error', 'This loan is not pending return.');
+        }
+
+        $loan->approveReturn();
+
+        return redirect()->back()->with('success', 'Return request approved. Item has been returned and inventory updated.');
+    }
+
+    public function rejectReturn(EquipmentLoan $loan)
+    {
+        if ($loan->status !== 'Pending Return') {
+            return redirect()->back()->with('error', 'This loan is not pending return.');
+        }
+
+        $loan->rejectReturn();
+
+        return redirect()->back()->with('success', 'Return request rejected. Loan status remains as borrowed.');
     }
 
     public function exportUniformSizes(Request $request)

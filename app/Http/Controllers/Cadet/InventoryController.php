@@ -477,13 +477,13 @@ class InventoryController extends Controller
     }
 
     // ================================================================
-    // RETURN EQUIPMENT LOAN
+    // REQUEST RETURN EQUIPMENT LOAN
     // ================================================================
-    
+
     public function returnLoan(Request $request, EquipmentLoan $loan)
     {
         $cadet = $this->getCurrentCadet();
-        
+
         if (!$cadet || $loan->cadet_id !== $cadet->id) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
@@ -492,18 +492,17 @@ class InventoryController extends Controller
             return redirect()->back()->with('error', 'This loan has already been returned.');
         }
 
-        $request->validate([
-            'return_date' => 'nullable|date|after_or_equal:' . $loan->borrow_date->format('Y-m-d') . '|before_or_equal:today'
-        ]);
+        if ($loan->status === 'Pending Return') {
+            return redirect()->back()->with('error', 'A return request for this loan is already pending instructor approval.');
+        }
 
-        $loan->update([
-            'status' => 'Returned',
-            'return_date' => $request->return_date ?? now()->toDateString()
-        ]);
+        if (!$loan->canRequestReturn()) {
+            return redirect()->back()->with('error', 'This loan cannot be returned at this time.');
+        }
 
-        $loan->inventoryItem->increment('available_quantity', $loan->quantity);
+        $loan->requestReturn();
 
-        return redirect()->back()->with('success', 'Equipment returned successfully.');
+        return redirect()->back()->with('success', 'Return request submitted successfully. Waiting for instructor approval.');
     }
 
     // ================================================================

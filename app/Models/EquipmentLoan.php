@@ -41,10 +41,10 @@ class EquipmentLoan extends Model
     // Helper methods for loan status
     public function isOverdue(): bool
     {
-        if ($this->status === 'Returned') {
+        if ($this->status === 'Returned' || $this->status === 'Pending Return') {
             return false;
         }
-        
+
         // Consider items overdue if borrowed for more than 30 days without return
         return $this->borrow_date->addDays(30)->isPast();
     }
@@ -100,7 +100,7 @@ class EquipmentLoan extends Model
     // Status helper methods
     public function isActive(): bool
     {
-        return $this->status === 'Borrowed';
+        return $this->status === 'Borrowed' || $this->status === 'Pending Return';
     }
 
     public function isReturned(): bool
@@ -108,10 +108,16 @@ class EquipmentLoan extends Model
         return $this->status === 'Returned';
     }
 
+    public function isPendingReturn(): bool
+    {
+        return $this->status === 'Pending Return';
+    }
+
     public function getStatusBadgeColorAttribute(): string
     {
         return match($this->status) {
             'Borrowed' => $this->isOverdue() ? 'red' : 'yellow',
+            'Pending Return' => 'orange',
             'Returned' => 'green',
             'Overdue' => 'red',
             default => 'gray'
@@ -121,12 +127,17 @@ class EquipmentLoan extends Model
     // Query scopes
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', 'Borrowed');
+        return $query->whereIn('status', ['Borrowed', 'Pending Return']);
     }
 
     public function scopeReturned(Builder $query): Builder
     {
         return $query->where('status', 'Returned');
+    }
+
+    public function scopePendingReturn(Builder $query): Builder
+    {
+        return $query->where('status', 'Pending Return');
     }
 
     public function scopeOverdue(Builder $query): Builder
@@ -163,6 +174,54 @@ class EquipmentLoan extends Model
     public function canBeReturned(): bool
     {
         return $this->status === 'Borrowed';
+    }
+
+    public function canRequestReturn(): bool
+    {
+        return $this->status === 'Borrowed';
+    }
+
+    public function requestReturn(): bool
+    {
+        if (!$this->canRequestReturn()) {
+            return false;
+        }
+
+        $this->update([
+            'status' => 'Pending Return'
+        ]);
+
+        return true;
+    }
+
+    public function approveReturn(string $returnDate = null): bool
+    {
+        if ($this->status !== 'Pending Return') {
+            return false;
+        }
+
+        $this->update([
+            'status' => 'Returned',
+            'return_date' => $returnDate ?? now()->toDateString()
+        ]);
+
+        // Update inventory quantity
+        $this->inventoryItem->increment('available_quantity', $this->quantity);
+
+        return true;
+    }
+
+    public function rejectReturn(): bool
+    {
+        if ($this->status !== 'Pending Return') {
+            return false;
+        }
+
+        $this->update([
+            'status' => 'Borrowed'
+        ]);
+
+        return true;
     }
 
     public function markAsReturned(string $returnDate = null): bool

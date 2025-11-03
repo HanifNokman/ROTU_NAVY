@@ -138,7 +138,7 @@ class Cadet extends Model
     public function activeLoans()
     {
         return $this->hasMany(EquipmentLoan::class)
-                ->where('status', 'Borrowed');
+                ->whereIn('status', ['Borrowed', 'Pending Return']);
     }
 
     public function pastLoans()
