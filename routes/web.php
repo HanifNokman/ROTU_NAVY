@@ -320,15 +320,34 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     // ------------------------------------------------------------------------
     // Gallery Management
     // ------------------------------------------------------------------------
-    
+
     Route::get('/gallery', [InstructorGalleryController::class, 'index'])->name('gallery');
     Route::post('/gallery', [InstructorGalleryController::class, 'store'])->name('gallery.store');
     Route::put('/gallery/{gallery}', [InstructorGalleryController::class, 'update'])->name('gallery.update');
     Route::delete('/gallery/{gallery}', [InstructorGalleryController::class, 'destroy'])->name('gallery.destroy');
-    
+
     // Gallery category routes
     Route::post('/gallery-categories', [InstructorGalleryController::class, 'storeCategory'])->name('gallery_categories.store');
     Route::delete('/gallery-categories/{category}', [InstructorGalleryController::class, 'destroyCategory'])->name('gallery_categories.destroy');
+
+    // ------------------------------------------------------------------------
+    // Report Generation
+    // ------------------------------------------------------------------------
+
+    Route::get('/reports', [App\Http\Controllers\Instructor\ReportController::class, 'index'])->name('reports');
+    Route::get('/reports/training', [App\Http\Controllers\Instructor\ReportController::class, 'trainingReport'])->name('reports.training');
+    Route::get('/reports/attendance', [App\Http\Controllers\Instructor\ReportController::class, 'attendanceReport'])->name('reports.attendance');
+    Route::get('/reports/inventory', [App\Http\Controllers\Instructor\ReportController::class, 'inventoryReport'])->name('reports.inventory');
+    Route::get('/reports/performance', [App\Http\Controllers\Instructor\ReportController::class, 'performanceReport'])->name('reports.performance');
+    Route::get('/reports/financial', [App\Http\Controllers\Instructor\ReportController::class, 'financialReport'])->name('reports.financial');
+    Route::get('/reports/analytics', [App\Http\Controllers\Instructor\ReportController::class, 'analytics'])->name('reports.analytics');
+
+    // Export routes
+    Route::get('/reports/training/export', [App\Http\Controllers\Instructor\ReportController::class, 'exportTrainingReport'])->name('reports.training.export');
+    Route::get('/reports/attendance/export', [App\Http\Controllers\Instructor\ReportController::class, 'exportAttendanceReport'])->name('reports.attendance.export');
+    Route::get('/reports/inventory/export', [App\Http\Controllers\Instructor\ReportController::class, 'exportInventoryReport'])->name('reports.inventory.export');
+    Route::get('/reports/performance/export', [App\Http\Controllers\Instructor\ReportController::class, 'exportPerformanceReport'])->name('reports.performance.export');
+    Route::get('/reports/financial/export', [App\Http\Controllers\Instructor\ReportController::class, 'exportFinancialReport'])->name('reports.financial.export');
 });
 
 // ============================================================================
