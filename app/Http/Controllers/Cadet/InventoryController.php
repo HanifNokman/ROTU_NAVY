@@ -508,11 +508,11 @@ class InventoryController extends Controller
     // ================================================================
     // DELETE UNIFORM SIZE
     // ================================================================
-    
+
     public function deleteUniformSize(CadetSize $cadetSize)
     {
         $cadet = $this->getCurrentCadet();
-        
+
         if (!$cadet || $cadetSize->cadet_id !== $cadet->id) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
@@ -525,6 +525,32 @@ class InventoryController extends Controller
         $cadetSize->delete();
 
         return redirect()->back()->with('success', "Uniform size for {$componentName} removed successfully.");
+    }
+
+    // ================================================================
+    // TOGGLE UNIFORM ISSUE STATUS (AJAX)
+    // ================================================================
+
+    public function toggleIssueStatus(Request $request, CadetSize $cadetSize)
+    {
+        $cadet = $this->getCurrentCadet();
+
+        if (!$cadet || $cadetSize->cadet_id !== $cadet->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
+        }
+
+        $request->validate([
+            'is_issued' => 'required|boolean'
+        ]);
+
+        $cadetSize->is_issued = $request->is_issued;
+        $cadetSize->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Issue status updated successfully.',
+            'is_issued' => $cadetSize->is_issued
+        ]);
     }
 
     // ================================================================

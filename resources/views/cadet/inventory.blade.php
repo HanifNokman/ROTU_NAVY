@@ -484,7 +484,7 @@
                                                 <tr>
                                                     <th>Component</th>
                                                     <th>Size</th>
-                                                    <th>Status</th>
+                                                    <th>Issued Status</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -517,15 +517,23 @@
                                                         </td>
                                                         <td>
                                                             @if($sizeEntry)
-                                                                @if($sizeEntry->is_issued)
-                                                                    <span class="status-badge" style="background-color: #d1fae5; color: #065f46;">
-                                                                        Issued
+                                                                <div class="flex items-center gap-3">
+                                                                    <label class="relative inline-flex items-center cursor-pointer">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            class="sr-only peer issue-toggle"
+                                                                            data-size-entry-id="{{ $sizeEntry->id }}"
+                                                                            {{ $sizeEntry->is_issued ? 'checked' : '' }}>
+                                                                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                                                    </label>
+                                                                    <span class="issue-status-text text-sm font-semibold">
+                                                                        @if($sizeEntry->is_issued)
+                                                                            <span class="text-green-700">Issued</span>
+                                                                        @else
+                                                                            <span class="text-yellow-700">Not Issued</span>
+                                                                        @endif
                                                                     </span>
-                                                                @else
-                                                                    <span class="status-badge" style="background-color: #fef3c7; color: #92400e;">
-                                                                        Not Issued
-                                                                    </span>
-                                                                @endif
+                                                                </div>
                                                             @else
                                                                 <span class="text-gray-400 text-sm">No size recorded</span>
                                                             @endif
@@ -964,7 +972,7 @@
                                             <tr>
                                                 <th>Component</th>
                                                 <th>Size</th>
-                                                <th>Status</th>
+                                                <th>Issued Status</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -1000,25 +1008,27 @@
                                     </td>
                                     <td>
                             `;
-                            
+
                             if (component.size) {
-                                if (component.is_issued) {
-                                    html += `
-                                        <span class="status-badge" style="background-color: #d1fae5; color: #065f46;">
-                                            Issued
+                                html += `
+                                    <div class="flex items-center gap-3">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                class="sr-only peer issue-toggle"
+                                                data-size-entry-id="${component.size_entry_id}"
+                                                ${component.is_issued ? 'checked' : ''}>
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                        </label>
+                                        <span class="issue-status-text text-sm font-semibold">
+                                            ${component.is_issued ? '<span class="text-green-700">Issued</span>' : '<span class="text-yellow-700">Not Issued</span>'}
                                         </span>
-                                    `;
-                                } else {
-                                    html += `
-                                        <span class="status-badge" style="background-color: #fef3c7; color: #92400e;">
-                                            Not Issued
-                                        </span>
-                                    `;
-                                }
+                                    </div>
+                                `;
                             } else {
                                 html += `<span class="text-gray-400 text-sm">No size recorded</span>`;
                             }
-                            
+
                             html += `
                                     </td>
                                     <td>
@@ -1058,10 +1068,13 @@
                         `;
                         
                         container.innerHTML = html;
-                        
+
                         // Re-attach validation to new inputs
                         attachSizeValidation();
-                        
+
+                        // Re-attach toggle handlers
+                        attachToggleHandlers();
+
                         // Re-attach form submit handler
                         const form = document.getElementById('uniformSizeForm');
                         if (form) {
@@ -1142,9 +1155,67 @@
             }
         });
 
+        function attachToggleHandlers() {
+            document.querySelectorAll('.issue-toggle').forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const sizeEntryId = this.dataset.sizeEntryId;
+                    const isIssued = this.checked;
+                    const statusText = this.closest('td').querySelector('.issue-status-text');
+
+                    // Optimistic UI update
+                    const originalChecked = !isIssued;
+                    if (statusText) {
+                        statusText.innerHTML = isIssued
+                            ? '<span class="text-green-700">Issued</span>'
+                            : '<span class="text-yellow-700">Not Issued</span>';
+                    }
+
+                    // Send AJAX request
+                    fetch(`/cadet/inventory/uniform-size/${sizeEntryId}/toggle-issue`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            is_issued: isIssued
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success notification (optional)
+                            console.log('Issue status updated successfully');
+                        } else {
+                            // Revert on failure
+                            this.checked = originalChecked;
+                            if (statusText) {
+                                statusText.innerHTML = originalChecked
+                                    ? '<span class="text-green-700">Issued</span>'
+                                    : '<span class="text-yellow-700">Not Issued</span>';
+                            }
+                            alert('Failed to update issue status');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Revert on error
+                        this.checked = originalChecked;
+                        if (statusText) {
+                            statusText.innerHTML = originalChecked
+                                ? '<span class="text-green-700">Issued</span>'
+                                : '<span class="text-yellow-700">Not Issued</span>';
+                        }
+                        alert('Error updating issue status');
+                    });
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             attachSizeValidation();
-            
+            attachToggleHandlers();
+
             const existingForm = document.getElementById('uniformSizeForm');
             if (existingForm) {
                 existingForm.addEventListener('submit', function(e) {
