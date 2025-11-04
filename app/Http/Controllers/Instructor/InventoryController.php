@@ -37,17 +37,32 @@ class InventoryController extends Controller
         $selectedUniformIntakeYear = $request->get('intake_year', $defaultIntakeYear);
         // For loan section, default to lowest intake if not provided
         $selectedLoanIntakeYear = $request->get('loan_intake_year', '');
-        
+        // For issuance tracking section
+        $selectedIssuanceIntakeYear = $request->get('issuance_intake_year', $defaultIntakeYear);
+
         $selectedUniformType = $request->get('uniform_type');
         $selectedUniformComponent = $request->get('uniform_component');
         $selectedCategory = $request->get('equipment_category');
         $selectedStatus = $request->get('loan_status', 'active'); // Default to active loans
+
+        // Issuance tracking filters
+        $selectedIssuanceUniformType = $request->get('issuance_uniform_type');
+        $selectedIssuanceComponent = $request->get('issuance_component');
+        $issuanceFilter = $request->get('issuance_filter', 'all');
 
         // Get uniform types and components for dropdowns
         $uniformTypes = UniformType::all();
         $uniformComponents = UniformComponent::when($selectedUniformType, function($query) use ($selectedUniformType) {
             return $query->where('uniform_type_id', $selectedUniformType);
         })->get();
+
+        // Get components for issuance tracking
+        $issuanceComponents = collect();
+        if ($selectedIssuanceUniformType) {
+            $issuanceComponents = UniformComponent::where('uniform_type_id', $selectedIssuanceUniformType)
+                ->orderBy('component_name')
+                ->get();
+        }
 
         // Handle AJAX requests for instant filtering
         if ($request->ajax()) {
@@ -79,6 +94,14 @@ class InventoryController extends Controller
         // Get inventory summary
         $inventorySummary = $this->getInventorySummary();
 
+        // Get issuance tracking data
+        $cadetsIssuanceData = $this->getIssuanceTrackingData(
+            $selectedIssuanceIntakeYear,
+            $selectedIssuanceUniformType,
+            $selectedIssuanceComponent,
+            $issuanceFilter
+        );
+
         return view('instructor.inventory', compact(
             'intakeYears',
             'selectedUniformIntakeYear',
@@ -91,7 +114,13 @@ class InventoryController extends Controller
             'uniformComponents',
             'uniformSizeSummary',
             'equipmentLoans',
-            'inventorySummary'
+            'inventorySummary',
+            'selectedIssuanceIntakeYear',
+            'selectedIssuanceUniformType',
+            'selectedIssuanceComponent',
+            'issuanceFilter',
+            'issuanceComponents',
+            'cadetsIssuanceData'
         ));
     }
 
@@ -983,5 +1012,237 @@ class InventoryController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    // ================================================================
+    // GET ISSUANCE TRACKING DATA
+    // ================================================================
+
+    private function getIssuanceTrackingData($intakeYear, $uniformType = null, $component = null, $issuanceFilter = 'all')
+    {
+        $cadetsData = collect();
+
+        if (!$intakeYear) {
+            return $cadetsData;
+        }
+
+        $query = Cadet::with(['user', 'cadetSizes.uniformComponent'])
+            ->whereHas('user')
+            ->where('intake_year', $intakeYear);
+
+        $cadets = $query->get();
+
+        if ($component) {
+            // Filter for specific component
+            $cadetsData = $cadets->map(function ($cadet) use ($component, $issuanceFilter) {
+                $sizeEntry = $cadet->cadetSizes->firstWhere('component_id', $component);
+
+                $issued = $sizeEntry ? $sizeEntry->is_issued : false;
+
+                // Apply issuance filter
+                if ($issuanceFilter === 'issued' && !$issued) {
+                    return null;
+                }
+                if ($issuanceFilter === 'not_issued' && $issued) {
+                    return null;
+                }
+
+                return [
+                    'cadet_id' => $cadet->id,
+                    'cadet_name' => $cadet->user->name,
+                    'size' => $sizeEntry ? $sizeEntry->size : 'N/A',
+                    'is_issued' => $issued,
+                    'component_name' => $sizeEntry ? $sizeEntry->uniformComponent->component_name : (UniformComponent::find($component)->component_name ?? 'Unknown')
+                ];
+            })->filter()->values();
+        } elseif ($uniformType) {
+            // Show all components for the selected uniform type
+            $typeComponents = UniformComponent::where('uniform_type_id', $uniformType)
+                ->orderBy('component_name')
+                ->get();
+
+            $cadetsData = $cadets->map(function ($cadet) use ($typeComponents, $issuanceFilter) {
+                $componentData = [];
+                foreach ($typeComponents as $component) {
+                    $sizeEntry = $cadet->cadetSizes->firstWhere('component_id', $component->id);
+                    $componentData[] = [
+                        'component_id' => $component->id,
+                        'component_name' => $component->component_name,
+                        'size' => $sizeEntry ? $sizeEntry->size : 'N/A',
+                        'is_issued' => $sizeEntry ? $sizeEntry->is_issued : false
+                    ];
+                }
+
+                // Apply issuance filter
+                if ($issuanceFilter !== 'all') {
+                    $componentData = collect($componentData)->filter(function($comp) use ($issuanceFilter) {
+                        if ($issuanceFilter === 'issued') {
+                            return $comp['is_issued'];
+                        } elseif ($issuanceFilter === 'not_issued') {
+                            return !$comp['is_issued'];
+                        }
+                        return true;
+                    })->values()->toArray();
+
+                    if (empty($componentData)) {
+                        return null;
+                    }
+                }
+
+                return [
+                    'cadet_id' => $cadet->id,
+                    'cadet_name' => $cadet->user->name,
+                    'components' => $componentData
+                ];
+            })->filter()->values();
+        }
+        // If neither component nor uniformType is selected, return empty collection
+        // Instructor must select a uniform type to view data
+
+        return $cadetsData;
+    }
+
+    // ================================================================
+    // COMPONENT ISSUANCE TRACKING (DEPRECATED - KEPT FOR COMPATIBILITY)
+    // ================================================================
+
+    public function componentIssuanceTracking(Request $request)
+    {
+        // Get intake years from current year (2025) down to 4 years back (2022)
+        $currentYear = date('Y');
+        $intakeYears = [];
+        for ($i = 0; $i < 4; $i++) {
+            $year = $currentYear - $i;
+            $intakeNumber = 14 - $i;
+            $intakeYears[] = [
+                'year' => $year,
+                'label' => "Intake - {$intakeNumber}"
+            ];
+        }
+
+        // Default to the lowest intake (last in the array)
+        $defaultIntakeYear = end($intakeYears)['year'];
+        $selectedIntakeYear = $request->get('intake_year', $defaultIntakeYear);
+        $selectedUniformType = $request->get('uniform_type');
+        $selectedComponent = $request->get('component');
+        $issuanceFilter = $request->get('issuance_filter', 'all'); // all, issued, not_issued
+
+        // Get uniform types and components for dropdowns
+        $uniformTypes = UniformType::orderBy('type_name')->get();
+        $components = collect();
+
+        if ($selectedUniformType) {
+            $components = UniformComponent::where('uniform_type_id', $selectedUniformType)
+                ->orderBy('component_name')
+                ->get();
+        }
+
+        // Get cadet issuance data
+        $cadetsData = collect();
+        if ($selectedIntakeYear) {
+            $query = Cadet::with(['user', 'cadetSizes.uniformComponent'])
+                ->whereHas('user')
+                ->where('intake_year', $selectedIntakeYear);
+
+            $cadets = $query->get();
+
+            if ($selectedComponent) {
+                // Filter for specific component
+                $cadetsData = $cadets->map(function ($cadet) use ($selectedComponent, $issuanceFilter) {
+                    $sizeEntry = $cadet->cadetSizes->firstWhere('component_id', $selectedComponent);
+
+                    $issued = $sizeEntry ? $sizeEntry->is_issued : false;
+
+                    // Apply issuance filter
+                    if ($issuanceFilter === 'issued' && !$issued) {
+                        return null;
+                    }
+                    if ($issuanceFilter === 'not_issued' && $issued) {
+                        return null;
+                    }
+
+                    return [
+                        'cadet_id' => $cadet->id,
+                        'cadet_name' => $cadet->user->name,
+                        'size' => $sizeEntry ? $sizeEntry->size : 'N/A',
+                        'is_issued' => $issued,
+                        'component_name' => $sizeEntry ? $sizeEntry->uniformComponent->component_name : UniformComponent::find($selectedComponent)->component_name ?? 'Unknown'
+                    ];
+                })->filter()->values();
+            } elseif ($selectedUniformType) {
+                // Show all components for the selected uniform type
+                $typeComponents = UniformComponent::where('uniform_type_id', $selectedUniformType)
+                    ->orderBy('component_name')
+                    ->get();
+
+                $cadetsData = $cadets->map(function ($cadet) use ($typeComponents, $issuanceFilter) {
+                    $componentData = [];
+                    foreach ($typeComponents as $component) {
+                        $sizeEntry = $cadet->cadetSizes->firstWhere('component_id', $component->id);
+                        $componentData[] = [
+                            'component_id' => $component->id,
+                            'component_name' => $component->component_name,
+                            'size' => $sizeEntry ? $sizeEntry->size : 'N/A',
+                            'is_issued' => $sizeEntry ? $sizeEntry->is_issued : false
+                        ];
+                    }
+
+                    // Apply issuance filter
+                    if ($issuanceFilter !== 'all') {
+                        $componentData = collect($componentData)->filter(function($comp) use ($issuanceFilter) {
+                            if ($issuanceFilter === 'issued') {
+                                return $comp['is_issued'];
+                            } elseif ($issuanceFilter === 'not_issued') {
+                                return !$comp['is_issued'];
+                            }
+                            return true;
+                        })->values()->toArray();
+
+                        if (empty($componentData)) {
+                            return null;
+                        }
+                    }
+
+                    return [
+                        'cadet_id' => $cadet->id,
+                        'cadet_name' => $cadet->user->name,
+                        'components' => $componentData
+                    ];
+                })->filter()->values();
+            }
+        }
+
+        return view('instructor.component-issuance', compact(
+            'intakeYears',
+            'selectedIntakeYear',
+            'selectedUniformType',
+            'selectedComponent',
+            'issuanceFilter',
+            'uniformTypes',
+            'components',
+            'cadetsData'
+        ));
+    }
+
+    // ================================================================
+    // GET ISSUANCE TRACKING DATA (AJAX)
+    // ================================================================
+
+    public function getIssuanceTrackingAjax(Request $request)
+    {
+        $intakeYear = $request->get('intake_year');
+        $uniformType = $request->get('uniform_type');
+        $component = $request->get('component');
+        $filter = $request->get('filter', 'all');
+
+        $cadetsData = $this->getIssuanceTrackingData($intakeYear, $uniformType, $component, $filter);
+
+        return response()->json([
+            'success' => true,
+            'data' => $cadetsData,
+            'has_data' => $cadetsData->isNotEmpty(),
+            'selected_component' => $component,
+            'selected_uniform_type' => $uniformType
+        ]);
     }
 }

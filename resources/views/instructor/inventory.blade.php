@@ -280,18 +280,27 @@
             {{-- SECTION 1: CADET UNIFORM SIZE SUMMARY --}}
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-xl overflow-hidden">
-                <div class="section-header">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/>
-                            </svg>
+                <div class="section-header cursor-pointer" onclick="toggleSizeSummarySection()">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-blue mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Cadet Uniform Size Summary</h3>
+                            </div>
+                            <p class="text-gray-600 ml-13">Track and analyze uniform size distributions across different intakes and components</p>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Cadet Uniform Size Summary</h3>
+                        <svg class="w-6 h-6 text-gray-600 transition-transform duration-300" id="sizeSummaryDropdownIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
-                    <p class="text-gray-600 ml-13">Track and analyze uniform size distributions across different intakes and components</p>
                 </div>
-                
+
+                <!-- Collapsible Content -->
+                <div id="sizeSummaryContent" class="hidden">
                 <!-- Top Section: Filters and Controls -->
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
@@ -400,32 +409,227 @@
                         </div>
                     @endif
                 </div>
+                </div>
             </div>
 
             {{-- ================================================================ --}}
-            {{-- SECTION 2: EQUIPMENT LOAN MANAGEMENT --}}
+            {{-- SECTION 2: UNIFORM ISSUANCE TRACKING --}}
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-xl overflow-hidden">
-                <div class="section-header">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                            </svg>
+                <div class="section-header cursor-pointer" onclick="toggleIssuanceSection()">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-purple mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Uniform Issuance Tracking</h3>
+                            </div>
+                            <p class="text-gray-600 ml-13">Track which cadets have been issued uniform components</p>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Equipment Loan Management</h3>
-                        @if($pendingReturnsCount > 0)
-                            <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-orange-100 text-orange-800 border-2 border-orange-300 animate-pulse">
-                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                                </svg>
-                                {{ $pendingReturnsCount }} Return{{ $pendingReturnsCount > 1 ? 's' : '' }} Pending
-                            </span>
+                        <svg class="w-6 h-6 text-gray-600 transition-transform duration-300" id="issuanceDropdownIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Collapsible Content -->
+                <div id="issuanceTrackingContent" class="hidden">
+                    <!-- Filter Section -->
+                    <div class="p-6 bg-gray-50 border-b border-gray-200">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <div class="flex flex-col">
+                                <label for="issuance_intake_year" class="text-sm font-medium text-gray-700 mb-1">Intake</label>
+                                <select name="issuance_intake_year" id="issuance_intake_year"
+                                        class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Select Intake</option>
+                                    @foreach($intakeYears as $intake)
+                                        <option value="{{ $intake['year'] }}" {{ $selectedIssuanceIntakeYear == $intake['year'] ? 'selected' : '' }}>
+                                            {{ $intake['label'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="issuance_uniform_type" class="text-sm font-medium text-gray-700 mb-1">Uniform Type</label>
+                                <select name="issuance_uniform_type" id="issuance_uniform_type"
+                                        class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">All Types</option>
+                                    @foreach($uniformTypes as $type)
+                                        <option value="{{ $type->id }}" {{ $selectedIssuanceUniformType == $type->id ? 'selected' : '' }}>
+                                            {{ $type->type_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="issuance_component" class="text-sm font-medium text-gray-700 mb-1">Component</label>
+                                <select name="issuance_component" id="issuance_component"
+                                        class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">All Components</option>
+                                    @foreach($issuanceComponents as $component)
+                                        <option value="{{ $component->id }}" {{ $selectedIssuanceComponent == $component->id ? 'selected' : '' }}>
+                                            {{ $component->component_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="issuance_filter" class="text-sm font-medium text-gray-700 mb-1">Status Filter</label>
+                                <select name="issuance_filter" id="issuance_filter"
+                                        class="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="all" {{ $issuanceFilter == 'all' ? 'selected' : '' }}>All Cadets</option>
+                                    <option value="issued" {{ $issuanceFilter == 'issued' ? 'selected' : '' }}>Issued Only</option>
+                                    <option value="not_issued" {{ $issuanceFilter == 'not_issued' ? 'selected' : '' }}>Not Issued Only</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="p-6" id="issuanceResultsContent">
+                        @if($cadetsIssuanceData && $cadetsIssuanceData->isNotEmpty())
+                            <div class="mb-4 flex justify-between items-center">
+                                <p class="text-sm text-gray-600">
+                                    Showing <span class="font-semibold text-blue-600">{{ $cadetsIssuanceData->count() }}</span> cadet(s)
+                                </p>
+                            </div>
+
+                            <div class="overflow-x-auto max-h-[480px] overflow-y-auto border border-gray-200 rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cadet Name</th>
+                                            @if($selectedIssuanceComponent)
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Component Name</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Uniform Size</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Issuance Status</th>
+                                            @else
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Component Name</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Uniform Size</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Issuance Status</th>
+                                            @endif
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach($cadetsIssuanceData as $cadet)
+                                            @if($selectedIssuanceComponent)
+                                                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <div class="flex items-center">
+                                                            <div class="bg-purple-100 rounded-full p-2 mr-3">
+                                                                <i class="fas fa-user text-purple-600 text-sm"></i>
+                                                            </div>
+                                                            <div class="text-sm font-semibold text-gray-900">{{ $cadet['cadet_name'] }}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $cadet['component_name'] }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cadet['size'] }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        @if($cadet['is_issued'])
+                                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                                <i class="fas fa-check-circle mr-1"></i>
+                                                                Issued
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                                                <i class="fas fa-clock mr-1"></i>
+                                                                Not Issued
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @else
+                                                @foreach($cadet['components'] as $index => $component)
+                                                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                                        @if($index === 0)
+                                                            <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-900" rowspan="{{ count($cadet['components']) }}">
+                                                                <div class="flex items-center">
+                                                                    <div class="bg-purple-100 rounded-full p-2 mr-3">
+                                                                        <i class="fas fa-user text-purple-600 text-sm"></i>
+                                                                    </div>
+                                                                    {{ $cadet['cadet_name'] }}
+                                                                </div>
+                                                            </td>
+                                                        @endif
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $component['component_name'] }}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $component['size'] }}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                            @if($component['is_issued'])
+                                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                                    Issued
+                                                                </span>
+                                                            @else
+                                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                                                    <i class="fas fa-clock mr-1"></i>
+                                                                    Not Issued
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center py-12">
+                                <div class="text-gray-400 text-6xl mb-4">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <p class="text-gray-500 text-lg">
+                                    @if(!$selectedIssuanceUniformType && !$selectedIssuanceComponent)
+                                        Please select a uniform type or component to view issuance data.
+                                    @else
+                                        No data available for the selected filters.
+                                    @endif
+                                </p>
+                            </div>
                         @endif
                     </div>
-                    <p class="text-gray-600 ml-13">Monitor equipment borrowing, returns, and track loan status across all cadets</p>
                 </div>
-                
+            </div>
+
+            {{-- ================================================================ --}}
+            {{-- SECTION 3: EQUIPMENT LOAN MANAGEMENT --}}
+            {{-- ================================================================ --}}
+            <div class="dashboard-card bg-white rounded-xl overflow-hidden">
+                <div class="section-header cursor-pointer" onclick="toggleEquipmentLoanSection()">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-green mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Equipment Loan Management</h3>
+                                @if($pendingReturnsCount > 0)
+                                    <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-orange-100 text-orange-800 border-2 border-orange-300 animate-pulse">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                        </svg>
+                                        {{ $pendingReturnsCount }} Return{{ $pendingReturnsCount > 1 ? 's' : '' }} Pending
+                                    </span>
+                                @endif
+                            </div>
+                            <p class="text-gray-600 ml-13">Monitor equipment borrowing, returns, and track loan status across all cadets</p>
+                        </div>
+                        <svg class="w-6 h-6 text-gray-600 transition-transform duration-300" id="equipmentLoanDropdownIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Collapsible Content -->
+                <div id="equipmentLoanContent" class="hidden">
                 <!-- Top Section: Filters and Controls -->
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex flex-wrap items-center justify-between gap-4">
@@ -621,22 +825,33 @@
                     @endif
                 </div>
             </div>
+        </div>
 
             {{-- ================================================================ --}}
-            {{-- SECTION 3: INVENTORY OVERVIEW --}}
+            {{-- SECTION 4: INVENTORY OVERVIEW --}}
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-xl overflow-hidden">
-                <div class="section-header">
-                    <div class="flex items-center mb-2">
-                        <div class="icon-wrapper gradient-orange mr-3 p-2 rounded-md">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
+                <div class="section-header cursor-pointer" onclick="toggleInventoryOverviewSection()">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-orange mr-3 p-2 rounded-md">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900">Inventory Overview</h3>
+                            </div>
+                            <p class="text-gray-600 ml-13">Real-time inventory status and availability tracking for all equipment and uniforms</p>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Inventory Overview</h3>
+                        <svg class="w-6 h-6 text-gray-600 transition-transform duration-300" id="inventoryOverviewDropdownIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
-                    <p class="text-gray-600 ml-13">Real-time inventory status and availability tracking for all equipment and uniforms</p>
                 </div>
+
+                <!-- Collapsible Content -->
+                <div id="inventoryOverviewContent" class="hidden">
                 <div class="p-6">
                     
                     <div class="overflow-x-auto">
@@ -692,6 +907,7 @@
                     </div>
                 </div>
             </div>
+                </div>
         </div>
     </div>
 
@@ -1510,6 +1726,209 @@
             
             showAlert('Uniform size summary report is being downloaded...', 'success');
         }
+
+        // ================================================================
+        // SECTION TOGGLE FUNCTIONS
+        // ================================================================
+
+        // Toggle Size Summary section
+        function toggleSizeSummarySection() {
+            const content = document.getElementById('sizeSummaryContent');
+            const icon = document.getElementById('sizeSummaryDropdownIcon');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Toggle Equipment Loan section
+        function toggleEquipmentLoanSection() {
+            const content = document.getElementById('equipmentLoanContent');
+            const icon = document.getElementById('equipmentLoanDropdownIcon');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Toggle Inventory Overview section
+        function toggleInventoryOverviewSection() {
+            const content = document.getElementById('inventoryOverviewContent');
+            const icon = document.getElementById('inventoryOverviewDropdownIcon');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // ================================================================
+        // UNIFORM ISSUANCE TRACKING FUNCTIONS
+        // ================================================================
+
+        let issuanceFilters = {
+            intakeYear: '{{ $selectedIssuanceIntakeYear }}',
+            uniformType: '{{ $selectedIssuanceUniformType }}',
+            component: '{{ $selectedIssuanceComponent }}',
+            filter: '{{ $issuanceFilter }}'
+        };
+
+        // Toggle issuance section dropdown
+        function toggleIssuanceSection() {
+            const content = document.getElementById('issuanceTrackingContent');
+            const icon = document.getElementById('issuanceDropdownIcon');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Update issuance component dropdown when uniform type changes
+        function updateIssuanceComponentDropdown() {
+            if (!issuanceFilters.uniformType) {
+                document.getElementById('issuance_component').innerHTML = '<option value="">All Components</option>';
+                return;
+            }
+
+            fetch(`/instructor/inventory/uniform-types/${issuanceFilters.uniformType}/components`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const componentSelect = document.getElementById('issuance_component');
+                        componentSelect.innerHTML = '<option value="">All Components</option>';
+                        data.data.forEach(component => {
+                            const option = document.createElement('option');
+                            option.value = component.id;
+                            option.textContent = component.component_name;
+                            if (component.id == issuanceFilters.component) {
+                                option.selected = true;
+                            }
+                            componentSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading components:', error);
+                });
+        }
+
+        // Update issuance tracking results via AJAX
+        function updateIssuanceTracking() {
+            const resultsContainer = document.getElementById('issuanceResultsContent');
+            resultsContainer.innerHTML = '<div class="text-center py-12"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div><p class="text-gray-500 mt-4">Loading...</p></div>';
+
+            const params = new URLSearchParams({
+                intake_year: issuanceFilters.intakeYear || '',
+                uniform_type: issuanceFilters.uniformType || '',
+                component: issuanceFilters.component || '',
+                filter: issuanceFilters.filter || 'all'
+            });
+
+            fetch(`{{ route('instructor.inventory.issuance-tracking.ajax') }}?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.has_data) {
+                        renderIssuanceData(data.data, data.selected_component);
+                    } else {
+                        resultsContainer.innerHTML = `
+                            <div class="text-center py-12">
+                                <div class="text-gray-400 text-6xl mb-4">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <p class="text-gray-500 text-lg">
+                                    ${!issuanceFilters.uniformType && !issuanceFilters.component
+                                        ? 'Please select a uniform type or component to view issuance data.'
+                                        : 'No data available for the selected filters.'}
+                                </p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultsContainer.innerHTML = `
+                        <div class="text-center py-12">
+                            <div class="text-red-400 text-6xl mb-4">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <p class="text-red-500 text-lg">Error loading data. Please try again.</p>
+                        </div>
+                    `;
+                });
+        }
+
+        // Render issuance data from JSON
+        function renderIssuanceData(cadetsData, selectedComponent) {
+            const resultsContainer = document.getElementById('issuanceResultsContent');
+            let html = `<div class="mb-4 flex justify-between items-center"><p class="text-sm text-gray-600">Showing <span class="font-semibold text-blue-600">${cadetsData.length}</span> cadet(s)</p></div><div class="overflow-x-auto max-h-[480px] overflow-y-auto border border-gray-200 rounded-lg"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10"><tr><th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cadet Name</th>`;
+
+            html += selectedComponent ? `<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Component Name</th><th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Uniform Size</th><th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Issuance Status</th>` : `<th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Component Name</th><th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Uniform Size</th><th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Issuance Status</th>`;
+
+            html += `</tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
+
+            cadetsData.forEach(cadet => {
+                if (selectedComponent) {
+                    html += `<tr class="hover:bg-gray-50 transition-colors duration-150"><td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><div class="bg-purple-100 rounded-full p-2 mr-3"><i class="fas fa-user text-purple-600 text-sm"></i></div><div class="text-sm font-semibold text-gray-900">${cadet.cadet_name}</div></div></td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cadet.component_name}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cadet.size}</td><td class="px-6 py-4 whitespace-nowrap">${cadet.is_issued ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Issued</span>` : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800"><i class="fas fa-clock mr-1"></i>Not Issued</span>`}</td></tr>`;
+                } else {
+                    cadet.components.forEach((component, index) => {
+                        html += `<tr class="hover:bg-gray-50 transition-colors duration-150">${index === 0 ? `<td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-900" rowspan="${cadet.components.length}"><div class="flex items-center"><div class="bg-purple-100 rounded-full p-2 mr-3"><i class="fas fa-user text-purple-600 text-sm"></i></div>${cadet.cadet_name}</div></td>` : ''}<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${component.component_name}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${component.size}</td><td class="px-6 py-4 whitespace-nowrap">${component.is_issued ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Issued</span>` : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800"><i class="fas fa-clock mr-1"></i>Not Issued</span>`}</td></tr>`;
+                    });
+                }
+            });
+
+            html += `</tbody></table></div>`;
+            resultsContainer.innerHTML = html;
+        }
+
+        // Event listeners for issuance tracking filters
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load components for selected uniform type on page load
+            if (issuanceFilters.uniformType) {
+                updateIssuanceComponentDropdown();
+            }
+
+            // Issuance intake year filter
+            document.getElementById('issuance_intake_year').addEventListener('change', function() {
+                issuanceFilters.intakeYear = this.value;
+                updateIssuanceTracking();
+            });
+
+            // Issuance uniform type filter
+            document.getElementById('issuance_uniform_type').addEventListener('change', function() {
+                issuanceFilters.uniformType = this.value;
+                issuanceFilters.component = ''; // Reset component when type changes
+                updateIssuanceComponentDropdown();
+                updateIssuanceTracking();
+            });
+
+            // Issuance component filter
+            document.getElementById('issuance_component').addEventListener('change', function() {
+                issuanceFilters.component = this.value;
+                updateIssuanceTracking();
+            });
+
+            // Issuance status filter
+            document.getElementById('issuance_filter').addEventListener('change', function() {
+                issuanceFilters.filter = this.value;
+                updateIssuanceTracking();
+            });
+        });
+
         function showAlert(message, type) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${

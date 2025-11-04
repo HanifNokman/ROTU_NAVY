@@ -288,7 +288,10 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     
     // Loan management
     Route::patch('/inventory/loans/{loan}', [InstructorInventoryController::class, 'updateLoanStatus'])->name('inventory.update-loan');
-    
+
+    // Issuance tracking AJAX
+    Route::get('/inventory/issuance-tracking/ajax', [InstructorInventoryController::class, 'getIssuanceTrackingAjax'])->name('inventory.issuance-tracking.ajax');
+
     // Export routes
     Route::get('/inventory/export/uniforms', [InstructorInventoryController::class, 'exportUniformSizes'])->name('inventory.export.uniforms');
     Route::get('/inventory/export/loans', [InstructorInventoryController::class, 'exportEquipmentLoans'])->name('inventory.export.loans');
@@ -385,6 +388,7 @@ Route::middleware(['auth', 'verified'])->prefix('cadet')->name('cadet.')->group(
     
     Route::delete('/inventory/uniform-size/{cadetSize}', [CadetInventoryController::class, 'deleteUniformSize'])->name('inventory.uniform-size.delete');
     Route::post('/inventory/uniform-size', [CadetInventoryController::class, 'updateUniformSize'])->name('inventory.uniform-size.update');
+    Route::patch('/inventory/uniform-size/{cadetSize}/toggle-issue', [CadetInventoryController::class, 'toggleIssueStatus'])->name('inventory.uniform-size.toggle-issue');
     Route::get('/inventory', [CadetInventoryController::class, 'index'])->name('inventory');
     Route::get('/inventory/profile', [CadetInventoryController::class, 'myProfile'])->name('inventory.profile');
     Route::get('/inventory/uniform-types/{uniformTypeId}/components', [CadetInventoryController::class, 'getComponentsByType'])->name('inventory.components-by-type');
