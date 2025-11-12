@@ -1397,7 +1397,7 @@
                             
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                                 @foreach($badgesData['unlocked'] as $unlockedBadge)
-                                    <div class="badge-card group relative bg-gradient-to-br from-white to-gray-50 border-2 {{ $unlockedBadge['is_displayed'] ? 'border-green-400 shadow-lg' : 'border-gray-200' }} rounded-xl p-4 text-center hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2"
+                                    <div class="badge-card badge-unlocked group relative bg-gradient-to-br from-white to-gray-50 border-2 {{ $unlockedBadge['is_displayed'] ? 'border-green-400 shadow-lg' : 'border-gray-200' }} rounded-xl p-4 text-center cursor-pointer"
                                         onclick="toggleBadgeDisplay({{ $unlockedBadge['badge']->id }})"
                                         data-badge-id="{{ $unlockedBadge['badge']->id }}">
 
@@ -1482,7 +1482,7 @@
                                     @if(count($badges['unlockable']) > 0)
                                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                                             @foreach($badges['unlockable'] as $badge)
-                                                <div class="badge-card group relative bg-gray-50 border-2 border-gray-300 border-dashed rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300">
+                                                <div class="badge-card badge-locked group relative bg-gray-50 border-2 border-gray-300 border-dashed rounded-xl p-4 text-center">
 
                                                     {{-- Greyed Out Badge Icon/Image --}}
                                                     <div class="flex justify-center mb-2">
@@ -1563,46 +1563,103 @@
     <style>
         .badge-card {
             position: relative;
+            /* GPU acceleration for smoother scrolling */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
-        
+
         .badge-tooltip {
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Ensure tooltip stays within viewport */
-        .badge-tooltip {
+            /* Ensure tooltip stays within viewport */
             max-width: calc(100vw - 2rem);
+            /* GPU acceleration */
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
-        /* Animation for badge hover */
+        /* Animation for badge hover - use will-change for better performance */
         .badge-card:hover {
             z-index: 10;
+            will-change: transform;
         }
 
-        /* Prevent tooltip from being cut off - adjust positioning based on position in grid */
-        .badge-card:nth-child(6n+1):nth-last-child(-n+6) .badge-tooltip,
-        .badge-card:nth-child(6n+2):nth-last-child(-n+5) .badge-tooltip,
-        .badge-card:nth-child(6n+3):nth-last-child(-n+4) .badge-tooltip,
-        .badge-card:nth-child(6n+4):nth-last-child(-n+3) .badge-tooltip,
-        .badge-card:nth-child(6n+5):nth-last-child(-n+2) .badge-tooltip,
-        .badge-card:nth-child(6n+6):nth-last-child(-n+1) .badge-tooltip {
-            bottom: auto;
-            top: 100%;
-            margin-top: 0.5rem;
-            margin-bottom: 0;
+        /* Optimize hover effects by reducing what gets recalculated */
+        .badge-card img,
+        .badge-card i {
+            will-change: transform;
         }
 
-        .badge-card:nth-child(6n+1):nth-last-child(-n+6) .badge-tooltip > div:last-child,
-        .badge-card:nth-child(6n+2):nth-last-child(-n+5) .badge-tooltip > div:last-child,
-        .badge-card:nth-child(6n+3):nth-last-child(-n+4) .badge-tooltip > div:last-child,
-        .badge-card:nth-child(6n+4):nth-last-child(-n+3) .badge-tooltip > div:last-child,
-        .badge-card:nth-child(6n+5):nth-last-child(-n+2) .badge-tooltip > div:last-child,
-        .badge-card:nth-child(6n+6):nth-last-child(-n+1) .badge-tooltip > div:last-child {
-            top: auto;
-            bottom: 100%;
-            transform: translateX(-50%) rotate(180deg);
-            margin-top: 0;
-            margin-bottom: -1rem;
+        /* Simplify tooltip positioning - use simpler approach */
+        @media (min-width: 1024px) {
+            .badge-tooltip {
+                bottom: calc(100% + 0.5rem);
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            /* For badges in the last row, show tooltip above */
+            .badge-card.tooltip-below .badge-tooltip {
+                bottom: auto;
+                top: calc(100% + 0.5rem);
+            }
+
+            .badge-card.tooltip-below .badge-tooltip > div:last-child {
+                transform: translateX(-50%) rotate(180deg);
+            }
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 1023px) {
+            .badge-tooltip {
+                bottom: auto;
+                top: calc(100% + 0.5rem);
+            }
+        }
+
+        /* Reduce animation complexity on lower-end devices */
+        @media (prefers-reduced-motion: reduce) {
+            .badge-card {
+                transition: none;
+            }
+            .badge-card img,
+            .badge-card i {
+                transition: none;
+            }
+        }
+
+        /* Use containment to isolate layout/paint */
+        .badge-card {
+            contain: layout style paint;
+        }
+
+        /* Optimized hover effects for unlocked badges */
+        .badge-unlocked {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .badge-unlocked:hover {
+            transform: translateY(-0.5rem) translateZ(0);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Optimized hover effects for locked badges */
+        .badge-locked {
+            transition: box-shadow 0.3s ease;
+        }
+
+        .badge-locked:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Optimize icon/image hover animations */
+        .badge-unlocked .group-hover\:scale-110 {
+            transition: transform 0.3s ease;
+        }
+
+        /* Reduce repaints by using transform instead of filter for grayscale hover */
+        .badge-locked .group-hover\:opacity-60 {
+            transition: opacity 0.3s ease;
         }
     </style>
 

@@ -592,11 +592,11 @@
                     x-transition:enter-end="opacity-100 transform translate-y-0">
                     <div class="flex flex-col lg:flex-row gap-4 sm:gap-8">
                         {{-- Profile Picture & Badges Section --}}
-                        <div class="flex flex-row lg:flex-col items-start space-x-3 sm:space-x-4 lg:space-x-0 lg:space-y-4">
+                        <div class="flex flex-col sm:flex-row lg:flex-col items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-0 lg:space-y-4">
                             <div class="relative flex-shrink-0">
                                 <img src="{{ $cadet?->profile_pic ? asset('storage/' . $cadet->profile_pic) : asset('images/default.png') }}"
                                     alt="Profile Picture"
-                                    class="w-24 h-32 sm:w-40 sm:h-56 md:w-56 md:h-80 object-cover rounded-xl sm:rounded-2xl shadow-lg border-2 sm:border-4 border-white">
+                                    class="w-32 h-44 sm:w-40 sm:h-56 md:w-56 md:h-80 object-cover rounded-xl sm:rounded-2xl shadow-lg border-2 sm:border-4 border-white">
 
                                 {{-- Best Cadet/Academic Banner --}}
                                 @if($cadet->is_best_cadet || $cadet->is_best_academic)
@@ -623,15 +623,37 @@
 
                             {{-- Displayed Badges --}}
                             @if($cadet->cadetBadges && $cadet->cadetBadges->count() > 0)
-                                <div class="flex-1 lg:w-full lg:max-w-[14rem] md:max-w-[16rem] space-y-1.5 sm:space-y-2 max-h-[128px] sm:max-h-[224px] md:max-h-[320px] lg:max-h-none overflow-y-auto custom-scrollbar">
-                                    @php
-                                        // Sort badges by rarity level (descending - highest first)
-                                        // Rarity levels: 6=Legendary (Best Cadet/Academic), 5=Platinum, 4=Gold, 3=Silver, 2=Bronze, 1=Standard
-                                        $sortedBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
-                                            return $cadetBadge->badge->rarity_level ?? 0;
-                                        });
-                                    @endphp
+                                @php
+                                    // Sort badges by rarity level (descending - highest first)
+                                    // Rarity levels: 6=Legendary (Best Cadet/Academic), 5=Platinum, 4=Gold, 3=Silver, 2=Bronze, 1=Standard
+                                    $sortedBadges = $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
+                                        return $cadetBadge->badge->rarity_level ?? 0;
+                                    });
+                                @endphp
 
+                                {{-- Mobile: 4 Column Grid Layout (< 640px) - Same style as Desktop --}}
+                                <div class="w-full grid grid-cols-2 gap-1.5 sm:hidden">
+                                    @foreach($sortedBadges->take(12) as $cadetBadge)
+                                        <div class="bg-white rounded-lg p-2 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 flex items-center space-x-2">
+                                            @if($cadetBadge->badge->icon_path)
+                                                <img src="{{ asset('storage/assets/badges/' . $cadetBadge->badge->icon_path) }}"
+                                                    alt="{{ $cadetBadge->badge->name }}"
+                                                    class="w-8 h-8 object-contain flex-shrink-0">
+                                            @else
+                                                <span class="text-2xl flex-shrink-0">🏆</span>
+                                            @endif
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs font-semibold text-gray-900 truncate">{{ $cadetBadge->badge->name }}</p>
+                                                <p class="text-xs text-gray-600" style="color: {{ $cadetBadge->badge->rarity_color ?? '#6b7280' }};">
+                                                    {{ $cadetBadge->badge->rarity_label ?? 'Badge' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                {{-- Desktop/Tablet: Vertical List (≥ 640px) - UNCHANGED --}}
+                                <div class="hidden sm:flex flex-1 lg:w-full lg:max-w-[14rem] md:max-w-[16rem] flex-col space-y-1.5 sm:space-y-2 max-h-[224px] md:max-h-[320px] lg:max-h-none overflow-y-auto custom-scrollbar">
                                     @foreach($sortedBadges as $cadetBadge)
                                         <div class="bg-white rounded-lg p-2 sm:p-3 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 flex items-center space-x-2 sm:space-x-3">
                                             @if($cadetBadge->badge->icon_path)

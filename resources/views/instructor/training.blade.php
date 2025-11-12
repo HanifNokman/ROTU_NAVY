@@ -1166,7 +1166,6 @@
 
     @push('styles')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/main.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     @endpush
 
@@ -1294,7 +1293,8 @@
                 editTraining(info.event.id);
             },
             height: 'auto',
-            eventDisplay: 'block'
+            eventDisplay: 'block',
+            displayEventTime: false
         });
         calendar.render();
     }

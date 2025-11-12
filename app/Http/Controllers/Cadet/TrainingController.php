@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Cadet;
 use App\Http\Controllers\Controller;
 use App\Models\Training;
 use App\Models\Cadet;
+use App\Models\TrainingAttendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -68,7 +69,18 @@ class TrainingController extends Controller
         $trainings = $query->orderBy('start_datetime', 'asc')->get();
 
         // Prepare trainings data with formatted fields for both view and AJAX
-        $formattedTrainings = $trainings->map(function ($training) {
+        $formattedTrainings = $trainings->map(function ($training) use ($cadet) {
+            // Get attendance record for this training
+            $attendance = TrainingAttendance::where('training_id', $training->id)
+                ->where('cadet_id', $cadet->id)
+                ->first();
+
+            // Determine attendance status
+            $attendanceStatus = null;
+            if ($attendance) {
+                $attendanceStatus = $attendance->present ? 'Present' : 'Absent';
+            }
+
             return [
                 'id' => $training->id,
                 'title' => $training->title,
@@ -78,6 +90,8 @@ class TrainingController extends Controller
                 'formatted_start_time' => $training->formatted_start_time,
                 'formatted_duration' => $training->formatted_duration,
                 'status' => $training->status,
+                'attendance_status' => $attendanceStatus,
+                'is_completed' => $training->status === 'Completed',
             ];
         });
 
