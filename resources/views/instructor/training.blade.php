@@ -1294,7 +1294,8 @@
                 editTraining(info.event.id);
             },
             height: 'auto',
-            eventDisplay: 'block'
+            eventDisplay: 'block',
+            displayEventTime: false
         });
         calendar.render();
     }

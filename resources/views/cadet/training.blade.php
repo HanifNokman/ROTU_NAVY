@@ -341,6 +341,7 @@
                                             <th>Start</th>
                                             <th>Duration</th>
                                             <th>Status</th>
+                                            <th>Attendance</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -379,6 +380,42 @@
                                                     </span>
                                                 </td>
                                                 <td>
+                                                    @php
+                                                        $cadet = \App\Models\Cadet::where('user_id', auth()->id())->first();
+                                                        $attendance = null;
+                                                        if ($cadet) {
+                                                            $attendance = \App\Models\TrainingAttendance::where('training_id', $training->id)
+                                                                ->where('cadet_id', $cadet->id)
+                                                                ->first();
+                                                        }
+                                                    @endphp
+                                                    @if($training->status === 'Completed' && $attendance)
+                                                        @if($attendance->present)
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                </svg>
+                                                                Present
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                </svg>
+                                                                Absent
+                                                            </span>
+                                                        @endif
+                                                    @elseif($training->status === 'Completed')
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                                            N/A
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                            Upcoming
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                <td>
                                                     <button onclick="viewTraining({{ $training->id }})" class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
                                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -390,7 +427,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="px-4 py-12 text-center">
+                                                <td colspan="7" class="px-4 py-12 text-center">
                                                     <div class="flex flex-col items-center">
                                                         <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                                             <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -550,12 +587,13 @@
                                         <th>Start</th>
                                         <th>Duration</th>
                                         <th>Status</th>
+                                        <th>Attendance</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="6" class="px-4 py-12 text-center">
+                                        <td colspan="7" class="px-4 py-12 text-center">
                                             <div class="flex flex-col items-center">
                                                 <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                                     <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -586,6 +624,7 @@
                                     <th>Start</th>
                                     <th>Duration</th>
                                     <th>Status</th>
+                                    <th>Attendance</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -622,6 +661,9 @@
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
                                 ${training.status}
                             </span>
+                        </td>
+                        <td>
+                            ${getAttendanceBadge(training)}
                         </td>
                         <td>
                             <button onclick="viewTraining(${training.id})" class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
@@ -707,7 +749,8 @@
                 },
                 height: 'auto',
                 eventDisplay: 'block',
-                eventTextColor: '#ffffff'
+                eventTextColor: '#ffffff',
+                displayEventTime: false
             });
             calendar.render();
         }
@@ -841,6 +884,35 @@
                 case 'Completed': return 'bg-gray-100 text-gray-800';
                 case 'Cancelled': return 'bg-red-100 text-red-800';
                 default: return 'bg-blue-100 text-blue-800';
+            }
+        }
+
+        // Get attendance badge HTML
+        function getAttendanceBadge(training) {
+            if (training.status === 'Completed' && training.attendance_status) {
+                if (training.attendance_status === 'Present') {
+                    return `
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Present
+                        </span>
+                    `;
+                } else {
+                    return `
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Absent
+                        </span>
+                    `;
+                }
+            } else if (training.status === 'Completed') {
+                return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">N/A</span>';
+            } else {
+                return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Upcoming</span>';
             }
         }
     </script>
