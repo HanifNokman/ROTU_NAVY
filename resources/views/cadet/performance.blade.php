@@ -1629,8 +1629,13 @@
         }
 
         /* Use containment to isolate layout/paint */
-        .badge-card {
+        /* Note: Excluding 'paint' for locked badges to allow tooltips to show */
+        .badge-unlocked {
             contain: layout style paint;
+        }
+
+        .badge-locked {
+            contain: layout style;
         }
 
         /* Optimized hover effects for unlocked badges */
