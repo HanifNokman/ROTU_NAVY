@@ -39,6 +39,9 @@ class TrainingDayNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $actionText = $this->userType === 'cadet' ? 'Mark Attendance' : 'View Training Details';
+        $actionUrl = $this->userType === 'cadet' ? route('cadet.attendance') : route('instructor.training');
+
         return (new MailMessage)
             ->subject('Training Today: ' . $this->training->title)
             ->greeting('Hello ' . $notifiable->name . '!')
@@ -48,7 +51,7 @@ class TrainingDayNotification extends Notification implements ShouldQueue
             ->line('Time: ' . $this->training->start_datetime->format('h:i A'))
             ->line('Location: ' . $this->training->location)
             ->line('Duration: ' . $this->training->formatted_duration)
-            ->action('Mark Attendance', $this->userType === 'cadet' ? route('cadet.attendance') : route('instructor.training'))
+            ->action($actionText, $actionUrl)
             ->line('Please arrive on time and be prepared for the training session.');
     }
 
