@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->date('borrow_date');
             $table->date('return_date')->nullable();
-            $table->enum('status', ['Borrowed', 'Pending Return', 'Returned'])->default('Borrowed');
+            $table->enum('status', ['Borrowed', 'Pending Return', 'Returned', 'Overdue'])->default('Borrowed');
             $table->timestamps();
         });
     }

@@ -546,7 +546,7 @@
                     </svg>
                 </div>
                 <h1 class="text-4xl font-bold text-gray-900 mb-3">
-                    Cadet Management
+                    Cadet Administration
                 </h1>
                 <p class="text-lg text-gray-600">Manage cadet information, positions, and qualifications</p>
             </div>
