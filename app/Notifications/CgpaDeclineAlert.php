@@ -57,7 +57,7 @@ class CgpaDeclineAlert extends Notification
             'past_cgpa' => $this->pastCgpa,
             'decline' => $this->decline,
             'icon' => 'warning',
-            'url' => route('instructor.dashboard')
+            'url' => route('instructor.cadet_management') . '?cadet_id=' . $this->cadetId
         ];
     }
 }

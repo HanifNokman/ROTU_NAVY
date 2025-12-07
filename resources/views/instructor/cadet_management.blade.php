@@ -3056,6 +3056,25 @@ function toggleBestAcademic(cadetId, button) {
         alert('Failed to update Best Academic status. Please try again.');
     });
 }
+
+// ================================================================
+// AUTO-OPEN CADET MODAL FROM URL PARAMETER
+// ================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if cadet_id parameter exists in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const cadetId = urlParams.get('cadet_id');
+
+    if (cadetId) {
+        // Wait a bit for the page to fully load, then open the modal
+        setTimeout(() => {
+            showCadetProfile(cadetId);
+            // Remove the parameter from URL without reloading the page
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }, 500);
+    }
+});
     </script>
     @endpush
 </x-app-layout>
