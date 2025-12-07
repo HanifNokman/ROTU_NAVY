@@ -112,6 +112,9 @@ class CadetDashboardController extends Controller
         // Get badge progress for badges nearing completion (>=50% progress)
         $badgeProgress = BadgeHelper::getBadgeProgress($cadet->id, 50);
 
+        // Get notifications for the user
+        $notifications = $user->notifications()->latest()->take(10)->get();
+
         return view('cadet.dashboard', compact(
             'user',
             'cadet',
@@ -121,7 +124,8 @@ class CadetDashboardController extends Controller
             'absentCadets',
             'absenceLeaderboard',
             'intakeCadets',
-            'badgeProgress'
+            'badgeProgress',
+            'notifications'
         ));
     }
 
