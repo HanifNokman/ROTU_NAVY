@@ -914,5 +914,20 @@
                 return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Upcoming</span>';
             }
         }
+
+        // Auto-open training modal from URL parameter
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const trainingId = urlParams.get('training_id');
+
+            if (trainingId) {
+                setTimeout(() => {
+                    viewTraining(trainingId);
+                    // Remove the parameter from URL without reloading
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                }, 500);
+            }
+        });
     </script>
 </x-app-layout>

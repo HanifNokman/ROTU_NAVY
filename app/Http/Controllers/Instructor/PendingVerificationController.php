@@ -12,6 +12,7 @@ use App\Mail\UserAcceptedMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use App\Notifications\WelcomeNotification;
 
 class PendingVerificationController extends Controller
 {
@@ -325,12 +326,12 @@ class PendingVerificationController extends Controller
                             'swimming_qualification' => 'In Progress',
                         ]);
 
-                        // Send acceptance email
+                        // Send welcome notification with temporary password
                         try {
-                            Mail::to($user->email)->send(new UserAcceptedMail($user));
+                            $user->notify(new WelcomeNotification('cadet', $application->matric_no));
                         } catch (\Exception $e) {
-                            \Log::error('Failed to send acceptance email to ' . $user->email . ': ' . $e->getMessage());
-                            // Don't fail the whole process if email fails
+                            \Log::error('Failed to send welcome notification to ' . $user->email . ': ' . $e->getMessage());
+                            // Don't fail the whole process if notification fails
                         }
 
                         $createdCount++;

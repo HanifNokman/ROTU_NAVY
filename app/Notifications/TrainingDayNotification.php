@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Training;
 
-class TrainingReminder extends Notification implements ShouldQueue
+class TrainingDayNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -39,18 +39,20 @@ class TrainingReminder extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $actionText = $this->userType === 'cadet' ? 'Mark Attendance' : 'View Training Details';
+        $actionUrl = $this->userType === 'cadet' ? route('cadet.attendance') : route('instructor.training');
+
         return (new MailMessage)
-            ->subject('Training Reminder: ' . $this->training->title)
+            ->subject('Training Today: ' . $this->training->title)
             ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('This is a reminder that you have a training scheduled tomorrow.')
+            ->line('This is a reminder that you have a training scheduled TODAY.')
             ->line('**Training Details:**')
             ->line('Title: ' . $this->training->title)
-            ->line('Date: ' . $this->training->start_datetime->format('M d, Y'))
             ->line('Time: ' . $this->training->start_datetime->format('h:i A'))
             ->line('Location: ' . $this->training->location)
             ->line('Duration: ' . $this->training->formatted_duration)
-            ->action('View Training Details', $this->userType === 'cadet' ? route('cadet.training') : route('instructor.training'))
-            ->line('Please be on time and prepared for the training session.');
+            ->action($actionText, $actionUrl)
+            ->line('Please arrive on time and be prepared for the training session.');
     }
 
     /**
@@ -61,18 +63,16 @@ class TrainingReminder extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'Training Reminder',
-            'message' => 'Reminder: "' . $this->training->title . '" is scheduled for tomorrow at ' . $this->training->start_datetime->format('h:i A') . ' at ' . $this->training->location . '.',
-            'type' => 'training_reminder',
+            'title' => 'Training Today',
+            'message' => 'Training "' . $this->training->title . '" is happening TODAY at ' . $this->training->start_datetime->format('h:i A') . ' at ' . $this->training->location . '. Don\'t forget to mark your attendance!',
+            'type' => 'training_day',
             'training_id' => $this->training->id,
             'training_title' => $this->training->title,
             'training_date' => $this->training->start_datetime->format('M d, Y'),
             'training_time' => $this->training->start_datetime->format('h:i A'),
             'training_location' => $this->training->location,
             'icon' => 'calendar',
-            'url' => $this->userType === 'cadet'
-                ? route('cadet.training') . '?training_id=' . $this->training->id
-                : route('instructor.training')
+            'url' => $this->userType === 'cadet' ? route('cadet.attendance') : route('instructor.training')
         ];
     }
 }

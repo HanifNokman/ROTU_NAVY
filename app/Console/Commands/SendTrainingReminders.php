@@ -7,6 +7,7 @@ use App\Models\Training;
 use App\Models\Cadet;
 use App\Models\Instructor;
 use App\Notifications\TrainingReminder;
+use App\Notifications\TrainingDayNotification;
 use Carbon\Carbon;
 
 class SendTrainingReminders extends Command
@@ -30,26 +31,60 @@ class SendTrainingReminders extends Command
      */
     public function handle()
     {
-        $this->info('Checking for trainings scheduled tomorrow...');
+        $this->info('Checking for trainings scheduled tomorrow and today...');
 
-        // Get trainings scheduled for tomorrow
+        // Get trainings scheduled for tomorrow (1-day reminder)
         $tomorrow = Carbon::tomorrow();
-        $trainings = Training::whereDate('start_datetime', $tomorrow->toDateString())
+        $tomorrowTrainings = Training::whereDate('start_datetime', $tomorrow->toDateString())
             ->where('status', 'Active')
             ->get();
 
-        if ($trainings->isEmpty()) {
-            $this->info('No trainings scheduled for tomorrow.');
-            return 0;
-        }
-
-        $this->info("Found {$trainings->count()} training(s) scheduled for tomorrow.");
+        // Get trainings scheduled for today (D-Day notification)
+        $today = Carbon::today();
+        $todayTrainings = Training::whereDate('start_datetime', $today->toDateString())
+            ->where('status', 'Active')
+            ->get();
 
         $cadetNotificationsSent = 0;
         $instructorNotificationsSent = 0;
 
+        // Process tomorrow's trainings (1-day reminder)
+        if (!$tomorrowTrainings->isEmpty()) {
+            $this->info("Found {$tomorrowTrainings->count()} training(s) scheduled for tomorrow.");
+            $stats = $this->sendReminders($tomorrowTrainings, TrainingReminder::class, '1-day reminder');
+            $cadetNotificationsSent += $stats['cadets'];
+            $instructorNotificationsSent += $stats['instructors'];
+        } else {
+            $this->info('No trainings scheduled for tomorrow.');
+        }
+
+        // Process today's trainings (D-Day notification)
+        if (!$todayTrainings->isEmpty()) {
+            $this->info("Found {$todayTrainings->count()} training(s) scheduled for today.");
+            $stats = $this->sendReminders($todayTrainings, TrainingDayNotification::class, 'D-Day notification');
+            $cadetNotificationsSent += $stats['cadets'];
+            $instructorNotificationsSent += $stats['instructors'];
+        } else {
+            $this->info('No trainings scheduled for today.');
+        }
+
+        $this->info("Total sent: {$cadetNotificationsSent} notifications to cadets.");
+        $this->info("Total sent: {$instructorNotificationsSent} notifications to instructors.");
+        $this->info('Training notifications sent successfully!');
+
+        return 0;
+    }
+
+    /**
+     * Send reminders for given trainings
+     */
+    private function sendReminders($trainings, $notificationClass, $type)
+    {
+        $cadetNotificationsSent = 0;
+        $instructorNotificationsSent = 0;
+
         foreach ($trainings as $training) {
-            $this->line("Processing: {$training->title}");
+            $this->line("Processing {$type}: {$training->title}");
 
             // Send notifications to cadets
             if ($training->involvement && $training->involvement !== 'all') {
@@ -65,13 +100,13 @@ class SendTrainingReminders extends Command
                         if ($cadet->user) {
                             // Check if notification already sent
                             $existingNotification = $cadet->user->notifications()
-                                ->where('type', 'App\Notifications\TrainingReminder')
+                                ->where('type', $notificationClass)
                                 ->where('data->training_id', $training->id)
                                 ->whereDate('created_at', '>=', now()->subDays(2))
                                 ->first();
 
                             if (!$existingNotification) {
-                                $cadet->user->notify(new TrainingReminder($training, 'cadet'));
+                                $cadet->user->notify(new $notificationClass($training, 'cadet'));
                                 $cadetNotificationsSent++;
                             }
                         }
@@ -84,13 +119,13 @@ class SendTrainingReminders extends Command
                 foreach ($cadets as $cadet) {
                     if ($cadet->user) {
                         $existingNotification = $cadet->user->notifications()
-                            ->where('type', 'App\Notifications\TrainingReminder')
+                            ->where('type', $notificationClass)
                             ->where('data->training_id', $training->id)
                             ->whereDate('created_at', '>=', now()->subDays(2))
                             ->first();
 
                         if (!$existingNotification) {
-                            $cadet->user->notify(new TrainingReminder($training, 'cadet'));
+                            $cadet->user->notify(new $notificationClass($training, 'cadet'));
                             $cadetNotificationsSent++;
                         }
                     }
@@ -103,24 +138,23 @@ class SendTrainingReminders extends Command
             foreach ($instructors as $instructor) {
                 if ($instructor->user) {
                     $existingNotification = $instructor->user->notifications()
-                        ->where('type', 'App\Notifications\TrainingReminder')
+                        ->where('type', $notificationClass)
                         ->where('data->training_id', $training->id)
                         ->whereDate('created_at', '>=', now()->subDays(2))
                         ->first();
 
                     if (!$existingNotification) {
-                        $instructor->user->notify(new TrainingReminder($training, 'instructor'));
+                        $instructor->user->notify(new $notificationClass($training, 'instructor'));
                         $instructorNotificationsSent++;
                     }
                 }
             }
         }
 
-        $this->info("Sent {$cadetNotificationsSent} notifications to cadets.");
-        $this->info("Sent {$instructorNotificationsSent} notifications to instructors.");
-        $this->info('Training reminders sent successfully!');
-
-        return 0;
+        return [
+            'cadets' => $cadetNotificationsSent,
+            'instructors' => $instructorNotificationsSent
+        ];
     }
 
     /**
