@@ -57,6 +57,19 @@ Route::get('/logout-and-landing', function () {
 Route::middleware(['auth'])->group(function () {
 
     // ------------------------------------------------------------------------
+    // Notification Routes
+    // ------------------------------------------------------------------------
+
+    Route::patch('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])
+        ->name('notifications.mark-read');
+
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.mark-all-read');
+
+    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+    // ------------------------------------------------------------------------
     // Badge API Routes
     // ------------------------------------------------------------------------
 

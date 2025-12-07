@@ -116,9 +116,15 @@ class InstructorDashboardController extends Controller
         }
 
         // ================================================================
+        // GET NOTIFICATIONS
+        // ================================================================
+
+        $notifications = $user->notifications()->latest()->take(10)->get();
+
+        // ================================================================
         // VIEW RENDERING
         // ================================================================
-        
+
         return view('instructor.dashboard', [
             'user' => $user,
             'instructor' => $instructor,
@@ -133,6 +139,7 @@ class InstructorDashboardController extends Controller
             'cgpaCadets' => $cgpaCadets,
             'absentCadets' => $absentCadets,
             'absenceLeaderboard' => $absenceLeaderboard,
+            'notifications' => $notifications,
         ]);
     }
     // ================================================================
@@ -610,11 +617,18 @@ class InstructorDashboardController extends Controller
         ]);
 
         foreach ($request->cadet_ids as $cadetId) {
-            \App\Models\Cadet::where('id', $cadetId)->increment('daily_duty_count');
+            $cadet = \App\Models\Cadet::with('user')->find($cadetId);
+            $cadet->increment('daily_duty_count');
 
             // Update performance rating after duty count change
             $service = new \App\Services\PerformanceCalculationService();
             $service->handleDutyCountChange($cadetId);
+
+            // Send notification to cadet about duty count update
+            $cadet->user->notify(new \App\Notifications\DutyCountUpdated(
+                $cadet->fresh()->daily_duty_count,
+                $cadet->user->name
+            ));
         }
 
         if ($request->ajax() || $request->wantsJson()) {

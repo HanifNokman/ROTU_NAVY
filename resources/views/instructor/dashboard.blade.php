@@ -346,6 +346,13 @@
             {{-- DASHBOARD HEADER --}}
             {{-- ================================================================ --}}
             <div class="text-center mb-4 sm:mb-8 relative">
+                {{-- Notification Badge (Left Side) --}}
+                @if(isset($notifications))
+                    <div class="absolute left-0 top-0 sm:left-4 md:left-8">
+                        <x-notification-badge :notifications="$notifications" />
+                    </div>
+                @endif
+
                 <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 gradient-blue rounded-2xl shadow-lg mb-3 sm:mb-4">
                     <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
@@ -371,6 +378,7 @@
                     </div>
                 </button>
             </div>
+
             {{-- ================================================================ --}}
             {{-- PERSONAL PROFILE SECTION --}}
             {{-- ================================================================ --}}
