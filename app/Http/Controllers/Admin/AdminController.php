@@ -688,6 +688,147 @@ class AdminController extends Controller
     }
 
     // ============================================================================
+    // GAMIFICATION MANAGEMENT
+    // ============================================================================
+
+    public function gamificationManagement()
+    {
+        $badges = Badge::withCount('cadetBadges')->orderBy('category')->orderBy('rarity_level', 'desc')->get();
+
+        $categories = [
+            'overall' => 'Overall Performance',
+            'attendance' => 'Attendance',
+            'quiz' => 'Quiz Performance',
+            'learning' => 'Learning Progress',
+            'duty' => 'Duty',
+            'academic' => 'Academic Excellence',
+        ];
+
+        $metrics = [
+            'attendance_percentage' => 'Attendance Percentage',
+            'quiz_average' => 'Quiz Average Score',
+            'quiz_count' => 'Total Quiz Attempts',
+            'learning_progress' => 'Learning Progress Percentage',
+            'duty_count' => 'Daily Duty Count',
+            'cgpa' => 'Current CGPA',
+            'total_points' => 'Total Performance Points',
+            'rank' => 'Cadet Rank',
+            'swimming_qualification' => 'Swimming Qualification',
+            'is_best_cadet' => 'Best Cadet Status',
+            'is_best_academic' => 'Best Academic Status',
+            'training_count' => 'Total Training Attendance',
+        ];
+
+        $operators = [
+            '>=' => 'Greater than or equal to',
+            '>' => 'Greater than',
+            '<=' => 'Less than or equal to',
+            '<' => 'Less than',
+            '==' => 'Equal to',
+            '!=' => 'Not equal to',
+        ];
+
+        $ranks = ['Kpt', 'Kdr', 'Lt.Kdr', 'Lt', 'Lt.Dya', 'Lt.M', 'PWI', 'PWII', 'BK', 'BM', 'LK', 'LKI', 'LKII'];
+
+        return view('admin.gamification_management', compact('badges', 'categories', 'metrics', 'operators', 'ranks'));
+    }
+
+    public function storeBadge(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category' => 'required|string',
+            'rarity_level' => 'required|integer|min:1|max:6',
+            'criteria_type' => 'required|in:hardcoded,dynamic',
+            'unlock_criteria' => 'required|string',
+            'criteria_config' => 'nullable|json',
+            'icon_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'is_active' => 'boolean',
+        ]);
+
+        if ($request->hasFile('icon_path')) {
+            $file = $request->file('icon_path');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('assets/badges', $filename, 'public');
+            $validated['icon_path'] = $filename;
+        }
+
+        $validated['is_active'] = $request->has('is_active');
+
+        if ($validated['criteria_type'] === 'dynamic' && !empty($validated['criteria_config'])) {
+            $validated['criteria_config'] = json_decode($validated['criteria_config'], true);
+        } else {
+            $validated['criteria_config'] = null;
+        }
+
+        Badge::create($validated);
+
+        return response()->json(['success' => true, 'message' => 'Badge created successfully!']);
+    }
+
+    public function updateBadge(Request $request, $id)
+    {
+        $badge = Badge::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category' => 'required|string',
+            'rarity_level' => 'required|integer|min:1|max:6',
+            'criteria_type' => 'required|in:hardcoded,dynamic',
+            'unlock_criteria' => 'required|string',
+            'criteria_config' => 'nullable|json',
+            'icon_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'is_active' => 'boolean',
+        ]);
+
+        if ($request->hasFile('icon_path')) {
+            // Delete old icon if exists
+            if ($badge->icon_path && Storage::disk('public')->exists('assets/badges/' . $badge->icon_path)) {
+                Storage::disk('public')->delete('assets/badges/' . $badge->icon_path);
+            }
+
+            $file = $request->file('icon_path');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('assets/badges', $filename, 'public');
+            $validated['icon_path'] = $filename;
+        }
+
+        $validated['is_active'] = $request->has('is_active');
+
+        if ($validated['criteria_type'] === 'dynamic' && !empty($validated['criteria_config'])) {
+            $validated['criteria_config'] = json_decode($validated['criteria_config'], true);
+        } else {
+            $validated['criteria_config'] = null;
+        }
+
+        $badge->update($validated);
+
+        return response()->json(['success' => true, 'message' => 'Badge updated successfully!']);
+    }
+
+    public function deleteBadge($id)
+    {
+        $badge = Badge::findOrFail($id);
+
+        // Delete icon if exists
+        if ($badge->icon_path && Storage::disk('public')->exists('assets/badges/' . $badge->icon_path)) {
+            Storage::disk('public')->delete('assets/badges/' . $badge->icon_path);
+        }
+
+        $badge->delete();
+
+        return response()->json(['success' => true, 'message' => 'Badge deleted successfully!']);
+    }
+
+    public function getBadge($id)
+    {
+        $badge = Badge::withCount('cadetBadges')->findOrFail($id);
+        return response()->json($badge);
+    }
+
+    // ============================================================================
     // VALIDATION RULES
     // ============================================================================
 

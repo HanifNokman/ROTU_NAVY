@@ -641,16 +641,28 @@ class CadetManagementController extends Controller
     public function show($cadetId)
     {
         try {
-            $cadet = Cadet::with('user')->findOrFail($cadetId);
+            $cadet = Cadet::with(['user', 'performanceRating'])->findOrFail($cadetId);
+
+            // Get performance points data - handle null rating safely
+            $rating = $cadet->performanceRating;
+            $performanceData = [
+                'total_points' => $rating ? ($rating->total_points ?? 0) : 0,
+                'attendance_points' => $rating ? ($rating->attendance_points ?? 0) : 0,
+                'quiz_points' => $rating ? ($rating->quiz_points ?? 0) : 0,
+                'learning_progress_points' => $rating ? ($rating->learning_progress_points ?? 0) : 0,
+                'rating' => $rating ? ($rating->rating ?? '⭐☆☆☆☆') : '⭐☆☆☆☆',
+            ];
+
             return response()->json([
                 'success' => true,
                 'cadet' => $cadet,
-                'user' => $cadet->user
+                'user' => $cadet->user,
+                'performance' => $performanceData
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cadet not found'
+                'message' => 'Cadet not found: ' . $e->getMessage()
             ], 404);
         }
     }

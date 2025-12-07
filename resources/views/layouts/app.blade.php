@@ -821,6 +821,9 @@
                                         <a href="{{ route('admin.data_management') }}" class="block px-3 py-2 text-sm font-medium rounded-md text-white hover:text-[#3c92d9]">
                                             Data Management
                                         </a>
+                                        <a href="{{ route('admin.gamification_management') }}" class="block px-3 py-2 text-sm font-medium rounded-md text-white hover:text-[#3c92d9]">
+                                            Gamification Management
+                                        </a>
                                         <a href="{{ route('admin.access_management') }}" class="block px-3 py-2 text-sm font-medium rounded-md text-white hover:text-[#3c92d9]">
                                             Access Management
                                         </a>
@@ -1073,6 +1076,9 @@
                                             </a>
                                             <a href="{{ route('admin.data_management') }}" class="block px-3 py-2 text-sm font-medium rounded-md text-white hover:text-[#3c92d9]">
                                                 Data Management
+                                            </a>
+                                            <a href="{{ route('admin.gamification_management') }}" class="block px-3 py-2 text-sm font-medium rounded-md text-white hover:text-[#3c92d9]">
+                                                Gamification Management
                                             </a>
                                             <a href="{{ route('admin.access_management') }}" class="block px-3 py-2 text-sm font-medium rounded-md text-white hover:text-[#3c92d9]">
                                                 Access Management

@@ -458,6 +458,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     // Access Management Routes
     Route::get('/access_management', [App\Http\Controllers\Admin\AdminController::class, 'accessManagement'])->name('access_management');
     Route::post('/access_management/transfer', [App\Http\Controllers\Admin\AdminController::class, 'transferAdmin'])->name('access_management.transfer');
+
+    // Gamification Management Routes
+    Route::get('/gamification_management', [App\Http\Controllers\Admin\AdminController::class, 'gamificationManagement'])->name('gamification_management');
+    Route::post('/badges', [App\Http\Controllers\Admin\AdminController::class, 'storeBadge'])->name('badges.store');
+    Route::get('/badges/{id}', [App\Http\Controllers\Admin\AdminController::class, 'getBadge'])->name('badges.show');
+    Route::put('/badges/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateBadge'])->name('badges.update');
+    Route::delete('/badges/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteBadge'])->name('badges.delete');
 });
 
 // ============================================================================

@@ -15,6 +15,8 @@ class Badge extends Model
         'icon_path',
         'description',
         'unlock_criteria',
+        'criteria_config',
+        'criteria_type',
         'category',
         'rarity_level',
         'is_active'
@@ -22,7 +24,8 @@ class Badge extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'rarity_level' => 'integer'
+        'rarity_level' => 'integer',
+        'criteria_config' => 'array'
     ];
 
     protected $appends = [
@@ -224,5 +227,113 @@ class Badge extends Model
         return $this->cadetBadges()
             ->where('cadet_id', $cadetId)
             ->first();
+    }
+
+    /**
+     * Evaluate if cadet meets dynamic criteria
+     */
+    public function evaluateCriteria($cadet)
+    {
+        if ($this->criteria_type !== 'dynamic' || empty($this->criteria_config)) {
+            return false;
+        }
+
+        $config = $this->criteria_config;
+        $allConditionsMet = true;
+
+        foreach ($config as $criterion) {
+            $conditionMet = false;
+
+            switch ($criterion['metric']) {
+                case 'attendance_percentage':
+                    $totalTrainings = $cadet->trainingAttendances()->count();
+                    $presentCount = $cadet->presentAttendances()->count();
+                    $attendancePercentage = $totalTrainings > 0 ? ($presentCount / $totalTrainings) * 100 : 0;
+                    $conditionMet = $this->compareValues($attendancePercentage, $criterion['operator'], $criterion['value']);
+                    break;
+
+                case 'quiz_average':
+                    $avgScore = \App\Models\CadetQuizScore::where('cadet_id', $cadet->id)->avg('score_percentage') ?? 0;
+                    $conditionMet = $this->compareValues($avgScore, $criterion['operator'], $criterion['value']);
+                    break;
+
+                case 'learning_progress':
+                    $learningProgress = $cadet->getLearningProgressPercentage();
+                    $conditionMet = $this->compareValues($learningProgress, $criterion['operator'], $criterion['value']);
+                    break;
+
+                case 'duty_count':
+                    $dutyCount = $cadet->daily_duty_count ?? 0;
+                    $conditionMet = $this->compareValues($dutyCount, $criterion['operator'], $criterion['value']);
+                    break;
+
+                case 'cgpa':
+                    $cgpa = $cadet->current_cgpa ?? 0;
+                    $conditionMet = $this->compareValues($cgpa, $criterion['operator'], $criterion['value']);
+                    break;
+
+                case 'total_points':
+                    $totalPoints = $cadet->performanceRating->total_points ?? 0;
+                    $conditionMet = $this->compareValues($totalPoints, $criterion['operator'], $criterion['value']);
+                    break;
+
+                case 'rank':
+                    $conditionMet = $cadet->rank === $criterion['value'];
+                    break;
+
+                case 'swimming_qualification':
+                    $conditionMet = $cadet->swimming_qualification === $criterion['value'];
+                    break;
+
+                case 'is_best_cadet':
+                    $conditionMet = $cadet->is_best_cadet == $criterion['value'];
+                    break;
+
+                case 'is_best_academic':
+                    $conditionMet = $cadet->is_best_academic == $criterion['value'];
+                    break;
+
+                case 'quiz_count':
+                    $quizCount = \App\Models\CadetQuizScore::where('cadet_id', $cadet->id)->count();
+                    $conditionMet = $this->compareValues($quizCount, $criterion['operator'], $criterion['value']);
+                    break;
+
+                case 'training_count':
+                    $trainingCount = $cadet->trainingAttendances()->count();
+                    $conditionMet = $this->compareValues($trainingCount, $criterion['operator'], $criterion['value']);
+                    break;
+            }
+
+            if (!$conditionMet) {
+                $allConditionsMet = false;
+                break;
+            }
+        }
+
+        return $allConditionsMet;
+    }
+
+    /**
+     * Compare values based on operator
+     */
+    private function compareValues($actual, $operator, $expected)
+    {
+        switch ($operator) {
+            case '>=':
+                return $actual >= $expected;
+            case '>':
+                return $actual > $expected;
+            case '<=':
+                return $actual <= $expected;
+            case '<':
+                return $actual < $expected;
+            case '==':
+            case '=':
+                return $actual == $expected;
+            case '!=':
+                return $actual != $expected;
+            default:
+                return false;
+        }
     }
 }

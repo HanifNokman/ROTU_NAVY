@@ -2136,8 +2136,16 @@ window.showDeleteModal = showDeleteModal;
 // ============================================================
 function showCadetProfile(cadetId) {
     fetch(`/instructor/cadets/${cadetId}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            if (!data.success) {
+                throw new Error(data.message || 'Unknown error');
+            }
             let profilePicHtml = '';
             if (data.cadet.profile_pic) {
                 const profilePicUrl = `/storage/${data.cadet.profile_pic}`;
@@ -2147,19 +2155,143 @@ function showCadetProfile(cadetId) {
                 profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
             }
 
+            // Calculate point distribution percentages
+            const performance = data.performance || {};
+            const totalPoints = parseFloat(performance.total_points) || 0;
+            const attendancePoints = parseFloat(performance.attendance_points) || 0;
+            const quizPoints = parseFloat(performance.quiz_points) || 0;
+            const learningPoints = parseFloat(performance.learning_progress_points) || 0;
+
+            // Calculate dynamic font size for name based on total length
+            const fullName = `${data.cadet.rank || 'Cadet'} ${data.user.name}`;
+            const nameLength = fullName.length;
+            let nameFontSize = 'text-2xl'; // Default size
+
+            if (nameLength > 30) {
+                nameFontSize = 'text-base'; // Very long names
+            } else if (nameLength > 25) {
+                nameFontSize = 'text-lg'; // Long names
+            } else if (nameLength > 20) {
+                nameFontSize = 'text-xl'; // Medium-long names
+            }
+
+            const attendancePercent = totalPoints > 0 ? (attendancePoints / totalPoints) * 100 : 0;
+            const quizPercent = totalPoints > 0 ? (quizPoints / totalPoints) * 100 : 0;
+            const learningPercent = totalPoints > 0 ? (learningPoints / totalPoints) * 100 : 0;
+
+            // Generate SVG donut chart
+            const radius = 70;
+            const circumference = 2 * Math.PI * radius;
+
+            const categories = [
+                { percent: attendancePercent, color: '#3b82f6', points: attendancePoints, label: 'Attendance' },
+                { percent: quizPercent, color: '#10b981', points: quizPoints, label: 'Quiz' },
+                { percent: learningPercent, color: '#06b6d4', points: learningPoints, label: 'Learning' },
+            ];
+
+            let currentOffset = 0;
+            let svgCircles = '';
+
+            categories.forEach(category => {
+                if (category.percent > 0) {
+                    const strokeDasharray = (category.percent / 100) * circumference;
+                    const strokeDashoffset = -currentOffset;
+                    currentOffset += strokeDasharray;
+
+                    svgCircles += `
+                        <circle cx="100" cy="100" r="${radius}"
+                            stroke="${category.color}"
+                            stroke-width="28"
+                            fill="none"
+                            stroke-dasharray="${strokeDasharray} ${circumference}"
+                            stroke-dashoffset="${strokeDashoffset}"
+                            style="transition: all 0.5s ease;"/>
+                    `;
+                }
+            });
+
             const profileContent = `
-                <div class="flex items-center space-x-4 mb-6">
-                    <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center">
-                        ${profilePicHtml}
-                    </div>
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-900">${data.user.name}</h4>
-                        <p class="text-sm text-gray-600">Service No: ${data.cadet.service_number || 'N/A'}</p>
-                        <p class="text-sm text-gray-600">Matric No: ${data.cadet.matric_no || 'N/A'}</p>
+                <!-- Header Card: Profile Info & Performance -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+                    <!-- Profile Section -->
+                    <div class="px-4 py-6 md:px-8 md:py-8">
+                        <div class="flex flex-col md:flex-row items-start gap-6">
+                            <!-- Top Row: Profile Picture + Chart -->
+                            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 w-full">
+                                <!-- Profile Picture - Vertical Rectangle -->
+                                <div class="w-24 h-32 md:w-28 md:h-36 rounded-2xl bg-gray-100 shadow-md flex items-center justify-center flex-shrink-0 border-4 border-gray-200 overflow-hidden">
+                                    ${profilePicHtml}
+                                </div>
+
+                                <!-- Name and Details Section -->
+                                <div class="flex-1 text-center md:text-left">
+                                    <h3 class="${nameFontSize} md:text-3xl font-bold text-gray-900 break-words mb-4">${fullName}</h3>
+
+                                    <div class="space-y-2.5 text-sm md:text-base text-gray-700">
+                                        <div class="flex flex-col md:flex-row md:items-center gap-1">
+                                            <span class="font-semibold text-gray-800">Service Number:</span>
+                                            <span class="text-gray-600">${data.cadet.service_number || 'N/A'}</span>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row md:items-center gap-1">
+                                            <span class="font-semibold text-gray-800">Matric Number:</span>
+                                            <span class="text-gray-600">${data.cadet.matric_no || 'N/A'}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <span class="text-yellow-500 text-2xl md:text-xl">${performance.rating || '⭐☆☆☆☆'}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Performance Chart -->
+                                <div class="flex-shrink-0">
+                                    <div class="bg-gradient-to-br from-gray-50 to-slate-100 rounded-xl p-4 border border-gray-200">
+                                        <div class="relative w-40 h-40 md:w-44 md:h-44">
+                                            <svg viewBox="0 0 200 200" class="w-full h-full transform -rotate-90">
+                                                ${svgCircles}
+                                            </svg>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <div class="text-center">
+                                                    <div class="text-2xl md:text-3xl font-black text-gray-900">${totalPoints.toFixed(0)}</div>
+                                                    <div class="text-xs text-gray-600 font-medium">Points</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Points Legend -->
+                                        <div class="mt-3 space-y-1.5 w-full max-w-[180px] mx-auto">
+                                            <div class="flex items-center justify-between text-gray-700 text-xs">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #3b82f6;"></div>
+                                                    <span class="truncate">Attendance</span>
+                                                </div>
+                                                <span class="font-bold ml-2">${attendancePoints.toFixed(0)}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-gray-700 text-xs">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #10b981;"></div>
+                                                    <span class="truncate">Quiz</span>
+                                                </div>
+                                                <span class="font-bold ml-2">${quizPoints.toFixed(0)}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-gray-700 text-xs">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #06b6d4;"></div>
+                                                    <span class="truncate">Learning</span>
+                                                </div>
+                                                <span class="font-bold ml-2">${learningPoints.toFixed(0)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Information Sections Grid -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <h5 class="font-medium text-gray-900 border-b pb-2">Personal Information</h5>
                         <div class="space-y-2 text-sm">
@@ -2249,15 +2381,16 @@ function showCadetProfile(cadetId) {
                             </div>
                         </div>
                     </div>
+                    </div>
                 </div>
             `;
-            
+
             document.getElementById('cadetProfileContent').innerHTML = profileContent;
             document.getElementById('cadetModal').classList.remove('hidden');
         })
         .catch(error => {
             console.error('Error fetching cadet profile:', error);
-            alert('Failed to load cadet profile');
+            alert('Failed to load cadet profile: ' + error.message);
         });
 }
 

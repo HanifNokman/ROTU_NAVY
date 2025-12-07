@@ -22,6 +22,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Welcome aboard! Your journey begins here',
                 'unlock_criteria' => 'Automatically unlocked on first login',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 1,
             ],
 
@@ -33,6 +35,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Achieved maximum performance rating of 5 stars',
                 'unlock_criteria' => 'Earn 800+ total points across all categories',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 5,
             ],
             [
@@ -42,6 +46,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Outstanding performance across all areas',
                 'unlock_criteria' => 'Earn 700+ total points',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
             [
@@ -51,6 +57,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Showing great potential with consistent performance',
                 'unlock_criteria' => 'Earn 500+ total points',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 3,
             ],
 
@@ -62,6 +70,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Never missed a training session',
                 'unlock_criteria' => '100% attendance rate',
                 'category' => 'attendance',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
             [
@@ -71,6 +81,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Consistent attendance record',
                 'unlock_criteria' => '90%+ attendance rate',
                 'category' => 'attendance',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 2,
             ],
             [
@@ -80,6 +92,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Good attendance habits',
                 'unlock_criteria' => '75%+ attendance rate',
                 'category' => 'attendance',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 1,
             ],
 
@@ -91,6 +105,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Mastered all quiz categories at hard difficulty',
                 'unlock_criteria' => 'Pass all categories at hard difficulty with 80%+',
                 'category' => 'quiz',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 5,
             ],
             [
@@ -100,6 +116,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Excellent performance across all quiz categories',
                 'unlock_criteria' => 'Pass all categories at medium difficulty with 80%+',
                 'category' => 'quiz',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
             [
@@ -109,6 +127,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Strong quiz performance',
                 'unlock_criteria' => 'Average 80%+ across all quiz attempts',
                 'category' => 'quiz',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 3,
             ],
             [
@@ -118,6 +138,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Consistent quiz performance',
                 'unlock_criteria' => 'Average 70%+ across all quiz attempts',
                 'category' => 'quiz',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 2,
             ],
 
@@ -129,6 +151,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Completed all learning materials',
                 'unlock_criteria' => '100% learning progress',
                 'category' => 'learning',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 5,
             ],
             [
@@ -138,6 +162,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Excellent learning progress',
                 'unlock_criteria' => '90%+ learning progress',
                 'category' => 'learning',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
             [
@@ -147,6 +173,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Strong learning commitment',
                 'unlock_criteria' => '75%+ learning progress',
                 'category' => 'learning',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 3,
             ],
 
@@ -158,6 +186,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Exemplary duty performance',
                 'unlock_criteria' => 'Complete 20+ duties',
                 'category' => 'duty',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
             [
@@ -167,6 +197,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Consistent duty participation',
                 'unlock_criteria' => 'Complete 15+ duties',
                 'category' => 'duty',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 3,
             ],
             [
@@ -176,6 +208,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Active duty participation',
                 'unlock_criteria' => 'Complete 10+ duties',
                 'category' => 'duty',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 2,
             ],
             [
@@ -185,6 +219,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Started duty participation',
                 'unlock_criteria' => 'Complete 5+ duties',
                 'category' => 'duty',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 1,
             ],
 
@@ -196,6 +232,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Outstanding academic achievement',
                 'unlock_criteria' => 'CGPA 3.75+',
                 'category' => 'academic',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 5,
             ],
             [
@@ -205,6 +243,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Excellent academic performance',
                 'unlock_criteria' => 'CGPA 3.50+',
                 'category' => 'academic',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
             [
@@ -214,6 +254,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Strong academic record',
                 'unlock_criteria' => 'CGPA 3.00+',
                 'category' => 'academic',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 3,
             ],
 
@@ -225,6 +267,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Promoted to Pegawai Kadet Kanan (PKK)',
                 'unlock_criteria' => 'Achieve promotion to PKK rank',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
             [
@@ -234,6 +278,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Promoted to Leftenan Muda (Lt M)',
                 'unlock_criteria' => 'Achieve promotion to Lt M rank',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 5,
             ],
 
@@ -245,6 +291,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Recognized as the best overall cadet',
                 'unlock_criteria' => 'Selected by instructor as Best Cadet and achieve Lt.M rank',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 6,
             ],
             [
@@ -254,6 +302,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Recognized for outstanding academic excellence',
                 'unlock_criteria' => 'Selected by instructor as Best Academic and achieve Lt.M rank',
                 'category' => 'academic',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 6,
             ],
 
@@ -265,6 +315,8 @@ class BadgeSeeder extends Seeder
                 'description' => 'Successfully passed swimming qualification test',
                 'unlock_criteria' => 'Pass the swimming qualification test',
                 'category' => 'overall',
+                'criteria_type' => 'hardcoded',
+                'criteria_config' => null,
                 'rarity_level' => 4,
             ],
         ];
