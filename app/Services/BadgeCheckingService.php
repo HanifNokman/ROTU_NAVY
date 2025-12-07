@@ -36,7 +36,29 @@ class BadgeCheckingService
 
             $shouldUnlock = false;
 
-            switch ($badge->category) {
+            // Check if badge uses dynamic criteria
+            if ($badge->criteria_type === 'dynamic') {
+                $shouldUnlock = $badge->evaluateCriteria($cadet);
+            } else {
+                // Use hardcoded criteria for backward compatibility
+                $shouldUnlock = $this->evaluateHardcodedCriteria($badge, $cadet, $performanceRating);
+            }
+
+            if ($shouldUnlock) {
+                // Use BadgeHelper to award badge - this will trigger the modal automatically
+                BadgeHelper::awardBadge($cadet->id, $badge->id);
+            }
+        }
+    }
+
+    /**
+     * Evaluate hardcoded criteria (legacy support)
+     */
+    private function evaluateHardcodedCriteria($badge, $cadet, $performanceRating)
+    {
+        $shouldUnlock = false;
+
+        switch ($badge->category) {
                 case 'overall':
                     // Auto-unlock welcome badge for all cadets
                     if ($badge->name === 'Cadet Induction') {
@@ -188,10 +210,6 @@ class BadgeCheckingService
                     break;
             }
 
-            if ($shouldUnlock) {
-                // Use BadgeHelper to award badge - this will trigger the modal automatically
-                BadgeHelper::awardBadge($cadet->id, $badge->id);
-            }
-        }
+        return $shouldUnlock;
     }
 }

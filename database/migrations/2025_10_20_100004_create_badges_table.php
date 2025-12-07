@@ -18,7 +18,9 @@ return new class extends Migration
             $table->text('description');
             $table->text('unlock_criteria');
             $table->string('category'); // attendance, quiz, learning, duty, academic, overall
-            $table->integer('rarity_level')->default(1); // 1-5, 5 being rarest
+            $table->string('criteria_type')->default('hardcoded'); // 'hardcoded' or 'dynamic'
+            $table->json('criteria_config')->nullable(); // Dynamic criteria configuration
+            $table->integer('rarity_level')->default(1); // 1-6, 6 being rarest (Mythic)
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

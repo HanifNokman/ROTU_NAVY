@@ -20,8 +20,6 @@ class InventoryItemSeeder extends Seeder
                 'description' => 'Military combat boots for field operations',
                 'total_quantity' => 100,
                 'available_quantity' => 85,
-                'size' => null,
-                'condition' => 'good',
             ],
             [
                 'name' => 'Field Backpack',
@@ -29,8 +27,6 @@ class InventoryItemSeeder extends Seeder
                 'description' => 'Standard issue field backpack',
                 'total_quantity' => 50,
                 'available_quantity' => 42,
-                'size' => null,
-                'condition' => 'excellent',
             ],
             [
                 'name' => 'Tactical Vest',
@@ -38,8 +34,6 @@ class InventoryItemSeeder extends Seeder
                 'description' => 'Tactical load-bearing vest',
                 'total_quantity' => 30,
                 'available_quantity' => 25,
-                'size' => null,
-                'condition' => 'good',
             ],
             // Uniform items
             [
@@ -48,8 +42,6 @@ class InventoryItemSeeder extends Seeder
                 'description' => 'Formal white service shirt',
                 'total_quantity' => 200,
                 'available_quantity' => 180,
-                'size' => 'M',
-                'condition' => 'excellent',
             ],
             [
                 'name' => 'Navy Blue Trousers',
@@ -57,8 +49,6 @@ class InventoryItemSeeder extends Seeder
                 'description' => 'Standard navy blue service trousers',
                 'total_quantity' => 200,
                 'available_quantity' => 175,
-                'size' => 'L',
-                'condition' => 'good',
             ],
             [
                 'name' => 'PT Shorts',
@@ -66,8 +56,6 @@ class InventoryItemSeeder extends Seeder
                 'description' => 'Physical training shorts',
                 'total_quantity' => 150,
                 'available_quantity' => 140,
-                'size' => 'M',
-                'condition' => 'excellent',
             ],
         ];
 
