@@ -1,3 +1,3 @@
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "cmd /c cd /d ""D:\xampp\htdocs\ROTU_NAVY"" && start-queue-worker.bat", 0, False
+WshShell.Run chr(34) & "d:\xampp\htdocs\ROTU_NAVY\start-queue-worker.bat" & Chr(34), 0
 Set WshShell = Nothing
