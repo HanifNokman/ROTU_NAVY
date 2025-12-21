@@ -39,18 +39,18 @@ class TrainingReminder extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $actionUrl = $this->userType === 'cadet' ? route('cadet.training') : route('instructor.training');
+
         return (new MailMessage)
             ->subject('Training Reminder: ' . $this->training->title)
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('This is a reminder that you have a training scheduled tomorrow.')
-            ->line('**Training Details:**')
-            ->line('Title: ' . $this->training->title)
-            ->line('Date: ' . $this->training->start_datetime->format('M d, Y'))
-            ->line('Time: ' . $this->training->start_datetime->format('h:i A'))
-            ->line('Location: ' . $this->training->location)
-            ->line('Duration: ' . $this->training->formatted_duration)
-            ->action('View Training Details', $this->userType === 'cadet' ? route('cadet.training') : route('instructor.training'))
-            ->line('Please be on time and prepared for the training session.');
+            ->view('emails.training-reminder', [
+                'name' => $notifiable->name,
+                'email' => $notifiable->email,
+                'training' => $this->training,
+                'trainingDate' => $this->training->start_datetime->format('M d, Y'),
+                'trainingTime' => $this->training->start_datetime->format('h:i A'),
+                'actionUrl' => $actionUrl,
+            ]);
     }
 
     /**

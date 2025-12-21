@@ -45,24 +45,14 @@ class WelcomeNotification extends Notification implements ShouldQueue
             default => route('login')
         };
 
-        $mail = (new MailMessage)
+        return (new MailMessage)
             ->subject('Welcome to ROTU NAVY UMS - Training System')
-            ->greeting('Welcome, ' . $notifiable->name . '!')
-            ->line('Your account has been successfully created in the ROTU NAVY UMS - Reserve Officer Training Unit Management System.')
-            ->line('You can now access the system to manage your training activities, view schedules, and track your progress.');
-
-        if ($this->temporaryPassword) {
-            $mail->line('**Your Login Credentials:**')
-                ->line('Email: ' . $notifiable->email)
-                ->line('Temporary Password: ' . $this->temporaryPassword)
-                ->line('⚠️ **IMPORTANT:** Please change your password immediately after your first login for security purposes.');
-        }
-
-        $mail->action('Access Your Dashboard', $dashboardRoute)
-            ->line('If you have any questions or need assistance, please contact your administrator.')
-            ->line('Thank you for being part of ROTU NAVY!');
-
-        return $mail;
+            ->view('emails.welcome', [
+                'name' => $notifiable->name,
+                'email' => $notifiable->email,
+                'temporaryPassword' => $this->temporaryPassword,
+                'dashboardUrl' => $dashboardRoute,
+            ]);
     }
 
     /**

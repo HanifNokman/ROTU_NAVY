@@ -44,15 +44,15 @@ class TrainingDayNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject('Training Today: ' . $this->training->title)
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('This is a reminder that you have a training scheduled TODAY.')
-            ->line('**Training Details:**')
-            ->line('Title: ' . $this->training->title)
-            ->line('Time: ' . $this->training->start_datetime->format('h:i A'))
-            ->line('Location: ' . $this->training->location)
-            ->line('Duration: ' . $this->training->formatted_duration)
-            ->action($actionText, $actionUrl)
-            ->line('Please arrive on time and be prepared for the training session.');
+            ->view('emails.training-day', [
+                'name' => $notifiable->name,
+                'email' => $notifiable->email,
+                'training' => $this->training,
+                'trainingTime' => $this->training->start_datetime->format('h:i A'),
+                'actionText' => $actionText,
+                'actionUrl' => $actionUrl,
+                'userType' => $this->userType,
+            ]);
     }
 
     /**
