@@ -1246,6 +1246,9 @@
                 </div>
             </div>
 
+            {{-- Mobile Bottom Spacer --}}
+            <div class="block md:hidden h-20"></div>
+
             {{-- ================================================================ --}}
             {{-- INTAKE ABSENCE TRACKING SECTION --}}
             {{-- Only visible for CO, Thana, Zayn positions --}}
@@ -1468,11 +1471,10 @@
                         </div>
                     </div>
                 </div>
-                {{-- Mobile Bottom Spacer --}}
-                <div class="block md:hidden h-20"></div>
             </div>
             @endif
-
+            {{-- Mobile Bottom Spacer --}}
+            <div class="block md:hidden h-20"></div>
         </div>
     </div>
 
