@@ -41,5 +41,18 @@ class AppServiceProvider extends ServiceProvider
         foreach ($this->policies as $model => $policy) {
             Gate::policy($model, $policy);
         }
+
+        // Register mail view namespace
+        $this->loadViewsFromPath(resource_path('views/vendor/mail'), 'mail');
+    }
+
+    /**
+     * Load views from a given path with a namespace.
+     */
+    protected function loadViewsFromPath(string $path, string $namespace): void
+    {
+        if (is_dir($path)) {
+            app('view')->addNamespace($namespace, $path);
+        }
     }
 }
