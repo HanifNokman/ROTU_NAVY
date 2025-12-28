@@ -1382,23 +1382,23 @@
 
     <!-- Instructor Profile Modal -->
     <div id="instructorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
+        <div class="flex items-center justify-center min-h-screen p-2 sm:p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-6 border-b border-gray-200">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-semibold text-gray-900 flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h2 class="text-lg sm:text-2xl font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-1 sm:mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                             Instructor Profile
                         </h2>
-                        <button onclick="closeInstructorModal()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                        <button onclick="closeInstructorModal()" class="text-gray-500 hover:text-gray-700 text-2xl sm:text-3xl font-bold leading-none">
                             ×
                         </button>
                     </div>
                 </div>
 
-                <div id="modalContent" class="p-6">
+                <div id="modalContent" class="p-3 sm:p-6">
                     <!-- Loading state -->
                     <div id="loadingState" class="text-center py-10">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -2536,79 +2536,79 @@
                           instructor.service_number && instructor.service_number.startsWith('N') ? ' TLDM' : '';
 
             return `
-                <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex flex-col md:flex-row gap-4 md:gap-6">
                     <!-- Profile Picture -->
                     <div class="flex justify-center lg:justify-start">
                         <img src="${instructor.profile_pic ? '/storage/' + instructor.profile_pic : '/images/default.png'}"
                             alt="Profile Picture"
-                            class="w-40 h-52 md:w-60 md:h-80 object-cover border rounded-md">
+                            class="w-32 h-40 sm:w-40 sm:h-52 md:w-60 md:h-80 object-cover border rounded-md">
                     </div>
 
                     <!-- Profile Information -->
-                    <div class="flex-1 space-y-6">
+                    <div class="flex-1 space-y-4 md:space-y-6">
                         <!-- Row 1 -->
-                        <div class="flex items-center justify-center md:justify-start gap-4">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold px-6 py-2 rounded-xl shadow-lg whitespace-nowrap">
+                        <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 sm:gap-4">
+                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold px-4 sm:px-6 py-2 rounded-xl shadow-lg whitespace-nowrap text-sm sm:text-base">
                                 <i class="fas fa-shield-alt mr-2"></i>
                                 Personal Profile
                             </div>
-                            <p class="text-2xl font-semibold text-gray-800">
+                            <p class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 text-center sm:text-left">
                                 ${instructor.rank || 'Unknown'} ${instructor.user?.name || 'No Name'}${prefix}
                             </p>
                         </div>
 
                         <!-- Row 2: Contact Info -->
-                        <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="bg-gray-50 rounded-xl p-3 sm:p-4">
                             <div class="flex items-center mb-3">
                                 <i class="fas fa-address-book w-5 text-blue-500 mr-2"></i>
-                                <p class="text-gray-700 font-semibold">Contact Information</p>
+                                <p class="text-gray-700 font-semibold text-sm sm:text-base">Contact Information</p>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="flex items-center">
-                                    <i class="fas fa-phone w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Phone:</strong> ${instructor.phone_number || 'Not set'}</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-phone w-4 text-green-500 mr-2 mt-0.5 sm:mt-0"></i>
+                                    <span class="text-xs sm:text-sm break-all"><strong>Phone:</strong> ${instructor.phone_number || 'Not set'}</span>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-envelope w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Email:</strong> ${instructor.user?.email || 'Not set'}</span>
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-envelope w-4 text-blue-500 mr-2 mt-0.5 sm:mt-0"></i>
+                                    <span class="text-xs sm:text-sm break-all"><strong>Email:</strong> ${instructor.user?.email || 'Not set'}</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Row 3: Service Info -->
-                        <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="bg-gray-50 rounded-xl p-3 sm:p-4">
                             <div class="flex items-center mb-3">
                                 <i class="fas fa-medal w-5 text-purple-500 mr-2"></i>
-                                <p class="text-gray-700 font-semibold">Service Information</p>
+                                <p class="text-gray-700 font-semibold text-sm sm:text-base">Service Information</p>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="flex items-center">
-                                    <i class="fas fa-user-tie w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Position:</strong> ${instructor.position || '-'}</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-user-tie w-4 text-blue-500 mr-2 mt-0.5 sm:mt-0 flex-shrink-0"></i>
+                                    <span class="text-xs sm:text-sm break-words"><strong>Position:</strong> ${instructor.position || '-'}</span>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-brain w-4 text-purple-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Expertise:</strong> ${instructor.expertise || '-'}</span>
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-brain w-4 text-purple-500 mr-2 mt-0.5 sm:mt-0 flex-shrink-0"></i>
+                                    <span class="text-xs sm:text-sm break-words"><strong>Expertise:</strong> ${instructor.expertise || '-'}</span>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-clock w-4 text-orange-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Service Years:</strong> ${instructor.time_in_service ? instructor.time_in_service + ' Years' : '-'}</span>
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-clock w-4 text-orange-500 mr-2 mt-0.5 sm:mt-0 flex-shrink-0"></i>
+                                    <span class="text-xs sm:text-sm"><strong>Service Years:</strong> ${instructor.time_in_service ? instructor.time_in_service + ' Years' : '-'}</span>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-certificate w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>TTP:</strong> ${instructor.ttp || '-'}</span>
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-certificate w-4 text-green-500 mr-2 mt-0.5 sm:mt-0 flex-shrink-0"></i>
+                                    <span class="text-xs sm:text-sm break-words"><strong>TTP:</strong> ${instructor.ttp || '-'}</span>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle w-4 text-green-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Status:</strong> ${instructor.status || '-'}</span>
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-check-circle w-4 text-green-500 mr-2 mt-0.5 sm:mt-0 flex-shrink-0"></i>
+                                    <span class="text-xs sm:text-sm"><strong>Status:</strong> ${instructor.status || '-'}</span>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-hashtag w-4 text-blue-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Service Number:</strong> ${instructor.service_number || '-'}</span>
+                                <div class="flex items-start sm:items-center">
+                                    <i class="fas fa-hashtag w-4 text-blue-500 mr-2 mt-0.5 sm:mt-0 flex-shrink-0"></i>
+                                    <span class="text-xs sm:text-sm break-all"><strong>Service Number:</strong> ${instructor.service_number || '-'}</span>
                                 </div>
-                                <div class="flex items-center col-span-2">
-                                    <i class="fas fa-building w-4 text-gray-500 mr-2"></i>
-                                    <span class="text-sm"><strong>Past Units:</strong> ${formatPastUnits(instructor.past_unit)}</span>
+                                <div class="flex items-start sm:items-center md:col-span-2">
+                                    <i class="fas fa-building w-4 text-gray-500 mr-2 mt-0.5 sm:mt-0 flex-shrink-0"></i>
+                                    <span class="text-xs sm:text-sm break-words"><strong>Past Units:</strong> ${formatPastUnits(instructor.past_unit)}</span>
                                 </div>
                             </div>
                         </div>
