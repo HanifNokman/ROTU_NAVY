@@ -42,8 +42,8 @@ class AppServiceProvider extends ServiceProvider
             Gate::policy($model, $policy);
         }
 
-        // Register mail view namespace
-        $this->loadViewsFromPath(resource_path('views/vendor/mail'), 'mail');
+        // Register mail view namespace (must point to html subdirectory)
+        $this->loadViewsFromPath(resource_path('views/vendor/mail/html'), 'mail');
     }
 
     /**
