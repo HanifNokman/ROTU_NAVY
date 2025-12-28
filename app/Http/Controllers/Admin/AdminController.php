@@ -57,15 +57,18 @@ class AdminController extends Controller
         ];
 
         $instructorsQuery = Instructor::with('user');
-        
+
         if ($request->has('status') && $request->status) {
             $instructorsQuery->where('status', $request->status);
         }
-        
+
         $instructors = $instructorsQuery
-            ->orderByRaw("FIELD(rank, '" . implode("','", array_keys($rankOrder)) . "')")
             ->orderBy('service_number')
-            ->get();
+            ->get()
+            ->sortBy(function ($instructor) use ($rankOrder) {
+                return $rankOrder[$instructor->rank] ?? 999;
+            })
+            ->values();
 
         $currentYear = now()->year;
         $minYear = $currentYear - 3;
@@ -168,12 +171,12 @@ class AdminController extends Controller
         ];
 
         $instructorsQuery = Instructor::with('user');
-        
+
         // Apply status filter
         if ($status) {
             $instructorsQuery->where('status', $status);
         }
-        
+
         // Apply search filter
         if ($search) {
             $instructorsQuery->where(function($query) use ($search) {
@@ -188,11 +191,14 @@ class AdminController extends Controller
                       });
             });
         }
-        
+
         $instructors = $instructorsQuery
-            ->orderByRaw("FIELD(rank, '" . implode("','", array_keys($rankOrder)) . "')")
             ->orderBy('service_number')
-            ->get();
+            ->get()
+            ->sortBy(function ($instructor) use ($rankOrder) {
+                return $rankOrder[$instructor->rank] ?? 999;
+            })
+            ->values();
 
         return response()->json([
             'success' => true,
