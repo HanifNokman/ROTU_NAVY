@@ -2819,7 +2819,7 @@
             </div>
 
             <div class="enhanced-card animate-on-scroll" style="text-align: center; margin-top: 4rem;">
-                <img src="storage/assets/images/tauliah.jpg" alt="Formasi Kadet PALAPES" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+                <img src="{{ asset('storage/assets/images/tauliah.jpg') }}" alt="Formasi Kadet PALAPES" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
                 <h3 style="color: var(--primary-blue); font-size: 2rem; margin-bottom: 1.5rem;">Membina Pemimpin Masa Depan</h3>
                 <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; max-width: 800px; margin: 0 auto;">
                     Program komprehensif kami melampaui latihan ketenteraan tradisional, memupuk pemikiran kritis, kepimpinan beretika, dan kebolehsuaian yang diperlukan untuk cemerlang dalam persekitaran global yang sentiasa berubah. Graduan muncul sebagai pemimpin yang yakin dan berkebolehan siap untuk membuat sumbangan bermakna kepada masyarakat.
