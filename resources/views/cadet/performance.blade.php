@@ -1672,9 +1672,11 @@
         }
 
         /* Content visibility for off-screen performance */
+        /* Note: Removed content-visibility to allow tooltips to display properly */
         .badge-card {
-            content-visibility: auto;
-            contain-intrinsic-size: 220px;
+            /* content-visibility: auto; */
+            /* contain-intrinsic-size: 220px; */
+            overflow: visible;
         }
 
         /* Lazy loading placeholder */
