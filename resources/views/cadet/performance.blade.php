@@ -1633,9 +1633,9 @@
         }
 
         /* Use containment to isolate layout/paint */
-        /* Note: Excluding 'paint' for locked badges to allow tooltips to show */
+        /* Note: Excluding 'paint' to allow tooltips to show outside bounds */
         .badge-unlocked {
-            contain: layout style paint;
+            contain: layout style;
         }
 
         .badge-locked {
