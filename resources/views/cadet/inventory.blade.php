@@ -611,6 +611,33 @@
 
                 <div class="section-content" id="availableItems-content">
                 <div class="p-6">
+                    {{-- Category Toggle --}}
+                    <div class="mb-6 flex justify-center" x-data="{ activeTab: 'all' }">
+                        <div class="inline-flex rounded-lg border border-gray-300 bg-gray-100 p-1 shadow-sm">
+                            <button
+                                type="button"
+                                @click="activeTab = 'all'; filterItems('all')"
+                                :class="activeTab === 'all' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+                                class="px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200">
+                                All Items
+                            </button>
+                            <button
+                                type="button"
+                                @click="activeTab = 'equipment'; filterItems('equipment')"
+                                :class="activeTab === 'equipment' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+                                class="px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200">
+                                Equipment
+                            </button>
+                            <button
+                                type="button"
+                                @click="activeTab = 'uniform'; filterItems('uniform')"
+                                :class="activeTab === 'uniform' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+                                class="px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200">
+                                Uniform
+                            </button>
+                        </div>
+                    </div>
+
                     @if($availableItems->isNotEmpty())
                         <div class="overflow-x-auto custom-scrollbar rounded-lg border border-gray-200">
                             <table class="data-table">
@@ -1369,7 +1396,7 @@
         function toggleSection(sectionId) {
             const content = document.getElementById(sectionId + '-content');
             const icon = document.getElementById(sectionId + '-icon');
-            
+
             if (content.classList.contains('expanded')) {
                 content.classList.remove('expanded');
                 icon.classList.remove('rotated');
@@ -1379,5 +1406,27 @@
             }
         }
         // Sections are collapsed by default (no auto-expand on page load)
+
+        // ================================================================
+        // FILTER ITEMS BY CATEGORY
+        // ================================================================
+        function filterItems(category) {
+            const tableRows = document.querySelectorAll('#availableItems-content tbody tr');
+
+            tableRows.forEach(row => {
+                const categoryBadge = row.querySelector('.status-badge');
+                if (!categoryBadge) return;
+
+                const categoryText = categoryBadge.textContent.trim().toLowerCase();
+
+                if (category === 'all') {
+                    row.style.display = '';
+                } else if (categoryText === category) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
     </script>
 </x-app-layout>

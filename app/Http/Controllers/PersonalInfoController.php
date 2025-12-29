@@ -49,6 +49,8 @@ class PersonalInfoController extends Controller
                 'bank_account_number' => 'nullable|string|max:15',
                 'current_cgpa' => 'nullable|numeric|between:0,4.00',
                 'past_cgpa' => 'nullable|numeric|between:0,4.00',
+                'faculty' => 'nullable|string|max:100',
+                'course' => 'nullable|string|max:100',
                 'BMI' => 'nullable|numeric',
                 'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);

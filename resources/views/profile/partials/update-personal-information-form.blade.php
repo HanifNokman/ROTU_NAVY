@@ -143,6 +143,16 @@
                         <x-text-input id="past_cgpa" name="past_cgpa" type="number" step="0.01" class="mt-2 block w-full px-4 py-2.5 rounded-lg" :value="$personal->past_cgpa" placeholder="0.00" />
                         <x-input-error class="mt-2" :messages="$errors->get('past_cgpa')" />
                     </div>
+                    <div>
+                        <x-input-label for="faculty" :value="__('Faculty')" class="text-sm font-semibold text-gray-700" />
+                        <x-text-input id="faculty" name="faculty" type="text" class="mt-2 block w-full px-4 py-2.5 rounded-lg" :value="$personal->faculty" placeholder="Enter faculty" />
+                        <x-input-error class="mt-2" :messages="$errors->get('faculty')" />
+                    </div>
+                    <div>
+                        <x-input-label for="course" :value="__('Course')" class="text-sm font-semibold text-gray-700" />
+                        <x-text-input id="course" name="course" type="text" class="mt-2 block w-full px-4 py-2.5 rounded-lg" :value="$personal->course" placeholder="Enter course" />
+                        <x-input-error class="mt-2" :messages="$errors->get('course')" />
+                    </div>
                 </div>
             </div>
 
