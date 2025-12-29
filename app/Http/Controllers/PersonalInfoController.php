@@ -36,7 +36,7 @@ class PersonalInfoController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
-        
+
         if ($user->role === 'cadet') {
             $validated = $request->validate([
                 'phone_number' => 'nullable|string|max:13',
@@ -67,10 +67,23 @@ class PersonalInfoController extends Controller
             $oldBMI = $cadet->BMI;
             $oldCGPA = $cadet->current_cgpa;
 
+            // Define fields that can only be filled once
+            $oneTimeFillFields = ['gender', 'ic_number', 'matric_no', 'intake_year', 'rank'];
+
             // Only update fields present in the request, preserve others
             foreach ($validated as $key => $value) {
                 if ($request->has($key) || $key === 'profile_pic') {
-                    $cadet->$key = $value;
+                    // Check if this is a one-time fill field
+                    if (in_array($key, $oneTimeFillFields)) {
+                        // Only allow update if the field is currently empty/null
+                        if (empty($cadet->$key)) {
+                            $cadet->$key = $value;
+                        }
+                        // If field already has a value, skip the update (preserve existing value)
+                    } else {
+                        // For non-restricted fields, update normally
+                        $cadet->$key = $value;
+                    }
                 }
             }
 
