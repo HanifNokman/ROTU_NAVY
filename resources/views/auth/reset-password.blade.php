@@ -572,7 +572,7 @@
         {{-- ================================================================ --}}
         <div class="illustration-panel">
             <div class="illustration-image">
-                <img src="storage/assets/images/tldm4.jpg" alt="Naval Security Reset" />
+                <img src="{{ asset('storage/assets/images/tldm4.jpg') }}" alt="Naval Security Reset" />
                 <div class="illustration-overlay">
                     <div class="illustration-content">
                         <h2 class="illustration-title">Cadet Management &<br>Learning Hub</h2>
