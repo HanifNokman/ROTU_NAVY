@@ -454,8 +454,8 @@
                     <div class="px-4 py-4 overflow-visible">
                         <div class="flex gap-3 overflow-x-auto overflow-y-visible custom-scrollbar pb-2">
                             @foreach($badgeProgress as $badge)
-                                <div class="badge-card group flex-shrink-0 bg-gray-50 border-2 border-gray-300 border-dashed rounded-xl p-3 text-center hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
-                                     style="width: 110px; height: 160px;">
+                                <div class="badge-card group flex-shrink-0 bg-gray-50 border-2 border-gray-300 border-dashed rounded-xl p-3 text-center hover:shadow-lg transition-all duration-300 cursor-pointer relative"
+                                     style="width: 110px; height: 160px; overflow: visible;">
 
                                     {{-- Default View --}}
                                     <div class="absolute inset-0 p-3 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity duration-300">
@@ -500,21 +500,26 @@
                                     </div>
 
                                     {{-- Hover View - Progress & Criteria --}}
-                                    <div class="absolute inset-0 p-1.5 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 bg-opacity-90 text-white">
-                                        {{-- Progress --}}
-                                        <div class="mb-1 text-center">
-                                            <div class="text-[8px] font-bold text-yellow-400">{{ $badge['progress']['current'] }}/{{ $badge['progress']['target'] }}</div>
-                                        </div>
-
-                                        {{-- Progress Bar --}}
-                                        <div class="relative h-0.5 bg-gray-600 rounded-full overflow-hidden mb-1 w-full">
-                                            <div class="absolute inset-0 h-full rounded-full transition-all duration-500 bg-yellow-400"
-                                                 style="width: {{ $badge['progress']['percentage'] }}%;"></div>
-                                        </div>
-
-                                        {{-- Unlock Criteria --}}
+                                    <div class="absolute inset-0 p-3 flex flex-col items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 bg-opacity-95 text-white">
+                                        {{-- Progress at top --}}
                                         <div class="text-center w-full">
-                                            <p class="text-[4px] text-gray-200 leading-none px-0.5" style="line-height: 1.1;">{{ $badge['progress']['criteria_text'] }}</p>
+                                            <div class="text-sm font-bold text-yellow-400 mb-2">{{ $badge['progress']['current'] }}/{{ $badge['progress']['target'] }}</div>
+
+                                            {{-- Progress Bar --}}
+                                            <div class="relative h-1.5 bg-gray-600 rounded-full overflow-hidden w-full">
+                                                <div class="absolute inset-0 h-full rounded-full transition-all duration-500 bg-yellow-400"
+                                                     style="width: {{ $badge['progress']['percentage'] }}%;"></div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Unlock Criteria in the middle - uses flex-grow to fill available space --}}
+                                        <div class="text-center w-full flex-grow flex items-center justify-center px-2 py-3">
+                                            <p class="text-[10px] text-gray-200 leading-snug">{{ $badge['progress']['criteria_text'] }}</p>
+                                        </div>
+
+                                        {{-- Percentage at bottom --}}
+                                        <div class="text-center w-full">
+                                            <span class="text-xs font-semibold text-yellow-400">{{ number_format($badge['progress']['percentage'], 0) }}%</span>
                                         </div>
                                     </div>
                                 </div>
