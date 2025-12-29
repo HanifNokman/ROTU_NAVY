@@ -618,17 +618,30 @@ class InstructorDashboardController extends Controller
 
         foreach ($request->cadet_ids as $cadetId) {
             $cadet = \App\Models\Cadet::with('user')->find($cadetId);
+
+            if (!$cadet) {
+                continue; // Skip if cadet not found
+            }
+
+            // Increment duty count
             $cadet->increment('daily_duty_count');
 
             // Update performance rating after duty count change
             $service = new \App\Services\PerformanceCalculationService();
             $service->handleDutyCountChange($cadetId);
 
-            // Send notification to cadet about duty count update
-            $cadet->user->notify(new \App\Notifications\DutyCountUpdated(
-                $cadet->fresh()->daily_duty_count,
-                $cadet->user->name
-            ));
+            // Send notification to cadet about duty count update (with error handling)
+            try {
+                if ($cadet->user) {
+                    $cadet->user->notify(new \App\Notifications\DutyCountUpdated(
+                        $cadet->fresh()->daily_duty_count,
+                        $cadet->user->name
+                    ));
+                }
+            } catch (\Exception $e) {
+                // Log the error but don't stop the duty increment
+                \Log::warning('Failed to send duty notification for cadet ' . $cadetId . ': ' . $e->getMessage());
+            }
         }
 
         if ($request->ajax() || $request->wantsJson()) {
