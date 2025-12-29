@@ -1405,9 +1405,11 @@
                                         <div class="flex justify-center mb-2">
                                             <div class="relative w-28 h-28 flex items-center justify-center">
                                                 @if($unlockedBadge['badge']->hasImageIcon())
-                                                    <img src="{{ $unlockedBadge['badge']->icon_url }}"
+                                                    <img data-src="{{ $unlockedBadge['badge']->icon_url }}"
                                                         alt="{{ $unlockedBadge['badge']->name }}"
-                                                        class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110">
+                                                        class="badge-lazy w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                                                        loading="lazy"
+                                                        decoding="async">
                                                 @else
                                                     <i class="{{ $unlockedBadge['badge']->icon }} text-6xl text-yellow-500 transition-transform duration-300 group-hover:scale-110"></i>
                                                 @endif
@@ -1488,9 +1490,11 @@
                                                     <div class="flex justify-center mb-2">
                                                         <div class="relative w-28 h-28 flex items-center justify-center filter grayscale opacity-40 group-hover:opacity-60 transition-opacity duration-300">
                                                             @if($badge->hasImageIcon())
-                                                                <img src="{{ $badge->icon_url }}"
+                                                                <img data-src="{{ $badge->icon_url }}"
                                                                     alt="{{ $badge->name }}"
-                                                                    class="w-full h-full object-contain">
+                                                                    class="badge-lazy w-full h-full object-contain"
+                                                                    loading="lazy"
+                                                                    decoding="async">
                                                             @else
                                                                 <i class="{{ $badge->icon }} text-6xl text-gray-400"></i>
                                                             @endif
@@ -1666,12 +1670,79 @@
         .badge-locked .group-hover\:opacity-60 {
             transition: opacity 0.3s ease;
         }
+
+        /* Content visibility for off-screen performance */
+        .badge-card {
+            content-visibility: auto;
+            contain-intrinsic-size: 220px;
+        }
+
+        /* Lazy loading placeholder */
+        .badge-lazy {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+        }
+
+        .badge-lazy.loaded {
+            background: none;
+            animation: none;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
     </style>
 
     {{-- ================================================================ --}}
     {{-- JAVASCRIPT --}}
     {{-- ================================================================ --}}
     <script>
+        // Lazy loading for badge images using Intersection Observer
+        document.addEventListener('DOMContentLoaded', function() {
+            const lazyImages = document.querySelectorAll('.badge-lazy');
+
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+
+                            if (src) {
+                                img.src = src;
+                                img.classList.add('loaded');
+                                img.removeAttribute('data-src');
+                                observer.unobserve(img);
+                            }
+                        }
+                    });
+                }, {
+                    rootMargin: '50px 0px', // Start loading 50px before entering viewport
+                    threshold: 0.01
+                });
+
+                lazyImages.forEach(img => {
+                    imageObserver.observe(img);
+                });
+            } else {
+                // Fallback for browsers that don't support IntersectionObserver
+                lazyImages.forEach(img => {
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.classList.add('loaded');
+                        img.removeAttribute('data-src');
+                    }
+                });
+            }
+        });
+
         function toggleBadgeDisplay(badgeId) {
             fetch('/cadet/performance/toggle-badge', {
                 method: 'POST',
