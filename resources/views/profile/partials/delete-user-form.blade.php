@@ -107,5 +107,4 @@
                 </button>
             </div>
         </form>
-    </x-modal>
-</section>
+</x-modal>
