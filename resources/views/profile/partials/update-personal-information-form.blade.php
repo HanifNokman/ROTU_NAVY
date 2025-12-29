@@ -51,12 +51,17 @@
                     <div>
                         <x-input-label for="gender" :value="__('Gender')" class="text-sm font-semibold text-gray-700" />
                         @php $selectedGender = $personal->gender; @endphp
-                        <select id="gender" name="gender" class="mt-2 block w-full px-4 py-2.5 rounded-lg border-gray-300 bg-gray-50" disabled>
+                        <select id="gender" name="gender" class="mt-2 block w-full px-4 py-2.5 rounded-lg border-gray-300 {{ !empty($selectedGender) ? 'bg-gray-50' : '' }}" {{ !empty($selectedGender) ? 'disabled' : '' }}>
+                            <option value="">Select Gender</option>
                             <option value="Male" {{ $selectedGender === 'Male' ? 'selected' : '' }}>Male</option>
                             <option value="Female" {{ $selectedGender === 'Female' ? 'selected' : '' }}>Female</option>
                         </select>
-                        <input type="hidden" name="gender" value="{{ $selectedGender }}" />
-                        <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @if(!empty($selectedGender))
+                            <input type="hidden" name="gender" value="{{ $selectedGender }}" />
+                            <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @else
+                            <p class="mt-1 text-xs text-blue-600">You can fill this field once. After saving, it cannot be changed.</p>
+                        @endif
                         <x-input-error class="mt-2" :messages="$errors->get('gender')" />
                     </div>
                 </div>
@@ -75,16 +80,24 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-input-label for="ic_number" :value="__('IC Number')" class="text-sm font-semibold text-gray-700" />
-                        <x-text-input id="ic_number" name="ic_number" type="text" class="mt-2 block w-full px-4 py-2.5 rounded-lg bg-gray-50" maxlength="15" :value="$personal->ic_number" disabled />
-                        <input type="hidden" name="ic_number" value="{{ $personal->ic_number }}" />
-                        <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        <x-text-input id="ic_number" name="ic_number" type="text" class="mt-2 block w-full px-4 py-2.5 rounded-lg {{ !empty($personal->ic_number) ? 'bg-gray-50' : '' }}" maxlength="15" :value="$personal->ic_number" :disabled="!empty($personal->ic_number)" placeholder="Enter IC number" />
+                        @if(!empty($personal->ic_number))
+                            <input type="hidden" name="ic_number" value="{{ $personal->ic_number }}" />
+                            <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @else
+                            <p class="mt-1 text-xs text-blue-600">You can fill this field once. After saving, it cannot be changed.</p>
+                        @endif
                         <x-input-error class="mt-2" :messages="$errors->get('ic_number')" />
                     </div>
                     <div>
                         <x-input-label for="matric_no" :value="__('Matric Number')" class="text-sm font-semibold text-gray-700" />
-                        <x-text-input id="matric_no" name="matric_no" type="text" class="mt-2 block w-full px-4 py-2.5 rounded-lg bg-gray-50" maxlength="11" :value="$personal->matric_no" disabled />
-                        <input type="hidden" name="matric_no" value="{{ $personal->matric_no }}" />
-                        <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        <x-text-input id="matric_no" name="matric_no" type="text" class="mt-2 block w-full px-4 py-2.5 rounded-lg {{ !empty($personal->matric_no) ? 'bg-gray-50' : '' }}" maxlength="11" :value="$personal->matric_no" :disabled="!empty($personal->matric_no)" placeholder="Enter matric number" />
+                        @if(!empty($personal->matric_no))
+                            <input type="hidden" name="matric_no" value="{{ $personal->matric_no }}" />
+                            <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @else
+                            <p class="mt-1 text-xs text-blue-600">You can fill this field once. After saving, it cannot be changed.</p>
+                        @endif
                         <x-input-error class="mt-2" :messages="$errors->get('matric_no')" />
                     </div>
                 </div>
@@ -106,14 +119,18 @@
                     <div>
                         <x-input-label for="intake_year" :value="__('Intake Year')" class="text-sm font-semibold text-gray-700" />
                         @php $selectedIntakeYear = $personal->intake_year; $currentYear = date('Y'); @endphp
-                        <select id="intake_year" name="intake_year" class="mt-2 block w-full px-4 py-2.5 rounded-lg border-gray-300 bg-gray-50" disabled>
+                        <select id="intake_year" name="intake_year" class="mt-2 block w-full px-4 py-2.5 rounded-lg border-gray-300 {{ !empty($selectedIntakeYear) ? 'bg-gray-50' : '' }}" {{ !empty($selectedIntakeYear) ? 'disabled' : '' }}>
                             <option value="">Select Year</option>
                             @for ($year = $currentYear; $year >= $currentYear - 3; $year--)
                                 <option value="{{ $year }}" {{ $selectedIntakeYear == $year ? 'selected' : '' }}>{{ $year }}</option>
                             @endfor
                         </select>
-                        <input type="hidden" name="intake_year" value="{{ $selectedIntakeYear }}" />
-                        <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @if(!empty($selectedIntakeYear))
+                            <input type="hidden" name="intake_year" value="{{ $selectedIntakeYear }}" />
+                            <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @else
+                            <p class="mt-1 text-xs text-blue-600">You can fill this field once. After saving, it cannot be changed.</p>
+                        @endif
                         <x-input-error class="mt-2" :messages="$errors->get('intake_year')" />
                     </div>
                     <div>
@@ -148,13 +165,17 @@
                     <div>
                         <x-input-label for="rank" :value="__('Rank')" class="text-sm font-semibold text-gray-700" />
                         @php $selectedRank = $personal->rank; @endphp
-                        <select id="rank" name="rank" class="mt-2 block w-full px-4 py-2.5 rounded-lg border-gray-300 bg-gray-50" disabled>
+                        <select id="rank" name="rank" class="mt-2 block w-full px-4 py-2.5 rounded-lg border-gray-300 {{ !empty($selectedRank) ? 'bg-gray-50' : '' }}" {{ !empty($selectedRank) ? 'disabled' : '' }}>
                             <option value="">Select Rank</option>
                             <option value="PK" {{ $selectedRank === 'PK' ? 'selected' : '' }}>PK</option>
                             <option value="PKK" {{ $selectedRank === 'PKK' ? 'selected' : '' }}>PKK</option>
                         </select>
-                        <input type="hidden" name="rank" value="{{ $selectedRank }}" />
-                        <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @if(!empty($selectedRank))
+                            <input type="hidden" name="rank" value="{{ $selectedRank }}" />
+                            <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
+                        @else
+                            <p class="mt-1 text-xs text-blue-600">You can fill this field once. After saving, it cannot be changed.</p>
+                        @endif
                         <x-input-error class="mt-2" :messages="$errors->get('rank')" />
                     </div>
                     <div>

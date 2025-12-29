@@ -1,4 +1,4 @@
-<section class="space-y-6">
+<section class="space-y-6 relative">
     <!-- Warning Notice -->
     <div class="p-4 rounded-lg bg-red-50 border border-red-200">
         <div class="flex items-start gap-3">
@@ -39,8 +39,10 @@
             {{ __('Delete Account') }}
         </button>
     </div>
+</section>
 
-    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
+<!-- Modal placed outside the section to ensure proper z-index layering -->
+<x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
         <form method="post" action="{{ route('profile.destroy') }}" class="p-8">
             @csrf
             @method('delete')
@@ -64,7 +66,7 @@
 
             <!-- Password Confirmation -->
             <div class="mb-6">
-                <x-input-label for="password" value="{{ __('Password')" class="text-sm font-semibold text-gray-700" />
+                <x-input-label for="password" value="{{ __('Password') }}" class="text-sm font-semibold text-gray-700" />
                 <div class="mt-2 relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
