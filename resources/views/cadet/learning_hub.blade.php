@@ -773,8 +773,9 @@
                                                                         <div class="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
                                                                             🎥 Training Video
                                                                         </div>
-                                                                        <button onclick="openMediaModal('{{ asset($material->file_url) }}', 'video', '{{ addslashes($material->title) }}')"
-                                                                            class="absolute top-2 right-2 bg-black bg-opacity-70 hover:bg-opacity-90 text-white p-2 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-100">
+                                                                        <button onclick="event.stopPropagation(); openVideoModal('{{ asset($material->file_url) }}', '{{ addslashes($material->title) }}')"
+                                                                            class="absolute top-2 right-2 bg-black bg-opacity-70 hover:bg-opacity-90 text-white p-2 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-100"
+                                                                            title="Open in fullscreen">
                                                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
                                                                             </svg>
@@ -801,20 +802,19 @@
                                                                         </audio>
                                                                     </div>
                                                                 @elseif($materialType === 'image')
-                                                                    <div class="relative group">
+                                                                    <div class="relative cursor-pointer group"
+                                                                        onclick="openImageModal('{{ asset($material->file_url) }}', '{{ addslashes($material->title) }}')">
                                                                         <img src="{{ asset($material->file_url) }}"
                                                                             alt="Material Image"
-                                                                            class="w-full h-auto rounded-lg shadow-lg max-w-4xl cursor-pointer transition-transform duration-300 group-hover:scale-105"
-                                                                            onclick="openMediaModal('{{ asset($material->file_url) }}', 'image', '{{ addslashes($material->title) }}')">
-                                                                        <div class="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium pointer-events-none">
+                                                                            class="w-full h-auto rounded-lg shadow-lg max-w-4xl transition-transform duration-500 group-hover:scale-105"
+                                                                            loading="lazy">
+                                                                        <div class="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
                                                                             📸 Training Image
                                                                         </div>
-                                                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all duration-300 flex items-center justify-center pointer-events-none">
-                                                                            <div class="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 rounded-full p-3 transition-opacity duration-300">
-                                                                                <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
-                                                                                </svg>
-                                                                            </div>
+                                                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-lg">
+                                                                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+                                                                            </svg>
                                                                         </div>
                                                                     </div>
                                                                 @endif
@@ -3247,133 +3247,157 @@
         console.log('✅ toggleMaterial function defined');
 
         // ========================================
-        // ENHANCED MEDIA MODAL
+        // MEDIA MODAL (IMAGE & VIDEO LIGHTBOX)
         // ========================================
-        function openMediaModal(url, type, title) {
-            const modal = document.getElementById('mediaModal');
-            const modalContent = document.getElementById('mediaModalContent');
-            const modalTitle = document.getElementById('mediaModalTitle');
+        function openImageModal(imageSrc, title) {
+            const modal = document.getElementById('imagePreviewModal');
+            const imageLoader = document.getElementById('imageLoader');
 
-            modalTitle.textContent = title || 'Media Viewer';
+            // Show loader
+            imageLoader.style.display = 'flex';
 
-            if (type === 'image') {
-                modalContent.innerHTML = `
-                    <div class="relative">
-                        <img src="${url}"
-                            alt="${title}"
-                            class="max-w-full max-h-[80vh] mx-auto rounded-lg"
-                            id="modalImage">
-                        <div class="absolute top-4 right-4 flex gap-2">
-                            <button onclick="downloadMedia('${url}', '${title}')"
-                                class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-110"
-                                title="Download Image">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            } else if (type === 'video') {
-                modalContent.innerHTML = `
-                    <div class="relative">
-                        <video controls
-                            class="max-w-full max-h-[80vh] mx-auto rounded-lg"
-                            id="modalVideo"
-                            autoplay>
-                            <source src="${url}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="mt-4 flex justify-center gap-2">
-                            <button onclick="document.getElementById('modalVideo').requestFullscreen()"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300">
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
-                                </svg>
-                                Fullscreen
-                            </button>
-                            <button onclick="downloadMedia('${url}', '${title}')"
-                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300">
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                Download
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
+            // Set image
+            document.getElementById('previewImage').src = imageSrc;
+            document.getElementById('previewTitle').textContent = title;
 
+            // Set download button
+            const downloadBtn = document.getElementById('downloadButton');
+            downloadBtn.href = imageSrc;
+            downloadBtn.download = title + '.jpg';
+
+            // Show modal
             modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            modal.style.animation = 'fadeIn 0.3s ease-in-out';
             document.body.style.overflow = 'hidden';
         }
 
-        function closeMediaModal() {
-            const modal = document.getElementById('mediaModal');
-            const modalContent = document.getElementById('mediaModalContent');
+        function openVideoModal(videoSrc, title) {
+            const modal = document.getElementById('videoPreviewModal');
+            const video = document.getElementById('previewVideo');
 
-            // Stop any playing video
-            const video = modalContent.querySelector('video');
-            if (video) {
-                video.pause();
-                video.currentTime = 0;
-            }
+            // Set video
+            video.src = videoSrc;
+            document.getElementById('videoPreviewTitle').textContent = title;
 
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
+            // Show modal
+            modal.classList.remove('hidden');
+            modal.style.animation = 'fadeIn 0.3s ease-in-out';
+            document.body.style.overflow = 'hidden';
 
-            // Clear content
-            modalContent.innerHTML = '';
+            // Play video
+            video.play();
         }
 
-        function downloadMedia(url, filename) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename || 'download';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        function closeImageModal() {
+            const modal = document.getElementById('imagePreviewModal');
+            modal.style.animation = 'fadeOut 0.2s ease-in-out';
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 200);
         }
 
-        // Close modal when clicking outside
+        function closeVideoModal() {
+            const modal = document.getElementById('videoPreviewModal');
+            const video = document.getElementById('previewVideo');
+
+            // Pause and reset video
+            video.pause();
+            video.currentTime = 0;
+
+            modal.style.animation = 'fadeOut 0.2s ease-in-out';
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 200);
+        }
+
+        // Close modal when clicking outside or pressing Escape
         document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('mediaModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeMediaModal();
+            const imageModal = document.getElementById('imagePreviewModal');
+            const videoModal = document.getElementById('videoPreviewModal');
+
+            if (imageModal) {
+                imageModal.addEventListener('click', function(e) {
+                    if (e.target === imageModal) {
+                        closeImageModal();
                     }
                 });
             }
 
-            // Close modal with Escape key
+            if (videoModal) {
+                videoModal.addEventListener('click', function(e) {
+                    if (e.target === videoModal) {
+                        closeVideoModal();
+                    }
+                });
+            }
+
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
-                    closeMediaModal();
+                    closeImageModal();
+                    closeVideoModal();
                 }
             });
         });
     </script>
 
-    <!-- Enhanced Media Modal -->
-    <div id="mediaModal" class="hidden fixed inset-0 bg-black bg-opacity-90 z-[9999] items-center justify-center p-4">
-        <div class="relative w-full max-w-7xl">
+    <!-- Image Preview Modal -->
+    <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center transition-all duration-300 backdrop-blur-sm overflow-y-auto">
+        <div class="relative max-w-5xl w-full p-4 my-8">
+            <!-- Modal Action Buttons -->
+            <div class="fixed top-6 right-6 z-20 flex gap-2">
+                <a id="downloadButton" href="#" download class="text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                </a>
+                <button onclick="closeImageModal()" class="text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <!-- Image Container with Loading -->
+                <div class="relative w-full flex items-center justify-center mb-4">
+                    <div id="imageLoader" class="absolute inset-0 flex items-center justify-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                    </div>
+                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'">
+                </div>
+
+                <!-- Info Card -->
+                <div class="bg-white rounded-xl p-6 mt-4 max-w-2xl w-full shadow-2xl">
+                    <h3 id="previewTitle" class="text-xl font-bold text-gray-900 mb-3"></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Preview Modal -->
+    <div id="videoPreviewModal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex items-center justify-center transition-all duration-300">
+        <div class="relative max-w-6xl w-full p-4">
             <!-- Close Button -->
-            <button onclick="closeMediaModal()"
-                class="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors duration-300 flex items-center gap-2">
-                <span class="text-lg font-medium">Close</span>
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-20 text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
 
-            <!-- Modal Title -->
-            <h3 id="mediaModalTitle" class="text-white text-2xl font-bold mb-4 text-center"></h3>
+            <div class="flex flex-col items-center">
+                <!-- Video Container -->
+                <video id="previewVideo" controls class="max-w-full max-h-[80vh] rounded-xl shadow-2xl mb-4">
+                    Your browser does not support the video tag.
+                </video>
 
-            <!-- Modal Content -->
-            <div id="mediaModalContent" class="bg-gray-900 rounded-xl p-4"></div>
+                <!-- Video Title -->
+                <div class="bg-white rounded-xl p-4 max-w-2xl w-full shadow-2xl">
+                    <h3 id="videoPreviewTitle" class="text-lg font-bold text-gray-900 text-center"></h3>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
