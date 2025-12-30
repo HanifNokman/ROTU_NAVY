@@ -763,13 +763,12 @@
                                                         <div class="flex flex-col md:flex-row gap-6">
                                                             <div class="md:flex-[0_0_40%]">
                                                                 @if($materialType === 'youtube')
-                                                                    <div class="relative group w-full" style="min-height: 250px;">
-                                                                        <div class="w-full h-full" style="position: relative; padding-bottom: 56.25%;">
+                                                                    <div class="relative group">
+                                                                        <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                                                             <iframe
                                                                                 src="{{ $material->getYouTubeEmbedUrl() }}"
                                                                                 data-material-id="{{ $material->id }}"
-                                                                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                                                                                class="rounded-lg shadow-lg"
+                                                                                class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
                                                                                 frameborder="0"
                                                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                                                 allowfullscreen>
@@ -853,13 +852,12 @@
                                                     @elseif($material->file_url && in_array($materialType, ['youtube', 'video', 'audio', 'image']))
                                                         <div class="text-center">
                                                             @if($materialType === 'youtube')
-                                                                <div class="relative inline-block w-full max-w-4xl mx-auto" style="min-height: 400px;">
-                                                                    <div class="w-full h-full" style="position: relative; padding-bottom: 56.25%;">
+                                                                <div class="relative inline-block w-full max-w-4xl mx-auto">
+                                                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                                                         <iframe
                                                                             src="{{ $material->getYouTubeEmbedUrl() }}"
                                                                             data-material-id="{{ $material->id }}"
-                                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                                                                            class="rounded-lg shadow-lg"
+                                                                            class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
                                                                             frameborder="0"
                                                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                                             allowfullscreen>
@@ -2364,13 +2362,12 @@
                         if (materialType === 'youtube') {
                             const videoId = getYouTubeVideoId(material.file_url);
                             contentHTML = `
-                                <div class="md:w-[40%]" style="min-height: 250px;">
-                                    <div class="w-full h-full" style="position: relative; padding-bottom: 56.25%;">
+                                <div class="md:w-[40%]">
+                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                         <iframe
                                             src="https://www.youtube.com/embed/${videoId}?enablejsapi=1"
                                             data-material-id="${material.id}"
-                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                                            class="rounded"
+                                            class="absolute top-0 left-0 w-full h-full rounded"
                                             frameborder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowfullscreen>
@@ -2409,13 +2406,12 @@
                         if (materialType === 'youtube') {
                             const videoId = getYouTubeVideoId(material.file_url);
                             contentHTML = `
-                                <div class="w-full flex justify-center" style="min-height: 400px;">
-                                    <div class="w-full max-w-4xl h-full" style="position: relative; padding-bottom: 56.25%;">
+                                <div class="w-full flex justify-center">
+                                    <div class="relative w-full max-w-4xl" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                         <iframe
                                             src="https://www.youtube.com/embed/${videoId}?enablejsapi=1"
                                             data-material-id="${material.id}"
-                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                                            class="rounded"
+                                            class="absolute top-0 left-0 w-full h-full rounded"
                                             frameborder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowfullscreen>
