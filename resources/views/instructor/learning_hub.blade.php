@@ -648,6 +648,14 @@
                                             <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
                                         </div>
 
+                                        <div class="mb-4">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" name="remove_media" value="1" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                                <span class="ml-2 text-sm text-gray-700">Remove current media (YouTube link or file)</span>
+                                            </label>
+                                            <p class="text-xs text-gray-500 mt-1">Check this to remove the current YouTube link or uploaded file</p>
+                                        </div>
+
                                         <div class="flex justify-end gap-3 pt-4">
                                             <button type="button" @click="showModal = false" class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-all duration-200 shadow-sm hover:shadow">Cancel</button>
                                             <button type="submit" class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">

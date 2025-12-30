@@ -50,6 +50,52 @@ class User extends Authenticatable
     }
 
     /**
+     * Set the user's name with proper capitalization.
+     * Handles common Malay name particles (bin, binti) as lowercase.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $this->standardizeName($value);
+    }
+
+    /**
+     * Standardize name by capitalizing the first letter of each word.
+     * Handles common Malay name particles (bin, binti) as lowercase.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    private function standardizeName(string $name): string
+    {
+        // Trim and remove extra spaces
+        $name = trim(preg_replace('/\s+/', ' ', $name));
+
+        // Split into words
+        $words = explode(' ', $name);
+
+        // Common Malay name particles that should be lowercase
+        $lowercaseParticles = ['bin', 'binti', 'a/l', 'a/p', 'al'];
+
+        $standardized = [];
+        foreach ($words as $word) {
+            $lowerWord = strtolower($word);
+
+            // Check if it's a common particle
+            if (in_array($lowerWord, $lowercaseParticles)) {
+                $standardized[] = $lowerWord;
+            } else {
+                // Capitalize first letter, rest lowercase
+                $standardized[] = ucfirst($lowerWord);
+            }
+        }
+
+        return implode(' ', $standardized);
+    }
+
+    /**
      * Get the galleries for the user (instructor).
      */
     public function galleries()

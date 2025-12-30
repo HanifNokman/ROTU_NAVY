@@ -130,6 +130,7 @@ class LearningHubController extends Controller
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
             'youtube_url' => 'nullable|url',
+            'remove_media' => 'nullable|boolean',
         ]);
 
         $data = [
@@ -138,8 +139,19 @@ class LearningHubController extends Controller
             'learning_material_category_id' => $request->learning_material_category_id,
         ];
 
+        // Check if user wants to remove media
+        if ($request->filled('remove_media') && $request->remove_media) {
+            // Delete old file if it exists and is not a YouTube link
+            if ($material->file_url && !$material->isYouTubeLink()) {
+                $oldFilePath = str_replace('storage/', '', $material->file_url);
+                if (Storage::disk('public')->exists($oldFilePath)) {
+                    Storage::disk('public')->delete($oldFilePath);
+                }
+            }
+            $data['file_url'] = null;
+        }
         // Check if YouTube URL is provided
-        if ($request->filled('youtube_url')) {
+        elseif ($request->filled('youtube_url')) {
             // Delete old file if it exists and is not a YouTube link
             if ($material->file_url && !$material->isYouTubeLink()) {
                 $oldFilePath = str_replace('storage/', '', $material->file_url);
