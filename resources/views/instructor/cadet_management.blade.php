@@ -2149,10 +2149,10 @@ function showCadetProfile(cadetId) {
             let profilePicHtml = '';
             if (data.cadet.profile_pic) {
                 const profilePicUrl = `/storage/${data.cadet.profile_pic}`;
-                profilePicHtml = `<img src="${profilePicUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
+                profilePicHtml = `<img src="${profilePicUrl}" alt="Profile" class="w-full h-full object-cover">`;
             } else {
                 const fallbackAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name)}`;
-                profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-20 h-20 rounded-full object-cover">`;
+                profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-full h-full object-cover">`;
             }
 
             // Calculate point distribution percentages
@@ -2162,17 +2162,27 @@ function showCadetProfile(cadetId) {
             const quizPoints = parseFloat(performance.quiz_points) || 0;
             const learningPoints = parseFloat(performance.learning_progress_points) || 0;
 
-            // Calculate dynamic font size for name based on total length
+            // Calculate dynamic font size for rank + name based on total length
             const fullName = `${data.cadet.rank || 'Cadet'} ${data.user.name}`;
             const nameLength = fullName.length;
-            let nameFontSize = 'text-2xl'; // Default size
+            let nameFontSize = 'text-3xl'; // Default size for short names
+            let nameFontSizeMobile = 'text-2xl'; // Default mobile size
 
-            if (nameLength > 30) {
-                nameFontSize = 'text-base'; // Very long names
+            if (nameLength > 45) {
+                nameFontSize = 'text-sm';
+                nameFontSizeMobile = 'text-xs';
+            } else if (nameLength > 40) {
+                nameFontSize = 'text-base';
+                nameFontSizeMobile = 'text-sm';
+            } else if (nameLength > 35) {
+                nameFontSize = 'text-lg';
+                nameFontSizeMobile = 'text-base';
+            } else if (nameLength > 30) {
+                nameFontSize = 'text-xl';
+                nameFontSizeMobile = 'text-lg';
             } else if (nameLength > 25) {
-                nameFontSize = 'text-lg'; // Long names
-            } else if (nameLength > 20) {
-                nameFontSize = 'text-xl'; // Medium-long names
+                nameFontSize = 'text-2xl';
+                nameFontSizeMobile = 'text-xl';
             }
 
             const attendancePercent = totalPoints > 0 ? (attendancePoints / totalPoints) * 100 : 0;
@@ -2218,14 +2228,21 @@ function showCadetProfile(cadetId) {
                         <div class="flex flex-col md:flex-row items-start gap-6">
                             <!-- Top Row: Profile Picture + Chart -->
                             <div class="flex flex-col md:flex-row items-center md:items-start gap-6 w-full">
-                                <!-- Profile Picture - Vertical Rectangle -->
-                                <div class="w-24 h-32 md:w-28 md:h-36 rounded-2xl bg-gray-100 shadow-md flex items-center justify-center flex-shrink-0 border-4 border-gray-200 overflow-hidden">
-                                    ${profilePicHtml}
+                                <!-- Profile Picture - Rounded Vertical Triangle -->
+                                <div class="relative w-24 h-32 md:w-28 md:h-36 flex-shrink-0">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 shadow-lg overflow-hidden"
+                                         style="clip-path: polygon(50% 0%, 0% 25%, 0% 100%, 100% 100%, 100% 25%); border-radius: 12px;">
+                                        <div class="w-full h-full flex items-center justify-center p-1">
+                                            <div class="w-full h-full overflow-hidden" style="clip-path: polygon(50% 2%, 2% 26%, 2% 98%, 98% 98%, 98% 26%); border-radius: 10px;">
+                                                ${profilePicHtml}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Name and Details Section -->
                                 <div class="flex-1 text-center md:text-left">
-                                    <h3 class="${nameFontSize} md:text-3xl font-bold text-gray-900 break-words mb-4">${fullName}</h3>
+                                    <h3 class="${nameFontSizeMobile} md:${nameFontSize} font-bold text-gray-900 break-words leading-tight mb-4">${fullName}</h3>
 
                                     <div class="space-y-2.5 text-sm md:text-base text-gray-700">
                                         <div class="flex flex-col md:flex-row md:items-center gap-1">
