@@ -82,7 +82,7 @@ class LearningHubController extends Controller
             'description' => 'nullable|string',
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
-            'youtube_url' => 'nullable|url|regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/',
+            'youtube_url' => 'nullable|url',
         ]);
 
         $filePath = null;
@@ -129,7 +129,7 @@ class LearningHubController extends Controller
             'description' => 'nullable|string',
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
-            'youtube_url' => 'nullable|url|regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/',
+            'youtube_url' => 'nullable|url',
         ]);
 
         $data = [
