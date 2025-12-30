@@ -2228,15 +2228,10 @@ function showCadetProfile(cadetId) {
                         <div class="flex flex-col md:flex-row items-start gap-6">
                             <!-- Top Row: Profile Picture + Chart -->
                             <div class="flex flex-col md:flex-row items-center md:items-start gap-6 w-full">
-                                <!-- Profile Picture - Rounded Vertical Triangle -->
-                                <div class="relative w-24 h-32 md:w-28 md:h-36 flex-shrink-0">
-                                    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 shadow-lg overflow-hidden"
-                                         style="clip-path: polygon(50% 0%, 0% 25%, 0% 100%, 100% 100%, 100% 25%); border-radius: 12px;">
-                                        <div class="w-full h-full flex items-center justify-center p-1">
-                                            <div class="w-full h-full overflow-hidden" style="clip-path: polygon(50% 2%, 2% 26%, 2% 98%, 98% 98%, 98% 26%); border-radius: 10px;">
-                                                ${profilePicHtml}
-                                            </div>
-                                        </div>
+                                <!-- Profile Picture - Rounded Vertical Rectangle -->
+                                <div class="w-24 h-32 md:w-28 md:h-36 flex-shrink-0 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-200 shadow-lg p-1">
+                                    <div class="w-full h-full rounded-xl overflow-hidden bg-white">
+                                        ${profilePicHtml}
                                     </div>
                                 </div>
 
