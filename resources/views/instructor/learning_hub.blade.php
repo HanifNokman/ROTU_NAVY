@@ -546,10 +546,17 @@
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                                 @if($material->file_url)
-                                                    <a href="{{ asset($material->file_url) }}" target="_blank"
-                                                    class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                                        View File
-                                                    </a>
+                                                    @if($material->isYouTubeLink())
+                                                        <a href="{{ $material->file_url }}" target="_blank"
+                                                        class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                                            View File
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ asset($material->file_url) }}" target="_blank"
+                                                        class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                                            View File
+                                                        </a>
+                                                    @endif
                                                 @else
                                                     <span class="text-gray-400">No file</span>
                                                 @endif
@@ -592,7 +599,7 @@
                         {{-- ================================================================ --}}
                         <template x-teleport="body">
                             <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
-                                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl transform transition-all duration-300 overflow-hidden">
+                                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden transform transition-all duration-300">
                                     <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
                                         <div class="flex justify-between items-start gap-4">
                                             <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -611,7 +618,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="p-6">
+                                    <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
+                                        <div class="p-6">
                                     <form method="POST" :action="updateUrl" enctype="multipart/form-data">
                                         <input type="hidden" name="_method" value="PUT">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -666,6 +674,7 @@
                                             </button>
                                         </div>
                                     </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -970,7 +979,7 @@
     {{-- ADD MATERIAL MODAL --}}
     <div id="materialModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 transition-opacity duration-300">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden transform transition-all duration-300">
                 <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
                     <div class="flex justify-between items-start gap-4">
                         <div class="flex items-center gap-3">
@@ -991,7 +1000,8 @@
                     </div>
                 </div>
 
-                <div class="p-6">
+                <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div class="p-6">
                     
                     <form action="{{ route('instructor.learning_materials.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -1049,6 +1059,7 @@
                             </button>
                         </div>
                     </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1501,12 +1512,17 @@
 
                 let materialsHTML = '';
                 data.materials.forEach(material => {
-                    const description = material.description 
+                    const description = material.description
                         ? `<p class="text-sm text-gray-500 mt-1">${material.description.length > 100 ? material.description.substring(0, 100) + '...' : material.description}</p>`
                         : '';
-                    
-                    const fileLink = material.file_url 
-                        ? `<a href="{{ asset('') }}${material.file_url}" target="_blank" class="text-indigo-600 hover:text-indigo-900 font-medium">View File</a>`
+
+                    // Check if it's a YouTube link
+                    const isYouTube = material.file_url && /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(material.file_url);
+
+                    const fileLink = material.file_url
+                        ? (isYouTube
+                            ? `<a href="${material.file_url}" target="_blank" class="text-indigo-600 hover:text-indigo-900 font-medium">View File</a>`
+                            : `<a href="{{ asset('') }}${material.file_url}" target="_blank" class="text-indigo-600 hover:text-indigo-900 font-medium">View File</a>`)
                         : '<span class="text-gray-400">No file</span>';
 
                     materialsHTML += `

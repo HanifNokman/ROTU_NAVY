@@ -124,7 +124,7 @@ class LearningMaterial extends Model
             return null;
         }
 
-        return "https://www.youtube.com/embed/{$videoId}";
+        return "https://www.youtube.com/embed/{$videoId}?enablejsapi=1";
     }
 
     /**
