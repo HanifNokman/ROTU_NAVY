@@ -82,22 +82,29 @@ class LearningHubController extends Controller
             'description' => 'nullable|string',
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
+            'youtube_url' => 'nullable|url|regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/',
         ]);
 
         $filePath = null;
 
-        if ($request->hasFile('file')) {
+        // Check if YouTube URL is provided
+        if ($request->filled('youtube_url')) {
+            $filePath = $request->youtube_url;
+        }
+        // Otherwise check for uploaded file
+        elseif ($request->hasFile('file')) {
             $file = $request->file('file');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = $file->storeAs('learning_materials', $fileName, 'public');
+            $filePath = 'storage/' . $filePath;
         }
 
         LearningMaterial::create([
             'title' => $request->title,
             'description' => $request->description,
             'learning_material_category_id' => $request->learning_material_category_id,
-            'file_url' => $filePath ? 'storage/' . $filePath : null,
-            'instructor_id' => auth()->id(), 
+            'file_url' => $filePath,
+            'instructor_id' => auth()->user()->instructor->id,
         ]);
 
         return redirect()->route('instructor.learning_hub')
@@ -113,7 +120,7 @@ class LearningHubController extends Controller
     public function update(Request $request, LearningMaterial $material)
     {
         // Allow instructors with Admin expertise to edit any material, others can only edit their own
-        if (auth()->user()->instructor->expertise !== 'Admin' && $material->instructor_id && $material->instructor_id !== auth()->id()) {
+        if (auth()->user()->instructor->expertise !== 'Admin' && $material->instructor_id && $material->instructor_id !== auth()->user()->instructor->id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -122,6 +129,7 @@ class LearningHubController extends Controller
             'description' => 'nullable|string',
             'learning_material_category_id' => 'required|exists:learning_material_categories,id',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,jpg,jpeg,png,gif,mp4,avi,mov,wmv,flv,webm,mkv|max:51200',
+            'youtube_url' => 'nullable|url|regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/',
         ]);
 
         $data = [
@@ -130,14 +138,27 @@ class LearningHubController extends Controller
             'learning_material_category_id' => $request->learning_material_category_id,
         ];
 
-        if ($request->hasFile('file')) {
-            if ($material->file_url) {
+        // Check if YouTube URL is provided
+        if ($request->filled('youtube_url')) {
+            // Delete old file if it exists and is not a YouTube link
+            if ($material->file_url && !$material->isYouTubeLink()) {
                 $oldFilePath = str_replace('storage/', '', $material->file_url);
                 if (Storage::disk('public')->exists($oldFilePath)) {
                     Storage::disk('public')->delete($oldFilePath);
                 }
             }
-            
+            $data['file_url'] = $request->youtube_url;
+        }
+        // Otherwise check for uploaded file
+        elseif ($request->hasFile('file')) {
+            // Delete old file if it exists and is not a YouTube link
+            if ($material->file_url && !$material->isYouTubeLink()) {
+                $oldFilePath = str_replace('storage/', '', $material->file_url);
+                if (Storage::disk('public')->exists($oldFilePath)) {
+                    Storage::disk('public')->delete($oldFilePath);
+                }
+            }
+
             $file = $request->file('file');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = $file->storeAs('learning_materials', $fileName, 'public');

@@ -73,10 +73,70 @@ class LearningMaterial extends Model
     }
 
     /**
+     * Check if the file_url is a YouTube link
+     */
+    public function isYouTubeLink(): bool
+    {
+        if (!$this->file_url) {
+            return false;
+        }
+
+        return preg_match('/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/', $this->file_url);
+    }
+
+    /**
+     * Extract YouTube video ID from URL
+     */
+    public function getYouTubeVideoId(): ?string
+    {
+        if (!$this->isYouTubeLink()) {
+            return null;
+        }
+
+        $url = $this->file_url;
+
+        // Handle youtu.be format
+        if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        // Handle youtube.com/watch?v= format
+        if (preg_match('/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        // Handle youtube.com/embed/ format
+        if (preg_match('/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get YouTube embed URL
+     */
+    public function getYouTubeEmbedUrl(): ?string
+    {
+        $videoId = $this->getYouTubeVideoId();
+
+        if (!$videoId) {
+            return null;
+        }
+
+        return "https://www.youtube.com/embed/{$videoId}";
+    }
+
+    /**
      * Get material type based on file extension
      */
     public function getMaterialTypeAttribute()
     {
+        // Check if it's a YouTube link first
+        if ($this->isYouTubeLink()) {
+            return 'youtube';
+        }
+
         if (!$this->file_url) {
             return 'text';
         }
