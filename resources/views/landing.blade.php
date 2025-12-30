@@ -1794,7 +1794,7 @@
                 backdrop-filter: blur(25px);
                 -webkit-backdrop-filter: blur(25px);
                 flex-direction: column;
-                padding: 1.5rem;
+                padding: 1rem 1.25rem;
                 gap: 0;
                 border-left: 1px solid rgba(60, 146, 217, 0.2);
                 box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
@@ -1835,8 +1835,8 @@
             /* Add horizontal separators for mobile navigation items */
             .nav-links.active > li:not(:last-child) {
                 border-bottom: 1px solid rgba(60, 146, 217, 0.2);
-                margin-bottom: 0.5rem;
-                padding-bottom: 0.5rem;
+                margin-bottom: 0.25rem;
+                padding-bottom: 0.25rem;
             }
 
             .nav-links.active li:nth-child(1) { animation-delay: 0.05s; }
@@ -1864,8 +1864,8 @@
             .nav-links > li > a {
                 display: flex;
                 align-items: center;
-                padding: 1rem 1.25rem;
-                margin: 0.25rem 0;
+                padding: 0.75rem 1rem;
+                margin: 0.15rem 0;
                 border-radius: 12px;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 font-weight: 500;
@@ -1922,6 +1922,17 @@
 
             .nav-links.active .mobile-only {
                 display: block;
+            }
+
+            /* Mobile Login Button Styling */
+            .nav-links.active .mobile-only .btn-primary {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 0 0.5rem 0;
+                padding: 0.875rem 1.5rem;
+                font-size: 1.05rem;
             }
 
             /* Mobile Navigation Overlay */
@@ -2390,6 +2401,14 @@
                 </div>
             </a>
             <ul class="nav-links" id="navLinks">
+                <!-- Authentication-based navigation -->
+                @auth
+                    <!-- Mobile navigation items are in different order than desktop -->
+                @else
+                    <!-- Login button - First item on mobile, last on desktop -->
+                    <li class="mobile-only" style="order: -1;"><a href="{{ route('login') }}" class="btn-primary">Login</a></li>
+                @endauth
+
                 <li><a href="#introduction">Pengenalan</a></li>
                 <li><a href="#timeline">Perjalanan</a></li>
                 <li><a href="#about">Mengenai</a></li>
@@ -2398,8 +2417,7 @@
                 <li><a href="#selection">Pemilihan</a></li>
                 <li><a href="#application">Mohon</a></li>
                 <li><a href="#gallery">Galeri</a></li>
-                
-                <!-- Authentication-based navigation -->
+
                 @auth
                     @php
                         $dashboardRoute = match (auth()->user()->role) {
@@ -2501,10 +2519,10 @@
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
                     </li>
-                    
+
                 @else
-                    <!-- If user is not logged in, show Login button -->
-                    <li><a href="{{ route('login') }}" class="btn-primary">Login</a></li>
+                    <!-- Login button for desktop - hidden on mobile since it's shown at top -->
+                    <li class="desktop-only"><a href="{{ route('login') }}" class="btn-primary">Login</a></li>
                 @endauth
             </ul>
             
