@@ -234,14 +234,48 @@
             gap: 1rem !important;
         }
 
-        /* Add duty button */
-        .bg-green-600.hover\\:bg-green-700 {
+        /* Add duty button - scoped to main content area only */
+        main .bg-green-600.hover\\:bg-green-700 {
             padding: 0.5rem 1rem !important;
             font-size: 0.875rem !important;
         }
 
-        .bg-green-600.hover\\:bg-green-700 span {
+        main .bg-green-600.hover\\:bg-green-700 span {
             display: inline !important;
+        }
+
+        /* Fix sidebar buttons specifically */
+        aside .btn-primary {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        aside .btn-primary svg {
+            display: inline-block !important;
+            flex-shrink: 0 !important;
+        }
+
+        aside .btn-primary span {
+            display: inline-block !important;
+            flex-shrink: 1 !important;
+        }
+
+        /* Fix logout button layout */
+        aside form button {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+        }
+
+        aside form button svg {
+            display: inline-block !important;
+            flex-shrink: 0 !important;
+        }
+
+        aside form button span {
+            display: inline-block !important;
         }
 
         /* Absence section filters */

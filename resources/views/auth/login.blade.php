@@ -463,13 +463,27 @@
         /* RESPONSIVE DESIGN - MOBILE */
         /* ================================================================ */
         @media (max-width: 480px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .auth-container {
+                width: 100%;
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+
             .form-panel {
+                width: 100%;
                 padding: 1rem;
-                padding-bottom: 140px;
+                padding-bottom: 160px;
                 background: url('storage/assets/logo/PSS-LOGO.png');
                 background-size: contain;
                 background-repeat: no-repeat;
                 background-position: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .form-panel::before {
@@ -479,10 +493,13 @@
             }
 
             .form-content {
+                width: 100%;
+                max-width: 100%;
                 background: white;
                 padding: 1.5rem;
                 border-radius: 16px;
                 position: relative;
+                box-sizing: border-box;
             }
 
             .form-content::before {
@@ -509,11 +526,30 @@
             .form-input {
                 padding: 0.875rem;
                 font-size: 0.95rem;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .btn-primary {
                 padding: 0.875rem;
                 font-size: 1rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .mobile-bottom-nav {
+                width: 100%;
+                max-width: 100vw;
+                padding: 1.25rem 1rem;
+                box-sizing: border-box;
+                left: 0;
+                right: 0;
+            }
+
+            .mobile-bottom-nav .btn-secondary {
+                width: 100%;
+                max-width: 280px;
+                box-sizing: border-box;
             }
         }
     </style>

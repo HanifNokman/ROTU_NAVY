@@ -761,7 +761,7 @@
                                                 <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                                                     @if($material->file_url && $material->description && in_array($materialType, ['youtube', 'video', 'audio', 'image']))
                                                         <div class="flex flex-col md:flex-row gap-6">
-                                                            <div class="md:flex-[0_0_30%]">
+                                                            <div class="md:flex-[0_0_45%]">
                                                                 @if($materialType === 'youtube')
                                                                     <div class="relative group">
                                                                         <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
@@ -2362,7 +2362,7 @@
                         if (materialType === 'youtube') {
                             const videoId = getYouTubeVideoId(material.file_url);
                             contentHTML = `
-                                <div class="md:w-[60%]">
+                                <div class="md:w-[45%]">
                                     <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                         <iframe
                                             src="https://www.youtube.com/embed/${videoId}?enablejsapi=1"
@@ -2374,32 +2374,32 @@
                                         </iframe>
                                     </div>
                                 </div>
-                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
+                                <div class="md:w-[55%] text-gray-700"><p>${material.description}</p></div>
                             `;
                         } else if (materialType === 'video') {
                             contentHTML = `
-                                <div class="md:w-[60%]">
+                                <div class="md:w-[45%]">
                                     <video id="video-${material.id}" controls class="w-full rounded" data-material-id="${material.id}">
                                         <source src="/${material.file_url}" type="video/mp4">
                                     </video>
                                 </div>
-                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
+                                <div class="md:w-[55%] text-gray-700"><p>${material.description}</p></div>
                             `;
                         } else if (materialType === 'audio') {
                             contentHTML = `
-                                <div class="md:w-[60%]">
+                                <div class="md:w-[45%]">
                                     <audio id="audio-${material.id}" controls class="w-full" data-material-id="${material.id}">
                                         <source src="/${material.file_url}" type="audio/mpeg">
                                     </audio>
                                 </div>
-                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
+                                <div class="md:w-[55%] text-gray-700"><p>${material.description}</p></div>
                             `;
                         } else if (materialType === 'image') {
                             contentHTML = `
-                                <div class="md:w-[60%]">
+                                <div class="md:w-[45%]">
                                     <img src="/${material.file_url}" alt="Material Image" class="w-full h-auto rounded">
                                 </div>
-                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
+                                <div class="md:w-[55%] text-gray-700"><p>${material.description}</p></div>
                             `;
                         }
                     } else if (material.file_url && isMedia) {
