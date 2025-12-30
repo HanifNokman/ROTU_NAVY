@@ -3258,12 +3258,6 @@
 
             // Set image
             document.getElementById('previewImage').src = imageSrc;
-            document.getElementById('previewTitle').textContent = title;
-
-            // Set download button
-            const downloadBtn = document.getElementById('downloadButton');
-            downloadBtn.href = imageSrc;
-            downloadBtn.download = title + '.jpg';
 
             // Show modal
             modal.classList.remove('hidden');
@@ -3277,7 +3271,6 @@
 
             // Set video
             video.src = videoSrc;
-            document.getElementById('videoPreviewTitle').textContent = title;
 
             // Show modal
             modal.classList.remove('hidden');
@@ -3344,34 +3337,22 @@
     </script>
 
     <!-- Image Preview Modal -->
-    <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center transition-all duration-300 backdrop-blur-sm overflow-y-auto">
-        <div class="relative max-w-5xl w-full p-4 my-8">
-            <!-- Modal Action Buttons -->
-            <div class="fixed top-6 right-6 z-20 flex gap-2">
-                <a id="downloadButton" href="#" download class="text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                </a>
-                <button onclick="closeImageModal()" class="text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
+    <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex items-center justify-center transition-all duration-300">
+        <div class="relative max-w-6xl w-full p-4">
+            <!-- Close Button (Outside on right) -->
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 z-20 text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
 
-            <div class="flex flex-col items-center">
+            <div class="flex items-center justify-center">
                 <!-- Image Container with Loading -->
-                <div class="relative w-full flex items-center justify-center mb-4">
+                <div class="relative flex items-center justify-center">
                     <div id="imageLoader" class="absolute inset-0 flex items-center justify-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
                     </div>
-                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'">
-                </div>
-
-                <!-- Info Card -->
-                <div class="bg-white rounded-xl p-6 mt-4 max-w-2xl w-full shadow-2xl">
-                    <h3 id="previewTitle" class="text-xl font-bold text-gray-900 mb-3"></h3>
+                    <img id="previewImage" src="" alt="" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" onload="document.getElementById('imageLoader').style.display='none'">
                 </div>
             </div>
         </div>
@@ -3380,23 +3361,18 @@
     <!-- Video Preview Modal -->
     <div id="videoPreviewModal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex items-center justify-center transition-all duration-300">
         <div class="relative max-w-6xl w-full p-4">
-            <!-- Close Button -->
+            <!-- Close Button (Outside on right) -->
             <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-20 text-white hover:text-gray-300 bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-3 transition-all duration-200 transform hover:scale-110">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
 
-            <div class="flex flex-col items-center">
+            <div class="flex items-center justify-center">
                 <!-- Video Container -->
-                <video id="previewVideo" controls class="max-w-full max-h-[80vh] rounded-xl shadow-2xl mb-4">
+                <video id="previewVideo" controls class="max-w-full max-h-[90vh] rounded-xl shadow-2xl">
                     Your browser does not support the video tag.
                 </video>
-
-                <!-- Video Title -->
-                <div class="bg-white rounded-xl p-4 max-w-2xl w-full shadow-2xl">
-                    <h3 id="videoPreviewTitle" class="text-lg font-bold text-gray-900 text-center"></h3>
-                </div>
             </div>
         </div>
     </div>
