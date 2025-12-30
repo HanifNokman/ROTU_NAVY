@@ -34,7 +34,14 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $validated = $request->validated();
+
+        // Standardize name: capitalize first letter of each word
+        if (isset($validated['name'])) {
+            $validated['name'] = $this->standardizeName($validated['name']);
+        }
+
+        $request->user()->fill($validated);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
@@ -43,6 +50,37 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Standardize name by capitalizing the first letter of each word.
+     * Handles common Malay name particles (bin, binti) as lowercase.
+     */
+    private function standardizeName(string $name): string
+    {
+        // Trim and remove extra spaces
+        $name = trim(preg_replace('/\s+/', ' ', $name));
+
+        // Split into words
+        $words = explode(' ', $name);
+
+        // Common Malay name particles that should be lowercase
+        $lowercaseParticles = ['bin', 'binti', 'a/l', 'a/p', 'al'];
+
+        $standardized = [];
+        foreach ($words as $word) {
+            $lowerWord = strtolower($word);
+
+            // Check if it's a common particle
+            if (in_array($lowerWord, $lowercaseParticles)) {
+                $standardized[] = $lowerWord;
+            } else {
+                // Capitalize first letter, rest lowercase
+                $standardized[] = ucfirst($lowerWord);
+            }
+        }
+
+        return implode(' ', $standardized);
     }
 
     /**
