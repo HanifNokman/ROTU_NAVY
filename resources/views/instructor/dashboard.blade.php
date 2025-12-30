@@ -245,37 +245,52 @@
         }
 
         /* Fix sidebar buttons specifically */
-        aside .btn-primary {
+        aside .btn-primary,
+        aside a.btn-primary {
             display: flex !important;
             flex-direction: row !important;
             align-items: center !important;
             justify-content: center !important;
+            gap: 0.5rem !important;
         }
 
-        aside .btn-primary svg {
+        aside .btn-primary svg,
+        aside a.btn-primary svg {
             display: inline-block !important;
             flex-shrink: 0 !important;
+            margin: 0 !important;
         }
 
-        aside .btn-primary span {
+        aside .btn-primary span,
+        aside a.btn-primary span {
             display: inline-block !important;
             flex-shrink: 1 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
 
         /* Fix logout button layout */
-        aside form button {
+        aside form button,
+        aside form button[type="button"] {
             display: flex !important;
             flex-direction: row !important;
             align-items: center !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
         }
 
-        aside form button svg {
+        aside form button svg,
+        aside form button[type="button"] svg {
             display: inline-block !important;
             flex-shrink: 0 !important;
+            margin: 0 !important;
         }
 
-        aside form button span {
+        aside form button span,
+        aside form button[type="button"] span {
             display: inline-block !important;
+            white-space: nowrap !important;
         }
 
         /* Absence section filters */
