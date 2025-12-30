@@ -16,14 +16,12 @@
                         id="name"
                         name="name"
                         type="text"
-                        class="block w-full px-4 py-2.5 rounded-lg border-gray-300 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                        class="block w-full px-4 py-2.5 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
                         :value="old('name', $user->name)"
-                        disabled
+                        required
                         autocomplete="name"
                     />
-                    <input type="hidden" name="name" value="{{ $user->name }}" />
                 </div>
-                <p class="mt-1 text-xs text-gray-500">This field cannot be modified</p>
                 <x-input-error class="mt-2" :messages="$errors->get('name')" />
             </div>
 
