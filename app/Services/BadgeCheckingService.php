@@ -71,11 +71,11 @@ class BadgeCheckingService
                     // Promotion badges based on rank
                     elseif ($badge->name === 'Midshipman' && $cadet->rank === 'PKK') {
                         $shouldUnlock = true;
-                    } elseif ($badge->name === 'Commissioned Officer' && $cadet->rank === 'Lt.M') {
+                    } elseif ($badge->name === 'Commissioned Officer' && $cadet->rank === 'Lt M') {
                         $shouldUnlock = true;
                     }
-                    // Best Cadet and Best Academic badges (requires Lt.M rank)
-                    elseif ($badge->name === 'Best Cadet' && $cadet->is_best_cadet && $cadet->rank === 'Lt.M') {
+                    // Best Cadet and Best Academic badges (requires Lt M rank)
+                    elseif ($badge->name === 'Best Cadet' && $cadet->is_best_cadet && $cadet->rank === 'Lt M') {
                         $shouldUnlock = true;
                     }
                     // Performance badges
@@ -192,8 +192,8 @@ class BadgeCheckingService
                     break;
 
                 case 'academic':
-                    // Best Academic badge (requires Lt.M rank)
-                    if ($badge->name === 'Best Academic' && $cadet->is_best_academic && $cadet->rank === 'Lt.M') {
+                    // Best Academic badge (requires Lt M rank)
+                    if ($badge->name === 'Best Academic' && $cadet->is_best_academic && $cadet->rank === 'Lt M') {
                         $shouldUnlock = true;
                     }
                     // CGPA-based academic badges

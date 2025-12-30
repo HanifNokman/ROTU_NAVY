@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('position', 50)->nullable();
             $table->string('phone_number', 15)->nullable();
-            $table->enum('rank', ['LKII','LKI','LK','BM','BK','PWI','PWII','Lt.M','Lt.Dya','Lt','Lt.Kdr','Kdr','Kpt'])->nullable();
+            $table->enum('rank', ['LKII','LKI','LK','BM','BK','PWI','PWII','Lt M','Lt Dya','Lt','Lt Kdr','Kdr','Kpt'])->nullable();
             $table->enum('expertise', ['PAP','JJM','PNK','TNL','BDI','KOM','PKOR','YO','Admin'])->nullable();
             $table->integer('time_in_service')->nullable();
             $table->date('ttp')->nullable();
@@ -37,7 +37,7 @@ return new class extends Migration {
                 'user_id' => $userId,
                 'position' => 'Developer',
                 'phone_number' => '0196520368',
-                'rank' => 'Lt.M',
+                'rank' => 'Lt M',
                 'expertise' => 'Admin',
                 'time_in_service' => 3,
                 'ttp' => now(),

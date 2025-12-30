@@ -431,10 +431,10 @@
                             <option value="BK" {{ $selectedRank === 'BK' ? 'selected' : '' }}>BK</option>
                             <option value="PWI" {{ $selectedRank === 'PWI' ? 'selected' : '' }}>PWI</option>
                             <option value="PWII" {{ $selectedRank === 'PWII' ? 'selected' : '' }}>PWII</option>
-                            <option value="Lt.M" {{ $selectedRank === 'Lt.M' ? 'selected' : '' }}>Lt.M</option>
-                            <option value="Lt.Dya" {{ $selectedRank === 'Lt.Dya' ? 'selected' : '' }}>Lt.Dya</option>
+                            <option value="Lt M" {{ $selectedRank === 'Lt M' ? 'selected' : '' }}>Lt M</option>
+                            <option value="Lt Dya" {{ $selectedRank === 'Lt Dya' ? 'selected' : '' }}>Lt Dya</option>
                             <option value="Lt" {{ $selectedRank === 'Lt' ? 'selected' : '' }}>Lt</option>
-                            <option value="Lt.Kdr" {{ $selectedRank === 'Lt.Kdr' ? 'selected' : '' }}>Lt.Kdr</option>
+                            <option value="Lt Kdr" {{ $selectedRank === 'Lt Kdr' ? 'selected' : '' }}>Lt Kdr</option>
                             <option value="Kdr" {{ $selectedRank === 'Kdr' ? 'selected' : '' }}>Kdr</option>
                             <option value="Kpt" {{ $selectedRank === 'Kpt' ? 'selected' : '' }}>Kpt</option>
                         </select>

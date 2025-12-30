@@ -1006,12 +1006,12 @@ class CadetManagementController extends Controller
                 $cadet->is_best_cadet = true;
                 $cadet->save();
 
-                // Check and unlock badge (only if Lt.M rank)
+                // Check and unlock badge (only if Lt M rank)
                 $this->checkAndUnlockBestCadetBadge($cadet);
 
-                $message = $cadet->rank === 'Lt.M'
+                $message = $cadet->rank === 'Lt M'
                     ? 'Cadet marked as Best Cadet and badge awarded!'
-                    : 'Cadet marked as Best Cadet! Badge will be awarded upon promotion to Lt.M.';
+                    : 'Cadet marked as Best Cadet! Badge will be awarded upon promotion to Lt M.';
 
                 return response()->json([
                     'success' => true,
@@ -1074,12 +1074,12 @@ class CadetManagementController extends Controller
                 $cadet->is_best_academic = true;
                 $cadet->save();
 
-                // Check and unlock badge (only if Lt.M rank)
+                // Check and unlock badge (only if Lt M rank)
                 $this->checkAndUnlockBestAcademicBadge($cadet);
 
-                $message = $cadet->rank === 'Lt.M'
+                $message = $cadet->rank === 'Lt M'
                     ? 'Cadet marked as Best Academic and badge awarded!'
-                    : 'Cadet marked as Best Academic! Badge will be awarded upon promotion to Lt.M.';
+                    : 'Cadet marked as Best Academic! Badge will be awarded upon promotion to Lt M.';
 
                 return response()->json([
                     'success' => true,
@@ -1114,12 +1114,12 @@ class CadetManagementController extends Controller
     }
 
     // ================================================================
-    // HELPER: Check and unlock Best Cadet badge (requires Lt.M rank)
+    // HELPER: Check and unlock Best Cadet badge (requires Lt M rank)
     // ================================================================
     private function checkAndUnlockBestCadetBadge($cadet)
     {
-        // Only unlock badge if cadet is Lt.M rank
-        if ($cadet->rank !== 'Lt.M') {
+        // Only unlock badge if cadet is Lt M rank
+        if ($cadet->rank !== 'Lt M') {
             return;
         }
 
@@ -1146,12 +1146,12 @@ class CadetManagementController extends Controller
     }
 
     // ================================================================
-    // HELPER: Check and unlock Best Academic badge (requires Lt.M rank)
+    // HELPER: Check and unlock Best Academic badge (requires Lt M rank)
     // ================================================================
     private function checkAndUnlockBestAcademicBadge($cadet)
     {
-        // Only unlock badge if cadet is Lt.M rank
-        if ($cadet->rank !== 'Lt.M') {
+        // Only unlock badge if cadet is Lt M rank
+        if ($cadet->rank !== 'Lt M') {
             return;
         }
 
@@ -1186,7 +1186,7 @@ class CadetManagementController extends Controller
 
         if ($rank === 'PKK') {
             $badgeName = 'Midshipman';
-        } elseif ($rank === 'Lt.M') {
+        } elseif ($rank === 'Lt M') {
             $badgeName = 'Commissioned Officer';
         }
 

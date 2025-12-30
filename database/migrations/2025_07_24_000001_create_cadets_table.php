@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->decimal('past_cgpa', 4, 2)->nullable();
             $table->string('phone_number', 15)->nullable();
             $table->string('ic_number', 14)->nullable();
-            $table->enum('rank', ['PK','PKK','Lt.M'])->nullable();
+            $table->enum('rank', ['PK','PKK','Lt M'])->nullable();
             $table->string('service_number', 20)->nullable();
             $table->enum('position', ['Normal','CO','Thana','Zayn','PMC'])->default('Normal');
             $table->enum('gender', ['Male','Female'])->nullable();

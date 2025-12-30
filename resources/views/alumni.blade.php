@@ -367,7 +367,7 @@
                                             @endif
                                         </div>
                                         @if($co)
-                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $co->user->name }}</p>
+                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt M {{ $co->user->name }}</p>
                                             <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                         @else
                                             <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Position Vacant</p>
@@ -417,7 +417,7 @@
                                                 @endif
                                             </div>
                                             @if($thana)
-                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $thana->user->name }}</p>
+                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt M {{ $thana->user->name }}</p>
                                                 <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                             @else
                                                 <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Position Vacant</p>
@@ -438,7 +438,7 @@
                                                 @endif
                                             </div>
                                             @if($zayn)
-                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $zayn->user->name }}</p>
+                                                <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt M {{ $zayn->user->name }}</p>
                                                 <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                             @else
                                                 <p class="alumni-name text-xs sm:text-sm text-gray-600 font-bold">Position Vacant</p>
@@ -484,7 +484,7 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt. M {{ $cadet->user->name }}</p>
+                                            <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">Lt M {{ $cadet->user->name }}</p>
                                             <p class="alumni-name text-xs sm:text-sm text-gray-700 font-bold">PSSTLDM</p>
                                         </div>
                                         @endforeach
@@ -680,7 +680,7 @@
                                                                     border: 2px solid #b8860b;
                                                                     max-width: 260px;">
                                                             <h4 class="cadet-name font-bold tracking-wide"
-                                                                data-name="Lt.M {{ strtoupper($cadet->user->name) }} PSSTLDM"
+                                                                data-name="Lt M {{ strtoupper($cadet->user->name) }} PSSTLDM"
                                                                 style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
                                                                        color: #3e2723;
                                                                        text-shadow:
@@ -689,7 +689,7 @@
                                                                        letter-spacing: 0.05em;
                                                                        line-height: 1.3;
                                                                        font-size: 16px;">
-                                                                Lt.M {{ strtoupper($cadet->user->name) }} PSSTLDM
+                                                                Lt M {{ strtoupper($cadet->user->name) }} PSSTLDM
                                                             </h4>
                                                         </div>
 
