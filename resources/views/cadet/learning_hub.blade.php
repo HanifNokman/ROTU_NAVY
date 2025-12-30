@@ -801,14 +801,15 @@
                                                                         </audio>
                                                                     </div>
                                                                 @elseif($materialType === 'image')
-                                                                    <div class="relative cursor-pointer group" onclick="openMediaModal('{{ asset($material->file_url) }}', 'image', '{{ addslashes($material->title) }}')">
+                                                                    <div class="relative group">
                                                                         <img src="{{ asset($material->file_url) }}"
                                                                             alt="Material Image"
-                                                                            class="w-full h-auto rounded-lg shadow-lg max-w-4xl transition-transform duration-300 group-hover:scale-105">
-                                                                        <div class="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
+                                                                            class="w-full h-auto rounded-lg shadow-lg max-w-4xl cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                                                                            onclick="openMediaModal('{{ asset($material->file_url) }}', 'image', '{{ addslashes($material->title) }}')">
+                                                                        <div class="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium pointer-events-none">
                                                                             📸 Training Image
                                                                         </div>
-                                                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all duration-300 flex items-center justify-center">
+                                                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all duration-300 flex items-center justify-center pointer-events-none">
                                                                             <div class="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 rounded-full p-3 transition-opacity duration-300">
                                                                                 <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
