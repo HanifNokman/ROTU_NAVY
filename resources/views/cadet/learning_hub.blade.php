@@ -767,6 +767,7 @@
                                                                         <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                                                             <iframe
                                                                                 src="{{ $material->getYouTubeEmbedUrl() }}"
+                                                                                data-material-id="{{ $material->id }}"
                                                                                 class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
                                                                                 frameborder="0"
                                                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -855,6 +856,7 @@
                                                                     <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                                                         <iframe
                                                                             src="{{ $material->getYouTubeEmbedUrl() }}"
+                                                                            data-material-id="{{ $material->id }}"
                                                                             class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
                                                                             frameborder="0"
                                                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2363,7 +2365,8 @@
                                 <div class="md:w-[60%]">
                                     <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                         <iframe
-                                            src="https://www.youtube.com/embed/${videoId}"
+                                            src="https://www.youtube.com/embed/${videoId}?enablejsapi=1"
+                                            data-material-id="${material.id}"
                                             class="absolute top-0 left-0 w-full h-full rounded"
                                             frameborder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2406,7 +2409,8 @@
                                 <div class="w-full flex justify-center">
                                     <div class="relative w-full max-w-4xl" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
                                         <iframe
-                                            src="https://www.youtube.com/embed/${videoId}"
+                                            src="https://www.youtube.com/embed/${videoId}?enablejsapi=1"
+                                            data-material-id="${material.id}"
                                             class="absolute top-0 left-0 w-full h-full rounded"
                                             frameborder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -3059,7 +3063,8 @@
             materialTimers: {},
             videoPlayers: {},
             completedMaterials: new Set(),
-            
+            youtubeTrackers: {},
+
             init(materialId, materialType, fileUrl) {
                 // Check if already completed
                 if (this.completedMaterials.has(materialId)) {
@@ -3067,13 +3072,15 @@
                     this.showCompletionBadge(materialId);
                     return;
                 }
-                
+
                 console.log('📝 Starting tracking for type:', materialType);
-                
+
                 if (materialType === 'text' || materialType === 'image') {
                     this.trackTextMaterial(materialId);
                 } else if (materialType === 'video' || materialType === 'audio') {
                     this.trackMediaMaterial(materialId, materialType);
+                } else if (materialType === 'youtube') {
+                    this.trackYouTubeMaterial(materialId);
                 }
             },
             
@@ -3139,7 +3146,122 @@
                     }
                 });
             },
-            
+
+            trackYouTubeMaterial(materialId) {
+                console.log('📺 trackYouTubeMaterial called for ID:', materialId);
+                this.markMaterialStarted(materialId);
+
+                // Find the YouTube iframe
+                const iframe = document.querySelector(`iframe[src*="youtube.com/embed"][data-material-id="${materialId}"], iframe[src*="youtube.com/embed"]:not([data-material-id])`);
+
+                if (!iframe) {
+                    console.error('❌ YouTube iframe not found for material:', materialId);
+                    return;
+                }
+
+                // Set material ID if not already set
+                if (!iframe.hasAttribute('data-material-id')) {
+                    iframe.setAttribute('data-material-id', materialId);
+                }
+
+                // Ensure iframe has enablejsapi parameter
+                const currentSrc = iframe.src;
+                if (!currentSrc.includes('enablejsapi=1')) {
+                    const separator = currentSrc.includes('?') ? '&' : '?';
+                    iframe.src = currentSrc + separator + 'enablejsapi=1';
+                }
+
+                // Initialize YouTube Player when API is ready
+                const initYouTubePlayer = () => {
+                    if (typeof YT === 'undefined' || !YT.Player) {
+                        console.log('⏳ YouTube API not ready, waiting...');
+                        setTimeout(initYouTubePlayer, 500);
+                        return;
+                    }
+
+                    try {
+                        const player = new YT.Player(iframe, {
+                            events: {
+                                'onStateChange': (event) => this.onYouTubePlayerStateChange(event, materialId)
+                            }
+                        });
+                        this.youtubeTrackers[materialId] = {
+                            player: player,
+                            watchedTime: 0,
+                            lastTime: 0,
+                            checkInterval: null
+                        };
+
+                        // Track watched time
+                        this.youtubeTrackers[materialId].checkInterval = setInterval(() => {
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                const currentTime = player.getCurrentTime();
+                                const tracker = this.youtubeTrackers[materialId];
+                                if (currentTime > tracker.lastTime) {
+                                    tracker.watchedTime += (currentTime - tracker.lastTime);
+                                }
+                                tracker.lastTime = currentTime;
+
+                                const duration = player.getDuration();
+                                if (duration > 0) {
+                                    const watchedPercentage = (tracker.watchedTime / duration) * 100;
+                                    if (watchedPercentage >= 90) {
+                                        this.completeMaterial(materialId, Math.floor(tracker.watchedTime));
+                                        clearInterval(tracker.checkInterval);
+                                    }
+                                }
+                            }
+                        }, 1000);
+
+                        console.log('✅ YouTube player initialized for material:', materialId);
+                    } catch (error) {
+                        console.error('❌ Error initializing YouTube player:', error);
+                        // Fallback to timer-based tracking
+                        this.fallbackYouTubeTracking(materialId);
+                    }
+                };
+
+                // Check if YouTube API is loaded
+                if (typeof YT !== 'undefined' && YT.Player) {
+                    initYouTubePlayer();
+                } else {
+                    // Wait for YouTube API to load
+                    window.onYouTubeIframeAPIReady = () => {
+                        initYouTubePlayer();
+                    };
+                    // Also try after a delay in case the callback doesn't fire
+                    setTimeout(initYouTubePlayer, 2000);
+                }
+            },
+
+            onYouTubePlayerStateChange(event, materialId) {
+                const tracker = this.youtubeTrackers[materialId];
+                if (!tracker) return;
+
+                // YT.PlayerState.ENDED = 0
+                if (event.data === 0) {
+                    const duration = tracker.player.getDuration();
+                    const watchedPercentage = (tracker.watchedTime / duration) * 100;
+                    if (watchedPercentage >= 90) {
+                        this.completeMaterial(materialId, Math.floor(tracker.watchedTime));
+                    }
+                    if (tracker.checkInterval) {
+                        clearInterval(tracker.checkInterval);
+                    }
+                }
+            },
+
+            fallbackYouTubeTracking(materialId) {
+                console.log('📺 Using fallback timer-based tracking for YouTube');
+                if (this.materialTimers[materialId]) {
+                    clearTimeout(this.materialTimers[materialId]);
+                }
+                this.materialTimers[materialId] = setTimeout(() => {
+                    console.log('⏰ 30 seconds elapsed for YouTube video! Marking as complete');
+                    this.completeMaterial(materialId, 30);
+                }, 30000);
+            },
+
             markMaterialStarted(materialId) {
                 fetch("{{ route('cadet.learning.start') }}", {
                     method: 'POST',
@@ -3453,4 +3575,7 @@
             </div>
         </div>
     </div>
+
+    {{-- YouTube IFrame API --}}
+    <script src="https://www.youtube.com/iframe_api"></script>
 </x-app-layout>
