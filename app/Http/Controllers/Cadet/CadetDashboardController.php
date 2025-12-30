@@ -30,8 +30,8 @@ class CadetDashboardController extends Controller
         $intakeYear = $cadet->intake_year ?? now()->year;
         $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
 
-        if (now()->greaterThanOrEqualTo($tauliahDate) && $cadet->rank !== 'Lt.M') {
-            $cadet->rank = 'Lt.M';
+        if (now()->greaterThanOrEqualTo($tauliahDate) && $cadet->rank !== 'Lt M') {
+            $cadet->rank = 'Lt M';
             $cadet->cadet_status = 'Completed';
             $cadet->save();
         }

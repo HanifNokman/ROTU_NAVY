@@ -43,10 +43,10 @@ class AdminController extends Controller
         $rankOrder = [
             'Kpt' => 1,
             'Kdr' => 2,
-            'Lt.Kdr' => 3,
+            'Lt Kdr' => 3,
             'Lt' => 4,
-            'Lt.Dya' => 5,
-            'Lt.M' => 6,
+            'Lt Dya' => 5,
+            'Lt M' => 6,
             'PWI' => 7,
             'PWII' => 8,
             'BK' => 9,
@@ -157,10 +157,10 @@ class AdminController extends Controller
         $rankOrder = [
             'Kpt' => 1,
             'Kdr' => 2,
-            'Lt.Kdr' => 3,
+            'Lt Kdr' => 3,
             'Lt' => 4,
-            'Lt.Dya' => 5,
-            'Lt.M' => 6,
+            'Lt Dya' => 5,
+            'Lt M' => 6,
             'PWI' => 7,
             'PWII' => 8,
             'BK' => 9,
@@ -734,7 +734,7 @@ class AdminController extends Controller
             '!=' => 'Not equal to',
         ];
 
-        $ranks = ['Kpt', 'Kdr', 'Lt.Kdr', 'Lt', 'Lt.Dya', 'Lt.M', 'PWI', 'PWII', 'BK', 'BM', 'LK', 'LKI', 'LKII'];
+        $ranks = ['Kpt', 'Kdr', 'Lt Kdr', 'Lt', 'Lt Dya', 'Lt M', 'PWI', 'PWII', 'BK', 'BM', 'LK', 'LKI', 'LKII'];
 
         return view('admin.gamification_management', compact('badges', 'categories', 'metrics', 'operators', 'ranks'));
     }

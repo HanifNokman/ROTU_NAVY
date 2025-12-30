@@ -79,7 +79,7 @@ class LearningHubController extends Controller
         $instructors = $instructorQuery->get();
 
         $rankOrder = [
-            'Kpt', 'Kdr', 'Lt.Kdr', 'Lt', 'Lt.Dya', 'Lt.M',
+            'Kpt', 'Kdr', 'Lt Kdr', 'Lt', 'Lt Dya', 'Lt M',
             'PWII', 'PWI', 'BK', 'BM', 'LK', 'LKI', 'LKII'
         ];
 
@@ -154,10 +154,10 @@ class LearningHubController extends Controller
         $rankOrder = [
             'Kpt',    // Highest
             'Kdr',
-            'Lt.Kdr',
+            'Lt Kdr',
             'Lt',
-            'Lt.Dya',
-            'Lt.M',
+            'Lt Dya',
+            'Lt M',
             'PWII',
             'PWI',
             'BK',

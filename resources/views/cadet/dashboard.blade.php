@@ -701,7 +701,7 @@
                                 </div>
                                 @php
                                     $prefix = '';
-                                    if (trim($cadet?->rank) === 'Lt.M') {
+                                    if (trim($cadet?->rank) === 'Lt M') {
                                         $prefix = ' PSSTLDM';
                                     }
                                 @endphp
@@ -1736,7 +1736,7 @@
                         <div class="flex-1 space-y-4">
                             ${recognitionBannersHtml}
                             <div>
-                                <h4 class="text-xl font-bold text-gray-900">${cadet.rank} ${cadet.name}${cadet.rank === 'Lt.M' ? ' PSSTLDM' : ''}</h4>
+                                <h4 class="text-xl font-bold text-gray-900">${cadet.rank} ${cadet.name}${cadet.rank === 'Lt M' ? ' PSSTLDM' : ''}</h4>
                                 <p class="text-sm text-gray-600">${cadet.position}</p>
                             </div>
                             
