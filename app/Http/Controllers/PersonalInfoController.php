@@ -5,6 +5,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use App\Models\Cadet;
 use App\Models\Instructor;
@@ -18,15 +20,139 @@ class PersonalInfoController extends Controller
     public function edit(Request $request): View
     {
         $user = $request->user();
-        
+
         $personal = $user->role === 'cadet'
             ? Cadet::where('user_id', $user->id)->first()
             : Instructor::where('user_id', $user->id)->first();
-            
+
         return view('profile.edit', [
             'user' => $user,
             'personal' => $personal,
         ]);
+    }
+
+    /**
+     * Handle profile picture upload with optimization and error handling.
+     */
+    private function handleProfilePictureUpload($request, $existingPicture = null)
+    {
+        if (!$request->hasFile('profile_pic')) {
+            return null;
+        }
+
+        $image = $request->file('profile_pic');
+
+        // Check if upload was successful
+        if (!$image->isValid()) {
+            throw new \Exception('File upload failed. The file may be corrupted or too large.');
+        }
+
+        try {
+            // Optimize and compress the image
+            $optimizedImagePath = $this->optimizeImage($image);
+
+            // Delete old profile picture if exists
+            if (!empty($existingPicture) && Storage::disk('public')->exists($existingPicture)) {
+                Storage::disk('public')->delete($existingPicture);
+            }
+
+            return $optimizedImagePath;
+
+        } catch (\Exception $e) {
+            Log::error('Profile picture upload failed', [
+                'error' => $e->getMessage(),
+                'file' => $image->getClientOriginalName(),
+                'size' => $image->getSize()
+            ]);
+            throw new \Exception('Failed to save profile picture. Please try a smaller image (under 2MB).');
+        }
+    }
+
+    /**
+     * Optimize image by resizing and compressing.
+     */
+    private function optimizeImage($uploadedFile)
+    {
+        // Create a unique filename
+        $filename = time() . '_' . uniqid() . '.jpg';
+        $path = 'profile_pics/' . $filename;
+
+        // Get image info
+        $imageInfo = getimagesize($uploadedFile->getPathname());
+        if (!$imageInfo) {
+            throw new \Exception('Invalid image file');
+        }
+
+        // Create image resource based on mime type
+        $sourceImage = match($imageInfo['mime']) {
+            'image/jpeg', 'image/jpg' => imagecreatefromjpeg($uploadedFile->getPathname()),
+            'image/png' => imagecreatefrompng($uploadedFile->getPathname()),
+            'image/gif' => imagecreatefromgif($uploadedFile->getPathname()),
+            default => throw new \Exception('Unsupported image type')
+        };
+
+        if (!$sourceImage) {
+            throw new \Exception('Failed to process image');
+        }
+
+        // Calculate new dimensions (max 800x800, maintain aspect ratio)
+        $maxSize = 800;
+        $width = imagesx($sourceImage);
+        $height = imagesy($sourceImage);
+
+        if ($width > $maxSize || $height > $maxSize) {
+            if ($width > $height) {
+                $newWidth = $maxSize;
+                $newHeight = (int)(($height / $width) * $maxSize);
+            } else {
+                $newHeight = $maxSize;
+                $newWidth = (int)(($width / $height) * $maxSize);
+            }
+        } else {
+            $newWidth = $width;
+            $newHeight = $height;
+        }
+
+        // Create new image with optimized size
+        $optimizedImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        // Preserve transparency for PNG
+        if ($imageInfo['mime'] === 'image/png') {
+            imagealphablending($optimizedImage, false);
+            imagesavealpha($optimizedImage, true);
+        }
+
+        // Resize image
+        imagecopyresampled(
+            $optimizedImage,
+            $sourceImage,
+            0, 0, 0, 0,
+            $newWidth,
+            $newHeight,
+            $width,
+            $height
+        );
+
+        // Save optimized image to storage
+        $fullPath = storage_path('app/public/' . $path);
+        $directory = dirname($fullPath);
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Save as JPEG with 85% quality (good balance between quality and size)
+        $saved = imagejpeg($optimizedImage, $fullPath, 85);
+
+        // Free memory
+        imagedestroy($sourceImage);
+        imagedestroy($optimizedImage);
+
+        if (!$saved) {
+            throw new \Exception('Failed to save optimized image');
+        }
+
+        return $path;
     }
 
     /**
@@ -52,19 +178,26 @@ class PersonalInfoController extends Controller
                 'faculty' => 'nullable|string|max:100',
                 'course' => 'nullable|string|max:100',
                 'BMI' => 'nullable|numeric',
+                'ttp_date' => 'nullable|date',
+                'insurance_number' => 'nullable|string|max:50',
                 'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-
-            // Handle profile picture upload
-            if ($request->hasFile('profile_pic')) {
-                $image = $request->file('profile_pic');
-                $imagePath = $image->store('profile_pics', 'public');
-                $validated['profile_pic'] = $imagePath;
-            }
 
             $cadet = Cadet::where('user_id', $user->id)->first();
             if (!$cadet) {
                 $cadet = new Cadet(['user_id' => $user->id]);
+            }
+
+            // Handle profile picture upload with optimization and error handling
+            try {
+                $imagePath = $this->handleProfilePictureUpload($request, $cadet->profile_pic);
+                if ($imagePath) {
+                    $validated['profile_pic'] = $imagePath;
+                }
+            } catch (\Exception $e) {
+                return Redirect::route('personal.edit')
+                    ->withErrors(['profile_pic' => $e->getMessage()])
+                    ->withInput();
             }
             $oldBMI = $cadet->BMI;
             $oldCGPA = $cadet->current_cgpa;
@@ -117,11 +250,21 @@ class PersonalInfoController extends Controller
                 'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
-            // Handle profile picture upload
-            if ($request->hasFile('profile_pic')) {
-                $image = $request->file('profile_pic');
-                $imagePath = $image->store('profile_pics', 'public');
-                $validated['profile_pic'] = $imagePath;
+            $instructor = Instructor::where('user_id', $user->id)->first();
+            if (!$instructor) {
+                $instructor = new Instructor(['user_id' => $user->id]);
+            }
+
+            // Handle profile picture upload with optimization and error handling
+            try {
+                $imagePath = $this->handleProfilePictureUpload($request, $instructor->profile_pic);
+                if ($imagePath) {
+                    $validated['profile_pic'] = $imagePath;
+                }
+            } catch (\Exception $e) {
+                return Redirect::route('personal.edit')
+                    ->withErrors(['profile_pic' => $e->getMessage()])
+                    ->withInput();
             }
 
             // Handle past_unit array - filter out empty values and encode as JSON
@@ -131,10 +274,6 @@ class PersonalInfoController extends Controller
                 }));
             }
 
-            $instructor = Instructor::where('user_id', $user->id)->first();
-            if (!$instructor) {
-                $instructor = new Instructor(['user_id' => $user->id]);
-            }
             foreach ($validated as $key => $value) {
                 if ($request->has($key) || $key === 'profile_pic' || $key === 'past_unit') {
                     $instructor->$key = $value;
