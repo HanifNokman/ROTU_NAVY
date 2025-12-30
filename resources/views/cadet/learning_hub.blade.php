@@ -759,10 +759,25 @@
                                                 class="material-content p-6 bg-gradient-to-br from-gray-50 to-blue-50 rounded-b-lg border-t-2 border-blue-200">
                                                 <!-- Material Content -->
                                                 <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                                                    @if($material->file_url && $material->description && in_array($materialType, ['video', 'audio', 'image']))
+                                                    @if($material->file_url && $material->description && in_array($materialType, ['youtube', 'video', 'audio', 'image']))
                                                         <div class="flex flex-col md:flex-row gap-6">
                                                             <div class="md:flex-[0_0_30%]">
-                                                                @if($materialType === 'video')
+                                                                @if($materialType === 'youtube')
+                                                                    <div class="relative group">
+                                                                        <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                                                            <iframe
+                                                                                src="{{ $material->getYouTubeEmbedUrl() }}"
+                                                                                class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                                                                                frameborder="0"
+                                                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                                                allowfullscreen>
+                                                                            </iframe>
+                                                                        </div>
+                                                                        <div class="absolute top-2 left-2 bg-red-600 bg-opacity-90 text-white px-2 py-1 rounded text-xs font-medium z-10">
+                                                                            ▶ YouTube Video
+                                                                        </div>
+                                                                    </div>
+                                                                @elseif($materialType === 'video')
                                                                     <div class="relative group">
                                                                         <video id="video-{{ $material->id }}"
                                                                             controls
@@ -833,9 +848,24 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    @elseif($material->file_url && in_array($materialType, ['video', 'audio', 'image']))
+                                                    @elseif($material->file_url && in_array($materialType, ['youtube', 'video', 'audio', 'image']))
                                                         <div class="text-center">
-                                                            @if($materialType === 'video')
+                                                            @if($materialType === 'youtube')
+                                                                <div class="relative inline-block w-full max-w-4xl mx-auto">
+                                                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                                                        <iframe
+                                                                            src="{{ $material->getYouTubeEmbedUrl() }}"
+                                                                            class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                                                                            frameborder="0"
+                                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                                            allowfullscreen>
+                                                                        </iframe>
+                                                                    </div>
+                                                                    <div class="absolute top-3 left-3 bg-red-600 bg-opacity-90 text-white px-3 py-1 rounded-lg text-sm font-medium z-10">
+                                                                        ▶ YouTube Video
+                                                                    </div>
+                                                                </div>
+                                                            @elseif($materialType === 'video')
                                                                 <div class="relative inline-block">
                                                                     <video id="video-{{ $material->id }}"
                                                                         controls
@@ -2297,21 +2327,53 @@
                     // Determine material type
                     let materialType = 'text';
                     if (material.file_url) {
-                        const ext = material.file_url.split('.').pop().toLowerCase();
-                        if (['mp4', 'webm', 'avi', 'mov'].includes(ext)) materialType = 'video';
-                        else if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) materialType = 'audio';
-                        else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) materialType = 'image';
-                        else if (['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext)) materialType = 'document';
+                        // Check if it's a YouTube link first
+                        if (/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(material.file_url)) {
+                            materialType = 'youtube';
+                        } else {
+                            const ext = material.file_url.split('.').pop().toLowerCase();
+                            if (['mp4', 'webm', 'avi', 'mov'].includes(ext)) materialType = 'video';
+                            else if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) materialType = 'audio';
+                            else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) materialType = 'image';
+                            else if (['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext)) materialType = 'document';
+                        }
                     }
 
-                    const isMedia = ['video', 'audio', 'image'].includes(materialType);
+                    const isMedia = ['youtube', 'video', 'audio', 'image'].includes(materialType);
                     const hasDescription = material.description && material.description.trim() !== '';
                     const fileUrl = material.file_url ? material.file_url.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
-                    
+
+                    // Extract YouTube video ID helper function
+                    const getYouTubeVideoId = (url) => {
+                        let match = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+                        if (match) return match[1];
+                        match = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
+                        if (match) return match[1];
+                        match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+                        if (match) return match[1];
+                        return null;
+                    };
+
                     let contentHTML = '';
 
                     if (material.file_url && hasDescription && isMedia) {
-                        if (materialType === 'video') {
+                        if (materialType === 'youtube') {
+                            const videoId = getYouTubeVideoId(material.file_url);
+                            contentHTML = `
+                                <div class="md:w-[60%]">
+                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                        <iframe
+                                            src="https://www.youtube.com/embed/${videoId}"
+                                            class="absolute top-0 left-0 w-full h-full rounded"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                </div>
+                                <div class="md:w-[40%] text-gray-700"><p>${material.description}</p></div>
+                            `;
+                        } else if (materialType === 'video') {
                             contentHTML = `
                                 <div class="md:w-[60%]">
                                     <video id="video-${material.id}" controls class="w-full rounded" data-material-id="${material.id}">
@@ -2338,7 +2400,22 @@
                             `;
                         }
                     } else if (material.file_url && isMedia) {
-                        if (materialType === 'video') {
+                        if (materialType === 'youtube') {
+                            const videoId = getYouTubeVideoId(material.file_url);
+                            contentHTML = `
+                                <div class="w-full flex justify-center">
+                                    <div class="relative w-full max-w-4xl" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                        <iframe
+                                            src="https://www.youtube.com/embed/${videoId}"
+                                            class="absolute top-0 left-0 w-full h-full rounded"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (materialType === 'video') {
                             contentHTML = `
                                 <div class="w-full flex justify-center">
                                     <video id="video-${material.id}" controls class="max-w-lg w-full rounded" data-material-id="${material.id}">

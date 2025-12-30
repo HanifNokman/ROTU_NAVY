@@ -637,6 +637,12 @@
                                         </div>
 
                                         <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">YouTube URL (optional)</label>
+                                            <input type="url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <p class="text-xs text-gray-500 mt-1">Enter a YouTube link to embed a video, or upload a file below</p>
+                                        </div>
+
+                                        <div class="mb-4">
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Replace File (optional)</label>
                                             <input type="file" name="file" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv">
                                             <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
@@ -1006,7 +1012,15 @@
                         </div>
                         
                         <div class="mb-4">
-                            <label for="material_file" class="block text-sm font-medium text-gray-700 mb-2">File</label>
+                            <label for="material_youtube_url" class="block text-sm font-medium text-gray-700 mb-2">YouTube URL (optional)</label>
+                            <input type="url" id="material_youtube_url" name="youtube_url"
+                                   placeholder="https://www.youtube.com/watch?v=..."
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <p class="text-xs text-gray-500 mt-1">Enter a YouTube link to embed a video, or upload a file below</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="material_file" class="block text-sm font-medium text-gray-700 mb-2">File Upload (optional)</label>
                             <input type="file" id="material_file" name="file"
                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
