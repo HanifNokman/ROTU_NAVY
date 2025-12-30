@@ -764,7 +764,7 @@
                                                             <div class="md:flex-[0_0_40%]">
                                                                 @if($materialType === 'youtube')
                                                                     <div class="relative group">
-                                                                        <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                                                        <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden; min-height: 200px;">
                                                                             <iframe
                                                                                 src="{{ $material->getYouTubeEmbedUrl() }}"
                                                                                 data-material-id="{{ $material->id }}"
@@ -853,7 +853,7 @@
                                                         <div class="text-center">
                                                             @if($materialType === 'youtube')
                                                                 <div class="relative inline-block w-full max-w-4xl mx-auto">
-                                                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden; min-height: 300px;">
                                                                         <iframe
                                                                             src="{{ $material->getYouTubeEmbedUrl() }}"
                                                                             data-material-id="{{ $material->id }}"
@@ -2363,7 +2363,7 @@
                             const videoId = getYouTubeVideoId(material.file_url);
                             contentHTML = `
                                 <div class="md:w-[40%]">
-                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                    <div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden; min-height: 200px;">
                                         <iframe
                                             src="https://www.youtube.com/embed/${videoId}?enablejsapi=1"
                                             data-material-id="${material.id}"
@@ -2407,7 +2407,7 @@
                             const videoId = getYouTubeVideoId(material.file_url);
                             contentHTML = `
                                 <div class="w-full flex justify-center">
-                                    <div class="relative w-full max-w-4xl" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                    <div class="relative w-full max-w-4xl" style="padding-bottom: 56.25%; height: 0; overflow: hidden; min-height: 300px;">
                                         <iframe
                                             src="https://www.youtube.com/embed/${videoId}?enablejsapi=1"
                                             data-material-id="${material.id}"
