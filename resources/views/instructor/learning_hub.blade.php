@@ -652,8 +652,9 @@
 
                                         <div class="mb-4">
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Replace File (optional)</label>
-                                            <input type="file" name="file" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv">
+                                            <input type="file" name="file" id="edit_material_file" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv" onchange="validateLearningHubFileSize(this, 'edit-material')">
                                             <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
+                                            <p id="edit-material-file-error" class="text-xs text-red-600 mt-2 hidden"></p>
                                         </div>
 
                                         <div class="mb-4">
@@ -901,10 +902,12 @@
 
                                         <div class="mb-4">
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Replace Supporting File (optional)</label>
-                                            <input type="file" name="file"
+                                            <input type="file" name="file" id="edit_quiz_file"
                                                 accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                            <p class="text-xs text-gray-500 mt-1">Current file will be replaced if new file is uploaded</p>
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                                onchange="validateLearningHubFileSize(this, 'edit-quiz')">
+                                            <p class="text-xs text-gray-500 mt-1">Current file will be replaced if new file is uploaded (Max: 50MB)</p>
+                                            <p id="edit-quiz-file-error" class="text-xs text-red-600 mt-2 hidden"></p>
                                         </div>
 
                                         <div class="flex justify-end gap-3 pt-4">
@@ -1041,8 +1044,10 @@
                             <label for="material_file" class="block text-sm font-medium text-gray-700 mb-2">File Upload (optional)</label>
                             <input type="file" id="material_file" name="file"
                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   onchange="validateLearningHubFileSize(this, 'add-material')">
                             <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
+                            <p id="add-material-file-error" class="text-xs text-red-600 mt-2 hidden"></p>
                         </div>
                         
                         <div class="flex justify-end gap-3 pt-4">
@@ -1298,8 +1303,10 @@
                             <label for="quiz_file" class="block text-sm font-medium text-gray-700 mb-2">Supporting File (optional)</label>
                             <input type="file" id="quiz_file" name="file"
                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   onchange="validateLearningHubFileSize(this, 'add-quiz')">
                             <p class="text-xs text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV, FLV, WEBM, MKV (Max: 50MB)</p>
+                            <p id="add-quiz-file-error" class="text-xs text-red-600 mt-2 hidden"></p>
                         </div>
 
                         <div class="flex justify-end gap-3 pt-4">
@@ -1891,9 +1898,46 @@
         });
 
         {{-- ================================================================ --}}
+        {{-- FILE SIZE VALIDATION FUNCTION --}}
+        {{-- ================================================================ --}}
+        function validateLearningHubFileSize(input, mode) {
+            const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+            const errorElementId = mode + '-file-error';
+            const errorElement = document.getElementById(errorElementId);
+            const submitButton = input.closest('form').querySelector('button[type="submit"]');
+
+            if (input.files && input.files[0]) {
+                const fileSize = input.files[0].size;
+                const fileName = input.files[0].name;
+
+                if (fileSize > maxSize) {
+                    const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+                    errorElement.textContent = `File size (${fileSizeMB}MB) exceeds the maximum limit of 50MB. Please choose a smaller file.`;
+                    errorElement.classList.remove('hidden');
+                    input.value = ''; // Clear the file input
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+
+                    return false;
+                } else {
+                    errorElement.classList.add('hidden');
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        {{-- ================================================================ --}}
         {{-- INITIALIZATION --}}
         {{-- ================================================================ --}}
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             const quizTypeSelect = document.getElementById('quiz_question_type');
             if (quizTypeSelect) {

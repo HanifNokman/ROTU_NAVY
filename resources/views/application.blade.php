@@ -765,10 +765,14 @@
                             <i class="fas fa-camera"></i>Gambar Profil <span class="required-indicator">* Wajib diisi</span>
                         </label>
                         <input type="file" id="profile_pic" name="profile_pic" accept="image/*" required
-                            class="form-file">
+                            class="form-file" onchange="validateApplicationFileSize(this)">
                         <span class="form-help">
                             <i class="fas fa-info-circle"></i>
                             Muat naik gambar passport terkini (JPEG, PNG, JPG, GIF - Maksimum 2MB)
+                        </span>
+                        <span id="profile-pic-error" class="form-help" style="color: #ef5350; display: none;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span id="profile-pic-error-text"></span>
                         </span>
                     </div>
 
@@ -795,6 +799,43 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
+        // File Size Validation
+        function validateApplicationFileSize(input) {
+            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+            const errorElement = document.getElementById('profile-pic-error');
+            const errorText = document.getElementById('profile-pic-error-text');
+            const submitButton = document.querySelector('.submit-btn');
+
+            if (input.files && input.files[0]) {
+                const fileSize = input.files[0].size;
+                const fileName = input.files[0].name;
+
+                if (fileSize > maxSize) {
+                    const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+                    errorText.textContent = `Saiz fail (${fileSizeMB}MB) melebihi had maksimum 2MB. Sila pilih gambar yang lebih kecil.`;
+                    errorElement.style.display = 'block';
+                    input.value = ''; // Clear the file input
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.style.opacity = '0.5';
+                        submitButton.style.cursor = 'not-allowed';
+                    }
+
+                    return false;
+                } else {
+                    errorElement.style.display = 'none';
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.style.opacity = '1';
+                        submitButton.style.cursor = 'pointer';
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
 
         // BMI Calculator
         function calculateBMI() {

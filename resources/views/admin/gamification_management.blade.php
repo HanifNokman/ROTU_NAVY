@@ -264,8 +264,9 @@
                 <!-- Icon Upload -->
                 <div class="col-span-2 md:col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Badge Icon</label>
-                    <input type="file" name="icon_path" accept="image/*" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <input type="file" name="icon_path" id="badge_icon_add" accept="image/*" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" onchange="validateBadgeIconSize(this, 'add')">
                     <p class="mt-1 text-xs text-gray-500">PNG, JPG, SVG, WEBP (max 2MB)</p>
+                    <p id="badge-icon-add-error" class="mt-1 text-xs text-red-600 hidden"></p>
                 </div>
 
                 <!-- Criteria Type -->
@@ -381,9 +382,10 @@
 
                 <div class="col-span-2 md:col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Badge Icon</label>
-                    <input type="file" name="icon_path" accept="image/*" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <input type="file" name="icon_path" id="badge_icon_edit" accept="image/*" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" onchange="validateBadgeIconSize(this, 'edit')">
                     <div id="currentIconPreview" class="mt-2"></div>
-                    <p class="mt-1 text-xs text-gray-500">Leave empty to keep current icon</p>
+                    <p class="mt-1 text-xs text-gray-500">Leave empty to keep current icon (max 2MB)</p>
+                    <p id="badge-icon-edit-error" class="mt-1 text-xs text-red-600 hidden"></p>
                 </div>
 
                 <div class="col-span-2">
@@ -851,6 +853,41 @@ function filterBadges() {
     });
 
     document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+}
+
+// File Size Validation for Badge Icons
+function validateBadgeIconSize(input, mode) {
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+    const errorElementId = 'badge-icon-' + mode + '-error';
+    const errorElement = document.getElementById(errorElementId);
+    const submitButton = input.closest('form').querySelector('button[type="submit"]');
+
+    if (input.files && input.files[0]) {
+        const fileSize = input.files[0].size;
+        const fileName = input.files[0].name;
+
+        if (fileSize > maxSize) {
+            const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+            errorElement.textContent = `File size (${fileSizeMB}MB) exceeds the maximum limit of 2MB. Please choose a smaller image.`;
+            errorElement.classList.remove('hidden');
+            input.value = ''; // Clear the file input
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            return false;
+        } else {
+            errorElement.classList.add('hidden');
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            return true;
+        }
+    }
+    return true;
 }
 </script>
 

@@ -3310,10 +3310,14 @@
 
                     <div class="form-group">
                         <label for="qrCodeImageUpload">QR Code Image:</label>
-                        <input type="file" id="qrCodeImageUpload" name="qr_code_image" accept="image/*">
+                        <input type="file" id="qrCodeImageUpload" name="qr_code_image" accept="image/*" onchange="validateQRCodeImageSize(this)">
                         <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                            <i class="fas fa-qrcode"></i> 
+                            <i class="fas fa-qrcode"></i>
                             Upload a QR code image (JPG, PNG, SVG - max 2MB)
+                        </small>
+                        <small id="qr-code-error" style="color: #ef5350; display: none; margin-top: 0.5rem;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span id="qr-code-error-text"></span>
                         </small>
                     </div>
                     
@@ -3966,6 +3970,43 @@
                 video.style.display = 'block';
             });
         });
+
+        // File Size Validation for QR Code Image
+        function validateQRCodeImageSize(input) {
+            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+            const errorElement = document.getElementById('qr-code-error');
+            const errorText = document.getElementById('qr-code-error-text');
+            const submitButton = input.closest('form').querySelector('button[type="submit"]');
+
+            if (input.files && input.files[0]) {
+                const fileSize = input.files[0].size;
+                const fileName = input.files[0].name;
+
+                if (fileSize > maxSize) {
+                    const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+                    errorText.textContent = `File size (${fileSizeMB}MB) exceeds the maximum limit of 2MB. Please choose a smaller image.`;
+                    errorElement.style.display = 'block';
+                    input.value = ''; // Clear the file input
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.style.opacity = '0.5';
+                        submitButton.style.cursor = 'not-allowed';
+                    }
+
+                    return false;
+                } else {
+                    errorElement.style.display = 'none';
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.style.opacity = '1';
+                        submitButton.style.cursor = 'pointer';
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
     </script>
 </body>
 </html>

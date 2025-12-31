@@ -584,9 +584,11 @@
 
                                     <div class="mb-4">
                                         <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Replace Image (optional)</label>
-                                        <input type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.webp"
-                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <input type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.webp" id="edit_gallery_image"
+                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                               onchange="validateGalleryImageSize(this, 'edit')">
                                         <p class="text-xs text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)</p>
+                                        <p id="edit-gallery-image-error" class="text-xs text-red-600 mt-2 hidden"></p>
                                     </div>
 
                                     <div class="flex justify-end gap-2 sm:gap-3">
@@ -762,7 +764,7 @@
                             <div class="relative">
                                 <input type="file" id="gallery_image" name="image" required accept=".jpg,.jpeg,.png,.gif,.webp"
                                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                                       onchange="previewGalleryImage(event)">
+                                       onchange="if(validateGalleryImageSize(this)) { previewGalleryImage(event); }">
                             </div>
                             <p class="text-xs text-gray-500 mt-2 flex items-center">
                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -770,6 +772,7 @@
                                 </svg>
                                 Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)
                             </p>
+                            <p id="gallery-image-error" class="text-xs text-red-600 mt-2 hidden"></p>
                             <div id="imagePreviewContainer" class="hidden mt-3">
                                 <img id="imagePreview" src="" alt="Preview" class="w-full h-32 sm:h-48 object-cover rounded-lg border-2 border-gray-200">
                             </div>
@@ -1212,6 +1215,51 @@
                 modal.classList.add('hidden');
                 document.body.style.overflow = 'auto';
             }, 200);
+        }
+
+        {{-- ================================================================ --}}
+        {{-- FILE SIZE VALIDATION FUNCTION --}}
+        {{-- ================================================================ --}}
+        function validateGalleryImageSize(input, mode = 'add') {
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            const errorElementId = mode === 'edit' ? 'edit-gallery-image-error' : 'gallery-image-error';
+            const errorElement = document.getElementById(errorElementId);
+            const submitButton = input.closest('form').querySelector('button[type="submit"]');
+
+            if (input.files && input.files[0]) {
+                const fileSize = input.files[0].size;
+                const fileName = input.files[0].name;
+
+                if (fileSize > maxSize) {
+                    const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+                    errorElement.textContent = `File size (${fileSizeMB}MB) exceeds the maximum limit of 10MB. Please choose a smaller image.`;
+                    errorElement.classList.remove('hidden');
+                    input.value = ''; // Clear the file input
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+
+                    // Also hide preview for add modal
+                    if (mode === 'add') {
+                        const previewContainer = document.getElementById('imagePreviewContainer');
+                        if (previewContainer) {
+                            previewContainer.classList.add('hidden');
+                        }
+                    }
+
+                    return false;
+                } else {
+                    errorElement.classList.add('hidden');
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                    return true;
+                }
+            }
+            return true;
         }
 
         {{-- ================================================================ --}}

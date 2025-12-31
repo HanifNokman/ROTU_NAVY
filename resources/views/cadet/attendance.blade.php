@@ -819,13 +819,19 @@
                                                     <input
                                                         type="file"
                                                         name="supporting_file"
+                                                        id="supporting_file"
                                                         required
                                                         accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                                                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-green-100 file:text-green-700 hover:file:bg-green-200 transition-all"
+                                                        onchange="validateAttendanceFileSize(this)"
                                                     >
                                                     <div class="text-xs text-gray-600 mt-2 flex items-center bg-blue-50 p-2 rounded">
                                                         <i class="fas fa-info-circle mr-1.5 text-blue-600"></i>
                                                         <span>JPG, PNG, PDF, DOC, DOCX • Max 5MB</span>
+                                                    </div>
+                                                    <div id="supporting-file-error" class="text-xs text-red-600 mt-2 hidden flex items-center">
+                                                        <i class="fas fa-exclamation-triangle mr-1.5"></i>
+                                                        <span id="supporting-file-error-text"></span>
                                                     </div>
                                                 </div>
 
@@ -1518,6 +1524,41 @@
                     }
                 }, 8000);
             @endif
+
+            // File Size Validation
+            function validateAttendanceFileSize(input) {
+                const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                const errorElement = document.getElementById('supporting-file-error');
+                const errorText = document.getElementById('supporting-file-error-text');
+                const submitButton = input.closest('form').querySelector('button[type="submit"]');
+
+                if (input.files && input.files[0]) {
+                    const fileSize = input.files[0].size;
+                    const fileName = input.files[0].name;
+
+                    if (fileSize > maxSize) {
+                        const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+                        errorText.textContent = `File size (${fileSizeMB}MB) exceeds the maximum limit of 5MB. Please choose a smaller file.`;
+                        errorElement.classList.remove('hidden');
+                        input.value = ''; // Clear the file input
+
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                            submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                        }
+
+                        return false;
+                    } else {
+                        errorElement.classList.add('hidden');
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                        return true;
+                    }
+                }
+                return true;
+            }
         </script>
     @endpush
 </x-app-layout>
