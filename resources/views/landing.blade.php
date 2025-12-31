@@ -1195,6 +1195,15 @@
             visibility: visible !important;
         }
 
+        .timeline-content h3 {
+            font-size: 1.6rem;
+        }
+
+        .timeline-content p {
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
         .timeline-icon {
             position: absolute;
             left: 50%;
@@ -2114,6 +2123,15 @@
             .timeline-center-icon:nth-child(5) { top: 60% !important; }
             .timeline-center-icon:nth-child(7) { top: 85% !important; }
 
+            .timeline-content h3 {
+                font-size: 1.2rem !important;
+            }
+
+            .timeline-content p {
+                font-size: 0.8rem !important;
+                line-height: 1.5 !important;
+            }
+
             .modal-content {
                 width: 95%;
                 margin: 5% auto;
@@ -2711,8 +2729,8 @@
                     <div class="timeline-item timeline-left">
                         <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/2.jpeg'); background-size: cover; background-position: center;">
                             <div class="timeline-content-inner">
-                                <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Junior</h3>
-                                <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
+                                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Junior</h3>
+                                <p style="color: var(--text-secondary); text-align: center;">
                                     Pengenalan kepada disiplin ketenteraan, tradisi tentera laut, latihan asas, pelayaran, dan pemulihan fizikal. 
                                     Kadet membangunkan kerja berpasukan asas, daya tahan, dan komitmen.
                                 </p>
@@ -2755,8 +2773,8 @@
                     <div class="timeline-item timeline-right">
                         <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/5.png'); background-size: cover; background-position: center;">
                             <div class="timeline-content-inner">
-                                <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Intermediate</h3>
-                                <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
+                                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Intermediate</h3>
+                                <p style="color: var(--text-secondary); text-align: center;">
                                     Fokus kepada pelayaran lanjutan, navigasi, operasi maritim, dan kepimpinan gunaan.
                                     Kadet memperoleh latihan praktikal, latihan lapangan, dan pendedahan kepada undang-undang tentera laut dan protokol keselamatan.
                                 </p>
@@ -2775,9 +2793,9 @@
                     <div class="timeline-item timeline-left">
                         <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/11.png'); background-size: cover; background-position: center;">
                             <div class="timeline-content-inner">
-                                <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Senior</h3>
-                                <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
-                                    Pembangunan kepimpinan dan persediaan untuk tanggungjawab komando.
+                                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; text-align: center; font-weight: 700;">Fasa Senior</h3>
+                                <p style="color: var(--text-secondary); text-align: center;">
+                                    Pembangunan kepimpinan dan persediaan untuk tanggungjawab ketua.
                                     Kadet membimbing junior, menguruskan pasukan, dan mengamalkan membuat keputusan dalam senario tentera laut yang kompleks.
                                 </p>
                             </div>
@@ -2819,8 +2837,8 @@
                     <div class="timeline-item timeline-right">
                         <div class="timeline-content" style="background-image: linear-gradient(rgba(46, 49, 60, 0.95), rgba(46, 49, 60, 0.95)), url('storage/landing/9.jpeg'); background-size: cover; background-position: center;">
                             <div class="timeline-content-inner">
-                                <h3 style="color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-weight: 700;">Pentauliahan</h3>
-                                <p style="color: var(--text-secondary); line-height: 1.7; text-align: center; font-size: 1rem;">
+                                <h3 style="color: var(--primary-blue); margin-bottom: 1rem; text-align: center; font-weight: 700;">Pentauliahan</h3>
+                                <p style="color: var(--text-secondary); text-align: center;">
                                     Peringkat akhir kekadetaan. Kadet menjalani penilaian komprehensif dan pentauliahan upacara
                                     sebagai Leftenan Muda dalam Pasukan Simpanan Sukarela Tentera Laut (PSSTLDM). Secara rasmi bersedia untuk berkhidmat dalam pertahanan tentera laut Malaysia.
                                 </p>
