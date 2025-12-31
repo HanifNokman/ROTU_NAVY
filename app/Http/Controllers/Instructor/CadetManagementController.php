@@ -1234,29 +1234,47 @@ class CadetManagementController extends Controller
         ]);
 
         try {
+            Log::info('Updating Tauliah settings', [
+                'month' => $request->tauliah_month,
+                'day' => $request->tauliah_day
+            ]);
+
             ContentSetting::set(
                 'tauliah_month',
                 $request->tauliah_month,
                 'text',
-                'Tauliah ceremony month (1-12). Default is September (9).'
+                'Tauliah ceremony month (1-12).'
             );
 
             ContentSetting::set(
                 'tauliah_day',
                 $request->tauliah_day,
                 'text',
-                'Tauliah ceremony day (1-31). Default is the 15th.'
+                'Tauliah ceremony day (1-31).'
             );
+
+            // Verify the update
+            $updatedMonth = ContentSetting::get('tauliah_month');
+            $updatedDay = ContentSetting::get('tauliah_day');
+
+            Log::info('Tauliah settings updated', [
+                'month' => $updatedMonth,
+                'day' => $updatedDay
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Tauliah date settings updated successfully'
+                'message' => 'Tauliah date settings updated successfully',
+                'data' => [
+                    'month' => $updatedMonth,
+                    'day' => $updatedDay
+                ]
             ]);
         } catch (\Exception $e) {
             Log::error('Error updating tauliah settings: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update tauliah settings'
+                'message' => 'Failed to update tauliah settings: ' . $e->getMessage()
             ], 500);
         }
     }
