@@ -2299,6 +2299,7 @@
 
             .timeline-content h3 {
                 font-size: 0.7rem !important;
+                margin-bottom: 0.4rem !important;
             }
 
             .timeline-content p {
