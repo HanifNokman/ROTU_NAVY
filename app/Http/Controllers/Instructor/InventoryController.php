@@ -17,12 +17,12 @@ class InventoryController extends Controller
 {
     public function index(Request $request)
     {
-        // Get intake years from current year (2025) down to 4 years back (2022)
+        // Get intake years from current year down to 4 years back
         $currentYear = date('Y');
         $intakeYears = [];
         for ($i = 0; $i < 4; $i++) {
             $year = $currentYear - $i;
-            $intakeNumber = 14 - $i;
+            $intakeNumber = $year - 2011;
             $intakeYears[] = [
                 'year' => $year,
                 'label' => "Intake - {$intakeNumber}"
@@ -731,7 +731,7 @@ class InventoryController extends Controller
         $intakeYears = [];
         for ($i = 0; $i < 4; $i++) {
             $year = $currentYear - $i;
-            $intakeNumber = 14 - $i;
+            $intakeNumber = $year - 2011;
             $intakeYears[] = [
                 'year' => $year,
                 'label' => "Intake {$intakeNumber}"
@@ -1108,12 +1108,12 @@ class InventoryController extends Controller
 
     public function componentIssuanceTracking(Request $request)
     {
-        // Get intake years from current year (2025) down to 4 years back (2022)
+        // Get intake years from current year down to 4 years back
         $currentYear = date('Y');
         $intakeYears = [];
         for ($i = 0; $i < 4; $i++) {
             $year = $currentYear - $i;
-            $intakeNumber = 14 - $i;
+            $intakeNumber = $year - 2011;
             $intakeYears[] = [
                 'year' => $year,
                 'label' => "Intake - {$intakeNumber}"

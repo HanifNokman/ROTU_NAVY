@@ -58,7 +58,7 @@ class CadetManagementController extends Controller
         $recentIntakes = [];
         for ($i = 0; $i < 4; $i++) {
             $year = $currentYear - $i;
-            $intakeNumber = 14 - $i;
+            $intakeNumber = $year - 2011;
             $recentIntakes[] = [
                 'year' => $year,
                 'label' => "Intake - {$intakeNumber} ({$year})"
