@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cadet;
 use App\Models\User;
 use App\Models\PerformanceRating;
+use App\Models\ContentSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
@@ -86,11 +87,12 @@ class CadetManagementController extends Controller
                 // Apply search filter
                 if ($searchQuery) {
                     $query->where(function($q) use ($searchQuery) {
-                        $q->where('service_number', 'like', "%{$searchQuery}%")
-                          ->orWhere('matric_no', 'like', "%{$searchQuery}%")
+                        $q->where('matric_no', 'like', "%{$searchQuery}%")
+                          ->orWhere('service_number', 'like', "%{$searchQuery}%")
                           ->orWhere('ic_number', 'like', "%{$searchQuery}%")
                           ->orWhereHas('user', function($userQuery) use ($searchQuery) {
-                              $userQuery->where('name', 'like', "%{$searchQuery}%");
+                              $userQuery->where('name', 'like', "%{$searchQuery}%")
+                                        ->orWhere('email', 'like', "%{$searchQuery}%");
                           });
                     });
                 }
@@ -149,7 +151,9 @@ class CadetManagementController extends Controller
             'bestAcademicCadets' => $bestAcademicCadets,
             'bestCadetIntakeYear' => $bestCadetIntakeYear,
             'suspendedCadets' => $suspendedCadets,
-            'suspendedIntakeYear' => $suspendedIntakeYear
+            'suspendedIntakeYear' => $suspendedIntakeYear,
+            'tauliahMonth' => ContentSetting::getTauliahMonth(),
+            'tauliahDay' => ContentSetting::getTauliahDay()
         ];
 
         Log::info('Sending to view', array_keys($viewData));
@@ -192,11 +196,12 @@ class CadetManagementController extends Controller
             // Apply search filter
             if ($searchQuery) {
                 $query->where(function($q) use ($searchQuery) {
-                    $q->where('service_number', 'like', "%{$searchQuery}%")
-                      ->orWhere('matric_no', 'like', "%{$searchQuery}%")
+                    $q->where('matric_no', 'like', "%{$searchQuery}%")
+                      ->orWhere('service_number', 'like', "%{$searchQuery}%")
                       ->orWhere('ic_number', 'like', "%{$searchQuery}%")
                       ->orWhereHas('user', function($userQuery) use ($searchQuery) {
-                          $userQuery->where('name', 'like', "%{$searchQuery}%");
+                          $userQuery->where('name', 'like', "%{$searchQuery}%")
+                                    ->orWhere('email', 'like', "%{$searchQuery}%");
                       });
                 });
             }
@@ -1216,5 +1221,43 @@ class CadetManagementController extends Controller
         }
 
         return rmdir($dir);
+    }
+
+    // ================================================================
+    // UPDATE TAULIAH SETTINGS: Update Tauliah ceremony date
+    // ================================================================
+    public function updateTauliahSettings(Request $request)
+    {
+        $request->validate([
+            'tauliah_month' => 'required|integer|min:1|max:12',
+            'tauliah_day' => 'required|integer|min:1|max:31'
+        ]);
+
+        try {
+            ContentSetting::set(
+                'tauliah_month',
+                $request->tauliah_month,
+                'text',
+                'Tauliah ceremony month (1-12). Default is September (9).'
+            );
+
+            ContentSetting::set(
+                'tauliah_day',
+                $request->tauliah_day,
+                'text',
+                'Tauliah ceremony day (1-31). Default is the 15th.'
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tauliah date settings updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating tauliah settings: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update tauliah settings'
+            ], 500);
+        }
     }
 }

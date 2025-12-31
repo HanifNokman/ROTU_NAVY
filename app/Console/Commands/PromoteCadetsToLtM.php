@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Cadet;
+use App\Models\ContentSetting;
 use App\Helpers\BadgeHelper;
 use Carbon\Carbon;
 
@@ -49,7 +50,7 @@ class PromoteCadetsToLtM extends Command
 
         foreach ($cadets as $cadet) {
             $intakeYear = $cadet->intake_year;
-            $tauliahDate = Carbon::createFromDate($intakeYear + 3, 9, 15);
+            $tauliahDate = ContentSetting::getTauliahDate($intakeYear);
 
             // Check if cadet has reached Tauliah date
             if ($force || $today->greaterThanOrEqualTo($tauliahDate)) {

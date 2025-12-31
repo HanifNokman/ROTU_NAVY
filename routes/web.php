@@ -247,6 +247,9 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
     Route::post('/cadets/{cadet}/toggle-best-cadet', [CadetManagementController::class, 'toggleBestCadet'])->name('cadets.toggle-best-cadet');
     Route::post('/cadets/{cadet}/toggle-best-academic', [CadetManagementController::class, 'toggleBestAcademic'])->name('cadets.toggle-best-academic');
 
+    // Tauliah Settings
+    Route::post('/cadets/tauliah-settings', [CadetManagementController::class, 'updateTauliahSettings'])->name('cadets.tauliah-settings');
+
     // ------------------------------------------------------------------------
     // Training Management
     // ------------------------------------------------------------------------

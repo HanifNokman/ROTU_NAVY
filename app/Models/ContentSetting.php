@@ -89,7 +89,7 @@ class ContentSetting extends Model
     public static function getDeadline(): ?Carbon
     {
         $deadline = self::get('application_deadline');
-        
+
         if (!$deadline) {
             return null;
         }
@@ -98,12 +98,42 @@ class ContentSetting extends Model
     }
 
     /**
+     * Get Tauliah date for a given intake year
+     * Year is calculated as intake_year + 3
+     * Month and day are retrieved from settings (default: September 15)
+     */
+    public static function getTauliahDate(int $intakeYear): Carbon
+    {
+        $month = (int) self::get('tauliah_month', 9);
+        $day = (int) self::get('tauliah_day', 15);
+        $year = $intakeYear + 3;
+
+        return Carbon::createFromDate($year, $month, $day);
+    }
+
+    /**
+     * Get Tauliah month from settings (default: 9 for September)
+     */
+    public static function getTauliahMonth(): int
+    {
+        return (int) self::get('tauliah_month', 9);
+    }
+
+    /**
+     * Get Tauliah day from settings (default: 15)
+     */
+    public static function getTauliahDay(): int
+    {
+        return (int) self::get('tauliah_day', 15);
+    }
+
+    /**
      * Clear all settings cache
      */
     public static function clearCache(): void
     {
         Cache::forget('all_content_settings');
-        
+
         $keys = self::pluck('key');
         foreach ($keys as $key) {
             Cache::forget("content_setting_{$key}");
