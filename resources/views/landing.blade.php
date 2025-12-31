@@ -1972,6 +1972,10 @@
             }
 
             /* Hero section */
+            .hero-section {
+                height: 70vh;
+            }
+
             .hero-content {
                 padding: 2rem 1.5rem;
                 max-width: 90%;
@@ -2267,6 +2271,10 @@
             }
 
             /* Hero */
+            .hero-section {
+                height: 60vh;
+            }
+
             .hero-content h1 {
                 font-size: 2rem;
             }
