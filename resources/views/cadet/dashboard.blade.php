@@ -1178,7 +1178,7 @@
                     <div class="p-8">
                         @php
                             $intakeYear = $cadet->intake_year ?? now()->year;
-                            $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
+                            $tauliahDate = \App\Models\ContentSetting::getTauliahDate($intakeYear);
                             $today = \Carbon\Carbon::today();
                             $daysLeft = $today->diffInDays($tauliahDate, false);
                             $totalPrepDays = 1095;
