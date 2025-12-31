@@ -49,6 +49,25 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if user account is pending approval
+        $user = Auth::user();
+        if ($user && $user->status === 'pending') {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account registration is pending approval. You will be notified via email once your account has been reviewed and approved by an administrator.',
+            ]);
+        }
+
+        // Check if user account has been rejected
+        if ($user && $user->status === 'rejected') {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account registration has been rejected. Please contact the administrator for more information.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
