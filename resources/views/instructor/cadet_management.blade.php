@@ -3184,46 +3184,54 @@ function closeTauliahModal() {
     document.getElementById('tauliahModal').classList.add('hidden');
 }
 
-// Handle Tauliah settings form submission
-document.getElementById('tauliahForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+// Handle Tauliah settings form submission - wait for DOM to be ready
+window.addEventListener('DOMContentLoaded', function() {
+    const tauliahForm = document.getElementById('tauliahForm');
+    if (tauliahForm) {
+        tauliahForm.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-    const formData = {
-        tauliah_month: document.getElementById('tauliahMonth').value,
-        tauliah_day: document.getElementById('tauliahDay').value
-    };
+            const formData = {
+                tauliah_month: document.getElementById('tauliahMonth').value,
+                tauliah_day: document.getElementById('tauliahDay').value
+            };
 
-    fetch('{{ route('instructor.cadets.tauliah-settings') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Response:', data);
-        if (data.success) {
-            alert('Tauliah date settings updated successfully!\nMonth: ' + data.data.month + ', Day: ' + data.data.day);
-            closeTauliahModal();
-            // Reload the page to reflect changes
-            location.reload();
-        } else {
-            alert('Error: ' + (data.message || 'Failed to update settings'));
-        }
-    })
-    .catch(error => {
-        console.error('Error updating Tauliah settings:', error);
-        alert('Failed to update settings. Please try again.');
-    });
-});
+            fetch('{{ route('instructor.cadets.tauliah-settings') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response:', data);
+                if (data.success) {
+                    alert('Tauliah date settings updated successfully!\nMonth: ' + data.data.month + ', Day: ' + data.data.day);
+                    closeTauliahModal();
+                    // Reload the page to reflect changes
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to update settings'));
+                }
+            })
+            .catch(error => {
+                console.error('Error updating Tauliah settings:', error);
+                alert('Failed to update settings. Please try again.');
+            });
+        });
+    }
 
-// Close modal when clicking outside
-document.getElementById('tauliahModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeTauliahModal();
+    // Close modal when clicking outside
+    const tauliahModal = document.getElementById('tauliahModal');
+    if (tauliahModal) {
+        tauliahModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTauliahModal();
+            }
+        });
     }
 });
     </script>
