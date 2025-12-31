@@ -70,6 +70,9 @@
             color: #1B1B1B;
             margin-bottom: 0rem;
             text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .form-subtitle {
@@ -190,7 +193,8 @@
         .info-tooltip-wrapper {
             display: inline-block;
             position: relative;
-            margin-left: 0.5rem;
+            margin-left: auto;
+            flex-shrink: 0;
         }
 
         .info-icon {
@@ -199,8 +203,8 @@
             justify-content: center;
             width: 20px;
             height: 20px;
-            background: #2196f3;
-            color: white;
+            background: rgba(33, 150, 243, 0.4);
+            color: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             font-size: 0.75rem;
             font-weight: 600;
@@ -209,15 +213,15 @@
         }
 
         .info-icon:hover {
-            background: #1976d2;
+            background: rgba(25, 118, 210, 0.6);
             transform: scale(1.1);
         }
 
         .info-tooltip {
             position: absolute;
             top: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
+            right: 0;
+            transform: translateY(10px);
             background: #1565c0;
             color: white;
             padding: 0.875rem;
@@ -237,8 +241,7 @@
             content: '';
             position: absolute;
             bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 10px;
             border: 8px solid transparent;
             border-bottom-color: #1565c0;
         }
@@ -252,7 +255,7 @@
         .info-tooltip-wrapper:hover .info-tooltip {
             opacity: 1;
             visibility: visible;
-            transform: translateX(-50%) translateY(5px);
+            transform: translateY(5px);
         }
 
         /* Mobile: Make tooltip visible on tap/click */
@@ -268,7 +271,7 @@
             .info-tooltip-wrapper.active .info-tooltip {
                 opacity: 1;
                 visibility: visible;
-                transform: translateX(-50%) translateY(5px);
+                transform: translateY(5px);
             }
         }
 
@@ -540,10 +543,17 @@
 
             .form-title {
                 font-size: 2rem;
+                flex-wrap: wrap;
             }
 
             .form-subtitle {
                 font-size: 1rem;
+            }
+
+            .info-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 0.7rem;
             }
         }
         
@@ -609,22 +619,26 @@
 
             .form-title {
                 font-size: 1.75rem;
+                flex-wrap: wrap;
+            }
+
+            .info-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 0.65rem;
             }
 
             /* Mobile: Adjust tooltip to fit screen */
             .info-tooltip {
                 width: calc(100vw - 3rem);
                 max-width: 280px;
-                left: auto;
                 right: 0;
                 transform: translateY(10px);
                 font-size: 0.75rem;
             }
 
             .info-tooltip::before {
-                left: auto;
-                right: 10px;
-                transform: none;
+                right: 5px;
             }
 
             .info-tooltip-wrapper.active .info-tooltip {
