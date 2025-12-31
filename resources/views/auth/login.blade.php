@@ -183,7 +183,95 @@
             font-size: 0.875rem;
             margin-top: 0.5rem;
         }
-        
+
+        /* ================================================================ */
+        /* INFO TOOLTIP */
+        /* ================================================================ */
+        .info-tooltip-wrapper {
+            display: inline-block;
+            position: relative;
+            margin-left: 0.5rem;
+        }
+
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: #2196f3;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: help;
+            transition: all 0.2s ease;
+        }
+
+        .info-icon:hover {
+            background: #1976d2;
+            transform: scale(1.1);
+        }
+
+        .info-tooltip {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: #1565c0;
+            color: white;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            width: 280px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .info-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-bottom-color: #1565c0;
+        }
+
+        .info-tooltip strong {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        .info-tooltip-wrapper:hover .info-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(5px);
+        }
+
+        /* Mobile: Make tooltip visible on tap/click */
+        @media (hover: none) and (pointer: coarse) {
+            .info-icon {
+                pointer-events: auto;
+            }
+
+            .info-tooltip {
+                pointer-events: auto;
+            }
+
+            .info-tooltip-wrapper.active .info-tooltip {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) translateY(5px);
+            }
+        }
+
         /* ================================================================ */
         /* BUTTONS */
         /* ================================================================ */
@@ -523,6 +611,26 @@
                 font-size: 1.75rem;
             }
 
+            /* Mobile: Adjust tooltip to fit screen */
+            .info-tooltip {
+                width: calc(100vw - 3rem);
+                max-width: 280px;
+                left: auto;
+                right: 0;
+                transform: translateY(10px);
+                font-size: 0.75rem;
+            }
+
+            .info-tooltip::before {
+                left: auto;
+                right: 10px;
+                transform: none;
+            }
+
+            .info-tooltip-wrapper.active .info-tooltip {
+                transform: translateY(5px);
+            }
+
             .form-input {
                 padding: 0.875rem;
                 font-size: 0.95rem;
@@ -564,7 +672,17 @@
         {{-- ================================================================ --}}
         <div class="form-panel">
             <div class="form-content">
-                <h1 class="form-title">Welcome Back</h1>
+                <h1 class="form-title">
+                    Welcome Back
+                    {{-- Info Tooltip --}}
+                    <span class="info-tooltip-wrapper">
+                        <span class="info-icon">i</span>
+                        <div class="info-tooltip">
+                            <strong>Registered but can't log in?</strong>
+                            Your account may still be pending approval. New registrations are reviewed by administrators before access is granted. You will receive an email notification once your account has been approved.
+                        </div>
+                    </span>
+                </h1>
                 <p class="form-subtitle">Sign in to your account</p>
 
                 <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -690,6 +808,27 @@
                 eyeIcon.classList.add('fa-eye');
             }
         }
+
+        // Mobile tooltip toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipWrapper = document.querySelector('.info-tooltip-wrapper');
+            const infoIcon = document.querySelector('.info-icon');
+
+            if (tooltipWrapper && infoIcon) {
+                // Toggle tooltip on click for mobile devices
+                infoIcon.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    tooltipWrapper.classList.toggle('active');
+                });
+
+                // Close tooltip when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!tooltipWrapper.contains(e.target)) {
+                        tooltipWrapper.classList.remove('active');
+                    }
+                });
+            }
+        });
     </script>
 
     {{-- ================================================================ --}}
