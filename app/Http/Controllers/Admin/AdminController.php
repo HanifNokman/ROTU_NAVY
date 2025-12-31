@@ -70,12 +70,12 @@ class AdminController extends Controller
             })
             ->values();
 
+        // For Admin: Show all intake years from Intake 11 (2022) onwards to current year
+        // Example: In 2025, show Intake 11 (2022), Intake 12 (2023), Intake 13 (2024), Intake 14 (2025)
+        // Example: In 2026, show Intake 11 (2022), Intake 12 (2023), Intake 13 (2024), Intake 14 (2025), Intake 15 (2026)
         $currentYear = now()->year;
-        $minYear = $currentYear - 3;
-        $intakeYears = collect(range($currentYear, $minYear))->filter(function($year) {
-            $intakeNumber = $year - 2011;
-            return $intakeNumber > 0;
-        });
+        $startYear = 2022; // Intake 11 (2022)
+        $intakeYears = collect(range($startYear, $currentYear));
 
         $intakes = $intakeYears->map(function($year) {
             $intakeNumber = $year - 2011;
