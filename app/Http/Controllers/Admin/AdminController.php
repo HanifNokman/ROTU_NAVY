@@ -31,13 +31,16 @@ class AdminController extends Controller
     public function userManagement(Request $request)
     {
         $cadetsQuery = Cadet::with('user');
-        
-        if ($request->has('intake') && $request->intake == 'no_intake') {
+
+        // Default to "No Intake Year" if no filter is selected
+        $intakeFilter = $request->get('intake', 'no_intake');
+
+        if ($intakeFilter == 'no_intake') {
             $cadetsQuery->whereNull('intake_year');
-        } elseif ($request->has('intake') && $request->intake) {
-            $cadetsQuery->where('intake_year', $request->intake);
+        } elseif ($intakeFilter) {
+            $cadetsQuery->where('intake_year', $intakeFilter);
         }
-        
+
         $cadets = $cadetsQuery->orderBy('service_number')->get();
 
         $rankOrder = [

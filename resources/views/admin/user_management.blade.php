@@ -73,9 +73,9 @@
                             <div>
                                 <label for="intake" class="block text-sm font-medium text-gray-700">Filter by Intake:</label>
                                 <select name="intake" id="intake" onchange="this.form.submit()" class="mt-1 block w-48 pl-3 pr-10 py-1 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md">
-                                    <option value="no_intake" @if($request->intake == 'no_intake') selected @endif>No Intake Year</option>
+                                    <option value="no_intake" @if(!$request->has('intake') || $request->intake == 'no_intake') selected @endif>No Intake Year</option>
                                     @foreach($intakes as $intake)
-                                        <option value="{{ $intake['year'] }}" @if($request->intake == $intake['year'] || (!$request->intake && $loop->first)) selected @endif>{{ $intake['label'] }}</option>
+                                        <option value="{{ $intake['year'] }}" @if($request->intake == $intake['year']) selected @endif>{{ $intake['label'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
