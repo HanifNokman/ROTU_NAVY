@@ -1250,43 +1250,43 @@
                     <div class="overflow-hidden rounded-xl border border-gray-200">
                         {{-- Table Header --}}
                         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 sticky top-0 z-10">
-                            <div class="grid grid-cols-7 gap-4 px-6 py-4">
-                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">No.</div>
-                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Service No.</div>
-                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Rank</div>
-                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Name</div>
-                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Position</div>
-                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Expertise</div>
-                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Time in Service</div>
+                            <div class="flex items-center px-6 py-4 gap-4">
+                                <div class="w-12 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">No.</div>
+                                <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Service No.</div>
+                                <div class="w-20 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Rank</div>
+                                <div class="flex-1 min-w-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Name</div>
+                                <div class="w-36 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Position</div>
+                                <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Expertise</div>
+                                <div class="w-28 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Time in Service</div>
                             </div>
                         </div>
 
                         {{-- Table Body (Scrollable) --}}
                         <div class="overflow-y-auto bg-white" style="max-height: 500px;">
                             @forelse($otherInstructors as $index => $otherInstructor)
-                                <div class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-150 instructor-row px-6 py-4"
+                                <div class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-150 instructor-row"
                                      data-instructor-id="{{ $otherInstructor->id }}"
                                      onclick="showInstructorProfile({{ $otherInstructor->id }})">
-                                    <div class="grid grid-cols-7 gap-4 items-center">
-                                        <div class="text-sm font-semibold text-gray-700">{{ $index + 1 }}</div>
-                                        <div class="text-sm text-gray-900">{{ $otherInstructor->service_number ?? 'N/A' }}</div>
-                                        <div class="text-sm">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <div class="flex items-center px-6 py-4 gap-4">
+                                        <div class="w-12 flex-shrink-0 text-sm font-semibold text-gray-700">{{ $index + 1 }}</div>
+                                        <div class="w-24 flex-shrink-0 text-sm text-gray-900 truncate">{{ $otherInstructor->service_number ?? 'N/A' }}</div>
+                                        <div class="w-20 flex-shrink-0 text-sm">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">
                                                 {{ $otherInstructor->rank ?? 'N/A' }}
                                             </span>
                                         </div>
-                                        <div class="text-sm font-medium text-gray-900">{{ $otherInstructor->user->name ?? 'N/A' }}</div>
-                                        <div class="text-sm">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        <div class="flex-1 min-w-0 text-sm font-medium text-gray-900 truncate">{{ $otherInstructor->user->name ?? 'N/A' }}</div>
+                                        <div class="w-36 flex-shrink-0 text-sm">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 whitespace-nowrap">
                                                 {{ $otherInstructor->position ?? 'N/A' }}
                                             </span>
                                         </div>
-                                        <div class="text-sm">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <div class="w-24 flex-shrink-0 text-sm">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">
                                                 {{ $otherInstructor->expertise ?? 'N/A' }}
                                             </span>
                                         </div>
-                                        <div class="text-sm font-medium text-gray-700">
+                                        <div class="w-28 flex-shrink-0 text-sm font-medium text-gray-700 whitespace-nowrap">
                                             {{ $otherInstructor->time_in_service ? $otherInstructor->time_in_service . ' ' . Str::plural('year', $otherInstructor->time_in_service) : 'N/A' }}
                                         </div>
                                     </div>
