@@ -1263,7 +1263,9 @@
                                 </thead>
                                 <tbody>
                                     @forelse($otherInstructors as $index => $otherInstructor)
-                                        <tr>
+                                        <tr class="cursor-pointer hover:bg-gray-50 transition-colors duration-150 instructor-row"
+                                            data-instructor-id="{{ $otherInstructor->id }}"
+                                            onclick="showInstructorProfile({{ $otherInstructor->id }})">
                                             <td class="font-semibold text-gray-700 text-xs">{{ $index + 1 }}</td>
                                             <td class="text-gray-900 text-xs">{{ $otherInstructor->service_number ?? 'N/A' }}</td>
                                             <td>
@@ -1345,6 +1347,27 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    {{-- ================================================================ --}}
+    {{-- INSTRUCTOR PROFILE MODAL --}}
+    {{-- ================================================================ --}}
+    <div id="instructorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Instructor Profile</h3>
+                        <button id="closeInstructorModal" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="instructorProfileContent"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1585,6 +1608,115 @@
                 }
             }
         };
+    });
+
+    // ================================================================
+    // FUNCTION: Show Instructor Profile Modal
+    // ================================================================
+    function showInstructorProfile(instructorId) {
+        fetch(`/instructor/instructors/${instructorId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data.success || !data.instructor) {
+                    throw new Error('Invalid response format');
+                }
+
+                const instructor = data.instructor;
+                const user = instructor.user || {};
+
+                // Build past units list
+                let pastUnitsHtml = '';
+                if (instructor.past_unit && Array.isArray(instructor.past_unit) && instructor.past_unit.length > 0) {
+                    pastUnitsHtml = instructor.past_unit.map(unit =>
+                        `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">${unit}</span>`
+                    ).join(' ');
+                } else {
+                    pastUnitsHtml = '<span class="text-gray-500 text-sm">None</span>';
+                }
+
+                const profileContent = `
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Name</div>
+                                <div class="text-base font-semibold text-gray-900">${user.name || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Service Number</div>
+                                <div class="text-base font-semibold text-gray-900">${instructor.service_number || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Rank</div>
+                                <div class="text-base font-semibold text-gray-900">${instructor.rank || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Position</div>
+                                <div class="text-base font-semibold text-gray-900">${instructor.position || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Expertise</div>
+                                <div class="text-base font-semibold text-gray-900">${instructor.expertise || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Time in Service</div>
+                                <div class="text-base font-semibold text-gray-900">
+                                    ${instructor.time_in_service ? instructor.time_in_service + (instructor.time_in_service == 1 ? ' year' : ' years') : 'N/A'}
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Email</div>
+                                <div class="text-base font-semibold text-gray-900">${user.email || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Phone Number</div>
+                                <div class="text-base font-semibold text-gray-900">${instructor.phone_number || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
+                                <div class="text-sm text-gray-600 mb-2">Past Units</div>
+                                <div class="flex flex-wrap gap-2">${pastUnitsHtml}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">TTP Status</div>
+                                <div class="text-base font-semibold text-gray-900">${instructor.ttp || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-600 mb-1">Status</div>
+                                <div class="text-base font-semibold text-gray-900">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${instructor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                        ${instructor.status || 'N/A'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('instructorProfileContent').innerHTML = profileContent;
+                document.getElementById('instructorModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error fetching instructor profile:', error);
+                alert('Failed to load instructor profile: ' + error.message);
+            });
+    }
+
+    // ================================================================
+    // EVENT LISTENERS: Instructor Modal Controls
+    // ================================================================
+    document.getElementById('closeInstructorModal').addEventListener('click', function() {
+        document.getElementById('instructorModal').classList.add('hidden');
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('instructorModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
     });
 
     // ================================================================

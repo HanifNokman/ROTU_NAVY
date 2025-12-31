@@ -664,4 +664,33 @@ class InstructorDashboardController extends Controller
 
         return redirect()->back()->with('success', 'Duty count updated successfully.');
     }
+
+    // ================================================================
+    // SHOW INSTRUCTOR PROFILE
+    // ================================================================
+
+    public function show($id)
+    {
+        try {
+            $instructor = Instructor::with('user')->findOrFail($id);
+
+            // Decode past_unit if it's JSON
+            if ($instructor->past_unit) {
+                $decoded = json_decode($instructor->past_unit, true);
+                $instructor->past_unit = json_last_error() === JSON_ERROR_NONE
+                    ? (is_array($decoded) ? $decoded : [$decoded])
+                    : [$instructor->past_unit];
+            }
+
+            return response()->json([
+                'success' => true,
+                'instructor' => $instructor
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Instructor not found'
+            ], 404);
+        }
+    }
 }

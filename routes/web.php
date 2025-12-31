@@ -182,6 +182,7 @@ Route::middleware(['auth', 'verified'])->prefix('instructor')->name('instructor.
 
     Route::match(['get', 'post'], '/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
     Route::post('/increment-duty', [InstructorDashboardController::class, 'incrementDuty'])->name('incrementDuty');
+    Route::get('/instructors/{id}', [InstructorDashboardController::class, 'show'])->name('instructors.show');
 
     // ------------------------------------------------------------------------
     // Pending Verification
