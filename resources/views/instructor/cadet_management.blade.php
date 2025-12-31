@@ -539,7 +539,7 @@
             {{-- ================================================================ --}}
             {{-- PAGE TITLE SECTION --}}
             {{-- ================================================================ --}}
-            <div class="text-center mb-8">
+            <div class="text-center mb-8 relative">
                 <div class="inline-flex items-center justify-center w-20 h-20 gradient-blue rounded-2xl shadow-lg mb-4">
                     <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -549,6 +549,20 @@
                     Cadet Administration
                 </h1>
                 <p class="text-lg text-gray-600">Manage cadet information, positions, and qualifications</p>
+
+                {{-- Tauliah Settings Button --}}
+                <button
+                    type="button"
+                    onclick="openTauliahModal()"
+                    class="absolute top-0 right-0 sm:top-0 sm:right-4 md:right-8"
+                    aria-label="Tauliah Date Settings">
+                    <div class="flex items-center space-x-1 sm:space-x-2 bg-white hover:bg-green-50 border-2 border-green-500 hover:border-green-600 text-green-700 px-2 py-1.5 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl active:scale-95 sm:hover:scale-105 transition-all duration-200 cursor-pointer">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="font-bold text-xs sm:text-base whitespace-nowrap">Tauliah Settings</span>
+                    </div>
+                </button>
             </div>
 
             {{-- ================================================================ --}}
@@ -1169,6 +1183,77 @@
 
     {{-- Mobile Bottom Spacer --}}
     <div class="block md:hidden h-20"></div>
+
+    {{-- ================================================================ --}}
+    {{-- TAULIAH SETTINGS MODAL --}}
+    {{-- ================================================================ --}}
+    <div id="tauliahModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-4 sm:p-5 border w-11/12 sm:w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900">Tauliah Date Settings</h3>
+                    <button onclick="closeTauliahModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="text-sm text-gray-600 mb-4">
+                    Set the ceremony date for Tauliah promotion. Year is automatically calculated as Intake Year + 3.
+                </p>
+
+                <form id="tauliahForm" class="space-y-4">
+                    <div>
+                        <label for="tauliahMonth" class="block text-sm font-medium text-gray-700 mb-1">
+                            Month
+                        </label>
+                        <select id="tauliahMonth" name="tauliah_month" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="1" {{ $tauliahMonth == 1 ? 'selected' : '' }}>January</option>
+                            <option value="2" {{ $tauliahMonth == 2 ? 'selected' : '' }}>February</option>
+                            <option value="3" {{ $tauliahMonth == 3 ? 'selected' : '' }}>March</option>
+                            <option value="4" {{ $tauliahMonth == 4 ? 'selected' : '' }}>April</option>
+                            <option value="5" {{ $tauliahMonth == 5 ? 'selected' : '' }}>May</option>
+                            <option value="6" {{ $tauliahMonth == 6 ? 'selected' : '' }}>June</option>
+                            <option value="7" {{ $tauliahMonth == 7 ? 'selected' : '' }}>July</option>
+                            <option value="8" {{ $tauliahMonth == 8 ? 'selected' : '' }}>August</option>
+                            <option value="9" {{ $tauliahMonth == 9 ? 'selected' : '' }}>September</option>
+                            <option value="10" {{ $tauliahMonth == 10 ? 'selected' : '' }}>October</option>
+                            <option value="11" {{ $tauliahMonth == 11 ? 'selected' : '' }}>November</option>
+                            <option value="12" {{ $tauliahMonth == 12 ? 'selected' : '' }}>December</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="tauliahDay" class="block text-sm font-medium text-gray-700 mb-1">
+                            Day
+                        </label>
+                        <input type="number" id="tauliahDay" name="tauliah_day" min="1" max="31"
+                               value="{{ $tauliahDay }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+                        <p class="text-xs sm:text-sm text-blue-800">
+                            <strong>Note:</strong> This applies to all cadets. Promotion year = Intake Year + 3.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
+                        <button type="button" onclick="closeTauliahModal()"
+                                class="w-full sm:flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="w-full sm:flex-1 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors">
+                            Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     {{-- ================================================================ --}}
     {{-- JAVASCRIPT --}}
@@ -3085,6 +3170,59 @@ document.addEventListener('DOMContentLoaded', function() {
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
         }, 500);
+    }
+});
+
+// ================================================================
+// TAULIAH SETTINGS MODAL FUNCTIONS
+// ================================================================
+function openTauliahModal() {
+    document.getElementById('tauliahModal').classList.remove('hidden');
+}
+
+function closeTauliahModal() {
+    document.getElementById('tauliahModal').classList.add('hidden');
+}
+
+// Handle Tauliah settings form submission
+document.getElementById('tauliahForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+        tauliah_month: document.getElementById('tauliahMonth').value,
+        tauliah_day: document.getElementById('tauliahDay').value
+    };
+
+    fetch('{{ route('cadets.tauliah-settings') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Tauliah date settings updated successfully!');
+            closeTauliahModal();
+            // Optionally reload the page to reflect changes
+            location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to update settings'));
+        }
+    })
+    .catch(error => {
+        console.error('Error updating Tauliah settings:', error);
+        alert('Failed to update settings. Please try again.');
+    });
+});
+
+// Close modal when clicking outside
+document.getElementById('tauliahModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeTauliahModal();
     }
 });
     </script>
