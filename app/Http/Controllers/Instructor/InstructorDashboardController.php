@@ -125,14 +125,39 @@ class InstructorDashboardController extends Controller
         // GET OTHER INSTRUCTORS
         // ================================================================
 
+        // Define rank hierarchy for proper sorting (from highest to lowest)
+        // Based on system hierarchy: Kpt (highest) to LKII (lowest)
+        $rankOrder = [
+            'Kpt' => 1,         
+            'Kdr' => 2,         
+            'Lt Kdr' => 3,      
+            'Lt' => 4,         
+            'Lt Dya' => 5,      
+            'Lt M' => 6,        
+            'PWI' => 7,        
+            'PWII' => 8,        
+            'BK' => 9,         
+            'BM' => 10,         
+            'LK' => 11,         
+            'LKI' => 12,        
+            'LKII' => 13,       
+        ];
+
         $otherInstructors = Instructor::with('user')
             ->where('user_id', '!=', $user->id)
             ->whereHas('user', function($query) {
                 $query->where('role', 'instructor');
             })
-            ->orderBy('rank', 'asc')
-            ->orderBy('time_in_service', 'desc')
-            ->get();
+            ->get()
+            ->sortBy(function($instructor) use ($rankOrder) {
+                // Get rank order value, default to 999 for unknown ranks (they go last)
+                $rankValue = $rankOrder[$instructor->rank] ?? 999;
+                // Secondary sort by time in service (descending)
+                $timeInService = $instructor->time_in_service ?? 0;
+                // Combine: lower rank number first, then higher time in service
+                return [$rankValue, -$timeInService];
+            })
+            ->values();
 
         // ================================================================
         // VIEW RENDERING
