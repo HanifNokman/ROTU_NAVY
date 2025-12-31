@@ -25,8 +25,9 @@
                     </div>
                     <div class="flex flex-col justify-center">
                         <x-input-label for="profile_pic" :value="__('Profile Picture')" class="text-sm font-semibold text-gray-700 mb-2" />
-                        <input id="profile_pic" name="profile_pic" type="file" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer border border-gray-300 rounded-lg transition-all" accept="image/*" />
-                        <p class="mt-2 text-xs text-gray-500">Recommended: Square image, at least 128x128 pixels</p>
+                        <input id="profile_pic" name="profile_pic" type="file" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer border border-gray-300 rounded-lg transition-all" accept="image/*" onchange="validateFileSize(this, 'cadet')" />
+                        <p class="mt-2 text-xs text-gray-500">Recommended: Square image, at least 128x128 pixels. Max size: 2MB</p>
+                        <p id="file-size-error-cadet" class="mt-2 text-xs text-red-600 hidden"></p>
                         <x-input-error class="mt-2" :messages="$errors->get('profile_pic')" />
                     </div>
                 </div>
@@ -289,8 +290,9 @@
                     </div>
                     <div class="flex flex-col justify-center">
                         <x-input-label for="profile_pic" :value="__('Profile Picture')" class="text-sm font-semibold text-gray-700 mb-2" />
-                        <input id="profile_pic" name="profile_pic" type="file" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-lg transition-all" accept="image/*" />
-                        <p class="mt-2 text-xs text-gray-500">Recommended: Square image, at least 128x128 pixels</p>
+                        <input id="profile_pic" name="profile_pic" type="file" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-lg transition-all" accept="image/*" onchange="validateFileSize(this, 'instructor')" />
+                        <p class="mt-2 text-xs text-gray-500">Recommended: Square image, at least 128x128 pixels. Max size: 2MB</p>
+                        <p id="file-size-error-instructor" class="mt-2 text-xs text-red-600 hidden"></p>
                         <x-input-error class="mt-2" :messages="$errors->get('profile_pic')" />
                     </div>
                 </div>
@@ -480,4 +482,30 @@
             </div>
         </form>
     @endif
+
+    <script>
+        function validateFileSize(input, role) {
+            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+            const errorElement = document.getElementById('file-size-error-' + role);
+            const submitButton = input.closest('form').querySelector('button[type="submit"]');
+
+            if (input.files && input.files[0]) {
+                const fileSize = input.files[0].size;
+                const fileName = input.files[0].name;
+
+                if (fileSize > maxSize) {
+                    const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+                    errorElement.textContent = `File size (${fileSizeMB}MB) exceeds the maximum limit of 2MB. Please choose a smaller image.`;
+                    errorElement.classList.remove('hidden');
+                    input.value = ''; // Clear the file input
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    errorElement.classList.add('hidden');
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+    </script>
 </section>
