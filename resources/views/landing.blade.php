@@ -2279,6 +2279,15 @@
                 min-height: auto;
             }
 
+            .timeline-content h3 {
+                font-size: 1.2rem !important;
+            }
+
+            .timeline-content p {
+                font-size: 0.8rem !important;
+                line-height: 1.5 !important;
+            }
+
             /* Application section - QR code */
             .qr-code-container {
                 width: 240px;
