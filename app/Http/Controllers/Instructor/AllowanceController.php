@@ -23,10 +23,9 @@ class AllowanceController extends Controller
         $selectedYear = $request->get('year', $currentYear);
         $selectedMonth = $request->get('month', $currentMonth);
 
-        $years = [];
-        for ($i = 0; $i < 4; $i++) {
-            $years[] = $currentYear - $i;
-        }
+        // Show all years from 2023 onwards to keep historical records
+        $startYear = 2023;
+        $years = range($currentYear, $startYear);  // Descending order: 2026, 2025, 2024, 2023
 
         $monthsWithTrainings = Training::whereYear('start_datetime', $selectedYear)
             ->selectRaw('MONTH(start_datetime) as month')
