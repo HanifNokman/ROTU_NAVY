@@ -3204,10 +3204,11 @@ document.getElementById('tauliahForm').addEventListener('submit', function(e) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Response:', data);
         if (data.success) {
-            alert('Tauliah date settings updated successfully!');
+            alert('Tauliah date settings updated successfully!\nMonth: ' + data.data.month + ', Day: ' + data.data.day);
             closeTauliahModal();
-            // Optionally reload the page to reflect changes
+            // Reload the page to reflect changes
             location.reload();
         } else {
             alert('Error: ' + (data.message || 'Failed to update settings'));
