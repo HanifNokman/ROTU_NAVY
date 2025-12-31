@@ -1248,60 +1248,59 @@
                     x-transition:enter-start="opacity-0 transform -translate-y-2"
                     x-transition:enter-end="opacity-100 transform translate-y-0">
                     <div class="overflow-hidden rounded-xl border border-gray-200">
-                        <div class="max-h-[500px] overflow-y-auto overflow-x-auto custom-scrollbar">
-                            <table class="data-table text-sm">
-                                <thead>
-                                    <tr>
-                                        <th class="text-xs">No.</th>
-                                        <th class="text-xs">Service No.</th>
-                                        <th class="text-xs">Rank</th>
-                                        <th class="text-xs">Name</th>
-                                        <th class="text-xs">Position</th>
-                                        <th class="text-xs">Expertise</th>
-                                        <th class="text-xs">Time in Service</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($otherInstructors as $index => $otherInstructor)
-                                        <tr class="cursor-pointer hover:bg-gray-50 transition-colors duration-150 instructor-row"
-                                            data-instructor-id="{{ $otherInstructor->id }}"
-                                            onclick="showInstructorProfile({{ $otherInstructor->id }})">
-                                            <td class="font-semibold text-gray-700 text-xs">{{ $index + 1 }}</td>
-                                            <td class="text-gray-900 text-xs">{{ $otherInstructor->service_number ?? 'N/A' }}</td>
-                                            <td>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                    {{ $otherInstructor->rank ?? 'N/A' }}
-                                                </span>
-                                            </td>
-                                            <td class="font-semibold text-gray-900 text-xs">{{ $otherInstructor->user->name ?? 'N/A' }}</td>
-                                            <td>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                                    {{ $otherInstructor->position ?? 'N/A' }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    {{ $otherInstructor->expertise ?? 'N/A' }}
-                                                </span>
-                                            </td>
-                                            <td class="font-semibold text-gray-700 text-xs">
-                                                {{ $otherInstructor->time_in_service ? $otherInstructor->time_in_service . ' ' . Str::plural('year', $otherInstructor->time_in_service) : 'N/A' }}
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="7" class="px-4 py-12 text-center">
-                                                <div class="flex flex-col items-center">
-                                                    <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                                    </svg>
-                                                    <p class="text-gray-500 text-lg font-medium">No other instructors found.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                        {{-- Table Header --}}
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 sticky top-0 z-10">
+                            <div class="grid grid-cols-7 gap-4 px-6 py-4">
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">No.</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Service No.</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Rank</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Name</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Position</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Expertise</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wider">Time in Service</div>
+                            </div>
+                        </div>
+
+                        {{-- Table Body (Scrollable) --}}
+                        <div class="overflow-y-auto bg-white" style="max-height: 500px;">
+                            @forelse($otherInstructors as $index => $otherInstructor)
+                                <div class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-150 instructor-row px-6 py-4"
+                                     data-instructor-id="{{ $otherInstructor->id }}"
+                                     onclick="showInstructorProfile({{ $otherInstructor->id }})">
+                                    <div class="grid grid-cols-7 gap-4 items-center">
+                                        <div class="text-sm font-semibold text-gray-700">{{ $index + 1 }}</div>
+                                        <div class="text-sm text-gray-900">{{ $otherInstructor->service_number ?? 'N/A' }}</div>
+                                        <div class="text-sm">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {{ $otherInstructor->rank ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm font-medium text-gray-900">{{ $otherInstructor->user->name ?? 'N/A' }}</div>
+                                        <div class="text-sm">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                {{ $otherInstructor->position ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                {{ $otherInstructor->expertise ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm font-medium text-gray-700">
+                                            {{ $otherInstructor->time_in_service ? $otherInstructor->time_in_service . ' ' . Str::plural('year', $otherInstructor->time_in_service) : 'N/A' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center">
+                                        <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        <p class="text-gray-500 text-lg font-medium">No other instructors found.</p>
+                                    </div>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -1629,6 +1628,16 @@
                 const instructor = data.instructor;
                 const user = instructor.user || {};
 
+                // Build profile picture HTML
+                let profilePicHtml = '';
+                if (instructor.profile_pic) {
+                    const profilePicUrl = `/storage/${instructor.profile_pic}`;
+                    profilePicHtml = `<img src="${profilePicUrl}" alt="Profile" class="w-full h-full object-cover">`;
+                } else {
+                    const fallbackAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Instructor')}`;
+                    profilePicHtml = `<img src="${fallbackAvatarUrl}" alt="Profile" class="w-full h-full object-cover">`;
+                }
+
                 // Build past units list
                 let pastUnitsHtml = '';
                 if (instructor.past_unit && Array.isArray(instructor.past_unit) && instructor.past_unit.length > 0) {
@@ -1639,58 +1648,118 @@
                     pastUnitsHtml = '<span class="text-gray-500 text-sm">None</span>';
                 }
 
+                // Calculate dynamic font size for rank + name based on total length
+                const fullName = `${instructor.rank || 'Instructor'} ${user.name}`;
+                const nameLength = fullName.length;
+                let nameFontSize = 'text-3xl'; // Default size for short names
+                let nameFontSizeMobile = 'text-2xl'; // Default mobile size
+
+                if (nameLength > 45) {
+                    nameFontSize = 'text-sm';
+                    nameFontSizeMobile = 'text-xs';
+                } else if (nameLength > 40) {
+                    nameFontSize = 'text-base';
+                    nameFontSizeMobile = 'text-sm';
+                } else if (nameLength > 35) {
+                    nameFontSize = 'text-lg';
+                    nameFontSizeMobile = 'text-base';
+                } else if (nameLength > 30) {
+                    nameFontSize = 'text-xl';
+                    nameFontSizeMobile = 'text-lg';
+                } else if (nameLength > 25) {
+                    nameFontSize = 'text-2xl';
+                    nameFontSizeMobile = 'text-xl';
+                }
+
                 const profileContent = `
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Name</div>
-                                <div class="text-base font-semibold text-gray-900">${user.name || 'N/A'}</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Service Number</div>
-                                <div class="text-base font-semibold text-gray-900">${instructor.service_number || 'N/A'}</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Rank</div>
-                                <div class="text-base font-semibold text-gray-900">${instructor.rank || 'N/A'}</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Position</div>
-                                <div class="text-base font-semibold text-gray-900">${instructor.position || 'N/A'}</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Expertise</div>
-                                <div class="text-base font-semibold text-gray-900">${instructor.expertise || 'N/A'}</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Time in Service</div>
-                                <div class="text-base font-semibold text-gray-900">
-                                    ${instructor.time_in_service ? instructor.time_in_service + (instructor.time_in_service == 1 ? ' year' : ' years') : 'N/A'}
+                    <!-- Header Card: Profile Info -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+                        <!-- Profile Section -->
+                        <div class="px-4 py-6 md:px-8 md:py-8">
+                            <div class="flex flex-col md:flex-row items-start gap-6">
+                                <!-- Top Row: Profile Picture + Info -->
+                                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 w-full">
+                                    <!-- Profile Picture - Rounded Vertical Rectangle -->
+                                    <div class="w-24 h-32 md:w-28 md:h-36 flex-shrink-0 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-200 shadow-lg p-1">
+                                        <div class="w-full h-full rounded-xl overflow-hidden bg-white">
+                                            ${profilePicHtml}
+                                        </div>
+                                    </div>
+
+                                    <!-- Name and Details Section -->
+                                    <div class="flex-1 text-center md:text-left">
+                                        <h3 class="${nameFontSizeMobile} md:${nameFontSize} font-bold text-gray-900 break-words leading-tight mb-4">${fullName}</h3>
+
+                                        <div class="space-y-2.5 text-sm md:text-base text-gray-700">
+                                            <div class="flex flex-col md:flex-row md:items-center gap-1">
+                                                <span class="font-semibold text-gray-800">Service Number:</span>
+                                                <span class="text-gray-600">${instructor.service_number || 'N/A'}</span>
+                                            </div>
+                                            <div class="flex flex-col md:flex-row md:items-center gap-1">
+                                                <span class="font-semibold text-gray-800">Position:</span>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                    ${instructor.position || 'N/A'}
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-col md:flex-row md:items-center gap-1">
+                                                <span class="font-semibold text-gray-800">Status:</span>
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${instructor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                                    ${instructor.status || 'N/A'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Email</div>
-                                <div class="text-base font-semibold text-gray-900">${user.email || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    <!-- Information Sections Grid -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h5 class="font-medium text-gray-900 border-b pb-2">Contact Information</h5>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Email:</span>
+                                        <span class="font-medium">${user.email || 'N/A'}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Phone:</span>
+                                        <span class="font-medium">${instructor.phone_number || 'N/A'}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Phone Number</div>
-                                <div class="text-base font-semibold text-gray-900">${instructor.phone_number || 'N/A'}</div>
+
+                            <div class="space-y-4">
+                                <h5 class="font-medium text-gray-900 border-b pb-2">Military Information</h5>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Rank:</span>
+                                        <span class="font-medium">${instructor.rank || 'N/A'}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Expertise:</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            ${instructor.expertise || 'N/A'}
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Time in Service:</span>
+                                        <span class="font-medium">
+                                            ${instructor.time_in_service ? instructor.time_in_service + (instructor.time_in_service == 1 ? ' year' : ' years') : 'N/A'}
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">TTP Status:</span>
+                                        <span class="font-medium">${instructor.ttp || 'N/A'}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
-                                <div class="text-sm text-gray-600 mb-2">Past Units</div>
+
+                            <div class="space-y-4 md:col-span-2">
+                                <h5 class="font-medium text-gray-900 border-b pb-2">Past Units</h5>
                                 <div class="flex flex-wrap gap-2">${pastUnitsHtml}</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">TTP Status</div>
-                                <div class="text-base font-semibold text-gray-900">${instructor.ttp || 'N/A'}</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm text-gray-600 mb-1">Status</div>
-                                <div class="text-base font-semibold text-gray-900">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${instructor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                                        ${instructor.status || 'N/A'}
-                                    </span>
-                                </div>
                             </div>
                         </div>
                     </div>
