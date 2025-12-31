@@ -39,3 +39,15 @@ Schedule::command('notifications:cleanup')
     ->name('cleanup-old-notifications')
     ->withoutOverlapping()
     ->onOneServer();
+
+// ============================================================================
+// CADET PROMOTION SYSTEM
+// ============================================================================
+
+// Automatically promote cadets to Lt M when they reach their Tauliah date
+// Runs daily at 1:00 AM
+Schedule::command('cadets:promote-to-ltm')
+    ->dailyAt('01:00')
+    ->name('automatic-cadet-promotion')
+    ->withoutOverlapping()
+    ->onOneServer();
