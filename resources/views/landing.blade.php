@@ -2298,12 +2298,12 @@
             }
 
             .timeline-content h3 {
-                font-size: 1.2rem !important;
+                font-size: 1rem !important;
             }
 
             .timeline-content p {
-                font-size: 0.8rem !important;
-                line-height: 1.5 !important;
+                font-size: 0.7rem !important;
+                line-height: 1.4 !important;
             }
 
             /* Application section - QR code */
