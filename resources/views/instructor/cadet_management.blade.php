@@ -3193,7 +3193,7 @@ document.getElementById('tauliahForm').addEventListener('submit', function(e) {
         tauliah_day: document.getElementById('tauliahDay').value
     };
 
-    fetch('{{ route('cadets.tauliah-settings') }}', {
+    fetch('{{ route('instructor.cadets.tauliah-settings') }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
