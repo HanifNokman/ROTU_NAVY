@@ -27,15 +27,6 @@ class CadetDashboardController extends Controller
             ])
             ->firstOrFail();
 
-        $intakeYear = $cadet->intake_year ?? now()->year;
-        $tauliahDate = \Carbon\Carbon::createFromDate($intakeYear + 3, 9, 15);
-
-        if (now()->greaterThanOrEqualTo($tauliahDate) && $cadet->rank !== 'Lt M') {
-            $cadet->rank = 'Lt M';
-            $cadet->cadet_status = 'Completed';
-            $cadet->save();
-        }
-
         // Sort displayed badges by rarity (rarest first) and limit to 12
         $cadet->setRelation('cadetBadges', $cadet->cadetBadges->sortByDesc(function($cadetBadge) {
             return $cadetBadge->badge->rarity_level;
