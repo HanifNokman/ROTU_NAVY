@@ -92,6 +92,7 @@ class AdminController extends Controller
 
         $totalUsers = User::count();
         $totalActiveCadets = Cadet::where('cadet_status', 'Active')->count();
+        $totalCommissionedCadets = Cadet::where('cadet_status', 'Completed')->count();
         $totalActiveInstructors = Instructor::where('status', 'Active')->count();
 
         return view('admin.user_management', compact(
@@ -102,6 +103,7 @@ class AdminController extends Controller
             'request',
             'totalUsers',
             'totalActiveCadets',
+            'totalCommissionedCadets',
             'totalActiveInstructors'
         ));
     }

@@ -11,7 +11,7 @@
             {{-- ================================================================ --}}
             {{-- SUMMARY CARDS --}}
             {{-- ================================================================ --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
                 {{-- Total Users --}}
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
@@ -37,8 +37,23 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <div class="text-sm font-medium text-gray-500">Total Active Cadets</div>
+                            <div class="text-sm font-medium text-gray-500">Active Cadets</div>
                             <div class="text-2xl font-semibold text-gray-900">{{ $totalActiveCadets }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Total Commissioned Cadets --}}
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-500">Commissioned Cadets</div>
+                            <div class="text-2xl font-semibold text-gray-900">{{ $totalCommissionedCadets }}</div>
                         </div>
                     </div>
                 </div>
@@ -52,7 +67,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <div class="text-sm font-medium text-gray-500">Total Active Instructors</div>
+                            <div class="text-sm font-medium text-gray-500">Active Instructors</div>
                             <div class="text-2xl font-semibold text-gray-900">{{ $totalActiveInstructors }}</div>
                         </div>
                     </div>
