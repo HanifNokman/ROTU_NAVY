@@ -122,6 +122,19 @@ class InstructorDashboardController extends Controller
         $notifications = $user->notifications()->latest()->take(10)->get();
 
         // ================================================================
+        // GET OTHER INSTRUCTORS
+        // ================================================================
+
+        $otherInstructors = Instructor::with('user')
+            ->where('user_id', '!=', $user->id)
+            ->whereHas('user', function($query) {
+                $query->where('role', 'instructor');
+            })
+            ->orderBy('rank', 'asc')
+            ->orderBy('time_in_service', 'desc')
+            ->get();
+
+        // ================================================================
         // VIEW RENDERING
         // ================================================================
 
@@ -140,6 +153,7 @@ class InstructorDashboardController extends Controller
             'absentCadets' => $absentCadets,
             'absenceLeaderboard' => $absenceLeaderboard,
             'notifications' => $notifications,
+            'otherInstructors' => $otherInstructors,
         ]);
     }
     // ================================================================

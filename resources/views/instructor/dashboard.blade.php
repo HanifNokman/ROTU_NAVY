@@ -1214,6 +1214,97 @@
                     </div>
                 </div>
             </div>
+
+            {{-- ================================================================ --}}
+            {{-- OTHER INSTRUCTORS SECTION --}}
+            {{-- ================================================================ --}}
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-2xl dashboard-card"
+                x-data="{ open: false }">
+                <div class="section-header cursor-pointer"
+                    @click="open = !open">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <div class="icon-wrapper gradient-blue mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">Other Instructors</h2>
+                            </div>
+                            <p class="text-gray-600 ml-13">View all instructors and their information</p>
+                        </div>
+                        <svg class="w-6 h-6 text-gray-400 transform transition-transform duration-300"
+                            :class="{ 'rotate-180': open }"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-8"
+                    x-show="open"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0">
+                    <div class="overflow-hidden rounded-xl border border-gray-200">
+                        <div class="max-h-[500px] overflow-y-auto overflow-x-auto custom-scrollbar">
+                            <table class="data-table text-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="text-xs">No.</th>
+                                        <th class="text-xs">Service No.</th>
+                                        <th class="text-xs">Rank</th>
+                                        <th class="text-xs">Name</th>
+                                        <th class="text-xs">Position</th>
+                                        <th class="text-xs">Expertise</th>
+                                        <th class="text-xs">Time in Service</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($otherInstructors as $index => $otherInstructor)
+                                        <tr>
+                                            <td class="font-semibold text-gray-700 text-xs">{{ $index + 1 }}</td>
+                                            <td class="text-gray-900 text-xs">{{ $otherInstructor->service_number ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    {{ $otherInstructor->rank ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="font-semibold text-gray-900 text-xs">{{ $otherInstructor->user->name ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                    {{ $otherInstructor->position ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    {{ $otherInstructor->expertise ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="font-semibold text-gray-700 text-xs">
+                                                {{ $otherInstructor->time_in_service ? $otherInstructor->time_in_service . ' ' . Str::plural('year', $otherInstructor->time_in_service) : 'N/A' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="px-4 py-12 text-center">
+                                                <div class="flex flex-col items-center">
+                                                    <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                    </svg>
+                                                    <p class="text-gray-500 text-lg font-medium">No other instructors found.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {{-- Mobile Bottom Spacer --}}
             <div class="block md:hidden h-20"></div>
         </div>
