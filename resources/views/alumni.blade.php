@@ -458,7 +458,7 @@
                                         }
                                     @endphp
                                     @if($otherCount > 0)
-                                    <div class="alumni-others-grid grid gap-4 sm:gap-4 w-full max-w-6xl justify-items-center
+                                    <div class="alumni-others-grid grid gap-4 sm:gap-4 w-full max-w-6xl place-content-center
                                         grid-cols-2 md:grid-cols-3 {{ $desktopCols }}">
                                         @foreach($others as $cadet)
                                         <div class="text-center">
