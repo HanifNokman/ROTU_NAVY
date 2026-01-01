@@ -34,7 +34,15 @@ class AllowanceController extends Controller
         $selectedMonth = $request->get('month', $currentMonth);
 
         // Use years that have training records, or fallback to 2023 onwards
-        $years = !empty($yearsWithTraining) ? $yearsWithTraining : range($effectiveYear, 2023);
+        if (!empty($yearsWithTraining)) {
+            $years = $yearsWithTraining;
+        } else {
+            // Ensure we have a valid range for the fallback
+            $startYear = 2023;
+            $years = $effectiveYear >= $startYear
+                ? range($effectiveYear, $startYear)
+                : [$effectiveYear];
+        }
 
         $monthsWithTrainings = Training::whereYear('start_datetime', $selectedYear)
             ->selectRaw('MONTH(start_datetime) as month')
@@ -55,6 +63,11 @@ class AllowanceController extends Controller
 
         if (empty($months)) {
             $months = $allMonths;
+        }
+
+        // If selected month doesn't have trainings, use the first available month
+        if (!isset($months[$selectedMonth]) && !empty($monthsWithTrainings)) {
+            $selectedMonth = $monthsWithTrainings[0];
         }
 
         $trainings = Training::whereYear('start_datetime', $selectedYear)
