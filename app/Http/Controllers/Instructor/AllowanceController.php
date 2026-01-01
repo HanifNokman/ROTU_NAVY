@@ -17,15 +17,24 @@ class AllowanceController extends Controller
 
     public function index(Request $request)
     {
-        $currentYear = Carbon::now()->year;
         $currentMonth = Carbon::now()->month;
 
-        $selectedYear = $request->get('year', $currentYear);
+        // Get distinct years from trainings table where trainings exist
+        $yearsWithTraining = Training::selectRaw('YEAR(start_datetime) as year')
+            ->groupBy('year')
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Determine the default selected year
+        $effectiveYear = \App\Models\Cadet::getEffectiveIntakeYear();
+        $defaultYear = !empty($yearsWithTraining) ? $yearsWithTraining[0] : $effectiveYear;
+
+        $selectedYear = $request->get('year', $defaultYear);
         $selectedMonth = $request->get('month', $currentMonth);
 
-        // Show all years from 2023 onwards to keep historical records
-        $startYear = 2023;
-        $years = range($currentYear, $startYear);  // Descending order: 2026, 2025, 2024, 2023
+        // Use years that have training records, or fallback to 2023 onwards
+        $years = !empty($yearsWithTraining) ? $yearsWithTraining : range($effectiveYear, 2023);
 
         $monthsWithTrainings = Training::whereYear('start_datetime', $selectedYear)
             ->selectRaw('MONTH(start_datetime) as month')
