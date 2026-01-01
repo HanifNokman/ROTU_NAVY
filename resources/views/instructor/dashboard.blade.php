@@ -617,7 +617,7 @@
                                         </div>
                                         <div>
                                             <p class="text-xs text-gray-500 font-medium">TTP</p>
-                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->ttp ?? '-' }}</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $instructor->ttp ? $instructor->ttp->format('d/m/Y') : '-' }}</p>
                                         </div>
                                     </div>
                                     <div class="info-item">
