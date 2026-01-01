@@ -17,11 +17,11 @@ class InventoryController extends Controller
 {
     public function index(Request $request)
     {
-        // Get intake years from current year down to 4 years back
-        $currentYear = date('Y');
+        // Get intake years from effective year down to 4 years back
+        $effectiveYear = \App\Models\Cadet::getEffectiveIntakeYear();
         $intakeYears = [];
         for ($i = 0; $i < 4; $i++) {
-            $year = $currentYear - $i;
+            $year = $effectiveYear - $i;
             $intakeNumber = $year - 2011;
             $intakeYears[] = [
                 'year' => $year,
@@ -725,12 +725,12 @@ class InventoryController extends Controller
     {
         $uniformType = $request->get('uniform_type');
         $uniformComponent = $request->get('uniform_component');
-        
-        // Get all intake years
-        $currentYear = date('Y');
+
+        // Get all intake years from effective year down to 4 years back
+        $effectiveYear = \App\Models\Cadet::getEffectiveIntakeYear();
         $intakeYears = [];
         for ($i = 0; $i < 4; $i++) {
-            $year = $currentYear - $i;
+            $year = $effectiveYear - $i;
             $intakeNumber = $year - 2011;
             $intakeYears[] = [
                 'year' => $year,
@@ -1108,11 +1108,11 @@ class InventoryController extends Controller
 
     public function componentIssuanceTracking(Request $request)
     {
-        // Get intake years from current year down to 4 years back
-        $currentYear = date('Y');
+        // Get intake years from effective year down to 4 years back
+        $effectiveYear = \App\Models\Cadet::getEffectiveIntakeYear();
         $intakeYears = [];
         for ($i = 0; $i < 4; $i++) {
-            $year = $currentYear - $i;
+            $year = $effectiveYear - $i;
             $intakeNumber = $year - 2011;
             $intakeYears[] = [
                 'year' => $year,

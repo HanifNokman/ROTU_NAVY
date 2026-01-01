@@ -240,7 +240,7 @@ class Cadet extends Model
     // Accessors
     public function getIntakeNameAttribute()
     {
-        $intakeNumber = 2025 - $this->intake_year + 14;
+        $intakeNumber = $this->intake_year - 2011;
         return "Intake - {$intakeNumber} ({$this->intake_year})";
     }
 
@@ -249,7 +249,7 @@ class Cadet extends Model
      */
     public function getIntakeLabelAttribute()
     {
-        $intakeNumber = 2025 - $this->intake_year + 14;
+        $intakeNumber = $this->intake_year - 2011;
         return "Intake - {$intakeNumber}";
     }
 
@@ -316,21 +316,43 @@ class Cadet extends Model
     }
 
     // Static methods
+
+    /**
+     * Get the effective intake year based on current date
+     * New intakes are only available from October onwards
+     *
+     * Example: In January-September 2026, returns 2025
+     *          In October-December 2026, returns 2026
+     */
+    public static function getEffectiveIntakeYear()
+    {
+        $now = Carbon::now();
+        $currentYear = $now->year;
+        $currentMonth = $now->month;
+
+        // If we haven't reached October yet, use previous year as the latest intake
+        if ($currentMonth < 10) {
+            return $currentYear - 1;
+        }
+
+        return $currentYear;
+    }
+
     public static function getRecentIntakes($count = 4)
     {
-        $currentYear = Carbon::now()->year;
+        $effectiveYear = self::getEffectiveIntakeYear();
         $intakes = [];
-        
+
         for ($i = 0; $i < $count; $i++) {
-            $year = $currentYear - $i;
-            $intakeNumber = 14 - $i;
+            $year = $effectiveYear - $i;
+            $intakeNumber = $year - 2011;
             $intakes[] = [
                 'year' => $year,
                 'label' => "Intake - {$intakeNumber} ({$year})",
                 'short_label' => "Intake - {$intakeNumber}" // ADDED FOR ATTENDANCE COMPATIBILITY
             ];
         }
-        
+
         return $intakes;
     }
 
