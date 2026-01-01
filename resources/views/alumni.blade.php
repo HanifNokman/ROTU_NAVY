@@ -458,7 +458,7 @@
                                         }
                                     @endphp
                                     @if($otherCount > 0)
-                                    <div class="alumni-others-grid flex flex-wrap justify-center gap-4 sm:gap-4 w-full" style="max-width: calc(5 * 6rem + 4 * 1rem);">
+                                    <div class="alumni-others-grid flex flex-wrap justify-center gap-4 sm:gap-6 w-full" style="max-width: calc(7 * 6rem + 6 * 1.5rem);">
                                         @foreach($others as $cadet)
                                         <div class="text-center" style="width: 6rem; flex-shrink: 0;">
                                             <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-2 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
