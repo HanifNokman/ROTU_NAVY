@@ -26,7 +26,7 @@ class CadetManagementController extends Controller
 
         // Initialize variables with defaults
         $infoType = $request->get('info_type', 'personnel');
-        $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
+        $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? Cadet::getEffectiveIntakeYear());
         $searchQuery = $request->get('search', '');
         $personnelMode = $request->get('personnel_mode', 'rank_up'); // 'suspend' or 'rank_up'
 
@@ -53,11 +53,11 @@ class CadetManagementController extends Controller
             'searchQuery' => $searchQuery
         ]);
 
-        // Create recent intakes array
-        $currentYear = now()->year;
+        // Create recent intakes array (considers October cutoff)
+        $effectiveYear = Cadet::getEffectiveIntakeYear();
         $recentIntakes = [];
         for ($i = 0; $i < 4; $i++) {
-            $year = $currentYear - $i;
+            $year = $effectiveYear - $i;
             $intakeNumber = $year - 2011;
             $recentIntakes[] = [
                 'year' => $year,
@@ -168,7 +168,7 @@ class CadetManagementController extends Controller
     {
         try {
             $infoType = $request->get('info_type', 'personnel');
-            $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? now()->year);
+            $intakeYear = $request->get('intake_year', Cadet::min('intake_year') ?? Cadet::getEffectiveIntakeYear());
             $searchQuery = $request->get('search', '');
             $personnelMode = $request->get('personnel_mode', 'rank_up');
 
@@ -259,7 +259,7 @@ class CadetManagementController extends Controller
     public function getBestCadetsAjax(Request $request)
     {
         try {
-            $intakeYear = $request->get('intake_year', now()->year);
+            $intakeYear = $request->get('intake_year', Cadet::getEffectiveIntakeYear());
             $cadets = $this->getBestCadets($intakeYear);
 
             $transformedCadets = $cadets->map(function($cadet) {
@@ -296,7 +296,7 @@ class CadetManagementController extends Controller
     public function getBestAcademicCadetsAjax(Request $request)
     {
         try {
-            $intakeYear = $request->get('intake_year', now()->year);
+            $intakeYear = $request->get('intake_year', Cadet::getEffectiveIntakeYear());
             $cadets = $this->getBestAcademicCadets($intakeYear);
 
             $transformedCadets = $cadets->map(function($cadet) {
@@ -332,7 +332,7 @@ class CadetManagementController extends Controller
     public function getSuspendedCadetsAjax(Request $request)
     {
         try {
-            $intakeYear = $request->get('intake_year', now()->year);
+            $intakeYear = $request->get('intake_year', Cadet::getEffectiveIntakeYear());
             
             $cadets = Cadet::with(['user', 'performanceRating'])
                 ->where('cadet_status', 'Suspended')
@@ -369,7 +369,7 @@ class CadetManagementController extends Controller
     public function getSwimmingPassDates(Request $request)
     {
         try {
-            $intakeYear = $request->get('intake_year', now()->year);
+            $intakeYear = $request->get('intake_year', Cadet::getEffectiveIntakeYear());
             
             $dates = Cadet::where('intake_year', $intakeYear)
                 ->where('cadet_status', '!=', 'Suspended')

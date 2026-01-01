@@ -442,13 +442,22 @@ class TrainingController extends Controller
 
     public function getYears(Request $request): JsonResponse
     {
-        $currentYear = Carbon::now()->year;
-        $years = [];
-        
-        for ($i = 0; $i < 4; $i++) {
-            $years[] = $currentYear - $i;
+        // Get distinct years from trainings table where trainings exist
+        $years = Training::selectRaw('YEAR(start_datetime) as year')
+            ->groupBy('year')
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // If no trainings exist, fallback to effective year range
+        if (empty($years)) {
+            $effectiveYear = \App\Models\Cadet::getEffectiveIntakeYear();
+            $years = [];
+            for ($i = 0; $i < 4; $i++) {
+                $years[] = $effectiveYear - $i;
+            }
         }
-        
+
         return response()->json([
             'success' => true,
             'years' => $years

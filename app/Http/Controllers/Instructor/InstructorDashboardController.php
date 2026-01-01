@@ -26,14 +26,15 @@ class InstructorDashboardController extends Controller
                 : [$instructor->past_unit];
         }
 
-        $currentYear = now()->year;
+        // Get effective intake year (considers October cutoff)
+        $effectiveYear = \App\Models\Cadet::getEffectiveIntakeYear();
 
         // ================================================================
         // INTAKE OPTIONS GENERATION
         // ================================================================
-        // Always show max 4 intakes: current year and 3 years below
-        $minYear = $currentYear - 3;
-        $intakeYears = collect(range($currentYear, $minYear))->filter(function($year) {
+        // Always show max 4 intakes: effective year and 3 years below
+        $minYear = $effectiveYear - 3;
+        $intakeYears = collect(range($effectiveYear, $minYear))->filter(function($year) {
             $intakeNumber = $year - 2011;
             return $intakeNumber > 0;
         });
@@ -46,11 +47,11 @@ class InstructorDashboardController extends Controller
             ];
         })->values();
 
-        $latestIntakeYear = $currentYear;
+        $latestIntakeYear = $effectiveYear;
 
         if ($intakeOptions->isEmpty()) {
             $startYear = 2012;
-            $endYear = max($currentYear, 2015);
+            $endYear = max($effectiveYear, 2015);
             
             $intakeOptions = collect(range($endYear, $startYear))->map(function($year) {
                 return [

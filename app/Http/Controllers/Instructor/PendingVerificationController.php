@@ -321,7 +321,7 @@ class PendingVerificationController extends Controller
                             'rank' => 'PK',
                             'position' => 'Normal',
                             'cadet_status' => 'Active',
-                            'intake_year' => now()->year,
+                            'intake_year' => \App\Models\Cadet::getEffectiveIntakeYear(),
                             'daily_duty_count' => 0,
                             'swimming_qualification' => 'In Progress',
                         ]);
