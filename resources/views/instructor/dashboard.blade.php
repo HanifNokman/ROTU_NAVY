@@ -443,7 +443,7 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <a href="{{ route('instructor.profile.edit') }}"
-                               @click.stop
+                               onclick="event.stopPropagation();"
                                class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors duration-200"
                                title="Edit Profile">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
