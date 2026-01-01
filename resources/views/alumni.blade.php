@@ -458,10 +458,9 @@
                                         }
                                     @endphp
                                     @if($otherCount > 0)
-                                    <div class="alumni-others-grid grid gap-4 sm:gap-4 w-full max-w-6xl place-content-center
-                                        grid-cols-2 md:grid-cols-3 {{ $desktopCols }}">
+                                    <div class="alumni-others-grid flex flex-wrap justify-center gap-4 sm:gap-4 w-full" style="max-width: calc(5 * 6rem + 4 * 1rem);">
                                         @foreach($others as $cadet)
-                                        <div class="text-center">
+                                        <div class="text-center" style="width: 6rem; flex-shrink: 0;">
                                             <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-2 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                                 @if($cadet->profile_pic)
                                                     <img src="{{ asset('storage/' . $cadet->profile_pic) }}" alt="{{ $cadet->user->name }}" class="w-full h-full object-cover">
