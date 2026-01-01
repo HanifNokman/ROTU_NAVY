@@ -319,10 +319,10 @@ class Cadet extends Model
 
     /**
      * Get the effective intake year based on current date
-     * New intakes are only available from October onwards
+     * New intakes are only available from September onwards
      *
-     * Example: In January-September 2026, returns 2025
-     *          In October-December 2026, returns 2026
+     * Example: In January-August 2026, returns 2025
+     *          In September-December 2026, returns 2026
      */
     public static function getEffectiveIntakeYear()
     {
@@ -330,8 +330,8 @@ class Cadet extends Model
         $currentYear = $now->year;
         $currentMonth = $now->month;
 
-        // If we haven't reached October yet, use previous year as the latest intake
-        if ($currentMonth < 10) {
+        // If we haven't reached September yet, use previous year as the latest intake
+        if ($currentMonth < 9) {
             return $currentYear - 1;
         }
 

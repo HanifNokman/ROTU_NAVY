@@ -53,7 +53,7 @@ class CadetManagementController extends Controller
             'searchQuery' => $searchQuery
         ]);
 
-        // Create recent intakes array (considers October cutoff)
+        // Create recent intakes array (considers September cutoff)
         $effectiveYear = Cadet::getEffectiveIntakeYear();
         $recentIntakes = [];
         for ($i = 0; $i < 4; $i++) {
