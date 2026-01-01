@@ -601,8 +601,7 @@
                                 </svg>
                             </div>
                             @php
-                                $currentYear = date('Y');
-                                $intakeYear = date('n') >= 10 ? $currentYear : $currentYear - 1;
+                                $intakeYear = \App\Models\Cadet::getEffectiveIntakeYear();
                             @endphp
 
                             <h3 class="text-2xl font-bold text-gray-900">

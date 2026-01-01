@@ -1200,7 +1200,7 @@
                 </div>
 
                 <p class="text-sm text-gray-600 mb-4">
-                    Set the ceremony date for Tauliah promotion. Year is automatically calculated as Intake Year + 3.
+                    Set the ceremony date and location for Tauliah promotion. Year is automatically calculated as Intake Year + 3.
                 </p>
 
                 <form id="tauliahForm" class="space-y-4">
@@ -1232,6 +1232,16 @@
                         <input type="number" id="tauliahDay" name="tauliah_day" min="1" max="31"
                                value="{{ $tauliahDay }}" required
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <div>
+                        <label for="tauliahLocation" class="block text-sm font-medium text-gray-700 mb-1">
+                            Ceremony Location
+                        </label>
+                        <input type="text" id="tauliahLocation" name="tauliah_location" maxlength="255"
+                               value="{{ $tauliahLocation }}" placeholder="e.g., UMS KK, UPNM Sungai Besi"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <p class="mt-1 text-xs text-gray-500">Specify where the commissioning ceremony will be held</p>
                     </div>
 
                     <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
