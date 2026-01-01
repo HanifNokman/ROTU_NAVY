@@ -214,7 +214,7 @@
 
         /* Alumni tree adjustments */
         .alumni-tree-spacing {
-            gap: 1.5rem !important;
+            gap: 1rem !important;
         }
 
         .alumni-portrait {
@@ -239,7 +239,7 @@
         }
 
         .connecting-line {
-            height: 1.5rem !important;
+            height: 1rem !important;
         }
 
         /* Adjust Thana/Zayn spacing on mobile */
@@ -349,13 +349,13 @@
                             </summary>
                             <div class="p-4 sm:p-6">
                                 <!-- Family Tree Layout -->
-                                <div class="flex flex-col items-center alumni-tree-spacing space-y-5 sm:space-y-6">
+                                <div class="flex flex-col items-center alumni-tree-spacing space-y-3 sm:space-y-4">
                                     <!-- CO at the top -->
                                     @php
                                         $co = $cadets->firstWhere('position', 'CO');
                                     @endphp
                                     <div class="text-center">
-                                        <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-3 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
+                                        <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-1 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                             @if($co && $co->profile_pic)
                                                 <img src="{{ asset('storage/' . $co->profile_pic) }}" alt="{{ $co->user->name }}" class="w-full h-full object-cover">
                                             @else
@@ -374,11 +374,6 @@
                                         @endif
                                         <p class="alumni-role text-xs sm:text-sm text-gray-500 font-semibold mt-1">CO Intake</p>
                                     </div>
-
-                                    <!-- Line connecting CO to Thana and Zayn -->
-                                    @if($co)
-                                    <div class="connecting-line w-px h-6 sm:h-6 bg-gray-400"></div>
-                                    @endif
 
                                     <!-- Thana and Zayn side by side -->
                                     @php
@@ -405,7 +400,7 @@
                                         </style>
                                         <!-- Thana position -->
                                         <div class="text-center">
-                                            <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-3 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
+                                            <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-1 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                                 @if($thana && $thana->profile_pic)
                                                     <img src="{{ asset('storage/' . $thana->profile_pic) }}" alt="{{ $thana->user->name }}" class="w-full h-full object-cover">
                                                 @else
@@ -426,7 +421,7 @@
                                         </div>
                                         <!-- Zayn position -->
                                         <div class="text-center">
-                                            <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-3 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
+                                            <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-1 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
                                                 @if($zayn && $zayn->profile_pic)
                                                     <img src="{{ asset('storage/' . $zayn->profile_pic) }}" alt="{{ $zayn->user->name }}" class="w-full h-full object-cover">
                                                 @else
@@ -447,11 +442,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Line connecting to others -->
-                                    @if($thana || $zayn)
-                                    <div class="connecting-line w-px h-6 sm:h-6 bg-gray-400"></div>
-                                    @endif
-
                                     <!-- Other cadets in grid -->
                                     @php
                                         $others = $cadets->filter(function($cadet) {
@@ -468,9 +458,8 @@
                                         }
                                     @endphp
                                     @if($otherCount > 0)
-                                    <div class="alumni-others-grid grid gap-4 sm:gap-4 w-full max-w-6xl
-                                        grid-cols-2 md:grid-cols-3 {{ $desktopCols }}
-                                        @if($otherCount <= 2) justify-items-center @endif">
+                                    <div class="alumni-others-grid grid gap-4 sm:gap-4 w-full max-w-6xl justify-items-center
+                                        grid-cols-2 md:grid-cols-3 {{ $desktopCols }}">
                                         @foreach($others as $cadet)
                                         <div class="text-center">
                                             <div class="alumni-portrait w-20 h-28 sm:w-24 sm:h-32 mx-auto mb-2 bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
