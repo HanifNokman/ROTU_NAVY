@@ -441,9 +441,19 @@
                             </div>
                             <h3 class="text-2xl font-bold text-gray-900">Personal Profile</h3>
                         </div>
-                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('instructor.profile.edit') }}"
+                               class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors duration-200"
+                               title="Edit Profile">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </a>
+                            <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
                     </div>
                     <p class="text-gray-600 ml-13">Your profile information and service details</p>
                 </div>
@@ -1247,23 +1257,24 @@
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 transform -translate-y-2"
                     x-transition:enter-end="opacity-100 transform translate-y-0">
-                    <div class="overflow-hidden rounded-xl border border-gray-200">
-                        {{-- Table Header --}}
-                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 sticky top-0 z-10">
-                            <div class="flex items-center px-6 py-4 gap-4">
-                                <div class="w-12 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">No.</div>
-                                <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Service No.</div>
-                                <div class="w-20 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Rank</div>
-                                <div class="flex-1 min-w-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Name</div>
-                                <div class="w-36 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Position</div>
-                                <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Expertise</div>
-                                <div class="w-28 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Time in Service</div>
+                    <div class="overflow-x-auto overflow-y-auto rounded-xl border border-gray-200" style="max-height: 600px;">
+                        <div class="min-w-max">
+                            {{-- Table Header --}}
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 sticky top-0 z-10">
+                                <div class="flex items-center px-6 py-4 gap-4">
+                                    <div class="w-12 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">No.</div>
+                                    <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Service No.</div>
+                                    <div class="w-20 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Rank</div>
+                                    <div class="flex-1 min-w-[200px] text-xs font-bold text-gray-700 uppercase tracking-wider">Name</div>
+                                    <div class="w-36 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Position</div>
+                                    <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Expertise</div>
+                                    <div class="w-28 flex-shrink-0 text-xs font-bold text-gray-700 uppercase tracking-wider">Time in Service</div>
+                                </div>
                             </div>
-                        </div>
 
-                        {{-- Table Body (Scrollable) --}}
-                        <div class="overflow-y-auto bg-white" style="max-height: 500px;">
-                            @forelse($otherInstructors as $index => $otherInstructor)
+                            {{-- Table Body --}}
+                            <div class="bg-white">
+                                @forelse($otherInstructors as $index => $otherInstructor)
                                 <div class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-150 instructor-row"
                                      data-instructor-id="{{ $otherInstructor->id }}"
                                      onclick="showInstructorProfile({{ $otherInstructor->id }})">
@@ -1275,7 +1286,7 @@
                                                 {{ $otherInstructor->rank ?? 'N/A' }}
                                             </span>
                                         </div>
-                                        <div class="flex-1 min-w-0 text-sm font-medium text-gray-900 truncate">{{ $otherInstructor->user->name ?? 'N/A' }}</div>
+                                        <div class="flex-1 min-w-[200px] text-sm font-medium text-gray-900 truncate">{{ $otherInstructor->user->name ?? 'N/A' }}</div>
                                         <div class="w-36 flex-shrink-0 text-sm">
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 whitespace-nowrap">
                                                 {{ $otherInstructor->position ?? 'N/A' }}
@@ -1301,6 +1312,7 @@
                                     </div>
                                 </div>
                             @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>

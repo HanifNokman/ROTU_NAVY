@@ -26,7 +26,7 @@ class InstructorDashboardController extends Controller
                 : [$instructor->past_unit];
         }
 
-        // Get effective intake year (considers October cutoff)
+        // Get effective intake year (considers September cutoff)
         $effectiveYear = \App\Models\Cadet::getEffectiveIntakeYear();
 
         // ================================================================

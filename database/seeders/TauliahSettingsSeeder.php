@@ -32,6 +32,15 @@ class TauliahSettingsSeeder extends Seeder
             ]
         );
 
+        ContentSetting::updateOrCreate(
+            ['key' => 'tauliah_location'],
+            [
+                'value' => 'UMS KK',
+                'type' => 'text',
+                'description' => 'Tauliah ceremony location/venue. Default is UMS KK.'
+            ]
+        );
+
         $this->command->info('Tauliah settings seeded successfully!');
     }
 }

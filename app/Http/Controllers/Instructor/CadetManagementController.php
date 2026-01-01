@@ -153,7 +153,8 @@ class CadetManagementController extends Controller
             'suspendedCadets' => $suspendedCadets,
             'suspendedIntakeYear' => $suspendedIntakeYear,
             'tauliahMonth' => ContentSetting::getTauliahMonth(),
-            'tauliahDay' => ContentSetting::getTauliahDay()
+            'tauliahDay' => ContentSetting::getTauliahDay(),
+            'tauliahLocation' => ContentSetting::getTauliahLocation()
         ];
 
         Log::info('Sending to view', array_keys($viewData));
@@ -1230,13 +1231,15 @@ class CadetManagementController extends Controller
     {
         $request->validate([
             'tauliah_month' => 'required|integer|min:1|max:12',
-            'tauliah_day' => 'required|integer|min:1|max:31'
+            'tauliah_day' => 'required|integer|min:1|max:31',
+            'tauliah_location' => 'nullable|string|max:255'
         ]);
 
         try {
             Log::info('Updating Tauliah settings', [
                 'month' => $request->tauliah_month,
-                'day' => $request->tauliah_day
+                'day' => $request->tauliah_day,
+                'location' => $request->tauliah_location
             ]);
 
             ContentSetting::set(
@@ -1253,21 +1256,31 @@ class CadetManagementController extends Controller
                 'Tauliah ceremony day (1-31).'
             );
 
+            ContentSetting::set(
+                'tauliah_location',
+                $request->tauliah_location ?? 'UMS KK',
+                'text',
+                'Tauliah ceremony location/venue.'
+            );
+
             // Verify the update
             $updatedMonth = ContentSetting::get('tauliah_month');
             $updatedDay = ContentSetting::get('tauliah_day');
+            $updatedLocation = ContentSetting::get('tauliah_location');
 
             Log::info('Tauliah settings updated', [
                 'month' => $updatedMonth,
-                'day' => $updatedDay
+                'day' => $updatedDay,
+                'location' => $updatedLocation
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Tauliah date settings updated successfully',
+                'message' => 'Tauliah ceremony settings updated successfully',
                 'data' => [
                     'month' => $updatedMonth,
-                    'day' => $updatedDay
+                    'day' => $updatedDay,
+                    'location' => $updatedLocation
                 ]
             ]);
         } catch (\Exception $e) {

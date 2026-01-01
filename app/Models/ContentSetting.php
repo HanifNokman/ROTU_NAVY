@@ -128,6 +128,14 @@ class ContentSetting extends Model
     }
 
     /**
+     * Get Tauliah location from settings (default: 'UMS KK')
+     */
+    public static function getTauliahLocation(): string
+    {
+        return self::get('tauliah_location', 'UMS KK');
+    }
+
+    /**
      * Clear all settings cache
      */
     public static function clearCache(): void
