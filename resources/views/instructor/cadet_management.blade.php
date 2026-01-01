@@ -3203,7 +3203,8 @@ window.addEventListener('DOMContentLoaded', function() {
 
             const formData = {
                 tauliah_month: document.getElementById('tauliahMonth').value,
-                tauliah_day: document.getElementById('tauliahDay').value
+                tauliah_day: document.getElementById('tauliahDay').value,
+                tauliah_location: document.getElementById('tauliahLocation').value
             };
 
             fetch('{{ route('instructor.cadets.tauliah-settings') }}', {
