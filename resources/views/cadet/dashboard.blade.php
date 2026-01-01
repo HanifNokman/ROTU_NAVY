@@ -589,6 +589,7 @@
                         </div>
                         <div class="flex items-center ml-2 sm:ml-6 flex-shrink-0 gap-2 sm:gap-3">
                             <a href="{{ route('cadet.profile.edit') }}"
+                               @click.stop
                                class="p-1.5 sm:p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md sm:rounded-lg shadow-sm transition-colors duration-200"
                                title="Edit Profile">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
