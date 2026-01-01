@@ -743,14 +743,14 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center text-sm text-gray-900">
                                                     <i class="fas fa-calendar-alt text-gray-400 mr-2"></i>
-                                                    {{ $loan->borrow_date->format('M d, Y') }}
+                                                    {{ $loan->borrow_date->format('d/m/Y') }}
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if($loan->return_date)
                                                     <div class="flex items-center text-sm text-gray-900">
                                                         <i class="fas fa-calendar-check text-green-500 mr-2"></i>
-                                                        {{ $loan->return_date->format('M d, Y') }}
+                                                        {{ $loan->return_date->format('d/m/Y') }}
                                                     </div>
                                                 @else
                                                     <span class="text-gray-400">-</span>

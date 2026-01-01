@@ -67,7 +67,7 @@
                     </div>
                     <div class="text-right text-sm text-gray-500">
                         <p>Generated: {{ now()->format('d/m/Y') }}</p>
-                        <p>{{ now()->format('h:i A') }}</p>
+                        <p>{{ now()->format('H:i') }}</p>
                     </div>
                 </div>
             </div>

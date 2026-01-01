@@ -1443,7 +1443,7 @@
                                                 </div>
                                                 <div class="flex items-center justify-center text-green-400">
                                                     <i class="fas fa-calendar-check mr-2"></i>
-                                                    <span class="text-xs">Unlocked: {{ $unlockedBadge['unlocked_at']->format('M d, Y') }}</span>
+                                                    <span class="text-xs">Unlocked: {{ $unlockedBadge['unlocked_at']->format('d/m/Y') }}</span>
                                                 </div>
                                                 <div class="flex items-center justify-center text-yellow-400">
                                                     <i class="fas fa-trophy mr-2"></i>

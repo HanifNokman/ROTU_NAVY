@@ -48,7 +48,7 @@ class TrainingDayNotification extends Notification implements ShouldQueue
                 'name' => $notifiable->name,
                 'email' => $notifiable->email,
                 'training' => $this->training,
-                'trainingTime' => $this->training->start_datetime->format('h:i A'),
+                'trainingTime' => $this->training->start_datetime->format('H:i'),
                 'actionText' => $actionText,
                 'actionUrl' => $actionUrl,
                 'userType' => $this->userType,
@@ -64,12 +64,12 @@ class TrainingDayNotification extends Notification implements ShouldQueue
     {
         return [
             'title' => 'Training Today',
-            'message' => 'Training "' . $this->training->title . '" is happening TODAY at ' . $this->training->start_datetime->format('h:i A') . ' at ' . $this->training->location . '. Don\'t forget to mark your attendance!',
+            'message' => 'Training "' . $this->training->title . '" is happening TODAY at ' . $this->training->start_datetime->format('H:i') . ' at ' . $this->training->location . '. Don\'t forget to mark your attendance!',
             'type' => 'training_day',
             'training_id' => $this->training->id,
             'training_title' => $this->training->title,
-            'training_date' => $this->training->start_datetime->format('M d, Y'),
-            'training_time' => $this->training->start_datetime->format('h:i A'),
+            'training_date' => $this->training->start_datetime->format('d/m/Y'),
+            'training_time' => $this->training->start_datetime->format('H:i'),
             'training_location' => $this->training->location,
             'icon' => 'calendar',
             'url' => $this->userType === 'cadet' ? route('cadet.attendance') : route('instructor.training')

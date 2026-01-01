@@ -296,9 +296,9 @@
                                                     <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Schedule</p>
                                                     <p class="text-sm font-semibold text-gray-900">
                                                     @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
-                                                        {{ $training->start_datetime->format('M d, Y') }} - {{ $training->end_datetime->format('M d, Y') }}
+                                                        {{ $training->start_datetime->format('d/m/Y') }} - {{ $training->end_datetime->format('d/m/Y') }}
                                                     @else
-                                                        {{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}@if($training->end_datetime) - {{ $training->end_datetime->format('h:i A') }}@endif
+                                                        {{ $training->formatted_start_date }} at {{ $training->formatted_start_time }}@if($training->end_datetime) - {{ $training->end_datetime->format('H:i') }}@endif
                                                     @endif
                                                     </p>
                                                 </div>

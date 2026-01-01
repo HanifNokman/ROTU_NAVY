@@ -313,7 +313,7 @@ class InstructorDashboardController extends Controller
             $groupedData[$intakeLabel][$cadetId]->pending_absences[] = (object)[
                 'training_title' => $absence->training_title,
                 'training_location' => $absence->training_location,
-                'training_date' => \Carbon\Carbon::parse($absence->start_datetime)->format('M d, Y'),
+                'training_date' => \Carbon\Carbon::parse($absence->start_datetime)->format('d/m/Y'),
                 'missing_items' => implode(', ', $missingItems)
             ];
         }

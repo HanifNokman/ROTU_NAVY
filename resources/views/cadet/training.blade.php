@@ -870,10 +870,12 @@
         // Format date time
         function formatDateTime(datetime) {
             const date = new Date(datetime);
-            const day = date.toLocaleDateString('en-MY', { year: 'numeric', month: 'short', day: 'numeric' });
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${day} ${hours}${minutes}H`;
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
         }
 
         // Get status badge color

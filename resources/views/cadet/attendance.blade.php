@@ -399,7 +399,7 @@
                                                         </svg>
                                                         <span class="truncate">
                                                         @if($training->end_datetime && $training->start_datetime->toDateString() !== $training->end_datetime->toDateString())
-                                                            {{ $training->start_datetime->format('M d') }} - {{ $training->end_datetime->format('M d, Y') }}
+                                                            {{ $training->start_datetime->format('d/m') }} - {{ $training->end_datetime->format('d/m/Y') }}
                                                         @else
                                                             {{ $training->formatted_start_date }}
                                                         @endif
@@ -444,7 +444,7 @@
                                                     <div class="text-sm font-bold text-gray-900 mt-0.5 break-words">
                                                         {{ $training->formatted_start_time }}
                                                         @if($training->end_datetime)
-                                                            - {{ $training->end_datetime->format('h:i A') }}
+                                                            - {{ $training->end_datetime->format('H:i') }}
                                                         @endif
                                                     </div>
                                                 </div>
@@ -556,7 +556,7 @@
                                                         <div class="text-xl font-bold text-green-900">Attendance Confirmed</div>
                                                         <div class="text-sm text-green-700 mt-1 flex items-center">
                                                             <i class="fas fa-clock mr-1.5"></i>
-                                                            Marked present at {{ $attendance->marked_at->format('g:i A') }}
+                                                            Marked present at {{ $attendance->marked_at->format('H:i') }}
                                                         </div>
                                                         @if($attendance->latitude && $attendance->longitude)
                                                             <div class="text-xs text-green-600 mt-1.5 flex items-center">

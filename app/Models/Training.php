@@ -130,19 +130,19 @@ public function calculateRoundedDuration(): ?int
     ];
 
     /**
-     * Get formatted start date
+     * Get formatted start date (dd/mm/yyyy)
      */
     public function getFormattedStartDateAttribute(): string
     {
-        return $this->start_datetime ? $this->start_datetime->format('M d, Y') : 'Not set';
+        return $this->start_datetime ? $this->start_datetime->format('d/m/Y') : 'Not set';
     }
 
     /**
-     * Get formatted start time
+     * Get formatted start time (24-hour format)
      */
     public function getFormattedStartTimeAttribute(): string
     {
-        return $this->start_datetime ? $this->start_datetime->format('h:i A') : 'Not set';
+        return $this->start_datetime ? $this->start_datetime->format('H:i') : 'Not set';
     }
 
     /**
@@ -169,42 +169,42 @@ public function calculateRoundedDuration(): ?int
     }
 
     /**
-     * Get formatted date range for display
+     * Get formatted date range for display (dd/mm/yyyy)
      */
 public function getFormattedDateRangeAttribute(): string
 {
     if (!$this->end_datetime) {
         return $this->formatted_start_date;
     }
-    
-    $startDate = $this->start_datetime->format('M d, Y');
-    $endDate = $this->end_datetime->format('M d, Y');
-    
+
+    $startDate = $this->start_datetime->format('d/m/Y');
+    $endDate = $this->end_datetime->format('d/m/Y');
+
     // If same day, show only start date
     if ($this->start_datetime->toDateString() === $this->end_datetime->toDateString()) {
         return $startDate;
     }
-    
+
     // If different days, show range
     return $startDate . ' - ' . $endDate;
 }
 
 /**
- * Get formatted time range for display
+ * Get formatted time range for display (24-hour format)
  */
 public function getFormattedTimeRangeAttribute(): string
 {
-    $startTime = $this->start_datetime->format('h:i A');
-    
+    $startTime = $this->start_datetime->format('H:i');
+
     if (!$this->end_datetime) {
         return $startTime;
     }
-    
+
     // If same day, show time range
     if ($this->start_datetime->toDateString() === $this->end_datetime->toDateString()) {
-        return $startTime . ' - ' . $this->end_datetime->format('h:i A');
+        return $startTime . ' - ' . $this->end_datetime->format('H:i');
     }
-    
+
     // If multi-day, show start time only (since it spans days)
     return $startTime;
 }
