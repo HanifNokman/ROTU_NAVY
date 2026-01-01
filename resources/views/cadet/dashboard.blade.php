@@ -831,7 +831,7 @@
                                             <p class="text-xs text-gray-500 font-medium">TTP Date</p>
                                             <p class="text-sm font-semibold text-gray-900">
                                                 @if(!empty($cadet->ttp_date))
-                                                    {{ \Carbon\Carbon::parse($cadet->ttp_date)->format('d M Y') }}
+                                                    {{ \Carbon\Carbon::parse($cadet->ttp_date)->format('d/m/Y') }}
                                                 @else
                                                     -
                                                 @endif
@@ -950,7 +950,7 @@
                                                 </span>
                                                 @if(!empty($cadet->swimming_pass_date))
                                                     <span class="text-xs text-gray-500">
-                                                        ({{ \Carbon\Carbon::parse($cadet->swimming_pass_date)->format('d M Y') }})
+                                                        ({{ \Carbon\Carbon::parse($cadet->swimming_pass_date)->format('d/m/Y') }})
                                                     </span>
                                                 @endif
                                             </div>
@@ -1223,7 +1223,7 @@
                                         <div class="mt-4 text-center space-y-2">
                                             <div>
                                                 <p class="text-sm text-gray-600">Commissioning Date:</p>
-                                                <p class="text-lg font-bold text-gray-900">{{ $tauliahDate->format('F d, Y') }}</p>
+                                                <p class="text-lg font-bold text-gray-900">{{ $tauliahDate->format('d/m/Y') }}</p>
                                             </div>
                                             <div class="pt-2 border-t border-gray-200">
                                                 <p class="text-sm text-gray-600">This year's Tauliah ceremony will be held at</p>

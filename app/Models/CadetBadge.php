@@ -65,10 +65,10 @@ class CadetBadge extends Model
     }
 
     /**
-     * Get formatted unlock date
+     * Get formatted unlock date (dd/mm/yyyy)
      */
     public function getFormattedUnlockDateAttribute()
     {
-        return $this->unlocked_at->format('M d, Y');
+        return $this->unlocked_at->format('d/m/Y');
     }
 }

@@ -599,7 +599,7 @@
                                         <div class="gallery-title">{{ $gallery->title }}</div>
                                         <div class="gallery-date">
                                             <i class="far fa-calendar" style="margin-right: 0.25rem;"></i>
-                                            {{ $gallery->created_at->format('d M Y') }}
+                                            {{ $gallery->created_at->format('d/m/Y') }}
                                         </div>
                                     </div>
                                 </div>

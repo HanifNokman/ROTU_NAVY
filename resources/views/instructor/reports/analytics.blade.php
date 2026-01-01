@@ -35,7 +35,7 @@
                     </div>
                     <div class="text-right text-sm text-gray-500">
                         <p>Last Updated</p>
-                        <p class="font-medium">{{ now()->format('d/m/Y h:i A') }}</p>
+                        <p class="font-medium">{{ now()->format('d/m/Y H:i') }}</p>
                     </div>
                 </div>
             </div>

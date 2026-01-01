@@ -595,7 +595,7 @@
                     <i class="fas fa-clock" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.7;"></i>
                     <h2 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.5rem;">Permohonan Ditutup</h2>
                     <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 2rem;">
-                        Tarikh akhir permohonan telah berlalu pada <strong>{{ $applicationDeadline->format('d F Y') }}</strong>.
+                        Tarikh akhir permohonan telah berlalu pada <strong>{{ $applicationDeadline->format('d/m/Y') }}</strong>.
                         Sila tunggu pengumuman sesi permohonan seterusnya.
                     </p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">

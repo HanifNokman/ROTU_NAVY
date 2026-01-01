@@ -696,7 +696,7 @@ class ReportController extends Controller
         $trends = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $month = $date->format('M Y');
+            $month = $date->format('m/Y');
 
             $trainings = Training::whereYear('start_datetime', $date->year)
                 ->whereMonth('start_datetime', $date->month)

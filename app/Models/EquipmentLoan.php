@@ -243,17 +243,17 @@ class EquipmentLoan extends Model
 
     public function getFormattedBorrowDateAttribute(): string
     {
-        return $this->borrow_date->format('M d, Y');
+        return $this->borrow_date->format('d/m/Y');
     }
 
     public function getFormattedReturnDateAttribute(): string
     {
-        return $this->return_date ? $this->return_date->format('M d, Y') : 'Not returned';
+        return $this->return_date ? $this->return_date->format('d/m/Y') : 'Not returned';
     }
 
     public function getFormattedDueDateAttribute(): string
     {
-        return $this->due_date->format('M d, Y');
+        return $this->due_date->format('d/m/Y');
     }
 
     // Boot method for model events

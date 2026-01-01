@@ -47,8 +47,8 @@ class TrainingReminder extends Notification implements ShouldQueue
                 'name' => $notifiable->name,
                 'email' => $notifiable->email,
                 'training' => $this->training,
-                'trainingDate' => $this->training->start_datetime->format('M d, Y'),
-                'trainingTime' => $this->training->start_datetime->format('h:i A'),
+                'trainingDate' => $this->training->start_datetime->format('d/m/Y'),
+                'trainingTime' => $this->training->start_datetime->format('H:i'),
                 'actionUrl' => $actionUrl,
             ]);
     }
@@ -62,12 +62,12 @@ class TrainingReminder extends Notification implements ShouldQueue
     {
         return [
             'title' => 'Training Reminder',
-            'message' => 'Reminder: "' . $this->training->title . '" is scheduled for tomorrow at ' . $this->training->start_datetime->format('h:i A') . ' at ' . $this->training->location . '.',
+            'message' => 'Reminder: "' . $this->training->title . '" is scheduled for tomorrow at ' . $this->training->start_datetime->format('H:i') . ' at ' . $this->training->location . '.',
             'type' => 'training_reminder',
             'training_id' => $this->training->id,
             'training_title' => $this->training->title,
-            'training_date' => $this->training->start_datetime->format('M d, Y'),
-            'training_time' => $this->training->start_datetime->format('h:i A'),
+            'training_date' => $this->training->start_datetime->format('d/m/Y'),
+            'training_time' => $this->training->start_datetime->format('H:i'),
             'training_location' => $this->training->location,
             'icon' => 'calendar',
             'url' => $this->userType === 'cadet'

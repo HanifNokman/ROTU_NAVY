@@ -58,9 +58,9 @@ class TrainingController extends Controller
             ->map(function($training) {
                 // Format dates
                 $training->formatted_start_date = $training->start_datetime ?
-                    $training->start_datetime->format('M d, Y') : 'N/A';
+                    $training->start_datetime->format('d/m/Y') : 'N/A';
                 $training->formatted_start_time = $training->start_datetime ?
-                    $training->start_datetime->format('h:i A') : 'N/A';
+                    $training->start_datetime->format('H:i') : 'N/A';
 
                 // Add status badge color
                 $training->status_badge_color = match($training->status) {
@@ -574,7 +574,7 @@ class TrainingController extends Controller
                 'id' => $training->id,
                 'title' => $training->title,
                 'location' => $training->location,
-                'start_datetime' => $training->start_datetime->format('d M Y, H:i'),
+                'start_datetime' => $training->start_datetime->format('d/m/Y H:i'),
                 'involvement' => $training->involvement,
                 'available_intakes' => $availableIntakes,
                 'cadets' => $cadets,

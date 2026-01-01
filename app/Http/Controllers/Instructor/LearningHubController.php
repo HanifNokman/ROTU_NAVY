@@ -327,7 +327,7 @@ class LearningHubController extends Controller
                 'escaped_option_d' => addslashes($question->option_d ?? ''),
                 'escaped_correct_answer' => addslashes($question->correct_answer ?? ''),
                 'escaped_question_preview' => addslashes($questionPreview),
-                'created_at' => $question->created_at->format('M d, Y'),
+                'created_at' => $question->created_at->format('d/m/Y'),
             ];
         });
 

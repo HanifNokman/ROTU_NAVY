@@ -70,17 +70,17 @@ class ContentSetting extends Model
     }
 
     /**
-     * Get formatted deadline for display
+     * Get formatted deadline for display (dd/mm/yyyy)
      */
     public static function getFormattedDeadline(): ?string
     {
         $deadline = self::get('application_deadline');
-        
+
         if (!$deadline) {
             return null;
         }
 
-        return Carbon::parse($deadline)->format('F j, Y');
+        return Carbon::parse($deadline)->format('d/m/Y');
     }
 
     /**

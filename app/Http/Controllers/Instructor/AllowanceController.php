@@ -122,8 +122,8 @@ class AllowanceController extends Controller
             'default_intake' => $mostSeniorIntake,
             'training' => [
                 'title' => $training->title,
-                'date' => $training->start_datetime->format('M d, Y'),
-                'time' => $training->start_datetime->format('h:i A')
+                'date' => $training->start_datetime->format('d/m/Y'),
+                'time' => $training->start_datetime->format('H:i')
             ]
         ]);
     }

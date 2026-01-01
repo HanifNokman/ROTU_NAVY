@@ -303,16 +303,16 @@ class InventoryController extends Controller
                 $html .= '<td class="px-6 py-4 whitespace-nowrap">';
                 $html .= '<div class="flex items-center text-sm text-gray-900">';
                 $html .= '<i class="fas fa-calendar-alt text-gray-400 mr-2"></i>';
-                $html .= $loan->borrow_date->format('M d, Y');
+                $html .= $loan->borrow_date->format('d/m/Y');
                 $html .= '</div>';
                 $html .= '</td>';
-                
+
                 // Return date
                 $html .= '<td class="px-6 py-4 whitespace-nowrap">';
                 if ($loan->return_date) {
                     $html .= '<div class="flex items-center text-sm text-gray-900">';
                     $html .= '<i class="fas fa-calendar-check text-green-500 mr-2"></i>';
-                    $html .= $loan->return_date->format('M d, Y');
+                    $html .= $loan->return_date->format('d/m/Y');
                     $html .= '</div>';
                 } else {
                     $html .= '<span class="text-gray-400">-</span>';
@@ -789,7 +789,7 @@ class InventoryController extends Controller
             
             // Report Header
             fputcsv($file, ['UNIFORM SIZE SUMMARY REPORT']);
-            fputcsv($file, ['Generated on: ' . now()->format('F j, Y \a\t g:i A')]);
+            fputcsv($file, ['Generated on: ' . now()->format('d/m/Y \a\t H:i')]);
             fputcsv($file, ['']);
 
             // Filter information
