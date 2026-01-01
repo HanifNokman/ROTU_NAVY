@@ -264,7 +264,7 @@
             <button onclick="closeEditModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl z-[120]">&times;</button>
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
-                <form id="editForm" method="POST">
+                <form id="editForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div id="formFields"></div>
@@ -366,12 +366,17 @@
             let profilePic = '';
             if (type === 'cadet' && data.cadet) profilePic = data.cadet.profile_pic;
             else if (type === 'instructor' && data.instructor) profilePic = data.instructor.profile_pic;
-            
+
             fields += `<div class="mb-4 col-span-2"><label class="block text-sm font-medium text-gray-700">Profile Picture</label>`;
+            fields += `<div id="profilePicPreview" class="mt-2 mb-2">`;
             if (profilePic) {
-                fields += `<img src="${profilePic}" alt="Profile Picture" class="w-20 h-20 object-cover rounded-full mt-1 mb-2">`;
+                fields += `<img src="/storage/${profilePic}" alt="Profile Picture" class="w-20 h-20 object-cover rounded-full border-2 border-gray-300">`;
+            } else {
+                fields += `<div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 text-xs">No Image</div>`;
             }
-            fields += `<input type="text" name="profile_pic" value="${profilePic || ''}" placeholder="Enter image URL" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">`;
+            fields += `</div>`;
+            fields += `<input type="file" name="profile_pic" id="profilePicInput" accept="image/*" class="mt-1 block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-lg">`;
+            fields += `<p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one. Max size: 2MB</p>`;
             fields += `</div>`;
 
             {{-- Basic User Info --}}
@@ -419,6 +424,7 @@
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Swimming Pass Date</label><input type="date" name="swimming_pass_date" value="${cadet.swimming_pass_date ? cadet.swimming_pass_date.split(' ')[0] : ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Bank Account Number</label><input type="text" name="bank_account_number" value="${cadet.bank_account_number || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Service Number</label><input type="text" name="service_number" value="${cadet.service_number || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
+                fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Cadet Status</label><select name="cadet_status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"><option value="Active" ${cadet.cadet_status === 'Active' ? 'selected' : ''}>Active</option><option value="Suspended" ${cadet.cadet_status === 'Suspended' ? 'selected' : ''}>Suspended</option><option value="Completed" ${cadet.cadet_status === 'Completed' ? 'selected' : ''}>Completed</option><option value="Inactive" ${cadet.cadet_status === 'Inactive' ? 'selected' : ''}>Inactive</option></select></div>`;
             }
 
             {{-- ================================================================ --}}
@@ -481,6 +487,37 @@
             fields += '</div>';
             document.getElementById('formFields').innerHTML = fields;
             document.getElementById('editForm').action = `/admin/user/${data.user.id}`;
+
+            // Add image preview functionality
+            const profilePicInput = document.getElementById('profilePicInput');
+            if (profilePicInput) {
+                profilePicInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Validate file size (2MB max)
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert('File size exceeds 2MB. Please choose a smaller image.');
+                            e.target.value = '';
+                            return;
+                        }
+
+                        // Validate file type
+                        if (!file.type.match('image.*')) {
+                            alert('Please select an image file.');
+                            e.target.value = '';
+                            return;
+                        }
+
+                        // Show preview
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const previewContainer = document.getElementById('profilePicPreview');
+                            previewContainer.innerHTML = `<img src="${event.target.result}" alt="Profile Picture Preview" class="w-20 h-20 object-cover rounded-full border-2 border-blue-500">`;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
 
             if (type === 'instructor') {
                 const addBtn = document.getElementById('add-past-unit');
