@@ -212,6 +212,130 @@ class AdminController extends Controller
         ]);
     }
 
+    /**
+     * Handle profile picture upload with optimization and error handling.
+     */
+    private function handleProfilePictureUpload($request, $existingPicture = null)
+    {
+        if (!$request->hasFile('profile_pic')) {
+            return null;
+        }
+
+        $image = $request->file('profile_pic');
+
+        // Check if upload was successful
+        if (!$image->isValid()) {
+            throw new \Exception('File upload failed. The file may be corrupted or too large.');
+        }
+
+        try {
+            // Optimize and compress the image
+            $optimizedImagePath = $this->optimizeImage($image);
+
+            // Delete old profile picture if exists
+            if (!empty($existingPicture) && Storage::disk('public')->exists($existingPicture)) {
+                Storage::disk('public')->delete($existingPicture);
+            }
+
+            return $optimizedImagePath;
+
+        } catch (\Exception $e) {
+            Log::error('Profile picture upload failed', [
+                'error' => $e->getMessage(),
+                'file' => $image->getClientOriginalName(),
+                'size' => $image->getSize()
+            ]);
+            throw new \Exception('Failed to save profile picture. Please try a smaller image (under 2MB).');
+        }
+    }
+
+    /**
+     * Optimize image by resizing and compressing.
+     */
+    private function optimizeImage($uploadedFile)
+    {
+        // Create a unique filename
+        $filename = time() . '_' . uniqid() . '.jpg';
+        $path = 'profile_pics/' . $filename;
+
+        // Get image info
+        $imageInfo = getimagesize($uploadedFile->getPathname());
+        if (!$imageInfo) {
+            throw new \Exception('Invalid image file');
+        }
+
+        // Create image resource based on mime type
+        $sourceImage = match($imageInfo['mime']) {
+            'image/jpeg', 'image/jpg' => imagecreatefromjpeg($uploadedFile->getPathname()),
+            'image/png' => imagecreatefrompng($uploadedFile->getPathname()),
+            'image/gif' => imagecreatefromgif($uploadedFile->getPathname()),
+            default => throw new \Exception('Unsupported image type')
+        };
+
+        if (!$sourceImage) {
+            throw new \Exception('Failed to process image');
+        }
+
+        // Calculate new dimensions (max 800x800, maintain aspect ratio)
+        $maxSize = 800;
+        $width = imagesx($sourceImage);
+        $height = imagesy($sourceImage);
+
+        if ($width > $maxSize || $height > $maxSize) {
+            if ($width > $height) {
+                $newWidth = $maxSize;
+                $newHeight = (int)(($height / $width) * $maxSize);
+            } else {
+                $newHeight = $maxSize;
+                $newWidth = (int)(($width / $height) * $maxSize);
+            }
+        } else {
+            $newWidth = $width;
+            $newHeight = $height;
+        }
+
+        // Create new image with optimized size
+        $optimizedImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        // Preserve transparency for PNG
+        if ($imageInfo['mime'] === 'image/png') {
+            imagealphablending($optimizedImage, false);
+            imagesavealpha($optimizedImage, true);
+        }
+
+        // Resize image
+        imagecopyresampled(
+            $optimizedImage,
+            $sourceImage,
+            0, 0, 0, 0,
+            $newWidth,
+            $newHeight,
+            $width,
+            $height
+        );
+
+        // Save optimized image to storage
+        $fullPath = storage_path('app/public/' . $path);
+        $directory = dirname($fullPath);
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Save as JPEG with 85% quality (good balance between quality and size)
+        $saved = imagejpeg($optimizedImage, $fullPath, 85);
+
+        // Free memory
+        imagedestroy($sourceImage);
+        imagedestroy($optimizedImage);
+
+        if (!$saved) {
+            throw new \Exception('Failed to save optimized image');
+        }
+
+        return $path;
+    }
+
     public function updateUser(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -231,7 +355,7 @@ class AdminController extends Controller
                 'bank_account_number' => 'nullable|string|max:15',
                 'rank' => 'nullable|string',
                 'position' => 'nullable|string',
-                'profile_pic' => 'nullable|string',
+                'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'intake_year' => 'nullable|digits:4',
                 'matric_no' => 'nullable|string|max:11',
                 'current_cgpa' => 'nullable|numeric|between:0,4.00',
@@ -242,22 +366,36 @@ class AdminController extends Controller
                 'swimming_qualification' => 'nullable|string',
                 'swimming_pass_date' => 'nullable|date',
                 'service_number' => 'nullable|string|max:10',
+                'cadet_status' => 'nullable|in:Active,Suspended,Completed,Inactive',
             ]);
-            
+
+            // Handle profile picture upload
+            try {
+                $imagePath = $this->handleProfilePictureUpload($request, $user->cadet->profile_pic);
+                if ($imagePath) {
+                    $cadetValidated['profile_pic'] = $imagePath;
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+            }
+
             $dateFields = ['BMI_update_date', 'swimming_pass_date'];
             foreach ($dateFields as $field) {
                 if (isset($cadetValidated[$field]) && trim($cadetValidated[$field]) === '') {
                     $cadetValidated[$field] = null;
                 }
             }
-            
+
             $user->cadet->update($cadetValidated);
-    
+
         } elseif ($user->role === 'instructor' && $user->instructor) {
             $instructorValidated = $request->validate([
                 'phone_number' => 'nullable|string|max:13',
                 'rank' => 'nullable|string',
-                'profile_pic' => 'nullable|string',
+                'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'position' => 'nullable|string|max:20',
                 'expertise' => 'nullable|string',
                 'time_in_service' => 'nullable|integer|min:0',
@@ -266,7 +404,20 @@ class AdminController extends Controller
                 'service_number' => 'nullable|string|max:10',
                 'past_unit' => 'nullable|array',
             ]);
-            
+
+            // Handle profile picture upload
+            try {
+                $imagePath = $this->handleProfilePictureUpload($request, $user->instructor->profile_pic);
+                if ($imagePath) {
+                    $instructorValidated['profile_pic'] = $imagePath;
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ], 400);
+            }
+
             if (isset($instructorValidated['past_unit'])) {
                 $instructorValidated['past_unit'] = json_encode(array_filter(
                     $instructorValidated['past_unit'],
@@ -275,7 +426,7 @@ class AdminController extends Controller
                     }
                 ));
             }
-            
+
             $user->instructor->update($instructorValidated);
         }
 
