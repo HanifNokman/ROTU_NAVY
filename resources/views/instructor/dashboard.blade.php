@@ -1276,7 +1276,14 @@
                                                 {{ $otherInstructor->rank ?? 'N/A' }}
                                             </span>
                                         </div>
-                                        <div class="flex-1 min-w-[200px] text-sm font-medium text-gray-900 truncate">{{ $otherInstructor->user->name ?? 'N/A' }}</div>
+                                        <div class="flex-1 min-w-[200px] text-sm font-medium text-gray-900 truncate">
+                                            {{ $otherInstructor->user->name ?? 'N/A' }}
+                                            @if($otherInstructor->service_number && str_contains($otherInstructor->service_number, 'NV'))
+                                                PSSTLDM
+                                            @elseif($otherInstructor->service_number && str_contains($otherInstructor->service_number, 'N') && !str_contains($otherInstructor->service_number, 'NV'))
+                                                TLDM
+                                            @endif
+                                        </div>
                                         <div class="w-36 flex-shrink-0 text-sm">
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 whitespace-nowrap">
                                                 {{ $otherInstructor->position ?? 'N/A' }}
@@ -1651,7 +1658,16 @@
                 }
 
                 // Calculate dynamic font size for rank + name based on total length
-                const fullName = `${instructor.rank || 'Instructor'} ${user.name}`;
+                // Add PSSTLDM/TLDM designation based on service number
+                let serviceDesignation = '';
+                if (instructor.service_number) {
+                    if (instructor.service_number.includes('NV')) {
+                        serviceDesignation = ' PSSTLDM';
+                    } else if (instructor.service_number.includes('N')) {
+                        serviceDesignation = ' TLDM';
+                    }
+                }
+                const fullName = `${instructor.rank || 'Instructor'} ${user.name}${serviceDesignation}`;
                 const nameLength = fullName.length;
                 let nameFontSize = 'text-3xl'; // Default size for short names
                 let nameFontSizeMobile = 'text-2xl'; // Default mobile size
