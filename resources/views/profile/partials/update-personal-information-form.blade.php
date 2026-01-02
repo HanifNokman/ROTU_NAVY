@@ -344,7 +344,7 @@
                             <option value="TNL" {{ $selectedExpertise === 'TNL' ? 'selected' : '' }}>TNL</option>
                             <option value="BDI" {{ $selectedExpertise === 'BDI' ? 'selected' : '' }}>BDI</option>
                             <option value="KOM" {{ $selectedExpertise === 'KOM' ? 'selected' : '' }}>KOM</option>
-                            <option value="PKOR" {{ $selectedExpertise === 'PKOR' ? 'selected' : '' }}>PKOR</option>
+                            <option value="Officer" {{ $selectedExpertise === 'Officer' ? 'selected' : '' }}>Officer</option>
                             <option value="YO" {{ $selectedExpertise === 'YO' ? 'selected' : '' }}>YO</option>
                             @if($personal->expertise === 'Admin')
                                 <option value="Admin" {{ $selectedExpertise === 'Admin' ? 'selected' : '' }}>Admin</option>
