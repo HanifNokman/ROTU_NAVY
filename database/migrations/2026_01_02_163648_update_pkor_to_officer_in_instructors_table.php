@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // First, modify the enum to include both PKOR and Officer temporarily
+        \DB::statement("ALTER TABLE instructors MODIFY COLUMN expertise ENUM('PAP','JJM','PNK','TNL','BDI','KOM','PKOR','Officer','YO','Admin')");
+
         // Update existing records with PKOR to Officer
         \DB::table('instructors')
             ->where('expertise', 'PKOR')
             ->update(['expertise' => 'Officer']);
 
-        // Modify the enum to replace PKOR with Officer
+        // Finally, remove PKOR from the enum, keeping only Officer
         \DB::statement("ALTER TABLE instructors MODIFY COLUMN expertise ENUM('PAP','JJM','PNK','TNL','BDI','KOM','Officer','YO','Admin')");
     }
 
@@ -25,12 +28,15 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // First, modify the enum to include both Officer and PKOR temporarily
+        \DB::statement("ALTER TABLE instructors MODIFY COLUMN expertise ENUM('PAP','JJM','PNK','TNL','BDI','KOM','PKOR','Officer','YO','Admin')");
+
         // Revert Officer back to PKOR
         \DB::table('instructors')
             ->where('expertise', 'Officer')
             ->update(['expertise' => 'PKOR']);
 
-        // Revert the enum to include PKOR
+        // Finally, remove Officer from the enum, keeping only PKOR
         \DB::statement("ALTER TABLE instructors MODIFY COLUMN expertise ENUM('PAP','JJM','PNK','TNL','BDI','KOM','PKOR','YO','Admin')");
     }
 };
