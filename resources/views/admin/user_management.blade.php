@@ -445,7 +445,7 @@
 
                 fields += `<div class="mb-4"><label class="block text-sm font-medium text-gray-700">Position</label><input type="text" name="position" value="${instructor.position || ''}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></div>`;
 
-                let expertiseOptions = ['', 'PAP', 'JJM', 'PNK', 'TNL', 'BDI', 'KOM', 'PKOR', 'YO'];
+                let expertiseOptions = ['', 'PAP', 'JJM', 'PNK', 'TNL', 'BDI', 'KOM', 'Officer', 'YO'];
                 let isAdminExpertise = instructor.expertise === 'Admin';
                 if (isAdminExpertise) {
                     expertiseOptions.push('Admin');

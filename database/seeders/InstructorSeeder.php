@@ -19,7 +19,7 @@ class InstructorSeeder extends Seeder
                 'phone_number' => '60123456789',
                 'rank' => 'Lt.Dya',
                 'position' => 'Senior Instructor',
-                'expertise' => 'PKOR',
+                'expertise' => 'Officer',
                 'time_in_service' => 15,
                 'status' => 'Active',
                 'service_number' => 'N/404123',
