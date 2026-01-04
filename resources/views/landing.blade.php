@@ -7,10 +7,11 @@
     // Total Active Cadets
     $totalActiveCadets = Cadet::where('cadet_status', 'Active')->count();
 
-    // Latest Intake Year with Completed Cadets
-    $latestCompletedIntake = Cadet::where('cadet_status', 'Completed')
+    // Latest Intake with Completed Cadets
+    $latestCompletedIntakeYear = Cadet::where('cadet_status', 'Completed')
         ->orderBy('intake_year', 'desc')
         ->value('intake_year') ?? date('Y');
+    $latestCompletedIntakeNumber = $latestCompletedIntakeYear - 2011;
 
     // Total Completed Cadets
     $totalCompletedCadets = Cadet::where('cadet_status', 'Completed')->count();
@@ -1043,6 +1044,15 @@
             color: var(--primary-blue);
             margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
             display: block;
+        }
+
+        .stat-year {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+            display: block;
+            opacity: 0.8;
         }
 
         .stat-label {
@@ -2669,7 +2679,7 @@
                 <span class="stat-label">Kadet Aktif Semasa</span>
             </div>
             <div class="stat-item animate-on-scroll">
-                <span class="stat-number" data-count="{{ $latestCompletedIntake }}">0</span>
+                <span class="stat-number" data-count="{{ $latestCompletedIntakeNumber }}">0</span>
                 <span class="stat-label">Intake Ditauliahkan</span>
             </div>
             <div class="stat-item animate-on-scroll">
