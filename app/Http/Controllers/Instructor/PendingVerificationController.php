@@ -43,7 +43,15 @@ class PendingVerificationController extends Controller
             ->where('role', 'instructor')
             ->get();
 
-        $applications = Application::all();
+        // Only show applications that have at least 1 pending test result
+        $applications = Application::where(function($query) {
+            $query->where('attendance', 'pending')
+                ->orWhere('drill_test', 'pending')
+                ->orWhere('physical_test', 'pending')
+                ->orWhere('medical_test', 'pending')
+                ->orWhere('interview', 'pending')
+                ->orWhere('final_evaluation', 'pending');
+        })->get();
 
         return view('instructor.pending-verification', compact('pendingCadets', 'pendingInstructors', 'applications'));
     }
