@@ -360,7 +360,7 @@ class PendingVerificationController extends Controller
                 $message .= " However, " . count($failedCreations) . " application(s) failed: " . implode(', ', $failedCreations);
             }
 
-            return redirect()->route('instructor.pending.verification.index')
+            return redirect()->route('instructor.pending.verification')
                 ->with('success', $message);
 
         } catch (\Exception $e) {
