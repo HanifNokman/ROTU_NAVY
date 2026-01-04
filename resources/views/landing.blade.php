@@ -3294,8 +3294,8 @@
                         <label for="applicationDeadline">Application Deadline Date:</label>
                         <input type="date" id="applicationDeadline" name="application_deadline" min="{{ date('Y-m-d') }}">
                         <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                            <i class="fas fa-info-circle"></i> 
-                            Banner shows 1 month before deadline and disappears day after
+                            <i class="fas fa-info-circle"></i>
+                            Banner shows 2 months before deadline and disappears day after
                         </small>
                     </div>
                     
