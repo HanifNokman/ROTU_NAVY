@@ -56,17 +56,17 @@ class ContentSetting extends Model
     public static function shouldShowDeadlineBanner(): bool
     {
         $deadline = self::get('application_deadline');
-        
+
         if (!$deadline) {
             return false;
         }
 
         $deadlineDate = Carbon::parse($deadline);
         $today = Carbon::today();
-        $oneMonthBefore = $deadlineDate->copy()->subMonth();
+        $twoMonthsBefore = $deadlineDate->copy()->subMonths(2);
         $oneDayAfter = $deadlineDate->copy()->addDay();
 
-        return $today->between($oneMonthBefore, $oneDayAfter);
+        return $today->between($twoMonthsBefore, $oneDayAfter);
     }
 
     /**
