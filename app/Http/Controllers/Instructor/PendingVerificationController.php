@@ -345,6 +345,26 @@ class PendingVerificationController extends Controller
                     }
                 }
 
+                // Mark all remaining candidates with pending fields as failed
+                $updatedCount = Application::where(function($query) {
+                    $query->where('attendance', 'pending')
+                        ->orWhere('drill_test', 'pending')
+                        ->orWhere('physical_test', 'pending')
+                        ->orWhere('medical_test', 'pending')
+                        ->orWhere('interview', 'pending')
+                        ->orWhere('final_evaluation', 'pending');
+                })
+                ->update([
+                    'attendance' => DB::raw("CASE WHEN attendance = 'pending' THEN 'failed' ELSE attendance END"),
+                    'drill_test' => DB::raw("CASE WHEN drill_test = 'pending' THEN 'failed' ELSE drill_test END"),
+                    'physical_test' => DB::raw("CASE WHEN physical_test = 'pending' THEN 'failed' ELSE physical_test END"),
+                    'medical_test' => DB::raw("CASE WHEN medical_test = 'pending' THEN 'failed' ELSE medical_test END"),
+                    'interview' => DB::raw("CASE WHEN interview = 'pending' THEN 'failed' ELSE interview END"),
+                    'final_evaluation' => DB::raw("CASE WHEN final_evaluation = 'pending' THEN 'failed' ELSE final_evaluation END"),
+                ]);
+
+                \Log::info("Marked {$updatedCount} application(s) with pending fields as failed.");
+
                 // Store selection completion date instead of immediately deleting applications
                 if ($createdCount > 0) {
                     $completionDate = Carbon::now();
