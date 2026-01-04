@@ -3129,8 +3129,8 @@
                             @endif
                         </div>
                         
-                        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">Imbas untuk Akses Segera</p>
-                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">Gunakan peranti mudah alih anda untuk mengimbas kod QR ini dan akses portal permohonan PALAPES secara terus</p>
+                        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">Imbas untuk Maklumat Lanjut</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">Gunakan peranti mudah alih anda untuk mengimbas kod QR ini dan dapatkan update terkini mengenai proses permohonan anda</p>
                         
                         <div style="background: rgba(60, 146, 217, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(60, 146, 217, 0.2);">
                             <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Perlukan Bantuan?</h4>

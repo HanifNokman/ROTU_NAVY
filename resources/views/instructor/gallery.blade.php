@@ -458,11 +458,7 @@
                     </div>
 
                     {{-- ================================================================ --}}
-                    {{-- ALPINE.JS COMPONENT FOR MODALS --}}
-                    {{-- ================================================================ --}}
-                    <div x-data="galleryManagement()">
-                        {{-- ================================================================ --}}
-                        {{-- CATEGORY OVERVIEW (DEFAULT VIEW) --}}
+                    {{-- CATEGORY OVERVIEW (DEFAULT VIEW) --}}
                         {{-- ================================================================ --}}
                         <div id="categoryOverview" class="space-y-6">
                             @php
@@ -548,83 +544,6 @@
                                 <p class="text-sm text-gray-400 mt-1">Add your first picture to get started!</p>
                             </div>
                         </div>
-
-                        {{-- ================================================================ --}}
-                        {{-- EDIT GALLERY MODAL --}}
-                        {{-- ================================================================ --}}
-                        <div x-show="showModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
-                            <div class="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-full max-w-xl relative max-h-[90vh] overflow-y-auto">
-                                <button type="button" @click="showModal = false" class="modal-close-btn absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-                                <h2 class="text-base sm:text-lg font-semibold mb-4">Edit Gallery Item</h2>
-                                <form method="POST" :action="updateUrl" enctype="multipart/form-data">
-                                    <input type="hidden" name="_method" value="PUT">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                    <div class="mb-4">
-                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Title</label>
-                                        <input type="text" name="title" x-model="gallery.title" required
-                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Description</label>
-                                        <textarea name="description" x-model="gallery.description" rows="3"
-                                                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Category</label>
-                                        <select name="gallery_category_id" x-model="gallery.gallery_category_id" required
-                                                class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            @foreach($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Replace Image (optional)</label>
-                                        <input type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.webp" id="edit_gallery_image"
-                                               class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                               onchange="validateGalleryImageSize(this, 'edit')">
-                                        <p class="text-xs text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)</p>
-                                        <p id="edit-gallery-image-error" class="text-xs text-red-600 mt-2 hidden"></p>
-                                    </div>
-
-                                    <div class="flex justify-end gap-2 sm:gap-3">
-                                        <button type="button" @click="showModal = false" class="px-3 sm:px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">Cancel</button>
-                                        <button type="submit" class="px-3 sm:px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition duration-200 text-xs sm:text-sm">Save</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        {{-- ================================================================ --}}
-                        {{-- DELETE GALLERY CONFIRMATION MODAL --}}
-                        {{-- ================================================================ --}}
-                        <div x-show="showDeleteModal" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
-                            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-xl w-full max-w-md">
-                                <h2 class="text-base sm:text-lg font-semibold mb-4">Confirm Deletion</h2>
-                                <p class="mb-6 text-gray-700 text-sm sm:text-base">Are you sure you want to delete <strong x-text="deleteGallery.title"></strong>?</p>
-
-                                <form :action="deleteUrl" method="POST">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                    <div class="flex justify-end gap-2 sm:gap-3">
-                                        <button type="button" @click="showDeleteModal = false"
-                                                class="px-3 sm:px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">
-                                            Cancel
-                                        </button>
-                                        <button type="submit"
-                                                class="px-3 sm:px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200 text-xs sm:text-sm">
-                                            Confirm Delete
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -922,6 +841,88 @@
 
     {{-- Mobile Bottom Spacer --}}
     <div class="block md:hidden h-20"></div>
+
+    {{-- ================================================================ --}}
+    {{-- GALLERY MODALS (outside all containers) --}}
+    {{-- ================================================================ --}}
+    <div x-data="galleryManagement()">
+        {{-- EDIT GALLERY MODAL --}}
+        <div x-show="showModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 backdrop-filter backdrop-blur-sm" style="display: none;">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-full max-w-xl relative max-h-[90vh] overflow-y-auto">
+                    <button type="button" @click="showModal = false" class="modal-close-btn absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                    <h2 class="text-base sm:text-lg font-semibold mb-4">Edit Gallery Item</h2>
+                    <form method="POST" :action="updateUrl" enctype="multipart/form-data">
+                        <input type="hidden" name="_method" value="PUT">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-4">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input type="text" name="title" x-model="gallery.title" required
+                                   class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea name="description" x-model="gallery.description" rows="3"
+                                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select name="gallery_category_id" x-model="gallery.gallery_category_id" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Replace Image (optional)</label>
+                            <input type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.webp" id="edit_gallery_image"
+                                   class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   onchange="validateGalleryImageSize(this, 'edit')">
+                            <p class="text-xs text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG, GIF, WEBP (Max: 10MB)</p>
+                            <p id="edit-gallery-image-error" class="text-xs text-red-600 mt-2 hidden"></p>
+                        </div>
+
+                        <div class="flex justify-end gap-2 sm:gap-3">
+                            <button type="button" @click="showModal = false" class="px-3 sm:px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">Cancel</button>
+                            <button type="submit" class="px-3 sm:px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition duration-200 text-xs sm:text-sm">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- DELETE GALLERY CONFIRMATION MODAL --}}
+        <div x-show="showDeleteModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 backdrop-filter backdrop-blur-sm" style="display: none;">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white p-4 sm:p-6 rounded-lg shadow-xl w-full max-w-md relative">
+                    <button type="button" @click="showDeleteModal = false" class="modal-close-btn absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                    <h2 class="text-base sm:text-lg font-semibold mb-4">Confirm Deletion</h2>
+                    <p class="mb-6 text-gray-700 text-sm sm:text-base">Are you sure you want to delete <strong x-text="deleteGallery.title"></strong>?</p>
+
+                    <form :action="deleteUrl" method="POST">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                        <div class="flex justify-end gap-2 sm:gap-3">
+                            <button type="button" @click="showDeleteModal = false"
+                                    class="px-3 sm:px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200 text-xs sm:text-sm">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-3 sm:px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200 text-xs sm:text-sm">
+                                Confirm Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- ================================================================ --}}
     {{-- JAVASCRIPT --}}
