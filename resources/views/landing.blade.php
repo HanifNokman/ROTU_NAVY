@@ -1,3 +1,23 @@
+@php
+    use App\Models\Cadet;
+    use App\Models\LearningMaterial;
+    use App\Models\LearningMaterialCategory;
+    use App\Models\Training;
+
+    // Total Active Cadets
+    $totalActiveCadets = Cadet::where('cadet_status', 'Active')->count();
+
+    // Latest Intake Year with Completed Cadets
+    $latestCompletedIntake = Cadet::where('cadet_status', 'Completed')
+        ->orderBy('intake_year', 'desc')
+        ->value('intake_year') ?? date('Y');
+
+    // Total Completed Cadets
+    $totalCompletedCadets = Cadet::where('cadet_status', 'Completed')->count();
+
+    // Total Training Sessions this year
+    $totalTrainingsThisYear = Training::whereYear('created_at', date('Y'))->count();
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -898,21 +918,21 @@
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            padding: 12px 28px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--primary-blue);
+            padding: 14px 32px;
             border-radius: 8px;
             transition: all 0.3s ease;
-            color: white;
+            color: var(--primary-blue);
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 1rem;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
         }
 
         .btn-secondary::before {
@@ -922,7 +942,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: var(--primary-blue);
+            background: var(--gradient-primary);
             transition: left 0.3s ease;
             z-index: -1;
         }
@@ -935,6 +955,15 @@
             color: white;
             transform: translateY(-2px);
             border-color: var(--primary-blue);
+            box-shadow: 0 6px 25px rgba(60, 146, 217, 0.5);
+        }
+
+        .btn-secondary i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-secondary:hover i {
+            transform: scale(1.1);
         }
 
         /* Floating Elements */
@@ -2636,20 +2665,20 @@
     <section class="stats-section" style="background: linear-gradient(135deg, rgba(16, 20, 28, 0.95), rgba(60, 146, 217, 0.1));">
         <div class="stats-container">
             <div class="stat-item animate-on-scroll">
-                <span class="stat-number" data-count="500">0</span>
-                <span class="stat-label">Jumlah Keseluruhan Kadet Palapes</span>
+                <span class="stat-number" data-count="{{ $totalActiveCadets }}">0</span>
+                <span class="stat-label">Kadet Aktif Semasa</span>
             </div>
             <div class="stat-item animate-on-scroll">
-                <span class="stat-number" data-count="11">0</span>
+                <span class="stat-number" data-count="{{ $latestCompletedIntake }}">0</span>
                 <span class="stat-label">Intake Ditauliahkan</span>
             </div>
             <div class="stat-item animate-on-scroll">
-                <span class="stat-number" data-count="95">0</span>
-                <span class="stat-label">% Kadet Ditauliahkan</span>
+                <span class="stat-number" data-count="{{ $totalCompletedCadets }}">0</span>
+                <span class="stat-label">Kadet Ditauliahkan</span>
             </div>
             <div class="stat-item animate-on-scroll">
-                <span class="stat-number" data-count="120">0</span>
-                <span class="stat-label">Kadet Aktif</span>
+                <span class="stat-number" data-count="{{ $totalTrainingsThisYear }}">0</span>
+                <span class="stat-label">Sesi Latihan {{ date('Y') }}</span>
             </div>
         </div>
     </section>
