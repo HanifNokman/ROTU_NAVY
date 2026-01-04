@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Notifications\WelcomeNotification;
+use App\Notifications\SelectionCompleteNotification;
+use Illuminate\Support\Facades\Notification;
 
 class PendingVerificationController extends Controller
 {
@@ -406,11 +408,37 @@ class PendingVerificationController extends Controller
                 }
             });
 
+            // Send selection complete notification to all applicants
+            $intakeYear = \App\Models\Cadet::getEffectiveIntakeYear();
+            $allApplications = Application::all();
+            $emailsSent = 0;
+            $emailsFailed = 0;
+
+            foreach ($allApplications as $application) {
+                try {
+                    // Create a notifiable object with email and name
+                    $notifiable = new \stdClass();
+                    $notifiable->email = $application->email;
+                    $notifiable->name = $application->name;
+
+                    Notification::route('mail', $application->email)
+                        ->notify(new SelectionCompleteNotification($intakeYear));
+
+                    $emailsSent++;
+                } catch (\Exception $e) {
+                    \Log::error("Failed to send selection complete email to {$application->email}: " . $e->getMessage());
+                    $emailsFailed++;
+                }
+            }
+
+            \Log::info("Sent selection complete notification to {$emailsSent} applicant(s). Failed: {$emailsFailed}");
+
             // Build success message
             $message = "Selection process completed successfully! Created {$createdCount} cadet account" . ($createdCount != 1 ? 's' : '') . '.';
-            
+            $message .= " Notification emails sent to {$emailsSent} applicant(s).";
+
             if (!empty($failedCreations)) {
-                $message .= " However, " . count($failedCreations) . " application(s) failed: " . implode(', ', $failedCreations);
+                $message .= " However, " . count($failedCreations) . " account creation(s) failed: " . implode(', ', $failedCreations);
             }
 
             return redirect()->route('instructor.pending.verification')
