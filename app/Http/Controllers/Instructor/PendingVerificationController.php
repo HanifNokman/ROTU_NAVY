@@ -239,8 +239,33 @@ class PendingVerificationController extends Controller
                 'final_evaluation' => 'final_evaluation'
             ];
 
+            // Define the evaluation order (must match frontend order)
+            $evaluationOrder = [
+                'attendance',
+                'drill_test',
+                'physical_test',
+                'medical_test',
+                'interview',
+                'final_evaluation'
+            ];
+
             $column = $columnMap[$request->step];
             $application->$column = $request->status;
+
+            // CASCADE FAILURE LOGIC:
+            // If this stage is marked as 'failed', reset all subsequent stages to 'pending'
+            if ($request->status === 'failed') {
+                $currentStageIndex = array_search($column, $evaluationOrder);
+
+                // Reset all stages after the failed stage to 'pending'
+                for ($i = $currentStageIndex + 1; $i < count($evaluationOrder); $i++) {
+                    $subsequentStage = $evaluationOrder[$i];
+                    $application->$subsequentStage = 'pending';
+                }
+
+                \Log::info("Cascade failure applied: {$application->name} failed at {$column}, reset subsequent stages to pending");
+            }
+
             $application->save();
 
             return response()->json([
