@@ -14,7 +14,8 @@ class PublicGalleryController extends Controller
     public function index(Request $request)
     {
         $categories = GalleryCategory::with(['instructor'])
-                                     ->orderBy('name', 'asc')
+                                     ->withCount('galleries')
+                                     ->orderBy('galleries_count', 'desc')
                                      ->get();
 
         // Group galleries by category for "all" view
