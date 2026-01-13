@@ -86,6 +86,132 @@
             font-size: 1.1rem;
         }
 
+        /* System Highlights Section */
+        .highlights-section {
+            margin-bottom: 3rem;
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .highlight-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-primary);
+            border-color: var(--primary-blue);
+        }
+
+        .highlight-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .highlight-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .highlight-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .highlight-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .highlight-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .features-overview {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .features-overview h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--primary-blue);
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .feature-badge {
+            background: rgba(60, 146, 217, 0.1);
+            border: 1px solid rgba(60, 146, 217, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-badge:hover {
+            background: rgba(60, 146, 217, 0.2);
+            border-color: var(--primary-blue);
+            transform: translateX(5px);
+        }
+
+        .feature-badge i {
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+        }
+
+        .feature-badge span {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
         /* Video Section */
         .video-section {
             background: rgba(255, 255, 255, 0.05);
@@ -266,10 +392,15 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.4s ease;
+            opacity: 0;
+            visibility: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .access-content.active {
             max-height: 5000px;
+            opacity: 1;
+            visibility: visible;
         }
 
         .access-body {
@@ -393,6 +524,117 @@
             </a>
             <h1>System Sitemap</h1>
             <p>Complete navigation guide for ROTU NAVY UMS</p>
+        </div>
+
+        <!-- System Highlights Section -->
+        <div class="highlights-section">
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="highlight-number">4</div>
+                    <h3>Access Levels</h3>
+                    <p>Guest, Cadet, Instructor, and Admin roles with tailored features</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div class="highlight-number">50+</div>
+                    <h3>Features</h3>
+                    <p>Comprehensive modules covering training, inventory, learning, and more</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="highlight-number">GPS</div>
+                    <h3>Geofencing</h3>
+                    <p>Location-based attendance verification and tracking system</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="highlight-number">∞</div>
+                    <h3>Gamification</h3>
+                    <p>Badge system, leaderboards, and performance tracking</p>
+                </div>
+            </div>
+
+            <div class="features-overview">
+                <h3><i class="fas fa-star"></i> Key System Capabilities</h3>
+                <div class="features-list">
+                    <div class="feature-badge">
+                        <i class="fas fa-user-check"></i>
+                        <span>Application Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Cadet Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Training Scheduler</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Attendance Tracking</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-boxes"></i>
+                        <span>Inventory System</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-tshirt"></i>
+                        <span>Uniform Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-book-open"></i>
+                        <span>Learning Hub</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-brain"></i>
+                        <span>Quiz System</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Analytics</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Allowance Tracking</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-medal"></i>
+                        <span>Badge Awards</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-file-export"></i>
+                        <span>Report Generation</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-images"></i>
+                        <span>Gallery System</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Role-Based Access</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Responsive Design</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Video Section -->
@@ -567,8 +809,8 @@
                             <div class="feature-items">
                                 <div class="feature-item">
                                     <div class="feature-subitem">Create/edit training sessions</div>
-                                    <div class="feature-subitem">Generate QR codes for attendance</div>
-                                    <div class="feature-subitem">Record attendance (manual/QR)</div>
+                                    <div class="feature-subitem">Set geofencing boundaries for locations</div>
+                                    <div class="feature-subitem">Record attendance (manual/GPS)</div>
                                     <div class="feature-subitem">View attendance reports</div>
                                 </div>
                             </div>
@@ -806,7 +1048,8 @@
                             <div class="feature-items">
                                 <div class="feature-item">
                                     <div class="feature-subitem">View attendance records</div>
-                                    <div class="feature-subitem">Mark attendance (QR code)</div>
+                                    <div class="feature-subitem">Mark attendance (GPS geofencing)</div>
+                                    <div class="feature-subitem">Location-based check-ins</div>
                                     <div class="feature-subitem">Submit absence reasons</div>
                                 </div>
                             </div>
