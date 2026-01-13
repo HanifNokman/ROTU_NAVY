@@ -621,6 +621,90 @@
             <p>Interactive system demonstration for ROTU NAVY UMS</p>
         </div>
 
+        <!-- Video Section -->
+        <div class="video-section" style="margin-top: 2rem;">
+            <h2>
+                <i class="fas fa-video"></i>
+                System Demo Video (15 minutes)
+            </h2>
+            <div class="video-container" id="videoContainer">
+                @if(isset($videoPath) && $videoPath)
+                    <video controls id="demoVideo">
+                        <source src="{{ $videoPath }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                @else
+                    <div class="video-placeholder">
+                        <i class="fas fa-film"></i>
+                        <p>Video demo will be displayed here</p>
+                        @auth
+                            @if(in_array(auth()->user()->role, ['instructor', 'admin']))
+                                <p style="font-size: 0.9rem; opacity: 0.7;">Use the upload button below to add your demo video</p>
+                            @else
+                                <p style="font-size: 0.9rem; opacity: 0.7;">System demo video will be available soon</p>
+                            @endauth
+                        @else
+                            <p style="font-size: 0.9rem; opacity: 0.7;">System demo video will be available soon</p>
+                        @endauth
+                    </div>
+                @endif
+            </div>
+
+            @auth
+                @if(in_array(auth()->user()->role, ['instructor', 'admin']))
+                    <div class="video-upload-section">
+                        <div class="upload-controls">
+                            <button class="upload-btn" onclick="document.getElementById('videoFile').click()">
+                                <i class="fas fa-upload"></i>
+                                <span>{{ isset($videoPath) && $videoPath ? 'Replace Video' : 'Upload Video' }}</span>
+                            </button>
+                            <input type="file" id="videoFile" class="file-input" accept="video/mp4,video/mov,video/avi,video/wmv">
+
+                            @if(isset($videoPath) && $videoPath)
+                                <button class="delete-btn" onclick="deleteVideo()">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Delete Video</span>
+                                </button>
+                            @endif
+                        </div>
+                        <div class="upload-info">
+                            <i class="fas fa-info-circle"></i>
+                            Maximum file size: 350MB | Supported formats: MP4, MOV, AVI, WMV
+                        </div>
+                        <div class="upload-progress" id="uploadProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <p id="progressText" style="margin-top: 0.5rem; font-size: 0.9rem;">Uploading... 0%</p>
+                        </div>
+                    </div>
+                @endif
+            @endauth
+        </div>
+
+        <!-- Objective Section -->
+        <div class="features-overview">
+            <h3><i class="fas fa-bullseye"></i> System Objectives</h3>
+            <div class="feature-items">
+                <div class="feature-item">
+                    <i class="fas fa-database" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Manage PALAPES Laut UMS information and content in a centralized manner</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-share-alt" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Facilitate information delivery to instructors and cadets</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-laptop-code" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Provide a digital learning platform to support cadet training</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-user-plus" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Attract students' interest in joining PALAPES Laut UMS</span>
+                </div>
+            </div>
+        </div>
+
         <!-- System Highlights Section -->
         <div class="highlights-section">
             <div class="highlights-grid">
@@ -637,8 +721,8 @@
                     <div class="highlight-icon">
                         <i class="fas fa-puzzle-piece"></i>
                     </div>
-                    <div class="highlight-number">15+</div>
-                    <h3>Features</h3>
+                    <div class="highlight-number">8+</div>
+                    <h3>Modules</h3>
                     <p>Comprehensive modules covering training, inventory, learning, and more</p>
                 </div>
 
@@ -792,90 +876,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Objective Section -->
-        <div class="features-overview">
-            <h3><i class="fas fa-bullseye"></i> System Objectives</h3>
-            <div class="feature-items">
-                <div class="feature-item">
-                    <i class="fas fa-database" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
-                    <span style="color: var(--text-primary);">Manage PALAPES Laut UMS information and content in a centralized manner</span>
-                </div>
-                <div class="feature-item">
-                    <i class="fas fa-share-alt" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
-                    <span style="color: var(--text-primary);">Facilitate information delivery to instructors and cadets</span>
-                </div>
-                <div class="feature-item">
-                    <i class="fas fa-laptop-code" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
-                    <span style="color: var(--text-primary);">Provide a digital learning platform to support cadet training</span>
-                </div>
-                <div class="feature-item">
-                    <i class="fas fa-user-plus" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
-                    <span style="color: var(--text-primary);">Attract students' interest in joining PALAPES Laut UMS</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Video Section -->
-        <div class="video-section" style="margin-top: 2rem;">
-            <h2>
-                <i class="fas fa-video"></i>
-                System Demo Video (15 minutes)
-            </h2>
-            <div class="video-container" id="videoContainer">
-                @if(isset($videoPath) && $videoPath)
-                    <video controls id="demoVideo">
-                        <source src="{{ $videoPath }}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                @else
-                    <div class="video-placeholder">
-                        <i class="fas fa-film"></i>
-                        <p>Video demo will be displayed here</p>
-                        @auth
-                            @if(in_array(auth()->user()->role, ['instructor', 'admin']))
-                                <p style="font-size: 0.9rem; opacity: 0.7;">Use the upload button below to add your demo video</p>
-                            @else
-                                <p style="font-size: 0.9rem; opacity: 0.7;">System demo video will be available soon</p>
-                            @endauth
-                        @else
-                            <p style="font-size: 0.9rem; opacity: 0.7;">System demo video will be available soon</p>
-                        @endauth
-                    </div>
-                @endif
-            </div>
-
-            @auth
-                @if(in_array(auth()->user()->role, ['instructor', 'admin']))
-                    <div class="video-upload-section">
-                        <div class="upload-controls">
-                            <button class="upload-btn" onclick="document.getElementById('videoFile').click()">
-                                <i class="fas fa-upload"></i>
-                                <span>{{ isset($videoPath) && $videoPath ? 'Replace Video' : 'Upload Video' }}</span>
-                            </button>
-                            <input type="file" id="videoFile" class="file-input" accept="video/mp4,video/mov,video/avi,video/wmv">
-
-                            @if(isset($videoPath) && $videoPath)
-                                <button class="delete-btn" onclick="deleteVideo()">
-                                    <i class="fas fa-trash"></i>
-                                    <span>Delete Video</span>
-                                </button>
-                            @endif
-                        </div>
-                        <div class="upload-info">
-                            <i class="fas fa-info-circle"></i>
-                            Maximum file size: 350MB | Supported formats: MP4, MOV, AVI, WMV
-                        </div>
-                        <div class="upload-progress" id="uploadProgress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progressFill"></div>
-                            </div>
-                            <p id="progressText" style="margin-top: 0.5rem; font-size: 0.9rem;">Uploading... 0%</p>
-                        </div>
-                    </div>
-                @endif
-            @endauth
         </div>
 
         <!-- System Map Introduction -->
