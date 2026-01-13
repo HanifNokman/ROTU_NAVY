@@ -683,7 +683,7 @@
         </div>
 
         <!-- Objective Section -->
-        <div class="features-overview">
+        <div class="features-overview" style="margin-bottom: 2rem;">
             <h3><i class="fas fa-bullseye"></i> System Objectives</h3>
             <div class="feature-items">
                 <div class="feature-item">
