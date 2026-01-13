@@ -621,6 +621,47 @@
             <p>Interactive system demonstration for ROTU NAVY UMS</p>
         </div>
 
+        <!-- System Highlights Section -->
+        <div class="highlights-section">
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="highlight-number">4</div>
+                    <h3>Access Levels</h3>
+                    <p>Guest, Cadet, Instructor, and Admin roles with tailored features</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div class="highlight-number">8+</div>
+                    <h3>Modules</h3>
+                    <p>Comprehensive modules covering training, inventory, learning, and more</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="highlight-number">GPS</div>
+                    <h3>Geofencing</h3>
+                    <p>Location-based attendance verification and tracking system</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="highlight-number">∞</div>
+                    <h3>Gamification</h3>
+                    <p>Badge system, leaderboards, and performance tracking</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Video Section -->
         <div class="video-section" style="margin-top: 2rem;">
             <h2>
@@ -705,46 +746,7 @@
             </div>
         </div>
 
-        <!-- System Highlights Section -->
-        <div class="highlights-section">
-            <div class="highlights-grid">
-                <div class="highlight-card">
-                    <div class="highlight-icon">
-                        <i class="fas fa-layer-group"></i>
-                    </div>
-                    <div class="highlight-number">4</div>
-                    <h3>Access Levels</h3>
-                    <p>Guest, Cadet, Instructor, and Admin roles with tailored features</p>
-                </div>
-
-                <div class="highlight-card">
-                    <div class="highlight-icon">
-                        <i class="fas fa-puzzle-piece"></i>
-                    </div>
-                    <div class="highlight-number">8+</div>
-                    <h3>Modules</h3>
-                    <p>Comprehensive modules covering training, inventory, learning, and more</p>
-                </div>
-
-                <div class="highlight-card">
-                    <div class="highlight-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div class="highlight-number">GPS</div>
-                    <h3>Geofencing</h3>
-                    <p>Location-based attendance verification and tracking system</p>
-                </div>
-
-                <div class="highlight-card">
-                    <div class="highlight-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="highlight-number">∞</div>
-                    <h3>Gamification</h3>
-                    <p>Badge system, leaderboards, and performance tracking</p>
-                </div>
-            </div>
-
+<div class="highlights-section">
             <div class="features-overview">
                 <h3><i class="fas fa-star"></i> Key System Capabilities</h3>
 
