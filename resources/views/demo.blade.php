@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Sitemap - ROTU NAVY UMS</title>
+    <title>System Demo - ROTU NAVY UMS</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -32,20 +32,20 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, var(--darker-navy) 0%, var(--dark-navy) 100%);
             color: var(--text-primary);
-            line-height: 1.6;
+            line-height: 1.5;
             min-height: 100vh;
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
         /* Header */
         .header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             position: relative;
         }
 
@@ -55,10 +55,11 @@
             top: 0;
             background: var(--gradient-primary);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
+            font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -72,7 +73,7 @@
         }
 
         .header h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
@@ -83,26 +84,26 @@
 
         .header p {
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         /* System Highlights Section */
         .highlights-section {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .highlights-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .highlight-card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.5rem;
+            border-radius: 14px;
+            padding: 1.25rem;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
@@ -132,67 +133,67 @@
         }
 
         .highlight-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1rem;
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 0.75rem;
             background: var(--gradient-primary);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
 
         .highlight-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
             color: var(--text-primary);
         }
 
         .highlight-card p {
             color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            line-height: 1.5;
         }
 
         .highlight-number {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .features-overview {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
+            border-radius: 14px;
+            padding: 1.5rem;
         }
 
         .features-overview h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            margin-bottom: 1.25rem;
             text-align: center;
             color: var(--primary-blue);
         }
 
         .features-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 0.75rem;
         }
 
         .feature-badge {
             background: rgba(60, 146, 217, 0.1);
             border: 1px solid rgba(60, 146, 217, 0.3);
             border-radius: 8px;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.85rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.6rem;
             transition: all 0.3s ease;
         }
 
@@ -204,31 +205,31 @@
 
         .feature-badge i {
             color: var(--primary-blue);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
         .feature-badge span {
             color: var(--text-primary);
-            font-size: 0.95rem;
+            font-size: 0.875rem;
         }
 
         /* Video Section */
         .video-section {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 3rem;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
             backdrop-filter: blur(10px);
         }
 
         .video-section h2 {
             color: var(--primary-blue);
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
+            margin-bottom: 1.25rem;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.65rem;
         }
 
         .video-container {
@@ -270,12 +271,12 @@
         /* Sitemap Section */
         .sitemap-intro {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .sitemap-intro h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -284,34 +285,35 @@
 
         .sitemap-intro p {
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
 
         /* Landing Page Box */
         .landing-box {
             background: var(--gradient-primary);
-            border-radius: 20px;
-            padding: 2rem;
+            border-radius: 14px;
+            padding: 1.5rem;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow-primary);
         }
 
         .landing-box h3 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .landing-box p {
             opacity: 0.9;
+            font-size: 0.95rem;
         }
 
         /* Branch Container */
         .branches-container {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
@@ -321,7 +323,7 @@
         .access-card {
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid var(--border-color);
-            border-radius: 20px;
+            border-radius: 14px;
             overflow: hidden;
             transition: all 0.3s ease;
         }
@@ -331,13 +333,13 @@
             box-shadow: var(--shadow-primary);
         }
 
-        .access-card.guest { border-top: 4px solid #10b981; }
-        .access-card.instructor { border-top: 4px solid var(--primary-blue); }
-        .access-card.cadet { border-top: 4px solid var(--accent-pink); }
-        .access-card.admin { border-top: 4px solid #f59e0b; }
+        .access-card.guest { border-top: 3px solid #10b981; }
+        .access-card.instructor { border-top: 3px solid var(--primary-blue); }
+        .access-card.cadet { border-top: 3px solid var(--accent-pink); }
+        .access-card.admin { border-top: 3px solid #f59e0b; }
 
         .access-header {
-            padding: 1.5rem;
+            padding: 1.1rem 1.3rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -356,13 +358,13 @@
         }
 
         .access-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .guest .access-icon { background: linear-gradient(135deg, #10b981, #059669); }
@@ -371,17 +373,17 @@
         .admin .access-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
         .access-title h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
         }
 
         .access-title p {
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .toggle-icon {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             transition: transform 0.3s ease;
             color: var(--primary-blue);
         }
@@ -406,25 +408,25 @@
         }
 
         .access-body {
-            padding: 1.5rem;
+            padding: 1.25rem;
         }
 
         /* Feature Section */
         .feature-section {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .feature-header {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem;
+            gap: 0.65rem;
+            padding: 0.75rem 0.9rem;
             background: rgba(60, 146, 217, 0.1);
-            border-left: 4px solid var(--primary-blue);
+            border-left: 3px solid var(--primary-blue);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .feature-header:hover {
@@ -433,26 +435,26 @@
 
         .feature-header i {
             color: var(--primary-blue);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
         .feature-header h4 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             flex: 1;
         }
 
         .feature-items {
-            padding-left: 2.5rem;
-            margin-top: 0.5rem;
+            padding-left: 2rem;
+            margin-top: 0.4rem;
         }
 
         .feature-item {
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
+            padding: 0.6rem;
+            margin-bottom: 0.4rem;
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            border-left: 3px solid rgba(60, 146, 217, 0.3);
+            border-radius: 6px;
+            border-left: 2px solid rgba(60, 146, 217, 0.3);
             transition: all 0.3s ease;
         }
 
@@ -465,29 +467,120 @@
         .feature-item strong {
             color: var(--primary-blue);
             display: block;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
+            font-size: 0.925rem;
         }
 
         .feature-subitem {
-            padding-left: 1rem;
-            margin: 0.25rem 0;
+            padding-left: 0.85rem;
+            margin: 0.2rem 0;
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         .feature-subitem::before {
             content: "→";
             color: var(--primary-blue);
-            margin-right: 0.5rem;
+            margin-right: 0.4rem;
         }
 
         /* Footer */
         .footer {
             text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
             border-top: 1px solid var(--border-color);
             color: var(--text-secondary);
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+        }
+
+        /* Video Upload Section */
+        .video-upload-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(60, 146, 217, 0.1);
+            border: 2px dashed var(--primary-blue);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .upload-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .upload-btn {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-info {
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-progress {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
         /* Responsive */
@@ -524,8 +617,8 @@
                 <i class="fas fa-home"></i>
                 <span>Back to Home</span>
             </a>
-            <h1>System Sitemap</h1>
-            <p>Complete navigation guide for ROTU NAVY UMS</p>
+            <h1>System Demo</h1>
+            <p>Interactive system demonstration for ROTU NAVY UMS</p>
         </div>
 
         <!-- System Highlights Section -->
@@ -570,6 +663,12 @@
 
             <div class="features-overview">
                 <h3><i class="fas fa-star"></i> Key System Capabilities</h3>
+
+                <!-- Instructor Features -->
+                <h4 style="color: var(--primary-blue); font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-user-tie"></i>
+                    Instructor Features
+                </h4>
                 <div class="features-list">
                     <div class="feature-badge">
                         <i class="fas fa-user-check"></i>
@@ -584,16 +683,52 @@
                         <span>Training Scheduler</span>
                     </div>
                     <div class="feature-badge">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Attendance Tracking</span>
-                    </div>
-                    <div class="feature-badge">
                         <i class="fas fa-boxes"></i>
                         <span>Inventory System</span>
                     </div>
                     <div class="feature-badge">
                         <i class="fas fa-tshirt"></i>
                         <span>Uniform Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-book"></i>
+                        <span>Learning Hub Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Quiz Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Analytics</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Allowance Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-file-export"></i>
+                        <span>Report Generation</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-camera"></i>
+                        <span>Gallery Management</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-medal"></i>
+                        <span>Badge Management</span>
+                    </div>
+                </div>
+
+                <!-- Cadet Features -->
+                <h4 style="color: var(--accent-pink); font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-user-graduate"></i>
+                    Cadet Features
+                </h4>
+                <div class="features-list">
+                    <div class="feature-badge">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Attendance Tracking</span>
                     </div>
                     <div class="feature-badge">
                         <i class="fas fa-book-open"></i>
@@ -604,32 +739,52 @@
                         <span>Quiz System</span>
                     </div>
                     <div class="feature-badge">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Performance Analytics</span>
+                        <i class="fas fa-trophy"></i>
+                        <span>Performance Tracking</span>
                     </div>
                     <div class="feature-badge">
-                        <i class="fas fa-money-bill-wave"></i>
+                        <i class="fas fa-money-bill"></i>
                         <span>Allowance Tracking</span>
                     </div>
                     <div class="feature-badge">
                         <i class="fas fa-medal"></i>
-                        <span>Badge Awards</span>
+                        <span>Badge Collection</span>
                     </div>
                     <div class="feature-badge">
-                        <i class="fas fa-file-export"></i>
-                        <span>Report Generation</span>
+                        <i class="fas fa-box"></i>
+                        <span>Uniform Profile</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-tools"></i>
+                        <span>Equipment Loans</span>
                     </div>
                     <div class="feature-badge">
                         <i class="fas fa-images"></i>
-                        <span>Gallery System</span>
+                        <span>Gallery Access</span>
                     </div>
                     <div class="feature-badge">
                         <i class="fas fa-bell"></i>
                         <span>Notifications</span>
                     </div>
+                </div>
+
+                <!-- Shared Features -->
+                <h4 style="color: #10b981; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-cogs"></i>
+                    System Features
+                </h4>
+                <div class="features-list">
                     <div class="feature-badge">
                         <i class="fas fa-shield-alt"></i>
                         <span>Role-Based Access</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>GPS Geofencing</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Gamification</span>
                     </div>
                     <div class="feature-badge">
                         <i class="fas fa-mobile-alt"></i>
@@ -639,27 +794,91 @@
             </div>
         </div>
 
+        <!-- Objective Section -->
+        <div class="features-overview">
+            <h3><i class="fas fa-bullseye"></i> System Objectives</h3>
+            <div class="feature-items">
+                <div class="feature-item">
+                    <i class="fas fa-database" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Manage PALAPES Laut UMS information and content in a centralized manner</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-share-alt" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Facilitate information delivery to instructors and cadets</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-laptop-code" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Provide a digital learning platform to support cadet training</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-user-plus" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Attract students' interest in joining PALAPES Laut UMS</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Video Section -->
-        <div class="video-section">
+        <div class="video-section" style="margin-top: 2rem;">
             <h2>
                 <i class="fas fa-video"></i>
                 System Demo Video (15 minutes)
             </h2>
-            <div class="video-container">
-                <div class="video-placeholder">
-                    <i class="fas fa-film"></i>
-                    <p>Video demo will be displayed here</p>
-                    <p style="font-size: 0.9rem; opacity: 0.7;">Upload your 15-minute demo video to showcase the system</p>
-                </div>
-                <!-- To add video, replace the placeholder with: -->
-                <!-- <video controls>
-                    <source src="/path/to/your/video.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video> -->
+            <div class="video-container" id="videoContainer">
+                @if(isset($videoPath) && $videoPath)
+                    <video controls id="demoVideo">
+                        <source src="{{ $videoPath }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                @else
+                    <div class="video-placeholder">
+                        <i class="fas fa-film"></i>
+                        <p>Video demo will be displayed here</p>
+                        @auth
+                            @if(in_array(auth()->user()->role, ['instructor', 'admin']))
+                                <p style="font-size: 0.9rem; opacity: 0.7;">Use the upload button below to add your demo video</p>
+                            @else
+                                <p style="font-size: 0.9rem; opacity: 0.7;">System demo video will be available soon</p>
+                            @endauth
+                        @else
+                            <p style="font-size: 0.9rem; opacity: 0.7;">System demo video will be available soon</p>
+                        @endauth
+                    </div>
+                @endif
             </div>
+
+            @auth
+                @if(in_array(auth()->user()->role, ['instructor', 'admin']))
+                    <div class="video-upload-section">
+                        <div class="upload-controls">
+                            <button class="upload-btn" onclick="document.getElementById('videoFile').click()">
+                                <i class="fas fa-upload"></i>
+                                <span>{{ isset($videoPath) && $videoPath ? 'Replace Video' : 'Upload Video' }}</span>
+                            </button>
+                            <input type="file" id="videoFile" class="file-input" accept="video/mp4,video/mov,video/avi,video/wmv">
+
+                            @if(isset($videoPath) && $videoPath)
+                                <button class="delete-btn" onclick="deleteVideo()">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Delete Video</span>
+                                </button>
+                            @endif
+                        </div>
+                        <div class="upload-info">
+                            <i class="fas fa-info-circle"></i>
+                            Maximum file size: 500MB | Supported formats: MP4, MOV, AVI, WMV
+                        </div>
+                        <div class="upload-progress" id="uploadProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <p id="progressText" style="margin-top: 0.5rem; font-size: 0.9rem;">Uploading... 0%</p>
+                        </div>
+                    </div>
+                @endif
+            @endauth
         </div>
 
-        <!-- Sitemap Introduction -->
+        <!-- System Map Introduction -->
         <div class="sitemap-intro">
             <h2>Interactive System Map</h2>
             <p>Explore the complete structure and features of the ROTU NAVY system</p>
@@ -1151,6 +1370,37 @@
             </div>
         </div>
 
+        <!-- Future Plans Section -->
+        <div class="features-overview" style="margin-top: 2rem;">
+            <h3><i class="fas fa-rocket"></i> Future Plans & Improvements</h3>
+            <div class="feature-items">
+                <div class="feature-item">
+                    <i class="fas fa-chart-pie" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Statistics on the implementation of LT</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-user-check" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Statistics on LT attendance</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-graduation-cap" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Attendance statistics for Phase 3 and Phase 6 compared to current strength</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-running" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Activity statistics compared to overall strength</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-book-reader" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Expand the Learning Hub with interactive and multimedia-based learning content</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt" style="color: var(--primary-blue); margin-right: 0.5rem;"></i>
+                    <span style="color: var(--text-primary);">Enhance system security with stronger authentication and refined access control</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="footer">
             <p>&copy; {{ date('Y') }} ROTU NAVY UMS - Reserve Officer Training Unit</p>
@@ -1182,6 +1432,100 @@
             // Toggle the clicked dropdown
             content.classList.toggle('active');
             toggle.classList.toggle('active');
+        }
+
+        // Video upload functionality
+        document.getElementById('videoFile')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Check file size (500MB = 524288000 bytes)
+            if (file.size > 524288000) {
+                alert('File size exceeds 500MB limit. Please choose a smaller file.');
+                return;
+            }
+
+            // Check file type
+            const allowedTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Invalid file type. Please upload MP4, MOV, AVI, or WMV files only.');
+                return;
+            }
+
+            uploadVideo(file);
+        });
+
+        function uploadVideo(file) {
+            const formData = new FormData();
+            formData.append('video', file);
+
+            const progressBar = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            progressBar.style.display = 'block';
+
+            const xhr = new XMLHttpRequest();
+
+            // Track upload progress
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    progressFill.style.width = percentComplete + '%';
+                    progressText.textContent = `Uploading... ${percentComplete}%`;
+                }
+            });
+
+            xhr.addEventListener('load', function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    progressText.textContent = 'Upload complete! Refreshing page...';
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    const error = JSON.parse(xhr.responseText);
+                    alert('Upload failed: ' + (error.error || 'Unknown error'));
+                    progressBar.style.display = 'none';
+                }
+            });
+
+            xhr.addEventListener('error', function() {
+                alert('Upload failed. Please try again.');
+                progressBar.style.display = 'none';
+            });
+
+            xhr.open('POST', '{{ route('demo.upload.video') }}');
+            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+            xhr.send(formData);
+        }
+
+        function deleteVideo() {
+            if (!confirm('Are you sure you want to delete the demo video?')) {
+                return;
+            }
+
+            fetch('{{ route('demo.delete.video') }}', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Video deleted successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to delete video: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                alert('Error deleting video. Please try again.');
+                console.error('Error:', error);
+            });
         }
 
         // Optional: Add smooth scroll behavior
