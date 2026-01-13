@@ -790,13 +790,13 @@
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                                    <tr id="candidatesTableHeader">
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-select-column">Select</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-actions-column">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200" id="candidatesTableBody">
@@ -825,12 +825,69 @@
 
                         {{-- End Selection Button --}}
                         <div id="endSelectionContainer" class="hidden mt-6">
-                            <form method="POST" action="{{ route('instructor.pending.verification.end-selection') }}" onsubmit="return confirm('Are you sure you want to complete the selection process? This will create cadet accounts for all passed candidates and delete all application records.')">
-                                @csrf
-                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200">
-                                    Complete Selection Process
-                                </button>
-                            </form>
+                            <button type="button" onclick="openConfirmationModal()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200">
+                                Complete Selection Process
+                            </button>
+                        </div>
+
+                        {{-- Confirmation Modal --}}
+                        <div id="confirmationModal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+                            <div class="modal-content w-full max-w-md mx-4 p-6 shadow-2xl">
+                                <div class="flex items-center justify-center w-12 h-12 mx-auto bg-yellow-100 rounded-full mb-4">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+
+                                <h3 class="text-xl font-bold text-center text-gray-900 mb-2">Complete Selection Process</h3>
+
+                                <p class="text-sm text-gray-600 text-center mb-6">
+                                    Are you sure you want to complete the selection process? This will:
+                                </p>
+
+                                <ul class="text-sm text-gray-700 mb-6 space-y-2">
+                                    <li class="flex items-start">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Automatically mark qualified candidates as passed in final evaluation</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Create cadet accounts for all passed candidates</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="w-5 h-5 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Send notifications to all applicants</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Delete all application records after 1 week</span>
+                                    </li>
+                                </ul>
+
+                                <p class="text-xs text-red-600 font-semibold text-center mb-6">
+                                    This action cannot be undone!
+                                </p>
+
+                                <div class="flex gap-3">
+                                    <button type="button" onclick="closeConfirmationModal()" class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors duration-200">
+                                        Cancel
+                                    </button>
+                                    <form method="POST" action="{{ route('instructor.pending.verification.end-selection') }}" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200">
+                                            Confirm
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1288,7 +1345,7 @@
             currentStepDescription.textContent = steps[currentStep].description;
 
             prevButton.disabled = currentStep === 0;
-            
+
             if (currentStep === steps.length - 1) {
                 nextButton.classList.add('hidden');
                 endSelectionContainer.classList.remove('hidden');
@@ -1297,10 +1354,25 @@
                 endSelectionContainer.classList.add('hidden');
             }
 
+            // Hide/show table columns based on current step
+            const selectColumns = document.querySelectorAll('.table-select-column');
+            const actionsColumns = document.querySelectorAll('.table-actions-column');
+            const isFinalStep = currentStep === 5; // Step 6 (final_evaluation) is index 5
+
+            if (isFinalStep) {
+                // Hide Select and Actions columns for final step
+                selectColumns.forEach(col => col.style.display = 'none');
+                actionsColumns.forEach(col => col.style.display = 'none');
+            } else {
+                // Show Select and Actions columns for all other steps
+                selectColumns.forEach(col => col.style.display = '');
+                actionsColumns.forEach(col => col.style.display = '');
+            }
+
             for (let i = 0; i < steps.length; i++) {
                 const progressElement = document.getElementById(`step${i + 1}Progress`);
                 const circle = progressElement.querySelector('div');
-                
+
                 if (i === currentStep) {
                     circle.className = 'w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold';
                 } else if (i < currentStep) {
@@ -1367,40 +1439,57 @@
                     const isPassed = status === 'passed';
                     const isFailed = status === 'failed';
                     const actualIndex = startIndex + index + 1;
+                    const isFinalStep = currentStep === 5; // Step 6 (final_evaluation) is index 5
 
                     const row = document.createElement('tr');
                     row.className = isFailed ? 'bg-red-50' : (isPassed ? 'bg-green-50' : '');
-                    row.innerHTML = `
-                        <td class="px-4 py-2 whitespace-nowrap">
-                            <input type="checkbox"
-                                   class="w-5 h-5 text-green-600 rounded focus:ring-green-500"
-                                   data-app-id="${application.id}"
-                                   ${isPassed ? 'checked' : ''}>
-                        </td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm">${actualIndex}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium">${application.name}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm">${application.gender}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm">${application.course}</td>
-                        <td class="px-4 py-2 whitespace-nowrap">
-                            <div class="flex gap-2">
-                                <button onclick="updateStatus(${application.id}, '${steps[currentStep].name}', 'passed')" 
-                                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${isPassed ? 'opacity-50 cursor-not-allowed' : ''}">
-                                    Pass
-                                </button>
-                                <button onclick="updateStatus(${application.id}, '${steps[currentStep].name}', 'failed')" 
-                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${isFailed ? 'opacity-50 cursor-not-allowed' : ''}">
-                                    Fail
-                                </button>
-                            </div>
-                        </td>
-                    `;
+
+                    // For final evaluation step, render read-only view without Select and Actions
+                    if (isFinalStep) {
+                        row.innerHTML = `
+                            <td class="px-4 py-2 whitespace-nowrap text-sm">${actualIndex}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm font-medium">${application.name}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm">${application.gender}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm">${application.course}</td>
+                        `;
+                    } else {
+                        // For steps 1-5, render with Select checkbox and Action buttons
+                        row.innerHTML = `
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <input type="checkbox"
+                                       class="w-5 h-5 text-green-600 rounded focus:ring-green-500"
+                                       data-app-id="${application.id}"
+                                       ${isPassed ? 'checked' : ''}>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm">${actualIndex}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm font-medium">${application.name}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm">${application.gender}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm">${application.course}</td>
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <div class="flex gap-2">
+                                    <button onclick="updateStatus(${application.id}, '${steps[currentStep].name}', 'passed')"
+                                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${isPassed ? 'opacity-50 cursor-not-allowed' : ''}">
+                                        Pass
+                                    </button>
+                                    <button onclick="updateStatus(${application.id}, '${steps[currentStep].name}', 'failed')"
+                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${isFailed ? 'opacity-50 cursor-not-allowed' : ''}">
+                                        Fail
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                    }
+
                     tableBody.appendChild(row);
 
-                    const checkbox = row.querySelector('input[type="checkbox"]');
-                    checkbox.addEventListener('change', function() {
-                        const newStatus = this.checked ? 'passed' : 'failed';
-                        updateStatus(application.id, steps[currentStep].name, newStatus);
-                    });
+                    // Only add checkbox event listener for non-final steps
+                    if (!isFinalStep) {
+                        const checkbox = row.querySelector('input[type="checkbox"]');
+                        checkbox.addEventListener('change', function() {
+                            const newStatus = this.checked ? 'passed' : 'failed';
+                            updateStatus(application.id, steps[currentStep].name, newStatus);
+                        });
+                    }
                 });
             }
 
@@ -1638,5 +1727,44 @@
             `;
             summaryContainer.appendChild(femaleCard);
         }
+
+        // Confirmation Modal Functions
+        function openConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+
+        // Close modal when clicking outside the modal content
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('confirmationModal');
+            if (modal) {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        closeConfirmationModal();
+                    }
+                });
+            }
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const modal = document.getElementById('confirmationModal');
+                    if (modal && !modal.classList.contains('hidden')) {
+                        closeConfirmationModal();
+                    }
+                }
+            });
+        });
     </script>
 </x-app-layout>

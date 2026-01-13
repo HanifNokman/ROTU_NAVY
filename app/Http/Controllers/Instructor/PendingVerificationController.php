@@ -295,6 +295,18 @@ class PendingVerificationController extends Controller
             $failedCreations = [];
 
             DB::transaction(function () use (&$createdCount, &$failedCreations) {
+                // Automatically update final_evaluation to 'passed' for applicants who have all previous evaluations passed
+                // This prevents candidates from disappearing before the selection process is officially completed
+                $autoPassCount = Application::where('attendance', 'passed')
+                    ->where('drill_test', 'passed')
+                    ->where('physical_test', 'passed')
+                    ->where('medical_test', 'passed')
+                    ->where('interview', 'passed')
+                    ->where('final_evaluation', 'pending')
+                    ->update(['final_evaluation' => 'passed']);
+
+                \Log::info("Auto-passed final_evaluation for {$autoPassCount} qualified applicant(s)");
+
                 // Get all applications that passed all steps
                 $passedApplications = Application::where('attendance', 'passed')
                     ->where('drill_test', 'passed')
