@@ -27,7 +27,7 @@ class DemoController extends Controller
         }
 
         $request->validate([
-            'video' => 'required|mimes:mp4,mov,avi,wmv|max:512000' // Max 500MB
+            'video' => 'required|mimes:mp4,mov,avi,wmv|max:358400' // Max 350MB
         ]);
 
         try {
