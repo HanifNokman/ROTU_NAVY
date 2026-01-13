@@ -627,7 +627,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2025 ROTU NAVY UMS. Built with passion for maritime excellence.</p>
+        <p>&copy; {{ date('Y') }} ROTU NAVY UMS. Built with passion for maritime excellence.</p>
     </footer>
 
     <script>
