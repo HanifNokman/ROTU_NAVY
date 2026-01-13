@@ -2902,10 +2902,16 @@ function createCadetTable(cadets, trainingId, filter = 'all') {
         sortedIntakes.forEach(intakeLabel => {
             const intakeCadets = cadetsByIntake[intakeLabel];
             
-            // Sort cadets within each intake by service number
+            // Sort cadets within each intake by service number (ascending)
             const sortedIntakeCadets = [...intakeCadets].sort((a, b) => {
-                const numA = parseInt(a.service_number, 10) || 0;
-                const numB = parseInt(b.service_number, 10) || 0;
+                // Extract numeric part from service number (e.g., "NV/8709188" -> 8709188)
+                const extractNumber = (serviceNum) => {
+                    if (!serviceNum) return 999999;
+                    const match = serviceNum.match(/(\d+)/);
+                    return match ? parseInt(match[1], 10) : 999999;
+                };
+                const numA = extractNumber(a.service_number);
+                const numB = extractNumber(b.service_number);
                 return numA - numB;
             });
             
@@ -2989,10 +2995,16 @@ function createCadetTable(cadets, trainingId, filter = 'all') {
         return groupedTableHTML;
         
     } else {
-        // Single intake view - use original table format
+        // Single intake view - use original table format (sorted by service number ascending)
         const sortedCadets = [...filteredCadets].sort((a, b) => {
-            const numA = parseInt(a.service_number, 10) || 0;
-            const numB = parseInt(b.service_number, 10) || 0;
+            // Extract numeric part from service number (e.g., "NV/8709188" -> 8709188)
+            const extractNumber = (serviceNum) => {
+                if (!serviceNum) return 999999;
+                const match = serviceNum.match(/(\d+)/);
+                return match ? parseInt(match[1], 10) : 999999;
+            };
+            const numA = extractNumber(a.service_number);
+            const numB = extractNumber(b.service_number);
             return numA - numB;
         });
         

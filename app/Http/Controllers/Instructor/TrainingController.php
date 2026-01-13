@@ -524,7 +524,7 @@ class TrainingController extends Controller
 
             $attendances = $attendanceQuery
                 ->select('training_attendances.*')
-                ->orderByRaw('CAST(cadets.service_number AS UNSIGNED) ASC')
+                ->orderByRaw('CASE WHEN cadets.service_number IS NULL OR cadets.service_number = "" THEN 999999 ELSE CAST(REGEXP_REPLACE(cadets.service_number, "[^0-9]", "") AS UNSIGNED) END ASC')
                 ->get();
 
             $cadets = $attendances->map(function($attendance) {
