@@ -19,6 +19,7 @@ use App\Http\Controllers\Instructor\AllowanceController;
 use App\Http\Controllers\Cadet\AttendanceController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Api\BadgeController;
+use App\Http\Controllers\DemoController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -39,9 +40,9 @@ Route::get('/about-me', function () {
     return view('about-me');
 })->name('about-me');
 
-Route::get('/sitemap', function () {
-    return view('sitemap');
-})->name('sitemap');
+Route::get('/demo', [App\Http\Controllers\DemoController::class, 'index'])->name('demo');
+Route::post('/demo/upload-video', [App\Http\Controllers\DemoController::class, 'uploadVideo'])->name('demo.upload.video');
+Route::delete('/demo/delete-video', [App\Http\Controllers\DemoController::class, 'deleteVideo'])->name('demo.delete.video');
 
 Route::get('/gallery', [App\Http\Controllers\PublicGalleryController::class, 'index'])->name('public.gallery');
 Route::get('/gallery/category/{categoryId}', [App\Http\Controllers\PublicGalleryController::class, 'getByCategory'])->name('public.gallery.category');
