@@ -39,6 +39,10 @@ Route::get('/about-me', function () {
     return view('about-me');
 })->name('about-me');
 
+Route::get('/sitemap', function () {
+    return view('sitemap');
+})->name('sitemap');
+
 Route::get('/gallery', [App\Http\Controllers\PublicGalleryController::class, 'index'])->name('public.gallery');
 Route::get('/gallery/category/{categoryId}', [App\Http\Controllers\PublicGalleryController::class, 'getByCategory'])->name('public.gallery.category');
 
