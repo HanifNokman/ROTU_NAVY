@@ -865,7 +865,7 @@
                         </div>
                         <div class="upload-info">
                             <i class="fas fa-info-circle"></i>
-                            Maximum file size: 500MB | Supported formats: MP4, MOV, AVI, WMV
+                            Maximum file size: 350MB | Supported formats: MP4, MOV, AVI, WMV
                         </div>
                         <div class="upload-progress" id="uploadProgress">
                             <div class="progress-bar">
@@ -1439,9 +1439,9 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            // Check file size (500MB = 524288000 bytes)
-            if (file.size > 524288000) {
-                alert('File size exceeds 500MB limit. Please choose a smaller file.');
+            // Check file size (350MB = 367001600 bytes)
+            if (file.size > 367001600) {
+                alert('File size exceeds 350MB limit. Please choose a smaller file.');
                 return;
             }
 
