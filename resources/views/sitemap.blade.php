@@ -308,10 +308,13 @@
 
         /* Branch Container */
         .branches-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
             margin-bottom: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Access Card */
@@ -326,7 +329,6 @@
         .access-card:hover {
             border-color: var(--primary-blue);
             box-shadow: var(--shadow-primary);
-            transform: translateY(-5px);
         }
 
         .access-card.guest { border-top: 4px solid #10b981; }
@@ -1161,6 +1163,23 @@
             const content = document.getElementById(`${type}-content`);
             const toggle = document.getElementById(`${type}-toggle`);
 
+            // Get all access types
+            const allTypes = ['guest', 'instructor', 'cadet', 'admin'];
+
+            // Close all other dropdowns
+            allTypes.forEach(t => {
+                if (t !== type) {
+                    const otherContent = document.getElementById(`${t}-content`);
+                    const otherToggle = document.getElementById(`${t}-toggle`);
+
+                    if (otherContent && otherToggle) {
+                        otherContent.classList.remove('active');
+                        otherToggle.classList.remove('active');
+                    }
+                }
+            });
+
+            // Toggle the clicked dropdown
             content.classList.toggle('active');
             toggle.classList.toggle('active');
         }
