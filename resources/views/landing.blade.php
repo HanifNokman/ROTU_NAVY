@@ -3273,7 +3273,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2025 PALAPES Laut UMS - Pasukan Latihan Pegawai Simpanan, Universiti Malaysia Sabah. Hak cipta terpelihara.</p>
+            <p>&copy; {{ date('Y') }} PALAPES Laut UMS - Pasukan Latihan Pegawai Simpanan, Universiti Malaysia Sabah. Hak cipta terpelihara.</p>
             <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
                 Berkhidmat untuk Malaysia | Membina Peribadi | Sedia Berkorban
             </p>
