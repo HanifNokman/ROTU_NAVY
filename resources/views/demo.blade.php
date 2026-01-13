@@ -637,7 +637,7 @@
                     <div class="highlight-icon">
                         <i class="fas fa-puzzle-piece"></i>
                     </div>
-                    <div class="highlight-number">50+</div>
+                    <div class="highlight-number">15+</div>
                     <h3>Features</h3>
                     <p>Comprehensive modules covering training, inventory, learning, and more</p>
                 </div>
