@@ -436,7 +436,7 @@
                  x-transition:leave="transition-all ease-in duration-300"
                  x-transition:leave-start="opacity-100 transform translate-y-0"
                  x-transition:leave-end="opacity-0 transform -translate-y-full"
-                 class="absolute top-4 left-0 right-0 z-50 px-3 sm:px-6 lg:px-8">
+                 class="absolute top-4 left-0 right-0 z-30 px-3 sm:px-6 lg:px-8">
 
                 <div class="bg-white border border-gray-300 rounded-lg shadow-xl overflow-visible">
                     {{-- Header --}}
