@@ -129,34 +129,35 @@
         justify-content: center;
         width: 20px;
         height: 20px;
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        color: white;
+        background: rgba(33, 150, 243, 0.4);
+        color: rgba(255, 255, 255, 0.9);
         border-radius: 50%;
         font-size: 0.75rem;
         font-weight: 600;
-        cursor: help;
+        cursor: pointer;
         transition: all 0.2s ease;
     }
 
     .info-icon:hover {
+        background: rgba(25, 118, 210, 0.6);
         transform: scale(1.1);
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
     }
 
     .info-tooltip {
         position: absolute;
-        top: 50%;
-        left: 100%;
-        transform: translateY(-50%) translateX(10px);
-        background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+        top: 100%;
+        right: 0;
+        transform: translateY(10px);
+        background: #1565c0;
         color: white;
-        padding: 1rem;
-        border-radius: 12px;
+        padding: 0.875rem;
+        border-radius: 8px;
         font-size: 0.8rem;
-        line-height: 1.6;
-        width: 320px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        display: none;
+        line-height: 1.5;
+        width: 280px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        visibility: hidden;
         transition: all 0.3s ease;
         z-index: 1000;
         pointer-events: none;
@@ -165,11 +166,10 @@
     .info-tooltip::before {
         content: '';
         position: absolute;
-        top: 50%;
-        right: 100%;
-        transform: translateY(-50%);
+        bottom: 100%;
+        right: 10px;
         border: 8px solid transparent;
-        border-right-color: #1e40af;
+        border-bottom-color: #1565c0;
     }
 
     .info-tooltip-title {
@@ -197,38 +197,40 @@
     .info-tooltip-wrapper:hover .info-tooltip {
         opacity: 1;
         visibility: visible;
-        transform: translateX(-50%) translateY(5px);
+        transform: translateY(5px);
+    }
+
+    /* Mobile: Make tooltip visible on tap/click */
+    @media (hover: none) and (pointer: coarse) {
+        .info-icon {
+            pointer-events: auto;
+        }
+
+        .info-tooltip {
+            pointer-events: auto;
+        }
+
+        .info-tooltip-wrapper.active .info-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
     }
 
     /* Mobile tooltip adjustments */
     @media (max-width: 640px) {
         .info-tooltip {
-            width: 280px;
-            left: auto;
-            right: -10px;
+            width: calc(100vw - 3rem);
+            max-width: 280px;
+            right: 0;
             transform: translateY(10px);
-        }
+            font-size: 0.75rem;
         }
 
         .info-tooltip::before {
-            left: auto;
-            right: 15px;
-            transform: none;
+            right: 5px;
         }
 
-        .info-tooltip-wrapper:hover .info-tooltip {
-            transform: translateY(5px);
-        }
-    }
-
-    /* Mobile: Make tooltip visible on tap/click */
-    .info-tooltip-wrapper.active .info-tooltip {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(5px);
-    }
-
-    @media (max-width: 640px) {
         .info-tooltip-wrapper.active .info-tooltip {
             transform: translateY(5px);
         }
@@ -817,7 +819,7 @@
                                 </span>
                                 {{-- Info Tooltip --}}
                                 <span class="info-tooltip-wrapper">
-                                    <span class="info-icon" style="background:rgba(33,150,243,0.4);color:rgba(255,255,255,0.9);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;font-size:0.75rem;font-weight:600;cursor:help;transition:all 0.2s ease;">i</span>
+                                    <span class="info-icon">i</span>
                                     <div class="info-tooltip">
                                         <span class="info-tooltip-title">How to Complete Learning Materials</span>
                                         <ul>
