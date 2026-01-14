@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Account Awaiting Approval</title>
-    
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2">
+
     {{-- ================================================================ --}}
     {{-- EXTERNAL RESOURCES --}}
     {{-- ================================================================ --}}
