@@ -1575,11 +1575,20 @@
         function openEditMaterial(id, title, description, categoryId) {
             const alpineComponent = document.querySelector('[x-data*="materialManagement"]');
             if (alpineComponent) {
+                // Unescape in correct order: backslash first, then quotes, then newlines
+                const unescapeString = (str) => {
+                    return str
+                        .replace(/\\\\/g, '\\')
+                        .replace(/\\"/g, '"')
+                        .replace(/\\'/g, "'")
+                        .replace(/\\n/g, '\n');
+                };
+
                 alpineComponent.dispatchEvent(new CustomEvent('open-edit-material', {
                     detail: {
                         id: id,
-                        title: title.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
-                        description: description.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+                        title: unescapeString(title),
+                        description: unescapeString(description),
                         learning_material_category_id: categoryId
                     }
                 }));
