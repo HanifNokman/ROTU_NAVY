@@ -113,6 +113,127 @@
         background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     }
 
+    /* ========================================= */
+    /* INFO TOOLTIP STYLES */
+    /* ========================================= */
+    .info-tooltip-wrapper {
+        display: inline-block;
+        position: relative;
+        margin-left: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .info-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        border-radius: 50%;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: help;
+        transition: all 0.2s ease;
+    }
+
+    .info-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    .info-tooltip {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        line-height: 1.6;
+        width: 320px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        pointer-events: none;
+    }
+
+    .info-tooltip::before {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 8px solid transparent;
+        border-bottom-color: #1e40af;
+    }
+
+    .info-tooltip-title {
+        display: block;
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .info-tooltip ul {
+        margin: 0;
+        padding-left: 1.25rem;
+    }
+
+    .info-tooltip li {
+        margin-bottom: 0.5rem;
+    }
+
+    .info-tooltip li:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-tooltip-wrapper:hover .info-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(5px);
+    }
+
+    /* Mobile tooltip adjustments */
+    @media (max-width: 640px) {
+        .info-tooltip {
+            width: 280px;
+            left: auto;
+            right: -10px;
+            transform: translateY(10px);
+        }
+
+        .info-tooltip::before {
+            left: auto;
+            right: 15px;
+            transform: none;
+        }
+
+        .info-tooltip-wrapper:hover .info-tooltip {
+            transform: translateY(5px);
+        }
+    }
+
+    /* Mobile: Make tooltip visible on tap/click */
+    .info-tooltip-wrapper.active .info-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(5px);
+    }
+
+    @media (max-width: 640px) {
+        .info-tooltip-wrapper.active .info-tooltip {
+            transform: translateY(5px);
+        }
+    }
+
     .gradient-cyan {
         background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
     }
@@ -692,6 +813,19 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                                 </svg>
                                 Learning Materials
+                                {{-- Info Tooltip --}}
+                                <span class="info-tooltip-wrapper">
+                                    <span class="info-icon">?</span>
+                                    <div class="info-tooltip">
+                                        <span class="info-tooltip-title">How to Complete Learning Materials</span>
+                                        <ul>
+                                            <li><strong>Text/Image:</strong> View for at least 10 seconds</li>
+                                            <li><strong>Video/Audio:</strong> Watch/listen to at least 90% of the content</li>
+                                            <li><strong>YouTube Video:</strong> Watch at least 80% of the video (skipping does not count)</li>
+                                            <li><strong>Documents:</strong> Open and view the document</li>
+                                        </ul>
+                                    </div>
+                                </span>
                             </span>
                         </h4>
 
@@ -3565,6 +3699,31 @@
                     closeImageModal();
                     closeVideoModal();
                 }
+            });
+
+            // Mobile info tooltip toggle
+            const tooltipWrappers = document.querySelectorAll('.info-tooltip-wrapper');
+            tooltipWrappers.forEach(wrapper => {
+                const infoIcon = wrapper.querySelector('.info-icon');
+                if (infoIcon) {
+                    infoIcon.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Close other tooltips first
+                        tooltipWrappers.forEach(w => {
+                            if (w !== wrapper) w.classList.remove('active');
+                        });
+                        wrapper.classList.toggle('active');
+                    });
+                }
+            });
+
+            // Close tooltip when clicking outside
+            document.addEventListener('click', function(e) {
+                tooltipWrappers.forEach(wrapper => {
+                    if (!wrapper.contains(e.target)) {
+                        wrapper.classList.remove('active');
+                    }
+                });
             });
         });
     </script>
