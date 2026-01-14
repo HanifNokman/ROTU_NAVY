@@ -148,7 +148,7 @@
         top: 100%;
         left: 50%;
         transform: translateX(-50%) translateY(10px);
-        background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+        background: linear-gradient(135deg, rgba(30,64,175,0.92) 0%, rgba(29,78,216,0.92) 100%);
         color: white;
         padding: 1rem;
         border-radius: 12px;
@@ -161,6 +161,10 @@
         transition: all 0.3s ease;
         z-index: 1000;
         pointer-events: none;
+        backdrop-filter: blur(4px);
+        /* Make sure tooltip is above other elements */
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
 
     .info-tooltip::before {
@@ -204,10 +208,17 @@
     /* Mobile tooltip adjustments */
     @media (max-width: 640px) {
         .info-tooltip {
-            width: 280px;
-            left: auto;
-            right: -10px;
-            transform: translateY(10px);
+            width: 90vw;
+            max-width: 340px;
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%) translateY(10px);
+            min-width: 200px;
+            box-sizing: border-box;
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
         }
 
         .info-tooltip::before {
@@ -226,6 +237,7 @@
         opacity: 1;
         visibility: visible;
         transform: translateX(-50%) translateY(5px);
+        pointer-events: auto;
     }
 
     @media (max-width: 640px) {
