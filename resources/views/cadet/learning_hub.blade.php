@@ -3189,26 +3189,36 @@
                             player: player,
                             watchedTime: 0,
                             lastTime: 0,
-                            checkInterval: null
+                            checkInterval: null,
+                            isPlaying: false,
+                            completed: false
                         };
 
-                        // Track watched time
+                        // Track watched time while video is playing
                         this.youtubeTrackers[materialId].checkInterval = setInterval(() => {
-                            if (event.data === YT.PlayerState.PLAYING) {
-                                const currentTime = player.getCurrentTime();
-                                const tracker = this.youtubeTrackers[materialId];
-                                if (currentTime > tracker.lastTime) {
-                                    tracker.watchedTime += (currentTime - tracker.lastTime);
-                                }
-                                tracker.lastTime = currentTime;
-
-                                const duration = player.getDuration();
-                                if (duration > 0) {
-                                    const watchedPercentage = (tracker.watchedTime / duration) * 100;
-                                    if (watchedPercentage >= 90) {
-                                        this.completeMaterial(materialId, Math.floor(tracker.watchedTime));
-                                        clearInterval(tracker.checkInterval);
+                            const tracker = this.youtubeTrackers[materialId];
+                            if (tracker && tracker.isPlaying && tracker.player && typeof tracker.player.getCurrentTime === 'function') {
+                                try {
+                                    const currentTime = tracker.player.getCurrentTime();
+                                    // Only add to watched time if moving forward (not seeking)
+                                    // Skip large jumps (> 2 seconds) which indicate seeking
+                                    if (currentTime > tracker.lastTime && (currentTime - tracker.lastTime) < 2) {
+                                        tracker.watchedTime += (currentTime - tracker.lastTime);
                                     }
+                                    tracker.lastTime = currentTime;
+
+                                    // Check if 80% watched and mark as complete
+                                    const duration = tracker.player.getDuration();
+                                    if (duration > 0 && !tracker.completed) {
+                                        const watchedPercentage = (tracker.watchedTime / duration) * 100;
+                                        if (watchedPercentage >= 80) {
+                                            console.log('✅ 80% watched! Marking YouTube video as complete.');
+                                            tracker.completed = true;
+                                            this.completeMaterial(materialId, Math.floor(tracker.watchedTime));
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.log('Error tracking YouTube time:', e);
                                 }
                             }
                         }, 1000);
@@ -3238,13 +3248,37 @@
                 const tracker = this.youtubeTrackers[materialId];
                 if (!tracker) return;
 
-                // YT.PlayerState.ENDED = 0
-                if (event.data === 0) {
-                    const duration = tracker.player.getDuration();
-                    const watchedPercentage = (tracker.watchedTime / duration) * 100;
-                    if (watchedPercentage >= 90) {
-                        this.completeMaterial(materialId, Math.floor(tracker.watchedTime));
+                // YT.PlayerState: ENDED=0, PLAYING=1, PAUSED=2, BUFFERING=3, CUED=5
+                if (event.data === YT.PlayerState.PLAYING) {
+                    tracker.isPlaying = true;
+                    console.log('▶️ YouTube video playing for material:', materialId);
+                } else if (event.data === YT.PlayerState.PAUSED) {
+                    tracker.isPlaying = false;
+                    console.log('⏸️ YouTube video paused for material:', materialId);
+                } else if (event.data === YT.PlayerState.ENDED) {
+                    tracker.isPlaying = false;
+                    console.log('🏁 YouTube video ended for material:', materialId);
+
+                    // Check if 80% was watched before marking as complete
+                    if (!tracker.completed) {
+                        try {
+                            const duration = tracker.player.getDuration();
+                            const watchedPercentage = (tracker.watchedTime / duration) * 100;
+                            console.log(`📊 Final watch percentage: ${watchedPercentage.toFixed(1)}%`);
+
+                            if (watchedPercentage >= 80) {
+                                console.log('✅ 80% watched! Marking as complete.');
+                                tracker.completed = true;
+                                this.completeMaterial(materialId, Math.floor(tracker.watchedTime));
+                            } else {
+                                console.log(`⚠️ Only ${watchedPercentage.toFixed(1)}% watched. Need 80% to complete.`);
+                            }
+                        } catch (e) {
+                            console.log('Error checking final percentage:', e);
+                        }
                     }
+
+                    // Clear the tracking interval
                     if (tracker.checkInterval) {
                         clearInterval(tracker.checkInterval);
                     }
