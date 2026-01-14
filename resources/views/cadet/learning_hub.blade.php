@@ -167,7 +167,7 @@
         content: '';
         position: absolute;
         bottom: 100%;
-        right: 10px;
+        right: 2px;
         border: 8px solid transparent;
         border-bottom-color: #1565c0;
     }
