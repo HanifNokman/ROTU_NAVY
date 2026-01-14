@@ -564,12 +564,12 @@
                                             <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                                 <div class="flex gap-2">
                                                     <button type="button"
-                                                            @click="openEdit({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}', description: '{{ addslashes($material->description ?? '') }}', learning_material_category_id: {{ $material->learning_material_category_id }} })"
+                                                            @click="openEdit({ id: {{ $material->id }}, title: {{ json_encode($material->title) }}, description: {{ json_encode($material->description ?? '') }}, learning_material_category_id: {{ $material->learning_material_category_id }} })"
                                                             class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm transition duration-200">
                                                         Edit
                                                     </button>
                                                     <button type="button"
-                                                            @click="openDelete({ id: {{ $material->id }}, title: '{{ addslashes($material->title) }}' })"
+                                                            @click="openDelete({ id: {{ $material->id }}, title: {{ json_encode($material->title) }} })"
                                                             class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200">
                                                         Delete
                                                     </button>

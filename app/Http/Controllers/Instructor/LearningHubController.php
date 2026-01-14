@@ -58,8 +58,8 @@ class LearningHubController extends Controller
                     'category_name' => $material->category->name ?? 'N/A',
                     'file_url' => $material->file_url,
                     'learning_material_category_id' => $material->learning_material_category_id,
-                    'escaped_title' => addslashes($material->title),
-                    'escaped_description' => addslashes($material->description ?? ''),
+                    'escaped_title' => str_replace(["\r\n", "\r", "\n", '"', "'", "\\"], ["\\n", "\\n", "\\n", '\\"', "\\'", "\\\\"], $material->title),
+                    'escaped_description' => str_replace(["\r\n", "\r", "\n", '"', "'", "\\"], ["\\n", "\\n", "\\n", '\\"', "\\'", "\\\\"], $material->description ?? ''),
                 ];
             })
         ]);
