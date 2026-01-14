@@ -145,9 +145,8 @@
 
     .info-tooltip {
         position: absolute;
-        top: 100%;
+        top: calc(100% + 8px);
         right: 0;
-        transform: translateY(10px);
         background: #1565c0;
         color: white;
         padding: 0.875rem;
@@ -197,7 +196,6 @@
     .info-tooltip-wrapper:hover .info-tooltip {
         opacity: 1;
         visibility: visible;
-        transform: translateY(5px);
     }
 
     /* Mobile: Make tooltip visible on tap/click */
@@ -213,7 +211,6 @@
         .info-tooltip-wrapper.active .info-tooltip {
             opacity: 1;
             visibility: visible;
-            transform: translateY(5px);
         }
     }
 
@@ -223,16 +220,11 @@
             width: calc(100vw - 3rem);
             max-width: 280px;
             right: 0;
-            transform: translateY(10px);
             font-size: 0.75rem;
         }
 
         .info-tooltip::before {
             right: 5px;
-        }
-
-        .info-tooltip-wrapper.active .info-tooltip {
-            transform: translateY(5px);
         }
     }
 
