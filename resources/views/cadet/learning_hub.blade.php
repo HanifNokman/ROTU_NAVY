@@ -816,11 +816,13 @@
                    <!-- Material List Accordion -->
                     <div class="mt-6 pt-6 border-t border-gray-200">
                         <h4 class="font-medium text-gray-800 mb-4">
-                            <span class="flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                </svg>
-                                Learning Materials
+                            <span class="flex items-center w-full justify-between">
+                                <span class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                    </svg>
+                                    <span>Learning Materials</span>
+                                </span>
                                 {{-- Info Tooltip --}}
                                 <span class="info-tooltip-wrapper">
                                     <span class="info-icon" style="background:rgba(33,150,243,0.4);color:rgba(255,255,255,0.9);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;font-size:0.75rem;font-weight:600;cursor:help;transition:all 0.2s ease;">i</span>
