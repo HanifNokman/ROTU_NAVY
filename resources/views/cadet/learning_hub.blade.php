@@ -145,9 +145,9 @@
 
     .info-tooltip {
         position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%) translateY(10px);
+        top: 50%;
+        left: 100%;
+        transform: translateY(-50%) translateX(10px);
         background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
         color: white;
         padding: 1rem;
@@ -156,8 +156,7 @@
         line-height: 1.6;
         width: 320px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        visibility: hidden;
+        display: none;
         transition: all 0.3s ease;
         z-index: 1000;
         pointer-events: none;
@@ -166,11 +165,11 @@
     .info-tooltip::before {
         content: '';
         position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
+        top: 50%;
+        right: 100%;
+        transform: translateY(-50%);
         border: 8px solid transparent;
-        border-bottom-color: #1e40af;
+        border-right-color: #1e40af;
     }
 
     .info-tooltip-title {
