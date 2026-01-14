@@ -119,7 +119,7 @@
     .info-tooltip-wrapper {
         display: inline-block;
         position: relative;
-        margin-left: 0.5rem;
+        margin-left: auto;
         flex-shrink: 0;
     }
 
@@ -142,14 +142,7 @@
         transform: scale(1.1);
         box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
     }
-    }
-    
-    .info-tooltip-wrapper {
-        display: inline-block;
-        position: relative;
-        margin-left: 0.5rem;
-        flex-shrink: 0;
-        margin-left: auto; /* Added margin-left: auto; */
+
     .info-tooltip {
         position: absolute;
         top: 100%;
