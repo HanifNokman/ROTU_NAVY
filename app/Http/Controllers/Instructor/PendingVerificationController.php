@@ -222,11 +222,18 @@ class PendingVerificationController extends Controller
 
     public function updateApplicationStep(Request $request)
     {
-        $request->validate([
+        $rules = [
             'application_id' => 'required|exists:applications,id',
             'step' => 'required|in:attendance,marching_test,physical_test,medical_test,interview,final_evaluation',
             'status' => 'required|in:passed,failed'
-        ]);
+        ];
+
+        // Require reason when marking as failed
+        if ($request->status === 'failed') {
+            $rules['reason'] = 'required|string|max:500';
+        }
+
+        $request->validate($rules);
 
         try {
             $application = Application::findOrFail($request->application_id);
@@ -241,6 +248,16 @@ class PendingVerificationController extends Controller
                 'final_evaluation' => 'final_evaluation'
             ];
 
+            // Map step names to reason columns
+            $reasonColumnMap = [
+                'attendance' => 'attendance_reason',
+                'marching_test' => 'drill_test_reason',
+                'physical_test' => 'physical_test_reason',
+                'medical_test' => 'medical_test_reason',
+                'interview' => 'interview_reason',
+                'final_evaluation' => 'final_evaluation_reason'
+            ];
+
             // Define the evaluation order (must match frontend order)
             $evaluationOrder = [
                 'attendance',
@@ -251,21 +268,40 @@ class PendingVerificationController extends Controller
                 'final_evaluation'
             ];
 
+            // Reason column order
+            $reasonOrder = [
+                'attendance_reason',
+                'drill_test_reason',
+                'physical_test_reason',
+                'medical_test_reason',
+                'interview_reason',
+                'final_evaluation_reason'
+            ];
+
             $column = $columnMap[$request->step];
+            $reasonColumn = $reasonColumnMap[$request->step];
             $application->$column = $request->status;
 
             // CASCADE FAILURE LOGIC:
-            // If this stage is marked as 'failed', reset all subsequent stages to 'pending'
+            // If this stage is marked as 'failed', mark all subsequent stages as failed with cascade reason
             if ($request->status === 'failed') {
+                // Save the instructor's reason for this stage
+                $application->$reasonColumn = $request->reason;
+
                 $currentStageIndex = array_search($column, $evaluationOrder);
 
-                // Reset all stages after the failed stage to 'pending'
+                // Mark all stages after the failed stage as 'failed' with cascade reason
                 for ($i = $currentStageIndex + 1; $i < count($evaluationOrder); $i++) {
                     $subsequentStage = $evaluationOrder[$i];
-                    $application->$subsequentStage = 'pending';
+                    $subsequentReasonColumn = $reasonOrder[$i];
+                    $application->$subsequentStage = 'failed';
+                    $application->$subsequentReasonColumn = 'Tidak layak - gagal penilaian sebelumnya';
                 }
 
-                \Log::info("Cascade failure applied: {$application->name} failed at {$column}, reset subsequent stages to pending");
+                \Log::info("Cascade failure applied: {$application->name} failed at {$column} with reason: {$request->reason}");
+            } else {
+                // If marking as passed, clear the reason for this stage
+                $application->$reasonColumn = null;
             }
 
             $application->save();
@@ -392,25 +428,44 @@ class PendingVerificationController extends Controller
                     }
                 }
 
-                // Mark all remaining candidates with pending fields as failed
-                $updatedCount = Application::where(function($query) {
+                // Mark all remaining candidates with pending fields as failed with appropriate reasons
+                $pendingApplications = Application::where(function($query) {
                     $query->where('attendance', 'pending')
                         ->orWhere('drill_test', 'pending')
                         ->orWhere('physical_test', 'pending')
                         ->orWhere('medical_test', 'pending')
                         ->orWhere('interview', 'pending')
                         ->orWhere('final_evaluation', 'pending');
-                })
-                ->update([
-                    'attendance' => DB::raw("CASE WHEN attendance = 'pending' THEN 'failed' ELSE attendance END"),
-                    'drill_test' => DB::raw("CASE WHEN drill_test = 'pending' THEN 'failed' ELSE drill_test END"),
-                    'physical_test' => DB::raw("CASE WHEN physical_test = 'pending' THEN 'failed' ELSE physical_test END"),
-                    'medical_test' => DB::raw("CASE WHEN medical_test = 'pending' THEN 'failed' ELSE medical_test END"),
-                    'interview' => DB::raw("CASE WHEN interview = 'pending' THEN 'failed' ELSE interview END"),
-                    'final_evaluation' => DB::raw("CASE WHEN final_evaluation = 'pending' THEN 'failed' ELSE final_evaluation END"),
-                ]);
+                })->get();
 
-                \Log::info("Marked {$updatedCount} application(s) with pending fields as failed.");
+                $evaluationOrder = ['attendance', 'drill_test', 'physical_test', 'medical_test', 'interview', 'final_evaluation'];
+                $reasonOrder = ['attendance_reason', 'drill_test_reason', 'physical_test_reason', 'medical_test_reason', 'interview_reason', 'final_evaluation_reason'];
+
+                foreach ($pendingApplications as $application) {
+                    $firstPendingFound = false;
+
+                    for ($i = 0; $i < count($evaluationOrder); $i++) {
+                        $stage = $evaluationOrder[$i];
+                        $reasonColumn = $reasonOrder[$i];
+
+                        if ($application->$stage === 'pending') {
+                            $application->$stage = 'failed';
+
+                            if (!$firstPendingFound) {
+                                // First pending stage gets "Tidak hadir untuk penilaian"
+                                $application->$reasonColumn = 'Tidak hadir untuk penilaian';
+                                $firstPendingFound = true;
+                            } else {
+                                // Subsequent stages get cascade reason
+                                $application->$reasonColumn = 'Tidak layak - gagal penilaian sebelumnya';
+                            }
+                        }
+                    }
+
+                    $application->save();
+                }
+
+                \Log::info("Marked " . $pendingApplications->count() . " application(s) with pending fields as failed with reasons.");
 
                 // Store selection completion date instead of immediately deleting applications
                 if ($createdCount > 0) {
