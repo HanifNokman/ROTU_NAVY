@@ -791,7 +791,6 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr id="candidatesTableHeader">
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider table-select-column">Select</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
@@ -1354,18 +1353,15 @@
                 endSelectionContainer.classList.add('hidden');
             }
 
-            // Hide/show table columns based on current step
-            const selectColumns = document.querySelectorAll('.table-select-column');
+            // Hide/show Actions column based on current step
             const actionsColumns = document.querySelectorAll('.table-actions-column');
             const isFinalStep = currentStep === 5; // Step 6 (final_evaluation) is index 5
 
             if (isFinalStep) {
-                // Hide Select and Actions columns for final step
-                selectColumns.forEach(col => col.style.display = 'none');
+                // Hide Actions column for final step
                 actionsColumns.forEach(col => col.style.display = 'none');
             } else {
-                // Show Select and Actions columns for all other steps
-                selectColumns.forEach(col => col.style.display = '');
+                // Show Actions column for all other steps
                 actionsColumns.forEach(col => col.style.display = '');
             }
 
@@ -1424,7 +1420,7 @@
             if (paginatedCandidates.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">
                             <svg class="w-12 h-12 text-gray-400 mb-2 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -1444,7 +1440,7 @@
                     const row = document.createElement('tr');
                     row.className = isFailed ? 'bg-red-50' : (isPassed ? 'bg-green-50' : '');
 
-                    // For final evaluation step, render read-only view without Select and Actions
+                    // For final evaluation step, render read-only view without Actions
                     if (isFinalStep) {
                         row.innerHTML = `
                             <td class="px-4 py-2 whitespace-nowrap text-sm">${actualIndex}</td>
@@ -1453,14 +1449,8 @@
                             <td class="px-4 py-2 whitespace-nowrap text-sm">${application.course}</td>
                         `;
                     } else {
-                        // For steps 1-5, render with Select checkbox and Action buttons
+                        // For steps 1-5, render with Action buttons
                         row.innerHTML = `
-                            <td class="px-4 py-2 whitespace-nowrap">
-                                <input type="checkbox"
-                                       class="w-5 h-5 text-green-600 rounded focus:ring-green-500"
-                                       data-app-id="${application.id}"
-                                       ${isPassed ? 'checked' : ''}>
-                            </td>
                             <td class="px-4 py-2 whitespace-nowrap text-sm">${actualIndex}</td>
                             <td class="px-4 py-2 whitespace-nowrap text-sm font-medium">${application.name}</td>
                             <td class="px-4 py-2 whitespace-nowrap text-sm">${application.gender}</td>
@@ -1471,8 +1461,9 @@
                                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${isPassed ? 'opacity-50 cursor-not-allowed' : ''}">
                                         Pass
                                     </button>
-                                    <button onclick="updateStatus(${application.id}, '${steps[currentStep].name}', 'failed')"
-                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${isFailed ? 'opacity-50 cursor-not-allowed' : ''}">
+                                    <button onclick="openFailureReasonModal(${application.id}, '${steps[currentStep].name}', '${application.name.replace(/'/g, "\\'")}')"
+                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 ${isFailed ? 'opacity-50 cursor-not-allowed' : ''}"
+                                            ${isFailed ? 'disabled' : ''}>
                                         Fail
                                     </button>
                                 </div>
@@ -1481,15 +1472,6 @@
                     }
 
                     tableBody.appendChild(row);
-
-                    // Only add checkbox event listener for non-final steps
-                    if (!isFinalStep) {
-                        const checkbox = row.querySelector('input[type="checkbox"]');
-                        checkbox.addEventListener('change', function() {
-                            const newStatus = this.checked ? 'passed' : 'failed';
-                            updateStatus(application.id, steps[currentStep].name, newStatus);
-                        });
-                    }
                 });
             }
 
@@ -1763,8 +1745,155 @@
                     if (modal && !modal.classList.contains('hidden')) {
                         closeConfirmationModal();
                     }
+                    const failureModal = document.getElementById('failureReasonModal');
+                    if (failureModal && !failureModal.classList.contains('hidden')) {
+                        closeFailureReasonModal();
+                    }
                 }
             });
         });
+
+        // Failure Reason Modal Functions
+        let pendingFailureData = null;
+
+        function openFailureReasonModal(applicationId, step, applicationName) {
+            pendingFailureData = {
+                applicationId: applicationId,
+                step: step,
+                applicationName: applicationName
+            };
+
+            document.getElementById('failureReasonApplicationName').textContent = applicationName;
+            document.getElementById('failureReasonStepName').textContent = getStepDisplayName(step);
+            document.getElementById('failureReasonInput').value = '';
+            document.getElementById('failureReasonModal').classList.remove('hidden');
+            document.getElementById('failureReasonInput').focus();
+        }
+
+        function closeFailureReasonModal() {
+            document.getElementById('failureReasonModal').classList.add('hidden');
+            pendingFailureData = null;
+            document.getElementById('failureReasonInput').value = '';
+        }
+
+        function getStepDisplayName(step) {
+            const stepNames = {
+                'attendance': 'Kehadiran (Attendance)',
+                'marching_test': 'Ujian Kawad (Marching Test)',
+                'physical_test': 'Ujian Fizikal (Physical Test)',
+                'medical_test': 'Ujian Perubatan (Medical Test)',
+                'interview': 'Temuduga (Interview)',
+                'final_evaluation': 'Penilaian Akhir (Final Evaluation)'
+            };
+            return stepNames[step] || step;
+        }
+
+        async function submitFailureReason() {
+            if (!pendingFailureData) return;
+
+            const reason = document.getElementById('failureReasonInput').value.trim();
+
+            if (!reason) {
+                alert('Sila masukkan sebab kegagalan / Please enter a failure reason');
+                document.getElementById('failureReasonInput').focus();
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ route("instructor.pending.verification.update-step") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        application_id: pendingFailureData.applicationId,
+                        step: pendingFailureData.step,
+                        status: 'failed',
+                        reason: reason
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const app = applications.find(a => a.id === pendingFailureData.applicationId);
+                    if (app) {
+                        // Update the current step status
+                        app[steps[currentStep].field] = 'failed';
+
+                        // Also update subsequent steps as failed (cascade)
+                        for (let i = currentStep + 1; i < steps.length; i++) {
+                            app[steps[i].field] = 'failed';
+                        }
+                    }
+
+                    closeFailureReasonModal();
+                    renderCandidates();
+                    renderSelectionSummary();
+                } else {
+                    alert('Gagal mengemas kini status. Sila cuba lagi. / Failed to update status. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Ralat berlaku. Sila cuba lagi. / An error occurred. Please try again.');
+            }
+        }
     </script>
+
+    {{-- Failure Reason Modal --}}
+    <div id="failureReasonModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-lg bg-white">
+            <div class="mt-3">
+                {{-- Modal Header --}}
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        Sebab Kegagalan / Failure Reason
+                    </h3>
+                    <button onclick="closeFailureReasonModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Candidate Info --}}
+                <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600">Calon / Candidate:</p>
+                    <p id="failureReasonApplicationName" class="font-semibold text-gray-900">-</p>
+                    <p class="text-sm text-gray-600 mt-2">Peringkat / Stage:</p>
+                    <p id="failureReasonStepName" class="font-semibold text-red-600">-</p>
+                </div>
+
+                {{-- Reason Input --}}
+                <div class="mb-4">
+                    <label for="failureReasonInput" class="block text-sm font-medium text-gray-700 mb-2">
+                        Sebab Kegagalan <span class="text-red-500">*</span>
+                    </label>
+                    <textarea
+                        id="failureReasonInput"
+                        rows="4"
+                        maxlength="500"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
+                        placeholder="Contoh: Gagal larian 2.4km - masa melebihi had / Example: Failed 2.4km run - time exceeded limit"
+                    ></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Maksimum 500 aksara / Maximum 500 characters</p>
+                </div>
+
+                {{-- Action Buttons --}}
+                <div class="flex justify-end gap-3">
+                    <button
+                        onclick="closeFailureReasonModal()"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                        Batal / Cancel
+                    </button>
+                    <button
+                        onclick="submitFailureReason()"
+                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        Sahkan Gagal / Confirm Fail
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>

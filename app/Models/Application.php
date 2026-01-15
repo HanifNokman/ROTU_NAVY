@@ -23,11 +23,17 @@ class Application extends Model
         'bmi',
         'profile_pic',
         'attendance',
+        'attendance_reason',
         'drill_test',
+        'drill_test_reason',
         'physical_test',
+        'physical_test_reason',
         'medical_test',
+        'medical_test_reason',
         'interview',
+        'interview_reason',
         'final_evaluation',
+        'final_evaluation_reason',
     ];
 
     protected $casts = [

@@ -358,6 +358,22 @@
             color: white;
         }
 
+        .phase-reason {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.875rem;
+            color: #991b1b;
+            line-height: 1.4;
+        }
+
+        .phase-reason i {
+            margin-right: 0.5rem;
+            color: #ef4444;
+        }
+
         .phase-icon {
             font-size: 1.5rem;
             margin-right: 0.5rem;
@@ -637,6 +653,11 @@
                                     @endif
                                 </span>
                             </div>
+                            @if($application->attendance === 'failed' && $application->attendance_reason)
+                                <div class="phase-reason">
+                                    <i class="fas fa-comment-alt"></i> {{ $application->attendance_reason }}
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Phase 2: Marching Test -->
@@ -656,6 +677,11 @@
                                     @endif
                                 </span>
                             </div>
+                            @if($application->drill_test === 'failed' && $application->drill_test_reason)
+                                <div class="phase-reason">
+                                    <i class="fas fa-comment-alt"></i> {{ $application->drill_test_reason }}
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Phase 3: Physical Test -->
@@ -675,6 +701,11 @@
                                     @endif
                                 </span>
                             </div>
+                            @if($application->physical_test === 'failed' && $application->physical_test_reason)
+                                <div class="phase-reason">
+                                    <i class="fas fa-comment-alt"></i> {{ $application->physical_test_reason }}
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Phase 4: Medical Test -->
@@ -694,6 +725,11 @@
                                     @endif
                                 </span>
                             </div>
+                            @if($application->medical_test === 'failed' && $application->medical_test_reason)
+                                <div class="phase-reason">
+                                    <i class="fas fa-comment-alt"></i> {{ $application->medical_test_reason }}
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Phase 5: Interview -->
@@ -713,6 +749,11 @@
                                     @endif
                                 </span>
                             </div>
+                            @if($application->interview === 'failed' && $application->interview_reason)
+                                <div class="phase-reason">
+                                    <i class="fas fa-comment-alt"></i> {{ $application->interview_reason }}
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Phase 6: Final Evaluation -->
@@ -732,6 +773,11 @@
                                     @endif
                                 </span>
                             </div>
+                            @if($application->final_evaluation === 'failed' && $application->final_evaluation_reason)
+                                <div class="phase-reason">
+                                    <i class="fas fa-comment-alt"></i> {{ $application->final_evaluation_reason }}
+                                </div>
+                            @endif
                         </div>
                     </div>
 
