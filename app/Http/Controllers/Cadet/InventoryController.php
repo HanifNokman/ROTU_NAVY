@@ -505,17 +505,27 @@ class InventoryController extends Controller
         $loan->requestReturn();
 
         // Notify all instructors about the pending return request
-        $instructors = User::where('role', 'instructor')->get();
-        foreach ($instructors as $instructor) {
-            try {
-                $instructor->notify(new PendingLoanReturnNotification(
-                    $loan,
-                    $cadet->name,
-                    $loan->inventoryItem->name
-                ));
-            } catch (\Exception $e) {
-                Log::error('Failed to send loan return notification: ' . $e->getMessage());
+        try {
+            // Ensure relationships are loaded
+            $loan->load('inventoryItem');
+            $cadetName = $cadet->user->name ?? $cadet->name ?? 'Unknown Cadet';
+            $itemName = $loan->inventoryItem->name ?? 'Unknown Item';
+
+            $instructors = User::where('role', 'instructor')->get();
+            foreach ($instructors as $instructor) {
+                try {
+                    $instructor->notify(new PendingLoanReturnNotification(
+                        $loan,
+                        $cadetName,
+                        $itemName
+                    ));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send loan return notification to instructor ' . $instructor->id . ': ' . $e->getMessage());
+                }
             }
+        } catch (\Exception $e) {
+            Log::error('Failed to process loan return notifications: ' . $e->getMessage());
+            // Don't fail the request - the loan status was already updated successfully
         }
 
         return redirect()->back()->with('success', 'Return request submitted successfully. Waiting for instructor approval.');
