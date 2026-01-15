@@ -1184,7 +1184,7 @@
                             <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
                                  onclick="openInstructorModal({{ $instructor->id }})">
                                 <div class="flex items-center space-x-4">
-                                    <img src="{{ $instructor->profile_pic ? asset('storage/' . $instructor->profile_pic) : asset('images/default.png') }}"
+                                    <img src="{{ $instructor->profile_pic ? asset('storage/' . $instructor->profile_pic) : 'https://ui-avatars.com/api/?name=' . urlencode($instructor->user->name ?? 'Instructor') . '&background=3b82f6&color=fff' }}"
                                          alt="Instructor Photo"
                                          class="w-16 h-16 rounded-full object-cover border-2 border-blue-200">
                                     <div class="flex-1">
@@ -2652,7 +2652,7 @@
 
                 let instructorsHTML = '';
                 data.forEach(instructor => {
-                    const profilePic = instructor.profile_pic ? `/storage/${instructor.profile_pic}` : '/images/default.png';
+                    const profilePic = instructor.profile_pic ? `/storage/${instructor.profile_pic}` : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(instructor.user?.name || 'Instructor') + '&background=3b82f6&color=fff';
                     const prefix = instructor.service_number && instructor.service_number.startsWith('NV') ? ' PSSTLDM' :
                                   instructor.service_number && instructor.service_number.startsWith('N') ? ' TLDM' : '';
 
@@ -2759,12 +2759,13 @@
         function generateInstructorProfileHTML(instructor) {
             const prefix = instructor.service_number && instructor.service_number.startsWith('NV') ? ' PSSTLDM' :
                           instructor.service_number && instructor.service_number.startsWith('N') ? ' TLDM' : '';
+            const defaultAvatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(instructor.user?.name || 'Instructor') + '&background=3b82f6&color=fff&size=256';
 
             return `
                 <div class="flex flex-col md:flex-row gap-4 md:gap-6">
                     <!-- Profile Picture -->
                     <div class="flex justify-center lg:justify-start">
-                        <img src="${instructor.profile_pic ? '/storage/' + instructor.profile_pic : '/images/default.png'}"
+                        <img src="${instructor.profile_pic ? '/storage/' + instructor.profile_pic : defaultAvatar}"
                             alt="Profile Picture"
                             class="w-32 h-40 sm:w-40 sm:h-52 md:w-60 md:h-80 object-cover border rounded-md">
                     </div>
