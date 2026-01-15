@@ -272,32 +272,32 @@
             </div>
 
             {{-- ================================================================ --}}
-            {{-- PENDING LOAN RETURN ALERT BANNER --}}
+            {{-- PENDING RETURN REQUEST ALERT BANNER --}}
             {{-- ================================================================ --}}
             @if($pendingReturnCount > 0)
-            <div class="bg-amber-50 border-l-4 border-amber-400 rounded-lg shadow-md p-4">
-                <div class="flex items-center">
+            <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg">
+                <div class="flex items-start">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        <svg class="h-5 w-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                         </svg>
                     </div>
                     <div class="ml-3 flex-1">
-                        <h3 class="text-sm font-semibold text-amber-800">
-                            Permintaan Pulangan Peralatan Menunggu
+                        <h3 class="text-sm font-semibold text-orange-800">
+                            Return Request{{ $pendingReturnCount > 1 ? 's' : '' }} Pending Approval
                         </h3>
-                        <p class="text-sm text-amber-700 mt-1">
-                            Terdapat <span class="font-bold">{{ $pendingReturnCount }}</span> permintaan pulangan peralatan yang memerlukan kelulusan anda.
+                        <p class="text-sm text-orange-700 mt-1">
+                            You have <span class="font-bold">{{ $pendingReturnCount }}</span> equipment return request{{ $pendingReturnCount > 1 ? 's' : '' }} awaiting your approval.
                         </p>
                     </div>
-                    <div class="ml-4">
+                    <div class="ml-4 flex-shrink-0">
                         <a href="#loans" onclick="showLoanSection(); filterByPendingReturn();"
-                           class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                           class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition-colors duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                            Lihat Permintaan
+                            View Requests
                         </a>
                     </div>
                 </div>

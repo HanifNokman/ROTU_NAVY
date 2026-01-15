@@ -42,8 +42,8 @@ class PendingLoanReturnNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'Permintaan Pulangan Peralatan',
-            'message' => $this->cadetName . ' telah memohon untuk memulangkan ' . $this->itemName . ' (Kuantiti: ' . $this->loan->quantity . ').',
+            'title' => 'Equipment Return Request',
+            'message' => $this->cadetName . ' has requested to return ' . $this->itemName . ' (Qty: ' . $this->loan->quantity . ').',
             'type' => 'loan_return_request',
             'loan_id' => $this->loan->id,
             'cadet_name' => $this->cadetName,

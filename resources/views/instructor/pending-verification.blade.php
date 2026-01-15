@@ -1794,7 +1794,7 @@
             const reason = document.getElementById('failureReasonInput').value.trim();
 
             if (!reason) {
-                alert('Sila masukkan sebab kegagalan / Please enter a failure reason');
+                alert('Please enter a failure reason');
                 document.getElementById('failureReasonInput').focus();
                 return;
             }
@@ -1832,11 +1832,11 @@
                     renderCandidates();
                     renderSelectionSummary();
                 } else {
-                    alert('Gagal mengemas kini status. Sila cuba lagi. / Failed to update status. Please try again.');
+                    alert('Failed to update status. Please try again.');
                 }
             } catch (error) {
                 console.error('Error updating status:', error);
-                alert('Ralat berlaku. Sila cuba lagi. / An error occurred. Please try again.');
+                alert('An error occurred. Please try again.');
             }
         }
     </script>
@@ -1848,7 +1848,7 @@
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">
-                        Sebab Kegagalan / Failure Reason
+                        Failure Reason
                     </h3>
                     <button onclick="closeFailureReasonModal()" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1859,25 +1859,25 @@
 
                 {{-- Candidate Info --}}
                 <div class="mb-4 p-3 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-600">Calon / Candidate:</p>
+                    <p class="text-sm text-gray-600">Candidate:</p>
                     <p id="failureReasonApplicationName" class="font-semibold text-gray-900">-</p>
-                    <p class="text-sm text-gray-600 mt-2">Peringkat / Stage:</p>
+                    <p class="text-sm text-gray-600 mt-2">Stage:</p>
                     <p id="failureReasonStepName" class="font-semibold text-red-600">-</p>
                 </div>
 
                 {{-- Reason Input --}}
                 <div class="mb-4">
                     <label for="failureReasonInput" class="block text-sm font-medium text-gray-700 mb-2">
-                        Sebab Kegagalan <span class="text-red-500">*</span>
+                        Failure Reason <span class="text-red-500">*</span>
                     </label>
                     <textarea
                         id="failureReasonInput"
                         rows="4"
                         maxlength="500"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
-                        placeholder="Contoh: Gagal larian 2.4km - masa melebihi had / Example: Failed 2.4km run - time exceeded limit"
+                        placeholder="Example: Failed 2.4km run - time exceeded limit"
                     ></textarea>
-                    <p class="text-xs text-gray-500 mt-1">Maksimum 500 aksara / Maximum 500 characters</p>
+                    <p class="text-xs text-gray-500 mt-1">Maximum 500 characters</p>
                 </div>
 
                 {{-- Action Buttons --}}
@@ -1885,12 +1885,12 @@
                     <button
                         onclick="closeFailureReasonModal()"
                         class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
-                        Batal / Cancel
+                        Cancel
                     </button>
                     <button
                         onclick="submitFailureReason()"
                         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                        Sahkan Gagal / Confirm Fail
+                        Confirm Fail
                     </button>
                 </div>
             </div>
