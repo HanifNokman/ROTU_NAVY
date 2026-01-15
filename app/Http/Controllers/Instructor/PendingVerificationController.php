@@ -45,14 +45,21 @@ class PendingVerificationController extends Controller
             ->where('role', 'instructor')
             ->get();
 
-        // Only show applications that have at least 1 pending test result
+        // Show applications that have at least 1 pending OR failed test result
+        // This allows instructors to give second chances to failed applicants
         $applications = Application::where(function($query) {
             $query->where('attendance', 'pending')
                 ->orWhere('drill_test', 'pending')
                 ->orWhere('physical_test', 'pending')
                 ->orWhere('medical_test', 'pending')
                 ->orWhere('interview', 'pending')
-                ->orWhere('final_evaluation', 'pending');
+                ->orWhere('final_evaluation', 'pending')
+                ->orWhere('attendance', 'failed')
+                ->orWhere('drill_test', 'failed')
+                ->orWhere('physical_test', 'failed')
+                ->orWhere('medical_test', 'failed')
+                ->orWhere('interview', 'failed')
+                ->orWhere('final_evaluation', 'failed');
         })->get();
 
         return view('instructor.pending-verification', compact('pendingCadets', 'pendingInstructors', 'applications'));
