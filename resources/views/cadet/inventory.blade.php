@@ -332,7 +332,7 @@
                 <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 px-2">
                     My Inventory
                 </h1>
-                <p class="text-sm sm:text-lg text-gray-600 px-2">Manage your uniform sizes and equipment loans</p>
+                <p class="text-sm sm:text-lg text-gray-600 px-2">Manage your uniform sizes and borrowed equipment</p>
             </div>
 
             {{-- ================================================================ --}}
@@ -385,7 +385,7 @@
                 </div>
             @endif
 
-            {{-- ACTIVE LOANS ALERT --}}
+            {{-- BORROWED EQUIPMENT ALERT --}}
             @php
                 $borrowedLoans = $activeLoans->filter(fn($loan) => $loan->status === 'Borrowed');
                 $overdueCount = $borrowedLoans->filter(fn($loan) => $loan->isOverdue())->count();
@@ -690,7 +690,7 @@
             </div>
 
             {{-- ================================================================ --}}
-            {{-- ACTIVE LOANS SECTION --}}
+            {{-- CURRENTLY BORROWED SECTION --}}
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-xl overflow-hidden">
                 
@@ -703,13 +703,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900">Active Loans</h3>
+                            <h3 class="text-2xl font-bold text-gray-900">Currently Borrowed</h3>
                         </div>
                         <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="activeLoans-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
-                    <p class="text-gray-600 ml-13">Your currently borrowed equipment</p>
+                    <p class="text-gray-600 ml-13">Equipment you currently have</p>
                 </div>
 
                 <div class="section-content" id="activeLoans-content">
@@ -784,14 +784,14 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-center text-gray-500 py-12">No active loans at the moment.</p>
+                        <p class="text-center text-gray-500 py-12">No borrowed equipment at the moment.</p>
                     @endif
                     </div>
                 </div>
             </div>
 
             {{-- ================================================================ --}}
-            {{-- PAST LOANS SECTION --}}
+            {{-- BORROWING HISTORY SECTION --}}
             {{-- ================================================================ --}}
             <div class="dashboard-card bg-white rounded-xl overflow-hidden">
                 
@@ -804,13 +804,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900">Past Loans</h3>
+                            <h3 class="text-2xl font-bold text-gray-900">Borrowing History</h3>
                         </div>
                         <svg class="w-6 h-6 text-gray-600 dropdown-icon" id="pastLoans-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
-                    <p class="text-gray-600 ml-13">Your loan history</p>
+                    <p class="text-gray-600 ml-13">Your past borrowing records</p>
                 </div>
 
                 <div class="section-content" id="pastLoans-content">
@@ -866,7 +866,7 @@
                             {{ $pastLoans->links() }}
                         </div>
                     @else
-                        <p class="text-center text-gray-500 py-12">No past loans found.</p>
+                        <p class="text-center text-gray-500 py-12">No borrowing history found.</p>
                     @endif
                 </div>
                 </div>

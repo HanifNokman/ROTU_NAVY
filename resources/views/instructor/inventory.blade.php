@@ -271,10 +271,38 @@
                 <p class="text-lg text-gray-600">Manage uniforms, equipment, and inventory tracking for cadets</p>
             </div>
 
-            {{-- Store pending returns count for use in Equipment Loan section --}}
-            @php
-                $pendingReturnsCount = \App\Models\EquipmentLoan::where('status', 'Pending Return')->count();
-            @endphp
+            {{-- ================================================================ --}}
+            {{-- PENDING LOAN RETURN ALERT BANNER --}}
+            {{-- ================================================================ --}}
+            @if($pendingReturnCount > 0)
+            <div class="bg-amber-50 border-l-4 border-amber-400 rounded-lg shadow-md p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-sm font-semibold text-amber-800">
+                            Permintaan Pulangan Peralatan Menunggu
+                        </h3>
+                        <p class="text-sm text-amber-700 mt-1">
+                            Terdapat <span class="font-bold">{{ $pendingReturnCount }}</span> permintaan pulangan peralatan yang memerlukan kelulusan anda.
+                        </p>
+                    </div>
+                    <div class="ml-4">
+                        <a href="#loans" onclick="showLoanSection(); filterByPendingReturn();"
+                           class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            Lihat Permintaan
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
 
             {{-- ================================================================ --}}
             {{-- SECTION 1: CADET UNIFORM SIZE SUMMARY --}}
@@ -610,17 +638,17 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-900">Equipment Loan Management</h3>
-                                @if($pendingReturnsCount > 0)
+                                <h3 class="text-2xl font-bold text-gray-900">Equipment Borrowing Management</h3>
+                                @if($pendingReturnCount > 0)
                                     <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-orange-100 text-orange-800 border-2 border-orange-300 animate-pulse">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                                         </svg>
-                                        {{ $pendingReturnsCount }} Return{{ $pendingReturnsCount > 1 ? 's' : '' }} Pending
+                                        {{ $pendingReturnCount }} Return{{ $pendingReturnCount > 1 ? 's' : '' }} Pending
                                     </span>
                                 @endif
                             </div>
-                            <p class="text-gray-600 ml-13">Monitor equipment borrowing, returns, and track loan status across all cadets</p>
+                            <p class="text-gray-600 ml-13">Monitor equipment borrowing, returns, and track borrow status across all cadets</p>
                         </div>
                         <svg class="w-6 h-6 text-gray-600 transition-transform duration-300" id="equipmentLoanDropdownIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -658,29 +686,29 @@
                                 </select>
                             </div>
                             
-                            <!-- Loan Status Toggle -->
+                            <!-- Borrow Status Toggle -->
                             <div class="flex flex-col">
-                                <label class="text-sm font-medium text-gray-700 mb-1">Loan Status</label>
+                                <label class="text-sm font-medium text-gray-700 mb-1">Status</label>
                                 <div class="flex rounded-md shadow-sm">
                                     <button type="button" 
                                             id="activeLoansBtn"
                                             class="px-4 py-2 text-sm font-medium rounded-l-md {{ $selectedStatus === 'active' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
                                             onclick="switchLoanStatus('active')">
-                                        Active Loans
+                                        Currently Borrowed
                                     </button>
                                     <button type="button" 
                                             id="returnedLoansBtn"
                                             class="px-4 py-2 text-sm font-medium rounded-r-md {{ $selectedStatus === 'returned' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
                                             onclick="switchLoanStatus('returned')">
-                                        Past Loans
+                                        Returned
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Right Side Button -->
                         <div class="flex gap-3">
-                            <button onclick="openEquipmentModal()" 
+                            <button onclick="openEquipmentModal()"
                                     class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
                                 <i class="fas fa-plus mr-2"></i>
                                 Add Equipment
@@ -696,7 +724,7 @@
                             <div class="text-gray-400 text-6xl mb-4">
                                 <i class="fas fa-tools"></i>
                             </div>
-                            <p class="text-gray-500 text-lg">No equipment loan records found.</p>
+                            <p class="text-gray-500 text-lg">No equipment borrowing records found.</p>
                         </div>
                     @else
                         <!-- Scrollable container with max 6 rows visible -->
@@ -862,7 +890,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Qty</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">On Loan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrowed</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Availability</th>
                                 </tr>
                             </thead>
@@ -1304,19 +1332,44 @@
         // Function to switch loan status with instant update
         function switchLoanStatus(status) {
             // Update button styles
-            document.getElementById('activeLoansBtn').className = 
-                status === 'active' 
+            document.getElementById('activeLoansBtn').className =
+                status === 'active'
                 ? 'px-4 py-2 text-sm font-medium rounded-l-md bg-green-600 text-white'
                 : 'px-4 py-2 text-sm font-medium rounded-l-md bg-gray-200 text-gray-700 hover:bg-gray-300';
-                
-            document.getElementById('returnedLoansBtn').className = 
-                status === 'returned' 
+
+            document.getElementById('returnedLoansBtn').className =
+                status === 'returned'
                 ? 'px-4 py-2 text-sm font-medium rounded-r-md bg-green-600 text-white'
                 : 'px-4 py-2 text-sm font-medium rounded-r-md bg-gray-200 text-gray-700 hover:bg-gray-300';
-            
+
             // Update filter and refresh content
             currentFilters.loanStatus = status;
             updateEquipmentLoans();
+        }
+
+        // Function to show the Equipment Loan section (expand if collapsed)
+        function showLoanSection() {
+            const content = document.getElementById('equipmentLoanContent');
+            const icon = document.getElementById('equipmentLoanDropdownIcon');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            }
+
+            // Scroll to the section after a small delay
+            setTimeout(() => {
+                document.getElementById('equipmentLoanContent').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        }
+
+        // Function to filter loans by Pending Return status
+        function filterByPendingReturn() {
+            // Switch to active loans which includes Pending Return
+            switchLoanStatus('active');
         }
 
         // Modal Functions

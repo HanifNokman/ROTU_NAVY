@@ -102,6 +102,9 @@ class InventoryController extends Controller
             $issuanceFilter
         );
 
+        // Get pending return requests count for alert
+        $pendingReturnCount = EquipmentLoan::where('status', 'Pending Return')->count();
+
         return view('instructor.inventory', compact(
             'intakeYears',
             'selectedUniformIntakeYear',
@@ -120,7 +123,8 @@ class InventoryController extends Controller
             'selectedIssuanceComponent',
             'issuanceFilter',
             'issuanceComponents',
-            'cadetsIssuanceData'
+            'cadetsIssuanceData',
+            'pendingReturnCount'
         ));
     }
 

@@ -9,6 +9,8 @@ use App\Models\EquipmentLoan;
 use App\Models\InventoryItem;
 use App\Models\UniformComponent;
 use App\Models\UniformType;
+use App\Models\User;
+use App\Notifications\PendingLoanReturnNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -501,6 +503,20 @@ class InventoryController extends Controller
         }
 
         $loan->requestReturn();
+
+        // Notify all instructors about the pending return request
+        $instructors = User::where('role', 'instructor')->get();
+        foreach ($instructors as $instructor) {
+            try {
+                $instructor->notify(new PendingLoanReturnNotification(
+                    $loan,
+                    $cadet->name,
+                    $loan->inventoryItem->name
+                ));
+            } catch (\Exception $e) {
+                Log::error('Failed to send loan return notification: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->back()->with('success', 'Return request submitted successfully. Waiting for instructor approval.');
     }
