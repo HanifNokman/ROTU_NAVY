@@ -577,7 +577,21 @@
                 $profilePicture = $instructor?->profile_pic;
 
                 $pendingUsersCount = App\Models\User::where('status', 'pending')->count();
-                $applicationsCount = App\Models\Application::count();
+                // Count applications that have at least 1 pending or failed test (matching what's shown on the page)
+                $applicationsCount = App\Models\Application::where(function($query) {
+                    $query->where('attendance', 'pending')
+                        ->orWhere('drill_test', 'pending')
+                        ->orWhere('physical_test', 'pending')
+                        ->orWhere('medical_test', 'pending')
+                        ->orWhere('interview', 'pending')
+                        ->orWhere('final_evaluation', 'pending')
+                        ->orWhere('attendance', 'failed')
+                        ->orWhere('drill_test', 'failed')
+                        ->orWhere('physical_test', 'failed')
+                        ->orWhere('medical_test', 'failed')
+                        ->orWhere('interview', 'failed')
+                        ->orWhere('final_evaluation', 'failed');
+                })->count();
                 $hasNotifications = $pendingUsersCount > 0 || $applicationsCount > 0;
 
             } elseif ($user->role === 'cadet') {
