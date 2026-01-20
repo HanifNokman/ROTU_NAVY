@@ -18,21 +18,22 @@ class GalleryController extends Controller
 
     public function index(Request $request)
     {
-        $instructorId = Auth::id();
-        
-        $categories = GalleryCategory::where('instructor_id', $instructorId)->get();
-        
-        $query = Gallery::where('instructor_id', $instructorId)
-                       ->with(['category', 'instructor'])
+        $currentUserId = Auth::id();
+
+        // Get all categories from all instructors so everyone can see and use them
+        $categories = GalleryCategory::with('instructor')->orderBy('name')->get();
+
+        // Get all galleries from all instructors
+        $query = Gallery::with(['category', 'instructor'])
                        ->orderBy('created_at', 'desc');
-        
+
         if ($request->filled('category')) {
             $query->where('gallery_category_id', $request->category);
         }
-        
+
         $galleries = $query->get();
-        
-        return view('instructor.gallery', compact('galleries', 'categories'));
+
+        return view('instructor.gallery', compact('galleries', 'categories', 'currentUserId'));
     }
 
     public function store(Request $request)

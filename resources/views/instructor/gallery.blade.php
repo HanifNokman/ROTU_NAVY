@@ -781,12 +781,21 @@
                                                 <h4 class="font-medium text-gray-900 text-sm sm:text-base truncate">{{ $category->name }}</h4>
                                                 <p class="text-xs sm:text-sm text-gray-500">
                                                     {{ $category->galleries->count() ?? 0 }} picture(s) in this category
+                                                    @if($category->instructor_id !== $currentUserId)
+                                                        <span class="text-gray-400">· by {{ $category->instructor->name ?? 'Unknown' }}</span>
+                                                    @endif
                                                 </p>
                                             </div>
-                                            <button onclick="confirmDeleteCategory({{ $category->id }}, '{{ $category->name }}', {{ $category->galleries->count() ?? 0 }})"
-                                                    class="px-2 sm:px-3 py-1 bg-red-600 text-white text-xs sm:text-sm rounded hover:bg-red-700 transition duration-200 flex-shrink-0">
-                                                Delete
-                                            </button>
+                                            @if($category->instructor_id === $currentUserId)
+                                                <button onclick="confirmDeleteCategory({{ $category->id }}, '{{ $category->name }}', {{ $category->galleries->count() ?? 0 }})"
+                                                        class="px-2 sm:px-3 py-1 bg-red-600 text-white text-xs sm:text-sm rounded hover:bg-red-700 transition duration-200 flex-shrink-0">
+                                                    Delete
+                                                </button>
+                                            @else
+                                                <span class="px-2 sm:px-3 py-1 bg-gray-200 text-gray-500 text-xs sm:text-sm rounded flex-shrink-0">
+                                                    Not yours
+                                                </span>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
@@ -931,6 +940,7 @@
         const galleryData = @json($galleries->groupBy('gallery_category_id'));
         const categoriesData = @json($categories);
         const allGalleries = @json($galleries);
+        const currentUserId = {{ $currentUserId }};
         let currentFilter = 'all';
 
         {{-- ================================================================ --}}
@@ -1111,6 +1121,7 @@
                             ${formatDate(photo.created_at)}
                         </div>
 
+                        ${photo.instructor_id === currentUserId ? `
                         <div class="flex gap-2 pt-2 sm:pt-3 border-t border-gray-100">
                             <button type="button"
                                     onclick="event.stopPropagation(); openEditGallery(${photo.id}, '${titleEscaped}', '${descEscaped}', ${photo.gallery_category_id})"
@@ -1129,6 +1140,11 @@
                                 <span class="hidden sm:inline">Delete</span>
                             </button>
                         </div>
+                        ` : `
+                        <div class="pt-2 sm:pt-3 border-t border-gray-100">
+                            <p class="text-xs text-gray-500 text-center italic">Uploaded by ${photo.instructor?.name || 'Unknown'}</p>
+                        </div>
+                        `}
                     </div>
                 </div>
             `;
